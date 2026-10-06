@@ -507,3 +507,32 @@ export async function writeContractFile(admin: Admin, input: {
   if (error) throw new Error("Não foi possível registrar o arquivo.");
   return { sha256: hash };
 }
+
+/** Sininho para a empresa a cada assinatura; ao concluir, e-mail para todas as partes. */
+export async function notifyContractSigned(admin: Admin, tenantId: string, contractId: string, signerName: string, fullySigned: boolean) {
+  try {
+    const { notifyTenant, emailPerson, tenantName } = await import("./notify.server");
+    const { data: c } = await admin.from("contracts").select("title, customers(name, email)").eq("id", contractId).maybeSingle();
+    const title = c?.title ?? "Contrato";
+    await notifyTenant(admin, {
+      tenantId, kind: fullySigned ? "contract.completed" : "contract.signed", link: `/contratos/${contractId}`,
+      dedupeKey: `contract.${fullySigned ? "completed" : "signed"}:${contractId}:${signerName}`,
+      title: fullySigned ? "Contrato assinado por todos" : "Nova assinatura no contrato",
+      body: fullySigned ? `“${title}” foi assinado por todas as partes.` : `${signerName} assinou “${title}”.`,
+      ...(fullySigned ? { email: { subject: `Contrato concluído — ${title}` } } : {}),
+    });
+    if (!fullySigned) return;
+    const company = await tenantName(admin, tenantId);
+    const cust = c?.customers as { email?: string | null } | null;
+    const { data: signers } = await admin.from("contract_signers").select("email").eq("contract_id", contractId).is("removed_at", null);
+    const to = [cust?.email, ...((signers ?? []) as { email: string | null }[]).map((s) => s.email)].filter((e): e is string => !!e);
+    for (const e of new Set(to)) {
+      await emailPerson(admin, {
+        tenantId, kind: "contract.completed_party", dedupeKey: `contract.completed_party:${contractId}:${e}`,
+        email: { to: e, subject: `Contrato concluído — ${title}`, title: "Contrato assinado por todas as partes", intro: `O documento “${title}” de ${company} foi assinado por todos. Você pode conferir a autenticidade a qualquer momento.`, cta: { label: "Verificar documento", url: "/verificar" } },
+      });
+    }
+  } catch (e) {
+    console.error("contract notify", e instanceof Error ? e.message : "falhou");
+  }
+}

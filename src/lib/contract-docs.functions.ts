@@ -150,7 +150,7 @@ export const createSignerLink = createServerFn({ method: "POST" })
     const m = await memberTenant(context.supabase, context.userId, ["owner", "admin", "finance"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { randomToken, tokenFingerprint } = await import("./crypto.server");
-    const { data: s } = await supabaseAdmin.from("contract_signers").select("id, contract_id, name, removed_at, contracts(status)")
+    const { data: s } = await supabaseAdmin.from("contract_signers").select("id, contract_id, name, email, role, removed_at, contracts(status, title)")
       .eq("id", data.signerId).eq("tenant_id", m.tenant_id).maybeSingle();
     if (!s || s.removed_at) throw new Error("Pessoa não encontrada.");
     const status = (s.contracts as { status: string } | null)?.status;
@@ -163,6 +163,19 @@ export const createSignerLink = createServerFn({ method: "POST" })
     }).eq("id", s.id);
     if (status === "draft") await supabaseAdmin.from("contracts").update({ status: "awaiting_customer", sent_at: new Date().toISOString() }).eq("id", s.contract_id);
     await contractEvent(supabaseAdmin, m.tenant_id, s.contract_id, "signer_link_created", s.name);
+    if (s.email) {
+      const { emailPerson, tenantName } = await import("./notify.server");
+      const company = await tenantName(supabaseAdmin, m.tenant_id);
+      const title = (s.contracts as { title?: string } | null)?.title ?? "Contrato";
+      const roleLabel = s.role === "witness" ? "testemunha" : s.role === "approver" ? "aprovador(a)" : "signatário(a)";
+      await emailPerson(supabaseAdmin, {
+        tenantId: m.tenant_id, kind: "contract.signer_invite", dedupeKey: `contract.signer_invite:${s.id}:${tokenFingerprint(token).slice(0, 16)}`,
+        email: { to: s.email, subject: `${company} pediu sua assinatura`, title: "Você tem um documento para assinar",
+          intro: `Olá, ${s.name}. ${company} indicou você como ${roleLabel} no documento abaixo.`,
+          lines: [{ label: "Documento", value: title }], cta: { label: "Revisar e assinar", url: `/assinar/${token}` },
+          footnote: `O link é pessoal e vale por ${SIGNER_TTL_DAYS} dias. Não encaminhe esta mensagem.` },
+      });
+    }
     return { token };
   });
 
@@ -267,6 +280,7 @@ export const signAsExtraSigner = createServerFn({ method: "POST" })
     const r = await recomputeContractStatus(admin, contract.id, version.id);
     await contractEvent(admin, signer.tenant_id, contract.id, "signed_extra", data.signerName, { role: signer.role }, ip);
     if (r.fullySigned) await contractEvent(admin, signer.tenant_id, contract.id, "completed", null);
+    await (await import("./contract-docs.server")).notifyContractSigned(admin, signer.tenant_id, contract.id, data.signerName, r.fullySigned);
     await logAudit(admin, { tenantId: signer.tenant_id, action: "contract.signed_by_extra", resource: "contracts", resourceId: contract.id, metadata: { role: signer.role, content_hash: version.content_hash } });
     return { status: r.status };
   });
