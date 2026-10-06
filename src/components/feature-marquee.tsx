@@ -1,15 +1,26 @@
 import { Boxes } from "lucide-react";
-import brandLogo from "@/assets/wiizepay-logo.png.asset.json";
-import wiizeLogo from "@/assets/ecosystem-wiize.png.asset.json";
-import metaLogo from "@/assets/ecosystem-meta.png.asset.json";
-import asaasLogo from "@/assets/ecosystem-asaas.png.asset.json";
-import asaasWhiteLogo from "@/assets/ecosystem-asaas-white.png.asset.json";
-import resendLogo from "@/assets/ecosystem-resend.png.asset.json";
-import vercelDarkLogo from "@/assets/ecosystem-vercel-dark.png.asset.json";
-import metaDarkLogo from "@/assets/ecosystem-meta-dark.png.asset.json";
-import whatsappDarkLogo from "@/assets/ecosystem-whatsapp-dark.png.asset.json";
-import resendDarkLogo from "@/assets/ecosystem-resend-dark.png.asset.json";
-import wiizeWordmarkDarkLogo from "@/assets/ecosystem-wiize-wordmark-dark.png.asset.json";
+import brandLogoUrl from "@/assets/wiizepay-logo.png";
+const brandLogo = { url: brandLogoUrl };
+import wiizeLogoUrl from "@/assets/ecosystem-wiize.png";
+const wiizeLogo = { url: wiizeLogoUrl };
+import metaLogoUrl from "@/assets/ecosystem-meta.png";
+const metaLogo = { url: metaLogoUrl };
+import asaasLogoUrl from "@/assets/ecosystem-asaas.png";
+const asaasLogo = { url: asaasLogoUrl };
+import asaasWhiteLogoUrl from "@/assets/ecosystem-asaas-white.png";
+const asaasWhiteLogo = { url: asaasWhiteLogoUrl };
+import resendLogoUrl from "@/assets/ecosystem-resend.png";
+const resendLogo = { url: resendLogoUrl };
+import vercelDarkLogoUrl from "@/assets/ecosystem-vercel-dark.png";
+const vercelDarkLogo = { url: vercelDarkLogoUrl };
+import metaDarkLogoUrl from "@/assets/ecosystem-meta-dark.png";
+const metaDarkLogo = { url: metaDarkLogoUrl };
+import whatsappDarkLogoUrl from "@/assets/ecosystem-whatsapp-dark.png";
+const whatsappDarkLogo = { url: whatsappDarkLogoUrl };
+import resendDarkLogoUrl from "@/assets/ecosystem-resend-dark.png";
+const resendDarkLogo = { url: resendDarkLogoUrl };
+import wiizeWordmarkDarkLogoUrl from "@/assets/ecosystem-wiize-wordmark-dark.png";
+const wiizeWordmarkDarkLogo = { url: wiizeWordmarkDarkLogoUrl };
 import { Marquee } from "@/components/ui/marquee";
 
 const items = [

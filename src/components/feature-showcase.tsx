@@ -1,5 +1,6 @@
 import { BarChart3, ShieldCheck, Wallet } from "lucide-react";
-import growthIllustration from "@/assets/wiizepay-growth-illustration.png.asset.json";
+import growthIllustrationUrl from "@/assets/wiizepay-growth-illustration.png";
+const growthIllustration = { url: growthIllustrationUrl };
 import { cn } from "@/lib/utils";
 
 const splitPoints = [
