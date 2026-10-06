@@ -1,0 +1,3 @@
+REVOKE ALL ON public.payment_coproductions, public.payment_coproduction_participants, public.coproduction_splits, public.coproduction_events FROM anon;
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON public.payment_coproductions, public.payment_coproduction_participants, public.coproduction_splits, public.coproduction_events FROM authenticated;
+GRANT SELECT ON public.payment_coproductions, public.payment_coproduction_participants, public.coproduction_splits, public.coproduction_events TO authenticated;
