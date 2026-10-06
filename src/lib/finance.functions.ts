@@ -163,8 +163,10 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => withdrawalSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const m = await requireMembership(context, FINANCE);
-    const { assertFinancialPassword } = await import("./finance.server");
+    // Saque é permissão crítica: só Proprietário e Admin (nunca colaborador financeiro).
+    const m = await requireMembership(context, ["owner", "admin"]);
+    const { assertFinancialPassword, assertTwoFactorIfEnrolled } = await import("./finance.server");
+    await assertTwoFactorIfEnrolled(context.claims, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { consumeRateLimit } = await import("./audit.server");
     const rl = await consumeRateLimit(supabaseAdmin, {
