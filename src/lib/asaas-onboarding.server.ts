@@ -162,7 +162,14 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
   if (mirror && next !== current) {
     await admin.from("activation_events").insert({ tenant_id: tenantId, from_status: current, to_status: next, message: "Atualizado pela análise do Asaas" });
     const n = NOTIFY[next];
-    if (n) await admin.from("notifications").insert({ tenant_id: tenantId, kind: `activation.${next}`, title: n.title, body: n.body, link: "/ativacao" });
+    if (n) {
+      const { notifyTenant } = await import("./notify.server");
+      await notifyTenant(admin, {
+        tenantId, kind: `activation.${next}`, title: n.title, body: n.body, link: "/ativacao",
+        dedupeKey: `activation.${next}:${tenantId}:${now}`,
+        email: { subject: `WiizePay — ${n.title}`, ...(next === "action_required" && patch["review_message"] ? { lines: [{ label: "O que falta", value: String(patch["review_message"]).slice(0, 200) }] } : {}) },
+      });
+    }
   }
   return { status: mirror ? next : current, items };
 }

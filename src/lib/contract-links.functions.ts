@@ -34,7 +34,7 @@ export const createContractLink = createServerFn({ method: "POST" })
 
     const { data: contract } = await supabaseAdmin
       .from("contracts")
-      .select("id, status")
+      .select("id, status, title, customers(name, email)")
       .eq("id", data.contractId)
       .eq("tenant_id", membership.tenant_id)
       .maybeSingle();
@@ -71,6 +71,20 @@ export const createContractLink = createServerFn({ method: "POST" })
       metadata: { expires_at: expiresAt.toISOString() },
     });
 
+    {
+      const cust = contract.customers as { name?: string | null; email?: string | null } | null;
+      if (cust?.email) {
+        const { emailPerson, tenantName } = await import("./notify.server");
+        const company = await tenantName(supabaseAdmin, membership.tenant_id);
+        await emailPerson(supabaseAdmin, {
+          tenantId: membership.tenant_id, kind: "contract.customer_invite", dedupeKey: `contract.customer_invite:${contract.id}:${tokenFingerprint(token).slice(0, 16)}`,
+          email: { to: cust.email, subject: `${company} enviou um contrato para você assinar`, title: "Contrato aguardando sua assinatura",
+            intro: `Olá, ${cust.name ?? ""}. ${company} enviou o contrato abaixo para sua assinatura digital.`,
+            lines: [{ label: "Contrato", value: contract.title ?? "Contrato" }], cta: { label: "Revisar e assinar", url: `/c/${token}` },
+            footnote: `O link é pessoal e vale até ${expiresAt.toLocaleDateString("pt-BR")}.` },
+        });
+      }
+    }
     return { token, expiresAt: expiresAt.toISOString() };
   });
 
@@ -282,6 +296,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
 
     await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "signed_customer", data.signerName, {}, ip);
     if (fullySigned) await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "completed", null);
+    await (await import("./contract-docs.server")).notifyContractSigned(supabaseAdmin, link.tenant_id, contract.id, data.signerName, fullySigned);
     await logAudit(supabaseAdmin, {
       tenantId: link.tenant_id,
       action: "contract.signed_by_customer",

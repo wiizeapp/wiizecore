@@ -69,6 +69,7 @@ import { Route as AuthenticatedContratosIdRouteImport } from './routes/_authenti
 import { Route as AuthenticatedNotasFiscaisIndexRouteImport } from './routes/_authenticated/notas-fiscais.index'
 import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authenticated/notas-fiscais.$id'
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
+import { Route as ApiPublicCronNotificationsRouteImport } from './routes/api/public/cron/notifications'
 import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/public/google-drive/callback'
 import { Route as ApiPublicOauthRevokeRouteImport } from './routes/api/public/oauth/revoke'
 import { Route as ApiPublicOauthTokenRouteImport } from './routes/api/public/oauth/token'
@@ -392,6 +393,12 @@ const AuthenticatedNotasFiscaisConfiguracoesRoute =
     path: '/notas-fiscais/configuracoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicCronNotificationsRoute =
+  ApiPublicCronNotificationsRouteImport.update({
+    id: '/api/public/cron/notifications',
+    path: '/api/public/cron/notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGoogleDriveCallbackRoute =
   ApiPublicGoogleDriveCallbackRouteImport.update({
     id: '/api/public/google-drive/callback',
@@ -516,6 +523,7 @@ export interface FileRoutesByFullPath {
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
@@ -589,6 +597,7 @@ export interface FileRoutesByTo {
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
@@ -664,6 +673,7 @@ export interface FileRoutesById {
   '/_authenticated/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/_authenticated/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
@@ -739,6 +749,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
     | '/notas-fiscais/'
+    | '/api/public/cron/notifications'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
@@ -812,6 +823,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
     | '/notas-fiscais'
+    | '/api/public/cron/notifications'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
@@ -886,6 +898,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notas-fiscais/$id'
     | '/_authenticated/notas-fiscais/configuracoes'
     | '/_authenticated/notas-fiscais/'
+    | '/api/public/cron/notifications'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
@@ -933,6 +946,7 @@ export interface RootRouteChildren {
   PortalKeyRoute: typeof PortalKeyRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
+  ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
   ApiPublicGoogleDriveCallbackRoute: typeof ApiPublicGoogleDriveCallbackRoute
   ApiPublicOauthRevokeRoute: typeof ApiPublicOauthRevokeRoute
   ApiPublicOauthTokenRoute: typeof ApiPublicOauthTokenRoute
@@ -1367,6 +1381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNotasFiscaisConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/cron/notifications': {
+      id: '/api/public/cron/notifications'
+      path: '/api/public/cron/notifications'
+      fullPath: '/api/public/cron/notifications'
+      preLoaderRoute: typeof ApiPublicCronNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/google-drive/callback': {
       id: '/api/public/google-drive/callback'
       path: '/api/public/google-drive/callback'
@@ -1576,6 +1597,7 @@ const rootRouteChildren: RootRouteChildren = {
   PortalKeyRoute: PortalKeyRoute,
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
+  ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
   ApiPublicGoogleDriveCallbackRoute: ApiPublicGoogleDriveCallbackRoute,
   ApiPublicOauthRevokeRoute: ApiPublicOauthRevokeRoute,
   ApiPublicOauthTokenRoute: ApiPublicOauthTokenRoute,

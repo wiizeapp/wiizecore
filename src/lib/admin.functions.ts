@@ -161,9 +161,11 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
       const failAndRefund = async (why: string) => {
         await rpc("cancel_withdrawal", { _tenant_id: wd.tenant_id, _withdrawal_id: wd.id, _reason: why });
         await admin.from("withdrawals").update({ status: "failed", reviewed_by: context.userId, reviewed_at: new Date().toISOString() }).eq("id", wd.id);
-        await admin.from("notifications").insert({
-          tenant_id: wd.tenant_id, kind: "withdrawal.failed", title: "Saque não realizado",
-          body: "Não foi possível concluir seu saque agora. O valor voltou para o seu saldo — tente novamente mais tarde.", link: "/financeiro",
+        const { notifyTenant } = await import("./notify.server");
+        await notifyTenant(admin, {
+          tenantId: wd.tenant_id, kind: "withdrawal.failed", dedupeKey: `withdrawal.failed:${wd.id}`, link: "/financeiro",
+          title: "Saque não realizado", body: "Não foi possível concluir seu saque agora. O valor voltou para o seu saldo — tente novamente mais tarde.",
+          email: { subject: "Seu saque não foi concluído" },
         });
       };
       // 1) Cobra a taxa de saque primeiro (transferência interna para a carteira WiizePay).
@@ -204,17 +206,22 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
         ? await rpc("complete_withdrawal", { _withdrawal_id: data.withdrawalId, _reviewer: context.userId, _reference: reference })
         : await rpc("cancel_withdrawal", { _tenant_id: wd.tenant_id, _withdrawal_id: data.withdrawalId, _reason: data.note });
     if (error) throw new Error("Este saque não pode mais ser alterado.");
+    const { notifyTenant, brl } = await import("./notify.server");
     if (data.decision === "reject") {
       await admin
         .from("withdrawals")
         .update({ status: "cancelled", reviewed_by: context.userId, reviewed_at: new Date().toISOString() })
         .eq("id", data.withdrawalId);
-      await admin.from("notifications").insert({
-        tenant_id: wd.tenant_id,
-        kind: "withdrawal.rejected",
-        title: "Saque recusado",
-        body: `${data.note}. O valor voltou para o seu saldo disponível.`,
-        link: "/financeiro",
+      await notifyTenant(admin, {
+        tenantId: wd.tenant_id, kind: "withdrawal.rejected", dedupeKey: `withdrawal.rejected:${wd.id}`, link: "/financeiro",
+        title: "Saque recusado", body: `${data.note}. O valor voltou para o seu saldo disponível.`,
+        email: { subject: "Seu saque foi recusado", lines: [{ label: "Valor", value: brl(wd.net_amount) }] },
+      });
+    } else {
+      await notifyTenant(admin, {
+        tenantId: wd.tenant_id, kind: "withdrawal.approved", dedupeKey: `withdrawal.approved:${wd.id}`, link: "/financeiro",
+        title: "Saque aprovado", body: `Seu saque de ${brl(wd.net_amount)} foi aprovado e enviado por Pix para a conta cadastrada.`,
+        email: { subject: "Saque aprovado e enviado por Pix", lines: [{ label: "Valor enviado", value: brl(wd.net_amount) }, ...(Number(wd.fee_amount ?? 0) > 0 ? [{ label: "Taxa de saque", value: brl(wd.fee_amount) }] : [])] },
       });
     }
     await logAudit(admin, {

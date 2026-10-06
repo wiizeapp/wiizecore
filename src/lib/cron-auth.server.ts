@@ -7,6 +7,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 export function authenticateWiizePayCron(request: Request): Response | null {
   const secrets = [
     process.env["WIIZEPAY_CRON_SECRET"],
+    process.env["CRON_SECRET"],
     process.env["WIIZEPAY_CRON_SECRET_PREVIOUS"],
     process.env["LOVABLE_CRON_SECRET"],
     process.env["LOVABLE_CRON_SECRET_PREVIOUS"],

@@ -210,6 +210,15 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
       resourceId: id,
       metadata: { amount: data.amount },
     });
+    {
+      const { notifyTenant, notifyPlatform, brl } = await import("./notify.server");
+      await notifyTenant(supabaseAdmin, {
+        tenantId: m.tenant_id, kind: "withdrawal.requested", dedupeKey: `withdrawal.requested:${id}`, link: "/financeiro",
+        title: "Saque solicitado", body: `Recebemos sua solicitação de saque de ${brl(data.amount)}. Ela está em análise.`,
+        email: { subject: "Solicitação de saque recebida", lines: [{ label: "Valor", value: brl(data.amount) }], footnote: "Se você não fez esta solicitação, troque sua senha e a senha financeira imediatamente e fale com o suporte." },
+      });
+      await notifyPlatform(supabaseAdmin, { tenantId: m.tenant_id, kind: "withdrawal.requested", title: "Novo saque para aprovar", body: `Saque de ${brl(data.amount)} aguardando análise.`, link: "/nimda" });
+    }
     return { id: id as string };
   });
 

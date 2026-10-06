@@ -35,3 +35,4 @@
 - Activation handoff uses a short-lived one-time token plus code; IP only audits/limits because mobile IP changes. Prevalidate document quality before private upload.
 - Payout data (`bank_accounts.sensitive_enc`) and KYC form (`payment_activations.form_enc`) are encrypted server-side; plaintext columns hold masks/safe keys only. Why: payout data must not leak from a DB read.
 - Environment-specific URLs (site, fallback, Wiize webhook/redirects) live only in `src/lib/deploy-config.ts`. Why: a production copy changes one file.
+- Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: um envio por evento e falha de e-mail nunca quebra a operação financeira.
