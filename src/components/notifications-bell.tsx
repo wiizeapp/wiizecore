@@ -22,6 +22,8 @@ function meta(kind: string | null | undefined): { icon: LucideIcon; tone: string
   if (k.startsWith("invoice.")) return { icon: FileText, tone: "bg-accent text-accent-foreground", label: "Ver nota fiscal" };
   if (k.startsWith("limit.")) return { icon: AlertTriangle, tone: "bg-accent text-accent-foreground", to: "/limites", label: "Ver limites" };
   if (k.startsWith("security") || k.startsWith("mfa")) return { icon: ShieldCheck, tone: "bg-destructive/10 text-destructive", to: "/seguranca", label: "Ver segurança" };
+  if (k.startsWith("contract.")) return { icon: FileText, tone: "bg-primary/10 text-primary", to: "/contratos", label: "Ver contratos" };
+  if (k.startsWith("activation.")) return { icon: ShieldCheck, tone: "bg-accent text-accent-foreground", to: "/ativacao", label: "Ver ativação" };
   return { icon: Bell, tone: "bg-muted text-muted-foreground", label: "Abrir" };
 }
 
