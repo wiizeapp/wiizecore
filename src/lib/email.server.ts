@@ -1,4 +1,4 @@
-import { BRAND } from "./brand-config";
+import { BRAND_CONFIG } from "./brand-config";
 import { DEPLOY_CONFIG } from "./deploy-config";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
@@ -28,7 +28,7 @@ export function absoluteUrl(path: string) {
 
 /** Modelo HTML único da WiizePay: simples, legível e sem dados sensíveis. */
 export function renderEmail(i: EmailInput) {
-  const brand = (BRAND as { name?: string }).name ?? "WiizePay";
+  const brand = BRAND_CONFIG.displayName;
   const rows = (i.lines ?? [])
     .map((l) => `<tr><td style="padding:6px 0;color:#6b7280;font-size:14px">${esc(l.label)}</td><td style="padding:6px 0;text-align:right;font-weight:600;font-size:14px;color:#111827">${esc(l.value)}</td></tr>`)
     .join("");
