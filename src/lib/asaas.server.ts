@@ -69,6 +69,7 @@ export interface PaymentProvider {
   updateCustomer(id: string, input: Record<string, unknown>): Promise<{ id: string }>;
   createPayment(input: Record<string, unknown>): Promise<ProviderPayment>;
   updatePayment(paymentId: string, input: Record<string, unknown>): Promise<ProviderPayment>;
+  updateSubscription(subscriptionId: string, input: Record<string, unknown>): Promise<{ id: string }>;
   listInstallmentPayments(installmentId: string): Promise<ProviderPayment[]>;
   createSubscription(input: Record<string, unknown>): Promise<{ id: string }>;
   listSubscriptionPayments(subscriptionId: string): Promise<ProviderPayment[]>;
@@ -217,6 +218,9 @@ export class AsaasProvider implements PaymentProvider {
   updatePayment(paymentId: string, input: Record<string, unknown>) {
     return this.request<ProviderPayment>("PUT", `/payments/${encodeURIComponent(paymentId)}`, input);
   }
+  updateSubscription(subscriptionId: string, input: Record<string, unknown>) {
+    return this.request<{ id: string }>("PUT", `/subscriptions/${encodeURIComponent(subscriptionId)}`, input);
+  }
   async listCustomerNotifications(customerId: string) {
     const res = await this.request<{ data: ProviderNotification[] }>("GET", `/customers/${encodeURIComponent(customerId)}/notifications`);
     return res.data ?? [];
@@ -319,7 +323,7 @@ export class AsaasProvider implements PaymentProvider {
     return this.request<ProviderTransfer>("POST", "/transfers", input);
   }
   /** Estorno oficial: POST /v3/payments/{id}/refund com value (parcial) e description. */
-  refundPayment(paymentId: string, input: { value: number; description?: string }) {
+  refundPayment(paymentId: string, input: { value: number; description?: string; splitRefunds?: { id: string; value: number }[] }) {
     return this.request<ProviderPayment>("POST", `/payments/${encodeURIComponent(paymentId)}/refund`, input);
   }
   getPayment(paymentId: string) {

@@ -539,7 +539,7 @@ function Cobrancas() {
                     </p>
                   </div>
                 ) : null}
-                {selectedService && selectedService.type !== "recurring" ? (
+                {selectedService ? (
                   <CoproductionCard enabled={coproOn} onEnabled={setCoproOn} list={coproducers} onChange={setCoproducers}
                     total={selectedService.custom_amount ? Number(customAmount.replace(/\./g, "").replace(",", ".")) || null : Number(selectedService.amount) || null}
                     installments={selectedService.type === "installment" ? (installmentCount ?? Number(selectedService.installments ?? 2)) : 1} />

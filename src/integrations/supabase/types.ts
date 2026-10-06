@@ -1278,6 +1278,7 @@ export type Database = {
           percentage: number
           provider_event_id: string | null
           provider_payment_id: string | null
+          refunded_amount: number
           refunded_at: string | null
           released_at: string | null
           status: string
@@ -1297,6 +1298,7 @@ export type Database = {
           percentage: number
           provider_event_id?: string | null
           provider_payment_id?: string | null
+          refunded_amount?: number
           refunded_at?: string | null
           released_at?: string | null
           status?: string
@@ -1316,6 +1318,7 @@ export type Database = {
           percentage?: number
           provider_event_id?: string | null
           provider_payment_id?: string | null
+          refunded_amount?: number
           refunded_at?: string | null
           released_at?: string | null
           status?: string
@@ -6273,6 +6276,10 @@ export type Database = {
       submit_activation: {
         Args: { _tenant_id: string; _user_id: string }
         Returns: undefined
+      }
+      sync_coproduction_refunds: {
+        Args: { _credit_owner: boolean; _items: Json; _payment_id: string }
+        Returns: number
       }
       wallet_consistency_report: {
         Args: never
