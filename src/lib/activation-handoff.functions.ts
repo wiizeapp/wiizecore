@@ -3,8 +3,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { activationFormSchema } from "./activation-validation";
 
-const TOKEN_TTL_MS = 10 * 60 * 1000;
-const SESSION_TTL_MS = 30 * 60 * 1000;
+/** O QR Code e o acesso no celular valem 15 minutos no total, contados da geração. */
+const TOKEN_TTL_MS = 15 * 60 * 1000;
 
 export const createActivationHandoff = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   const { data: member } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
@@ -19,26 +19,42 @@ export const createActivationHandoff = createServerFn({ method: "POST" }).middle
   const { error } = await supabaseAdmin.from("activation_mobile_handoffs").insert({ tenant_id: member.tenant_id, created_by: context.userId, token_hash: tokenFingerprint(token), code_hash: hashSecretValue(code), expires_at: expiresAt, created_ip: requestInfo().ip });
   if (error) throw new Error("Não foi possível gerar o acesso para o celular.");
   await logSecurityEvent(supabaseAdmin, { userId: context.userId, tenantId: member.tenant_id, eventType: "activation.mobile_handoff_created" });
-  return { token, code, expiresAt };
+  return { token, expiresAt };
 });
 
+/** Computador consulta se o celular já concluiu, para atualizar a tela sozinho. */
+export const getActivationHandoffStatus = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ token: z.string().min(20).max(100) }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: member } = await context.supabase.from("tenant_members").select("tenant_id").eq("user_id", context.userId).limit(1).maybeSingle();
+    if (!member) throw new Error("Sem acesso.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { tokenFingerprint } = await import("./crypto.server");
+    const { data: row } = await supabaseAdmin.from("activation_mobile_handoffs").select("verified_at, used_at, revoked_at, expires_at").eq("token_hash", tokenFingerprint(data.token)).eq("tenant_id", member.tenant_id).maybeSingle();
+    if (!row) return { state: "expired" as const };
+    if (row.used_at) return { state: "done" as const };
+    if (row.revoked_at || new Date(row.expires_at) <= new Date()) return { state: "expired" as const };
+    return { state: row.verified_at ? ("opened" as const) : ("waiting" as const) };
+  });
+
 export const verifyActivationHandoff = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => z.object({ token: z.string().min(20).max(100), code: z.string().regex(/^\d{6}$/) }).parse(input))
+  .inputValidator((input: unknown) => z.object({ token: z.string().min(20).max(100) }).parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { tokenFingerprint, verifySecretValue, randomToken } = await import("./crypto.server");
+    const { tokenFingerprint, randomToken } = await import("./crypto.server");
     const { requestInfo, consumeRateLimit, logSecurityEvent } = await import("./audit.server");
     const fingerprint = tokenFingerprint(data.token);
     const rate = await consumeRateLimit(supabaseAdmin, { scope: "activation_handoff", identifier: `${fingerprint.slice(0, 20)}:${requestInfo().ip ?? "unknown"}`, maxAttempts: 5, windowSeconds: 600, blockSeconds: 900 });
     if (!rate.allowed) throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     const { data: row } = await supabaseAdmin.from("activation_mobile_handoffs").select("*").eq("token_hash", fingerprint).maybeSingle();
     const valid = row && !row.revoked_at && !row.used_at && !row.verified_at && new Date(row.expires_at) > new Date();
-    if (!valid || !verifySecretValue(data.code, row.code_hash)) {
+    if (!valid) {
       if (row) await supabaseAdmin.from("activation_mobile_handoffs").update({ attempts: Math.min(10, Number(row.attempts ?? 0) + 1), revoked_at: Number(row.attempts ?? 0) >= 4 ? new Date().toISOString() : null }).eq("id", row.id);
-      throw new Error("Link ou código inválido, expirado ou já utilizado.");
+      throw new Error("Este QR Code é inválido, expirou ou já foi usado. Gere um novo no computador.");
     }
     const sessionToken = randomToken(32);
-    const sessionExpiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString();
+    // A sessão termina junto com o QR Code: nunca passa dos 15 minutos.
+    const sessionExpiresAt = row.expires_at;
     await supabaseAdmin.from("activation_mobile_handoffs").update({ verified_at: new Date().toISOString(), verified_ip: requestInfo().ip, session_token_hash: tokenFingerprint(sessionToken), session_expires_at: sessionExpiresAt }).eq("id", row.id);
     await logSecurityEvent(supabaseAdmin, { userId: row.created_by, tenantId: row.tenant_id, eventType: "activation.mobile_handoff_verified" });
     return { sessionToken, sessionExpiresAt };
@@ -48,7 +64,7 @@ async function resolveSession(sessionToken: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { tokenFingerprint } = await import("./crypto.server");
   const { data: row } = await supabaseAdmin.from("activation_mobile_handoffs").select("*").eq("session_token_hash", tokenFingerprint(sessionToken)).maybeSingle();
-  if (!row || row.revoked_at || row.used_at || !row.session_expires_at || new Date(row.session_expires_at) <= new Date()) throw new Error("Este acesso expirou. Gere um novo acesso no computador.");
+  if (!row || row.revoked_at || row.used_at || !row.session_expires_at || new Date(row.session_expires_at) <= new Date()) throw new Error("Este QR Code expirou. Gere um novo no computador.");
   return { admin: supabaseAdmin, row };
 }
 
