@@ -471,12 +471,11 @@ export async function checkPaymentDivergence(admin: AdminClient, tenantId: strin
 /** Sininho + e-mails de pagamento recebido ou cobrança em atraso (uma vez por cobrança e situação). */
 export async function notifyPaymentStatus(admin: AdminClient, tenantId: string, paymentId: string, status: string, _eventType: string) {
   if (status !== "paid" && status !== "overdue") return;
-  const { notifyTenant, emailPerson, brl, tenantName } = await import("./notify.server");
+  const { notifyTenant, brl } = await import("./notify.server");
   const { data: p } = await admin.from("payments").select("id, gross_amount, net_amount, description, due_on, invoice_url, customers(name, email)").eq("id", paymentId).eq("tenant_id", tenantId).maybeSingle();
   if (!p) return;
   const c = p.customers as { name?: string | null; email?: string | null } | null;
   const who = c?.name ?? "Cliente";
-  const company = await tenantName(admin, tenantId);
   const kind = status === "paid" ? "payment.received" : "payment.overdue";
   const lines = [
     { label: "Cliente", value: who },
