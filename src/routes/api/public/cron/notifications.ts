@@ -24,16 +24,7 @@ async function run(request: Request) {
         title: "Cobrança em atraso", body: `A cobrança de ${c?.name ?? "cliente"} (${brl(p.gross_amount)}) está em atraso.`,
         email: { subject: `Cobrança em atraso — ${c?.name ?? "cliente"}` },
       });
-      if (c?.email && p.invoice_url) {
-        const company = await tenantName(admin, p.tenant_id);
-        await emailPerson(admin, {
-          tenantId: p.tenant_id, kind: "payment.overdue_reminder", dedupeKey: `payment.overdue_reminder:${p.id}:d${d}`,
-          email: { to: c.email, subject: `Lembrete de pagamento — ${company}`, title: "Lembrete de pagamento pendente",
-            intro: `Olá, ${c.name ?? ""}. A cobrança de ${company} está em aberto há ${d} dia(s). Se já pagou, desconsidere.`,
-            lines: [{ label: "Valor", value: brl(p.gross_amount) }], cta: { label: "Pagar agora", url: p.invoice_url } },
-        });
-        sent++;
-      }
+      // Cliente final não recebe lembretes da WiizePay: só os do Asaas, quando a empresa contrata o plano de lembretes.
     }
   }
 
