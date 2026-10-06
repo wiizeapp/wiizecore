@@ -145,7 +145,7 @@ function AuthPage() {
       return;
     }
     setBusyAction("signup");
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
@@ -160,6 +160,11 @@ function AuthPage() {
           ? ui("Este e-mail já tem conta. Faça login.")
           : ui("Não foi possível criar a conta."),
       );
+      return;
+    }
+    // E-mail já cadastrado: o servidor não cria outra conta e devolve um usuário sem identidades.
+    if (signUpData.user && (signUpData.user.identities?.length ?? 0) === 0) {
+      toast.error(ui("Este e-mail já tem conta. Faça login."));
       return;
     }
     toast.success(ui("Conta criada! Confirme o e-mail que enviamos para continuar."));

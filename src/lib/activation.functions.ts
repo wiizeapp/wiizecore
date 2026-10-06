@@ -69,6 +69,13 @@ export const saveActivationDraft = createServerFn({ method: "POST" })
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const row = await ensureRow(admin, m.tenant_id);
     if (!EDITABLE.includes(row.status)) throw new Error("O cadastro não pode ser alterado neste momento.");
+    {
+      const doc = String((data.personType === "company" ? data.form.cnpj : data.form.cpf) ?? "").replace(/\D/g, "");
+      if (doc.length >= 11) {
+        const { data: used } = await (admin.rpc as any)("document_in_use", { _tenant_id: m.tenant_id, _document: doc });
+        if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
+      }
+    }
     const next = row.status === "action_required" ? "action_required" : "in_progress";
     await admin.from("payment_activations").update({ person_type: data.personType, ...(await import("./activation-form-crypto.server")).sealForm(data.form), consents: data.consents, status: next }).eq("tenant_id", m.tenant_id);
     // Copia para os dados da empresa apenas o que foi preenchido; o restante o usuário completa depois.
@@ -86,7 +93,10 @@ export const saveActivationDraft = createServerFn({ method: "POST" })
     put("complement", f.complement); put("district", f.district); put("city", f.city); put("state", f.state.toUpperCase());
     if (Object.keys(patch).length) {
       const { error } = await admin.from("tenants").update(patch as never).eq("id", m.tenant_id);
-      if (error) console.error("sync empresa", error.message);
+      if (error) {
+        if (error.code === "23505") throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
+        console.error("sync empresa", error.message);
+      }
     }
     return { ok: true };
   });
@@ -123,6 +133,11 @@ export const submitActivation = createServerFn({ method: "POST" })
     if (!validCpf(f["cpf"] ?? "")) throw new Error("CPF inválido.");
     if (row.person_type === "company" && !validCnpj(f["cnpj"] ?? "")) throw new Error("CNPJ inválido.");
     if (row.person_type === "company" && !validCpf(f["legalRepCpf"] ?? "")) throw new Error("CPF do responsável legal inválido.");
+    {
+      const doc = (row.person_type === "company" ? f["cnpj"] : f["cpf"]) ?? "";
+      const { data: used } = await (admin.rpc as any)("document_in_use", { _tenant_id: m.tenant_id, _document: doc });
+      if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
+    }
     if (!BRAZIL_STATES.some(([uf]) => uf === (f["state"] ?? "").toUpperCase())) throw new Error("Selecione um Estado válido.");
     const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id);
     const have = new Set((documents ?? []).map((document: { kind: string }) => document.kind));
