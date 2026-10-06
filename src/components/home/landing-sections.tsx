@@ -177,39 +177,39 @@ export function ComparisonSection() {
     <section className="section-shell py-20 lg:py-28">
       <SectionIntro center eyebrow="Por que a WiizePay" title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A WiizePay cuida do que vem antes e do que vem depois dele." />
       <div className="relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 cmp-half-live lg:block" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 cmp-half-live" />
         <div className="relative">
-          <div className="grid lg:grid-cols-2">
-            <div className="flex items-center gap-3.5 border-b border-border/70 px-5 py-5 sm:px-7">
-              <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-border bg-muted/40 text-muted-foreground"><CreditCard className="size-5" /></span>
+          <div className="grid grid-cols-2">
+            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-border/70 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl border sm:size-11 border-border bg-muted/40 text-muted-foreground"><CreditCard className="size-5" /></span>
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{ui("Sem a WiizePay")}</p>
-                <p className="mt-0.5 font-display text-base font-semibold text-muted-foreground">{ui("Só um link de pagamento")}</p>
+                <p className="mt-0.5 font-display text-sm font-semibold text-muted-foreground sm:text-base">{ui("Só um link de pagamento")}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3.5 border-b border-border/70 px-5 py-5 sm:px-7 lg:border-l lg:border-primary/20">
-              <img src={brandLogo.url} alt="WiizePay" width={44} height={44} className="size-11 shrink-0 rounded-xl" />
+            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-l border-border/70 border-l-primary/20 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+              <img src={brandLogo.url} alt="WiizePay" width={44} height={44} className="size-9 shrink-0 rounded-xl sm:size-11" />
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a WiizePay")}</p>
-                <p className="mt-0.5 font-display text-base font-semibold">Wiize<span className="text-primary">Pay</span></p>
+                <p className="mt-0.5 font-display text-sm font-semibold sm:text-base">Wiize<span className="text-primary">Pay</span></p>
               </div>
-              <span className="ml-auto hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary sm:block">{ui("Tudo no mesmo fluxo")}</span>
+              <span className="ml-auto hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary lg:block">{ui("Tudo no mesmo fluxo")}</span>
             </div>
           </div>
           {rows.map(([label, off, on]) => (
-            <div key={label} className="cmp-anim grid border-b border-border/70 last:border-b-0 lg:grid-cols-2">
-              <div className="px-5 py-4 sm:px-7">
+            <div key={label} className="cmp-anim grid grid-cols-2 border-b border-border/70 last:border-b-0">
+              <div className="min-w-0 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">{ui(label)}</p>
-                <div className="mt-1.5 flex items-start gap-3">
-                  <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"><X className="size-3.5" /></span>
-                  <p className="text-[0.95rem] leading-6 text-muted-foreground">{ui(off)}</p>
+                <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
+                  <span className="mt-0.5 grid size-5 shrink-0 sm:size-6 place-items-center rounded-full bg-muted text-muted-foreground"><X className="size-3.5" /></span>
+                  <p className="text-xs leading-5 text-muted-foreground sm:text-[0.95rem] sm:leading-6">{ui(off)}</p>
                 </div>
               </div>
-              <div className="bg-primary/[0.04] px-5 py-4 sm:px-7 lg:border-l lg:border-primary/15 lg:bg-transparent">
+              <div className="min-w-0 border-l border-primary/15 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui(label)}</p>
-                <div className="mt-1.5 flex items-start gap-3">
-                  <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3.5" /></span>
-                  <p className="text-[0.95rem] font-medium leading-6">{ui(on)}</p>
+                <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
+                  <span className="mt-0.5 grid size-5 shrink-0 sm:size-6 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3.5" /></span>
+                  <p className="text-xs font-medium leading-5 sm:text-[0.95rem] sm:leading-6">{ui(on)}</p>
                 </div>
               </div>
             </div>
@@ -485,15 +485,15 @@ function TestimonialsRow({ items, duration, reverse = false }: { items: Testimon
   const ui = useUi();
   return (
     <div className="relative overflow-hidden py-1.5">
-      <div className="tm-track flex w-max flex-row gap-6" style={{ animationDuration: `${duration}s`, animationDirection: reverse ? "reverse" : "normal" }}>
+      <div className="tm-track flex w-max flex-row gap-4 md:gap-6" style={{ animationDuration: `${duration}s`, animationDirection: reverse ? "reverse" : "normal" }}>
         {[0, 1, 2].map((copy) => (
-          <div key={copy} className="flex flex-row gap-6" aria-hidden={copy !== 0}>
+          <div key={copy} className="flex flex-row gap-4 md:gap-6" aria-hidden={copy !== 0}>
             {items.map(({ text, name, role }) => (
-              <figure key={`${copy}-${name}`} className="m-0 w-[320px] shrink-0 rounded-2xl border border-border bg-card p-6 shadow-card md:w-[380px]">
-                <Quote className="mb-4 size-6 text-primary/40" />
-                <blockquote className="m-0"><p className="text-sm leading-relaxed text-muted-foreground md:text-base">{ui(text)}</p></blockquote>
-                <figcaption className="mt-6 flex items-center gap-4">
-                  <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">{testimonialInitials(name)}</span>
+              <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 shadow-card md:w-[380px]">
+                <Quote className="mb-3 size-5 text-primary/40 sm:mb-4 sm:size-6" />
+                <blockquote className="m-0"><p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm md:text-base">{ui(text)}</p></blockquote>
+                <figcaption className="mt-4 flex items-center gap-3 sm:mt-6 sm:gap-4">
+                  <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-xs sm:size-12 sm:text-sm font-bold text-primary-foreground">{testimonialInitials(name)}</span>
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate text-sm font-semibold md:text-base">{name}</span>
                     <span className="truncate text-xs text-muted-foreground md:text-sm">{ui(role)}</span>
@@ -517,7 +517,7 @@ export function AudienceSection() {
         <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("O que nossos")} <span className="hero-shine">{ui("clientes dizem")}</span></h2>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{ui("Veja como empresas de serviços estão cobrando, recebendo e organizando o financeiro com a WiizePay.")}</p>
       </div>
-      <div className="tm-mask-x relative flex flex-col gap-6" role="region" aria-label={ui("Depoimentos de clientes")}>
+      <div className="tm-mask-x relative flex flex-col gap-4 md:gap-6" role="region" aria-label={ui("Depoimentos de clientes")}>
         <TestimonialsRow items={TESTIMONIALS.slice(0, 5)} duration={60} />
         <TestimonialsRow items={TESTIMONIALS.slice(5, 9)} duration={70} reverse />
       </div>
