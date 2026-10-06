@@ -308,6 +308,9 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     } catch (e) {
       console.error("charge timeline", e instanceof Error ? e.message : "x");
     }
+    if (status === "paid" || status === "overdue") {
+      await notifyPaymentStatus(admin, event.tenant_id, paymentId, status, event.event_type).catch(() => undefined);
+    }
     if (event.event_type.startsWith("PAYMENT_CHARGEBACK") || status === "refunded") {
       const { flagAnticipationImpact } = await import("./anticipation.server");
       await flagAnticipationImpact(admin, paymentId, event.event_type);
