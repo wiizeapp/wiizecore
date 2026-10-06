@@ -9,7 +9,8 @@ CREATE EXTENSION IF NOT EXISTS pg_net;
 
 -- 1) Chave da Resend guardada no cofre do banco (troque o texto abaixo)
 SELECT vault.create_secret('COLE_AQUI_SUA_RESEND_API_KEY', 'resend_api_key')
-WHERE NOT EXISTS (SELECT 1 FROM vault.secrets WHERE name = 'resend_api_key');
+WHERE NOT EXISTS (SELECT 1 FROM vault.decrypted_secrets WHERE name = 'resend_api_key');
+-- Para trocar a chave depois, use docs/cron-corrigir-chave.sql (vault.update_secret).
 
 -- 2) Envia um e-mail uma única vez (dedupe em email_outbox)
 CREATE OR REPLACE FUNCTION public.wp_send_tenant_email(
