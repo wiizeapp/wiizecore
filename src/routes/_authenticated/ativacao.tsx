@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { BadgeCheck, Building2, Clock, ShieldCheck, User, AlertTriangle, XCircle, ExternalLink, Loader2, RefreshCw, Smartphone, Monitor, Mail, Copy } from "lucide-react";
+import { BadgeCheck, Building2, Clock, ShieldCheck, User, AlertTriangle, XCircle, ExternalLink, Loader2, RefreshCw, Smartphone, KeyRound } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { getActivation, refreshActivationStatus, saveActivationDraft, submitActivation, uploadActivationDocument } from "@/lib/activation.functions";
 import { ActivationBadge, DOC_LABEL } from "@/components/activation-status";
@@ -18,7 +18,10 @@ import { Progress } from "@/components/ui/progress";
 import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { createActivationHandoff } from "@/lib/activation-handoff.functions";
+import { createActivationHandoff, getActivationHandoffStatus } from "@/lib/activation-handoff.functions";
+import { getSecurityStatus } from "@/lib/security.functions";
+import { Link } from "@tanstack/react-router";
+import QRCode from "qrcode";
 import { activationFormSchema, BRAZIL_STATES, formatBRLInput, REQUIRED_DOCS, validateActivationStep } from "@/lib/activation-validation";
 import { compressActivationFile } from "@/lib/image-compression";
 import { ActivationDocumentUpload } from "@/components/activation-document-upload";
@@ -62,6 +65,7 @@ function Content({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) 
   return (
     <div className="space-y-6">
       <StatusCard data={data} />
+      {["submitted", "under_review", "approved"].includes(data.status) ? <NextSteps status={data.status} /> : null}
       {data.provider?.items?.length ? <ProviderPanel data={data} /> : null}
       {editable && (data.role === "owner" || data.role === "admin") && <Wizard data={data} />}
       {editable && !(data.role === "owner" || data.role === "admin") && (
@@ -95,6 +99,31 @@ function StatusCard({ data }: { data: Awaited<ReturnType<typeof getActivation>> 
           <p className="mt-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"><strong>Mensagem da análise:</strong> {data.reviewMessage}</p>
         )}
       </div>
+    </section>
+  );
+}
+
+function NextSteps({ status }: { status: string }) {
+  const fetchS = useServerFn(getSecurityStatus);
+  const { data: sec } = useQuery({ queryKey: ["security-status"], queryFn: () => fetchS() });
+  return (
+    <section className="surface-panel space-y-4 p-5 sm:p-6">
+      {status !== "approved" ? (
+        <div className="space-y-2">
+          <h2 className="font-display text-base font-semibold">O que acontece agora</h2>
+          <ol className="list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+            <li>O Asaas analisa seus dados e documentos. Costuma levar até 3 dias úteis.</li>
+            <li>Se faltar algo, avisamos aqui, no sininho e por e-mail, com o que corrigir.</li>
+            <li>Quando aprovado, você já pode criar cobranças e receber pagamentos.</li>
+          </ol>
+        </div>
+      ) : null}
+      {sec && !sec.hasFinancialPassword ? (
+        <div className="flex flex-col gap-3 rounded-lg border border-warning/40 bg-warning/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-3"><KeyRound className="mt-0.5 size-5 shrink-0 text-foreground" /><div><p className="text-sm font-semibold">Crie sua senha financeira</p><p className="text-sm text-muted-foreground">Ela protege saques e outras operações com dinheiro. Sem ela, você não conseguirá sacar.</p></div></div>
+          <Button asChild><Link to="/seguranca">Criar senha financeira</Link></Button>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -162,12 +191,30 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [handoffOpen, setHandoffOpen] = useState(false);
   const createHandoff = useServerFn(createActivationHandoff);
-  const [handoff, setHandoff] = useState<{ url: string; code: string; expiresAt: string } | null>(null);
+  const [handoff, setHandoff] = useState<{ url: string; token: string; expiresAt: string; qr: string } | null>(null);
+  const handoffStatusFn = useServerFn(getActivationHandoffStatus);
+  const handoffStatus = useQuery({
+    queryKey: ["handoff-status", handoff?.token],
+    queryFn: () => handoffStatusFn({ data: { token: handoff!.token } }),
+    enabled: handoffOpen && !!handoff,
+    refetchInterval: (q) => (q.state.data?.state === "done" || q.state.data?.state === "expired" ? false : 4000),
+  });
+  useEffect(() => {
+    if (handoffStatus.data?.state === "done") {
+      toast.success("Dados recebidos do celular.");
+      setHandoffOpen(false);
+      void qc.invalidateQueries({ queryKey: ["activation"] }).then(() => window.location.reload());
+    }
+  }, [handoffStatus.data?.state, qc]);
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { if (!handoffOpen) return; const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, [handoffOpen]);
   const handoffM = useMutation({
     mutationFn: async () => {
       await save({ data: { personType, form: form as never, consents } });
       const result = await createHandoff();
-      return { ...result, url: `${window.location.origin}/ativacao-celular/${result.token}` };
+      const url = `${window.location.origin}/ativacao-celular/${result.token}`;
+      const qr = await QRCode.toDataURL(url, { margin: 1, width: 260 });
+      return { ...result, url, qr };
     },
     onSuccess: (result) => { setHandoff(result); setHandoffOpen(true); },
     onError: (error: Error) => toast.error(error.message),
@@ -216,14 +263,23 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
             </Button>
           ))}
           {errors['personType'] ? <p className="text-sm text-destructive sm:col-span-2">{errors['personType']}</p> : null}
-          {personType ? <div className="sm:col-span-2 rounded-lg border border-border p-4"><p className="text-sm font-medium">Onde deseja continuar?</p><div className="mt-3 flex flex-col gap-2 sm:flex-row"><Button type="button" variant="outline" disabled><Monitor className="size-4" />Continuar neste computador</Button><Button type="button" variant="outline" disabled={handoffM.isPending} onClick={() => handoffM.mutate()}>{handoffM.isPending ? <Loader2 className="size-4 animate-spin" /> : <Smartphone className="size-4" />}Continuar no celular</Button><Button type="button" variant="ghost" disabled title="Disponível depois da configuração de e-mail"><Mail className="size-4" />Receber por e-mail — em breve</Button></div></div> : null}
+          {personType ? <div className="sm:col-span-2 flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-medium">Prefere usar o celular?</p><p className="text-sm text-muted-foreground">Leia um QR Code e envie fotos dos documentos direto do celular.</p></div><Button type="button" variant="outline" disabled={handoffM.isPending} onClick={() => handoffM.mutate()}>{handoffM.isPending ? <Loader2 className="size-4 animate-spin" /> : <Smartphone className="size-4" />}Continuar no celular</Button></div> : null}
         </div>
       )}
 
       <Dialog open={handoffOpen} onOpenChange={setHandoffOpen}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Continue com segurança no celular</DialogTitle><DialogDescription>Abra o link no celular e informe o código. O acesso expira em 10 minutos e só pode ser usado uma vez.</DialogDescription></DialogHeader>
-          {handoff ? <div className="space-y-4"><div className="rounded-lg border bg-muted/40 p-4 text-center"><p className="text-xs text-muted-foreground">Código de confirmação</p><p className="mt-1 font-mono text-3xl font-bold tracking-widest">{handoff.code}</p></div><div className="space-y-2"><Label>Link seguro</Label><div className="flex gap-2"><Input readOnly value={handoff.url} className="min-w-0" /><Button type="button" size="icon" variant="outline" aria-label="Copiar link seguro" onClick={() => navigator.clipboard.writeText(handoff.url).then(() => toast.success("Link copiado."))}><Copy className="size-4" /></Button></div></div><Button className="w-full" asChild><a href={handoff.url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" />Abrir acesso do celular</a></Button></div> : null}
+          <DialogHeader><DialogTitle>Continue no celular</DialogTitle><DialogDescription>Aponte a câmera do celular para o QR Code. Ele vale por 15 minutos, funciona uma única vez e só permite enviar os dados do cadastro.</DialogDescription></DialogHeader>
+          {handoff ? (() => { const left = Math.max(0, new Date(handoff.expiresAt).getTime() - now); const expired = left === 0 || handoffStatus.data?.state === "expired"; return (
+            <div className="space-y-4 text-center">
+              <div className={`mx-auto w-fit rounded-lg border bg-background p-3 ${expired ? "opacity-30" : ""}`}><img src={handoff.qr} alt="QR Code para continuar no celular" width={220} height={220} /></div>
+              {expired ? (
+                <div className="space-y-2"><p className="text-sm font-medium text-destructive">QR Code expirado.</p><Button onClick={() => handoffM.mutate()} disabled={handoffM.isPending}>Gerar novo QR Code</Button></div>
+              ) : (
+                <p className="text-sm text-muted-foreground">{handoffStatus.data?.state === "opened" ? "Celular conectado. Aguardando você concluir por lá…" : "Aguardando leitura…"} · expira em {Math.floor(left / 60000)}:{String(Math.floor((left % 60000) / 1000)).padStart(2, "0")}</p>
+              )}
+            </div>
+          ); })() : null}
         </DialogContent>
       </Dialog>
 
