@@ -6138,6 +6138,10 @@ export type Database = {
         Args: { _reference: string; _reviewer: string; _withdrawal_id: string }
         Returns: undefined
       }
+      document_in_use: {
+        Args: { _document: string; _tenant_id: string }
+        Returns: boolean
+      }
       dunning_change_group_plan: {
         Args: {
           _charge_group_id: string

@@ -4760,5 +4760,6 @@
   "valores fixos": "valores fijos",
   "A divisão será aplicada sobre o valor líquido efetivamente recebido em cada pagamento, após as taxas aplicáveis. O link de pagamento fica bloqueado até todos aceitarem.": "La división se aplica sobre el valor neto efectivamente recibido en cada pago, después de las tarifas. El enlace de pago queda bloqueado hasta que todos acepten.",
   "Pagamento disponível em breve": "Pago disponible pronto",
-  "O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.": "El proveedor está terminando la configuración de este cobro. Vuelva a este mismo enlace en unos instantes."
+  "O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.": "El proveedor está terminando la configuración de este cobro. Vuelva a este mismo enlace en unos instantes.",
+  "Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.": "Este CPF/CNPJ ya está vinculado a otra cuenta WiizePay. Use un documento que aún no tenga cuenta."
 }

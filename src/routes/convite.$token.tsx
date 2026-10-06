@@ -84,6 +84,7 @@ function InvitePage() {
           options: { emailRedirectTo: window.location.href, data: { full_name: invite.fullName ?? undefined } },
         });
         if (error) throw error;
+        if (data.user && (data.user.identities?.length ?? 0) === 0) throw new Error("Este e-mail já tem conta. Faça login.");
         if (!data.session) setSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: invite.email, password });
