@@ -22,6 +22,8 @@
 - Valor fixo é convertido de forma determinística em percentual do líquido; centavos residuais ficam com o principal; a soma sempre bate exatamente com o líquido.
 - Webhook repetido não duplica nada: cada registro de divisão é único por parcela + participante + identificador do Asaas.
 - Se, ao conferir a documentação do Asaas, alguma limitação impedir exatamente esse comportamento (por exemplo, a taxa WiizePay também ser cobrada por divisão), aviso claramente e adapto com segurança, sem atalhos fictícios.
+- O Asaas é a fonte da verdade: o valor recebido por cada participante vem somente do pagamento confirmado e da divisão real devolvida pelo Asaas; se diferir da estimativa, vale o do Asaas. Nenhum saldo previsto é mostrado como recebido.
+- Antes de finalizar, testo a divisão no ambiente de teste do Asaas e relato exatamente como ela foi aplicada.
 - Telas mostram "Estimativa de participação" antes do pagamento e o valor real por parcela depois (ex.: 1/6 — Pago — R$ 57,00; 3/6 — Pendente).
 
 ## Detalhes técnicos
