@@ -42,4 +42,4 @@
 - [x] Deixar preparada, mas desativada, a futura opção de envio do acesso por e-mail.
 - [x] Guiar fotos de documentos, aceitar PDF e pré-validar resolução, luz, foco e integridade antes do envio.
 
-- [ ] Coproduções MVP (plano aguardando aprovação; inclui teste de split no sandbox Asaas)
+- [x] Coproduções MVP
