@@ -4731,5 +4731,6 @@
   "valores fixos": "fixed amounts",
   "A divisão será aplicada sobre o valor líquido efetivamente recebido em cada pagamento, após as taxas aplicáveis. O link de pagamento fica bloqueado até todos aceitarem.": "The split is applied to the net amount actually received in each payment, after applicable fees. The payment link stays blocked until everyone accepts.",
   "Pagamento disponível em breve": "Payment available soon",
-  "O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.": "The provider is finishing this charge's setup. Come back to this same link shortly."
+  "O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.": "The provider is finishing this charge's setup. Come back to this same link shortly.",
+  "Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.": "This CPF/CNPJ is already linked to another WiizePay account. Use a document that doesn't have an account yet."
 }
