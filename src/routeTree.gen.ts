@@ -38,6 +38,7 @@ import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedCobrancasRouteImport } from './routes/_authenticated/cobrancas'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedContratosRouteImport } from './routes/_authenticated/contratos'
+import { Route as AuthenticatedCoproducoesRouteImport } from './routes/_authenticated/coproducoes'
 import { Route as AuthenticatedCuponsRouteImport } from './routes/_authenticated/cupons'
 import { Route as AuthenticatedDocumentosRouteImport } from './routes/_authenticated/documentos'
 import { Route as AuthenticatedEquipeRouteImport } from './routes/_authenticated/equipe'
@@ -66,6 +67,7 @@ import { Route as VerificarIndexRouteImport } from './routes/verificar.index'
 import { Route as VerificarCodeRouteImport } from './routes/verificar.$code'
 import { Route as AuthenticatedClientesIdRouteImport } from './routes/_authenticated/clientes_.$id'
 import { Route as AuthenticatedContratosIdRouteImport } from './routes/_authenticated/contratos_.$id'
+import { Route as AuthenticatedCoproducoesIdRouteImport } from './routes/_authenticated/coproducoes_.$id'
 import { Route as AuthenticatedNotasFiscaisIndexRouteImport } from './routes/_authenticated/notas-fiscais.index'
 import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authenticated/notas-fiscais.$id'
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
@@ -231,6 +233,12 @@ const AuthenticatedContratosRoute = AuthenticatedContratosRouteImport.update({
   path: '/contratos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCoproducoesRoute =
+  AuthenticatedCoproducoesRouteImport.update({
+    id: '/coproducoes',
+    path: '/coproducoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCuponsRoute = AuthenticatedCuponsRouteImport.update({
   id: '/cupons',
   path: '/cupons',
@@ -375,6 +383,12 @@ const AuthenticatedContratosIdRoute =
     path: '/contratos/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCoproducoesIdRoute =
+  AuthenticatedCoproducoesIdRouteImport.update({
+    id: '/coproducoes_/$id',
+    path: '/coproducoes/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNotasFiscaisIndexRoute =
   AuthenticatedNotasFiscaisIndexRouteImport.update({
     id: '/notas-fiscais/',
@@ -492,6 +506,7 @@ export interface FileRoutesByFullPath {
   '/cobrancas': typeof AuthenticatedCobrancasRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/contratos': typeof AuthenticatedContratosRoute
+  '/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/cupons': typeof AuthenticatedCuponsRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/equipe': typeof AuthenticatedEquipeRoute
@@ -520,6 +535,7 @@ export interface FileRoutesByFullPath {
   '/verificar/': typeof VerificarIndexRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
+  '/coproducoes/$id': typeof AuthenticatedCoproducoesIdRoute
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
@@ -566,6 +582,7 @@ export interface FileRoutesByTo {
   '/cobrancas': typeof AuthenticatedCobrancasRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/contratos': typeof AuthenticatedContratosRoute
+  '/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/cupons': typeof AuthenticatedCuponsRoute
   '/documentos': typeof AuthenticatedDocumentosRoute
   '/equipe': typeof AuthenticatedEquipeRoute
@@ -594,6 +611,7 @@ export interface FileRoutesByTo {
   '/verificar': typeof VerificarIndexRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
+  '/coproducoes/$id': typeof AuthenticatedCoproducoesIdRoute
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
@@ -642,6 +660,7 @@ export interface FileRoutesById {
   '/_authenticated/cobrancas': typeof AuthenticatedCobrancasRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/contratos': typeof AuthenticatedContratosRoute
+  '/_authenticated/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/_authenticated/cupons': typeof AuthenticatedCuponsRoute
   '/_authenticated/documentos': typeof AuthenticatedDocumentosRoute
   '/_authenticated/equipe': typeof AuthenticatedEquipeRoute
@@ -670,6 +689,7 @@ export interface FileRoutesById {
   '/verificar/': typeof VerificarIndexRoute
   '/_authenticated/clientes_/$id': typeof AuthenticatedClientesIdRoute
   '/_authenticated/contratos_/$id': typeof AuthenticatedContratosIdRoute
+  '/_authenticated/coproducoes_/$id': typeof AuthenticatedCoproducoesIdRoute
   '/_authenticated/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/_authenticated/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
@@ -718,6 +738,7 @@ export interface FileRouteTypes {
     | '/cobrancas'
     | '/configuracoes'
     | '/contratos'
+    | '/coproducoes'
     | '/cupons'
     | '/documentos'
     | '/equipe'
@@ -746,6 +767,7 @@ export interface FileRouteTypes {
     | '/verificar/'
     | '/clientes/$id'
     | '/contratos/$id'
+    | '/coproducoes/$id'
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
     | '/notas-fiscais/'
@@ -792,6 +814,7 @@ export interface FileRouteTypes {
     | '/cobrancas'
     | '/configuracoes'
     | '/contratos'
+    | '/coproducoes'
     | '/cupons'
     | '/documentos'
     | '/equipe'
@@ -820,6 +843,7 @@ export interface FileRouteTypes {
     | '/verificar'
     | '/clientes/$id'
     | '/contratos/$id'
+    | '/coproducoes/$id'
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
     | '/notas-fiscais'
@@ -867,6 +891,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cobrancas'
     | '/_authenticated/configuracoes'
     | '/_authenticated/contratos'
+    | '/_authenticated/coproducoes'
     | '/_authenticated/cupons'
     | '/_authenticated/documentos'
     | '/_authenticated/equipe'
@@ -895,6 +920,7 @@ export interface FileRouteTypes {
     | '/verificar/'
     | '/_authenticated/clientes_/$id'
     | '/_authenticated/contratos_/$id'
+    | '/_authenticated/coproducoes_/$id'
     | '/_authenticated/notas-fiscais/$id'
     | '/_authenticated/notas-fiscais/configuracoes'
     | '/_authenticated/notas-fiscais/'
@@ -1164,6 +1190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedContratosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/coproducoes': {
+      id: '/_authenticated/coproducoes'
+      path: '/coproducoes'
+      fullPath: '/coproducoes'
+      preLoaderRoute: typeof AuthenticatedCoproducoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cupons': {
       id: '/_authenticated/cupons'
       path: '/cupons'
@@ -1360,6 +1393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedContratosIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/coproducoes_/$id': {
+      id: '/_authenticated/coproducoes_/$id'
+      path: '/coproducoes/$id'
+      fullPath: '/coproducoes/$id'
+      preLoaderRoute: typeof AuthenticatedCoproducoesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/notas-fiscais/': {
       id: '/_authenticated/notas-fiscais/'
       path: '/notas-fiscais'
@@ -1483,6 +1523,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCobrancasRoute: typeof AuthenticatedCobrancasRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedContratosRoute: typeof AuthenticatedContratosRoute
+  AuthenticatedCoproducoesRoute: typeof AuthenticatedCoproducoesRoute
   AuthenticatedCuponsRoute: typeof AuthenticatedCuponsRoute
   AuthenticatedDocumentosRoute: typeof AuthenticatedDocumentosRoute
   AuthenticatedEquipeRoute: typeof AuthenticatedEquipeRoute
@@ -1501,6 +1542,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedServicosRoute: typeof AuthenticatedServicosRoute
   AuthenticatedClientesIdRoute: typeof AuthenticatedClientesIdRoute
   AuthenticatedContratosIdRoute: typeof AuthenticatedContratosIdRoute
+  AuthenticatedCoproducoesIdRoute: typeof AuthenticatedCoproducoesIdRoute
   AuthenticatedNotasFiscaisIdRoute: typeof AuthenticatedNotasFiscaisIdRoute
   AuthenticatedNotasFiscaisConfiguracoesRoute: typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   AuthenticatedNotasFiscaisIndexRoute: typeof AuthenticatedNotasFiscaisIndexRoute
@@ -1515,6 +1557,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCobrancasRoute: AuthenticatedCobrancasRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedContratosRoute: AuthenticatedContratosRoute,
+  AuthenticatedCoproducoesRoute: AuthenticatedCoproducoesRoute,
   AuthenticatedCuponsRoute: AuthenticatedCuponsRoute,
   AuthenticatedDocumentosRoute: AuthenticatedDocumentosRoute,
   AuthenticatedEquipeRoute: AuthenticatedEquipeRoute,
@@ -1533,6 +1576,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedServicosRoute: AuthenticatedServicosRoute,
   AuthenticatedClientesIdRoute: AuthenticatedClientesIdRoute,
   AuthenticatedContratosIdRoute: AuthenticatedContratosIdRoute,
+  AuthenticatedCoproducoesIdRoute: AuthenticatedCoproducoesIdRoute,
   AuthenticatedNotasFiscaisIdRoute: AuthenticatedNotasFiscaisIdRoute,
   AuthenticatedNotasFiscaisConfiguracoesRoute:
     AuthenticatedNotasFiscaisConfiguracoesRoute,

@@ -68,6 +68,7 @@ export interface PaymentProvider {
   createCustomer(input: Record<string, unknown>): Promise<{ id: string }>;
   updateCustomer(id: string, input: Record<string, unknown>): Promise<{ id: string }>;
   createPayment(input: Record<string, unknown>): Promise<ProviderPayment>;
+  updatePayment(paymentId: string, input: Record<string, unknown>): Promise<ProviderPayment>;
   listInstallmentPayments(installmentId: string): Promise<ProviderPayment[]>;
   createSubscription(input: Record<string, unknown>): Promise<{ id: string }>;
   listSubscriptionPayments(subscriptionId: string): Promise<ProviderPayment[]>;
@@ -212,6 +213,9 @@ export class AsaasProvider implements PaymentProvider {
   }
   createPayment(input: Record<string, unknown>) {
     return this.request<ProviderPayment>("POST", "/payments", input);
+  }
+  updatePayment(paymentId: string, input: Record<string, unknown>) {
+    return this.request<ProviderPayment>("PUT", `/payments/${encodeURIComponent(paymentId)}`, input);
   }
   async listCustomerNotifications(customerId: string) {
     const res = await this.request<{ data: ProviderNotification[] }>("GET", `/customers/${encodeURIComponent(customerId)}/notifications`);

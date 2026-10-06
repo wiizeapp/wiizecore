@@ -40,6 +40,15 @@ const createChargeSchema = z.object({
   customAmount: z.number().positive().max(1_000_000).nullable().optional(),
   /** Plano de lembretes só para esta cobrança; vazio usa o padrão da empresa. */
   dunningPlan: z.enum(["essential", "smart", "intensive"]).nullable().optional(),
+  /** Coprodutores desta cobrança (até 4). O servidor valida contas, percentuais e calcula tudo. */
+  coproducers: z.array(z.object({
+    name: z.string().trim().min(2).max(120),
+    email: z.string().trim().email().max(200),
+    type: z.enum(["percent", "fixed"]),
+    percent: z.number().gt(0).lt(100).nullable().optional(),
+    fixedAmount: z.number().positive().max(1_000_000).nullable().optional(),
+    responsibility: z.string().max(300).nullable().optional(),
+  })).max(4).nullable().optional(),
 });
 
 

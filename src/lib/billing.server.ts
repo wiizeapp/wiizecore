@@ -289,6 +289,15 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     }
     const { error } = await admin.rpc("apply_payment_event", args);
     if (error) throw new Error(error.message);
+    if (status === "paid") {
+      // Coprodução: registra somente o valor que o Asaas efetivamente dividiu nesta parcela (idempotente).
+      const { recordSplitFromProvider } = await import("./coproduction.server");
+      await recordSplitFromProvider(admin, paymentId, p as unknown as Record<string, unknown>, event.external_event_id);
+    }
+    if (status === "refunded") {
+      const { error: cpRefundError } = await (admin.rpc as any)("refund_coproduction_splits", { _payment_id: paymentId });
+      if (cpRefundError) console.error("coproduction refund", cpRefundError.message);
+    }
     if (status === "paid") await reimburseProviderFee(admin, paymentId);
     if (status === "paid") {
       const { autoIssueOnPayment } = await import("./asaas-invoices.server");
@@ -298,6 +307,8 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     if (event.event_type === "PAYMENT_RECEIVED" || event.event_type === "PAYMENT_RECEIVED_IN_CASH") {
       const { error: settleError } = await (admin.rpc as any)("settle_payment", { _payment_id: paymentId });
       if (settleError) throw new Error(settleError.message);
+      const { error: cpReleaseError } = await (admin.rpc as any)("release_coproduction_splits", { _payment_id: paymentId });
+      if (cpReleaseError) throw new Error(cpReleaseError.message);
     }
     // Linha do tempo da cobrança e estado da tentativa confirmada pelo provedor.
     try {
