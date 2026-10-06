@@ -3,7 +3,8 @@ import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, Ci
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import brandLogo from "@/assets/wiizepay-logo.png.asset.json";
+import brandLogoUrl from "@/assets/wiizepay-logo.png";
+const brandLogo = { url: brandLogoUrl };
 import { formatBRL } from "@/lib/format";
 
 function useUi() {

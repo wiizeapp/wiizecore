@@ -3,8 +3,10 @@ import { Link2, ShieldCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/brand";
-import asaasBlueLogo from "@/assets/ecosystem-asaas.png.asset.json";
-import asaasWhiteLogo from "@/assets/ecosystem-asaas-white.png.asset.json";
+import asaasBlueLogoUrl from "@/assets/ecosystem-asaas.png";
+const asaasBlueLogo = { url: asaasBlueLogoUrl };
+import asaasWhiteLogoUrl from "@/assets/ecosystem-asaas-white.png";
+const asaasWhiteLogo = { url: asaasWhiteLogoUrl };
 
 function AsaasLogo() {
   return (

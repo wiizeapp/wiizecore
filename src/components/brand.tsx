@@ -1,4 +1,5 @@
-import logoAsset from "@/assets/wiizepay-logo-v2.png.asset.json";
+import logoAssetUrl from "@/assets/wiizepay-logo-v2.png";
+const logoAsset = { url: logoAssetUrl };
 import internalLogo from "@/assets/wiizepay-logo-internal.png";
 import { cn } from "@/lib/utils";
 

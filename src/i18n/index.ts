@@ -15,9 +15,12 @@ import esFees from "@/locales/es/fees.json";
 import ptUi from "@/locales/pt-BR/ui.json";
 import enUi from "@/locales/en/ui.json";
 import esUi from "@/locales/es/ui.json";
-import flagPt from "@/assets/flag-pt.asset.json";
-import flagEn from "@/assets/flag-en.asset.json";
-import flagEs from "@/assets/flag-es.asset.json";
+import flagPtUrl from "@/assets/flag-pt.webp";
+const flagPt = { url: flagPtUrl };
+import flagEnUrl from "@/assets/flag-en.png";
+const flagEn = { url: flagEnUrl };
+import flagEsUrl from "@/assets/flag-es.webp";
+const flagEs = { url: flagEsUrl };
 
 /** Idiomas suportados. Para adicionar um novo: criar src/locales/<código>/ e registrar aqui. */
 export const LANGUAGES = [
