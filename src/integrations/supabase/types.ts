@@ -1972,6 +1972,53 @@ export type Database = {
           },
         ]
       }
+      email_outbox: {
+        Row: {
+          created_at: string
+          dedupe_key: string
+          error_message: string | null
+          id: string
+          kind: string
+          provider_id: string | null
+          recipient_masked: string | null
+          sent_at: string | null
+          status: string
+          tenant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          dedupe_key: string
+          error_message?: string | null
+          id?: string
+          kind: string
+          provider_id?: string | null
+          recipient_masked?: string | null
+          sent_at?: string | null
+          status?: string
+          tenant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          dedupe_key?: string
+          error_message?: string | null
+          id?: string
+          kind?: string
+          provider_id?: string | null
+          recipient_masked?: string | null
+          sent_at?: string | null
+          status?: string
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_outbox_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_change_log: {
         Row: {
           changed_by: string | null
