@@ -30,7 +30,7 @@ export async function notifyTenant(admin: Admin, input: {
       const to = await tenantManagerEmails(admin, input.tenantId);
       await sendEmail(admin, {
         tenantId: input.tenantId, kind: input.kind, dedupeKey: input.dedupeKey,
-        email: { title: input.title, intro: input.body, cta: input.link ? { label: "Abrir na WiizePay", url: input.link } : undefined, ...input.email, to },
+        email: { title: input.title, intro: input.body, ...(input.link ? { cta: { label: "Abrir na WiizePay", url: input.link } } : {}), ...input.email, to },
       });
     }
   } catch (e) {
