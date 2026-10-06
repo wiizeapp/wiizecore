@@ -94,6 +94,19 @@ export async function applySplitToOpenPayments(admin: Admin, coproductionId: str
   if (!conn) throw new Error("Conta de pagamentos não ativada.");
   const { data: rows } = await admin.from("payments").select("id, provider_payment_id, gross_amount, platform_fee_amount, status").eq("tenant_id", cp.tenant_id).eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
   const errors: string[] = [];
+  // Recorrência: a divisão vai na assinatura do Asaas, então todo novo ciclo já nasce dividido.
+  const { data: sub } = await admin.from("subscriptions").select("provider_subscription_id, amount").eq("tenant_id", cp.tenant_id)
+    .in("id", ((await admin.from("payments").select("subscription_id").eq("charge_group_id", cp.charge_group_id).not("subscription_id", "is", null).limit(1)).data ?? []).map((x) => x.subscription_id!)).maybeSingle();
+  if (sub?.provider_subscription_id) {
+    try {
+      const ref = rows?.[0];
+      const fee = Number(ref?.platform_fee_amount ?? 0);
+      const split = await splitFor(admin, cp.charge_group_id, Number(ref?.gross_amount ?? sub.amount), fee);
+      await conn.provider.updateSubscription(sub.provider_subscription_id, { split, updatePendingPayments: true });
+    } catch (e) {
+      errors.push(e instanceof Error ? e.message.slice(0, 200) : "erro");
+    }
+  }
   for (const r of rows ?? []) {
     try {
       const split = await splitFor(admin, cp.charge_group_id, Number(r.gross_amount), Number(r.platform_fee_amount ?? 0));
@@ -133,4 +146,61 @@ export async function recordSplitFromProvider(admin: Admin, paymentId: string, r
   }
   const { error } = await (admin.rpc as any)("apply_coproduction_split", { _payment_id: p.id, _items: items, _event_id: eventId });
   if (error) throw new Error(error.message);
+}
+
+/**
+ * Reembolso dividido proporcionalmente: cada coprodutor devolve a fração que recebeu do líquido.
+ * Retorna as partes no formato do Asaas (id da divisão + valor). O centavo que sobrar fica com o principal.
+ */
+export async function refundSharesFor(admin: Admin, paymentId: string, refundAmount: number, remote: Record<string, unknown> | null) {
+  const { data: p } = await admin.from("payments").select("id, net_amount").eq("id", paymentId).maybeSingle();
+  if (!p) return [];
+  const { data: splits } = await db(admin).from("coproduction_splits").select("participant_id, amount, refunded_amount, status").eq("payment_id", paymentId).in("status", ["received", "released"]);
+  if (!splits?.length) return [];
+  const { data: parts } = await db(admin).from("payment_coproduction_participants").select("id, wallet_id").in("id", splits.map((s: any) => s.participant_id));
+  const remoteSplit = (remote?.["split"] as { id?: string; walletId?: string }[] | undefined) ?? [];
+  const totalNetCents = Math.round((Number(p.net_amount) + splits.reduce((a: number, s: any) => a + Number(s.amount), 0)) * 100);
+  if (totalNetCents <= 0) return [];
+  const refundCents = Math.round(refundAmount * 100);
+  const out: { id: string; value: number }[] = [];
+  for (const s of splits) {
+    const wallet = parts?.find((x: any) => x.id === s.participant_id)?.wallet_id;
+    const providerSplitId = remoteSplit.find((x) => x.walletId === wallet)?.id;
+    if (!providerSplitId) continue;
+    const share = Math.floor((refundCents * Math.round(Number(s.amount) * 100)) / totalNetCents);
+    const left = Math.round((Number(s.amount) - Number(s.refunded_amount)) * 100);
+    const cents = Math.min(share, left);
+    if (cents > 0) out.push({ id: providerSplitId, value: cents / 100 });
+  }
+  return out;
+}
+
+/**
+ * Lê no Asaas o total já estornado de cada coprodutor (refundedSplits concluídos) e aplica só a diferença.
+ * Avisos repetidos não estornam de novo. `creditOwner` devolve ao principal a parte paga pelos coprodutores
+ * quando o reembolso foi pedido pela WiizePay (o principal reservou o valor cheio).
+ */
+export async function syncRefundsFromProvider(admin: Admin, paymentId: string, creditOwner: boolean) {
+  const { data: p } = await admin.from("payments").select("id, tenant_id, provider_payment_id").eq("id", paymentId).maybeSingle();
+  if (!p?.provider_payment_id) return 0;
+  const { data: splits } = await db(admin).from("coproduction_splits").select("participant_id").eq("payment_id", paymentId);
+  if (!splits?.length) return 0;
+  const { getTenantProvider } = await import("./billing.server");
+  const conn = await getTenantProvider(admin, p.tenant_id);
+  if (!conn) return 0;
+  const remote = (await conn.provider.getPayment(p.provider_payment_id)) as unknown as Record<string, unknown>;
+  const remoteSplit = (remote["split"] as { id?: string; walletId?: string }[] | undefined) ?? [];
+  const refunds = (remote["refunds"] as { refundedSplits?: { id: string; value: number; done?: boolean }[] | null }[] | undefined) ?? [];
+  const byWallet = new Map<string, number>();
+  for (const r of refunds) for (const rs of r.refundedSplits ?? []) {
+    if (!rs.done) continue;
+    const w = remoteSplit.find((x) => x.id === rs.id)?.walletId;
+    if (w) byWallet.set(w, Math.round(((byWallet.get(w) ?? 0) + Number(rs.value)) * 100) / 100);
+  }
+  const { data: parts } = await db(admin).from("payment_coproduction_participants").select("id, wallet_id").in("id", splits.map((s: any) => s.participant_id));
+  const items = (parts ?? []).map((x: any) => ({ participant_id: x.id, refunded_total: byWallet.get(x.wallet_id) ?? 0 })).filter((i: any) => i.refunded_total > 0);
+  if (!items.length) return 0;
+  const { data, error } = await (admin.rpc as any)("sync_coproduction_refunds", { _payment_id: paymentId, _items: items, _credit_owner: creditOwner });
+  if (error) throw new Error(error.message);
+  return Number(data ?? 0);
 }

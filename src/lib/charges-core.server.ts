@@ -218,7 +218,6 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     // Coprodução: validada antes de qualquer registro, para não existir cobrança com convite impossível.
     let coproducers: Awaited<ReturnType<typeof import("./coproduction.server").prepareCoproducers>> | null = null;
     if (data.coproducers?.length) {
-      if (service.type === "recurring") throw new Error("Coprodução está disponível para cobranças à vista e parceladas.");
       const totalFee = service.type === "installment" && method !== "credit_card" ? initialFee.totalFee * feeInstallments : initialFee.totalFee;
       const { prepareCoproducers } = await import("./coproduction.server");
       coproducers = await prepareCoproducers(admin, tenantId, data.coproducers, round2(amount - totalFee));
