@@ -25,6 +25,7 @@ export type ChargeCoreInput = {
   installmentCount?: number | null | undefined;
   chargeType?: "one_time" | "installment" | "recurring" | null | undefined;
   frequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "semiannual" | "yearly" | null | undefined;
+  coproducers?: import("./coproduction.server").CoproducerInput[] | null | undefined;
 };
 
 export async function issueLink(
@@ -213,6 +214,15 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     const feeGross = service.type === "installment" && method === "credit_card" ? amount : firstGross;
     const initialFee = await computePlatformFeeDetails(admin, feeGross, method, feeInstallments, service.type === "recurring");
     const firstFee = service.type === "installment" && method === "credit_card" ? round2(initialFee.totalFee / feeInstallments) : initialFee.totalFee;
+
+    // Coprodução: validada antes de qualquer registro, para não existir cobrança com convite impossível.
+    let coproducers: Awaited<ReturnType<typeof import("./coproduction.server").prepareCoproducers>> | null = null;
+    if (data.coproducers?.length) {
+      if (service.type === "recurring") throw new Error("Coprodução está disponível para cobranças à vista e parceladas.");
+      const totalFee = service.type === "installment" && method !== "credit_card" ? initialFee.totalFee * feeInstallments : initialFee.totalFee;
+      const { prepareCoproducers } = await import("./coproduction.server");
+      coproducers = await prepareCoproducers(admin, tenantId, data.coproducers, round2(amount - totalFee));
+    }
 
     const { data: placeholder, error: insertError } = await admin
       .from("payments")
@@ -407,6 +417,10 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       }
     }
 
+    if (coproducers) {
+      const { createCoproduction } = await import("./coproduction.server");
+      await createCoproduction(admin, { tenantId, chargeGroupId, userId, participants: coproducers });
+    }
     const link = await issueLink(admin, { tenantId, chargeGroupId, customerId: customer.id, serviceId: service.id, contractId, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
     await logAudit(admin, {
       tenantId,

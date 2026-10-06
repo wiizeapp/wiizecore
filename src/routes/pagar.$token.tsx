@@ -201,6 +201,8 @@ function Checkout() {
            <CustomerForm token={token} customer={data.customer} acceptedTerms={acceptedTerms} onAcceptedTerms={setAcceptedTerms} onDone={() => void refetch()} />
         ) : data.pendingContract ? (
           <CheckoutContractForm onViewed={() => void track({ data: { token, event: "contract_viewed" } }).catch(() => undefined)} token={token} contract={data.pendingContract} customerName={data.customer?.name ?? ""} onSigned={() => void refetch()} />
+        ) : data.coproductionPending && !allPaid ? (
+          <StateView icon={CheckCircle2} tone="muted" title={ui("Pagamento disponível em breve")} text={ui("O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.")} />
         ) : allPaid || pixPaid ? (
           <StateView icon={CheckCircle2} tone="success" title={ui("Pagamento realizado com sucesso")} text={waitingNext ? ui("Tudo certo! Seu último pagamento foi confirmado. A próxima parcela fica disponível neste link 5 dias antes do vencimento.") : data.nextExpected ? ui("Tudo certo! Seu pagamento foi confirmado. A próxima cobrança aparecerá neste mesmo link.") : data.payments.length > 1 ? ui("Tudo certo! Todos os pagamentos desta cobrança foram confirmados.") : ui("Tudo certo! Seu pagamento foi confirmado.")} hint={ui("Você receberá a confirmação do pagamento pelos canais disponíveis.")}>
             {lastPaid ? <dl className="mx-auto mt-6 max-w-sm divide-y divide-border border-y border-border text-sm">

@@ -1222,6 +1222,143 @@ export type Database = {
         }
         Relationships: []
       }
+      coproduction_events: {
+        Row: {
+          actor_user_id: string | null
+          coproduction_id: string
+          created_at: string
+          event: string
+          id: string
+          metadata: Json
+          participant_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          actor_user_id?: string | null
+          coproduction_id: string
+          created_at?: string
+          event: string
+          id?: string
+          metadata?: Json
+          participant_id?: string | null
+          tenant_id: string
+        }
+        Update: {
+          actor_user_id?: string | null
+          coproduction_id?: string
+          created_at?: string
+          event?: string
+          id?: string
+          metadata?: Json
+          participant_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coproduction_events_coproduction_id_fkey"
+            columns: ["coproduction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_coproductions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coproduction_splits: {
+        Row: {
+          amount: number
+          coproduction_id: string
+          created_at: string
+          fee_amount: number
+          gross_amount: number
+          id: string
+          net_amount: number
+          participant_id: string
+          participant_tenant_id: string
+          payment_id: string
+          percentage: number
+          provider_event_id: string | null
+          provider_payment_id: string | null
+          refunded_at: string | null
+          released_at: string | null
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          amount: number
+          coproduction_id: string
+          created_at?: string
+          fee_amount: number
+          gross_amount: number
+          id?: string
+          net_amount: number
+          participant_id: string
+          participant_tenant_id: string
+          payment_id: string
+          percentage: number
+          provider_event_id?: string | null
+          provider_payment_id?: string | null
+          refunded_at?: string | null
+          released_at?: string | null
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          amount?: number
+          coproduction_id?: string
+          created_at?: string
+          fee_amount?: number
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          participant_id?: string
+          participant_tenant_id?: string
+          payment_id?: string
+          percentage?: number
+          provider_event_id?: string | null
+          provider_payment_id?: string | null
+          refunded_at?: string | null
+          released_at?: string | null
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coproduction_splits_coproduction_id_fkey"
+            columns: ["coproduction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_coproductions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coproduction_splits_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "payment_coproduction_participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coproduction_splits_participant_tenant_id_fkey"
+            columns: ["participant_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coproduction_splits_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coproduction_splits_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupon_events: {
         Row: {
           coupon_id: string | null
@@ -3504,6 +3641,147 @@ export type Database = {
           },
           {
             foreignKeyName: "payment_attempts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_coproduction_participants: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          accepted_snapshot: Json | null
+          coproduction_id: string
+          created_at: string
+          email: string
+          fixed_amount: number | null
+          id: string
+          name: string
+          participant_tenant_id: string
+          participant_user_id: string
+          participation_type: string
+          percentage: number
+          rejected_at: string | null
+          responsibility: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          wallet_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          accepted_snapshot?: Json | null
+          coproduction_id: string
+          created_at?: string
+          email: string
+          fixed_amount?: number | null
+          id?: string
+          name: string
+          participant_tenant_id: string
+          participant_user_id: string
+          participation_type: string
+          percentage: number
+          rejected_at?: string | null
+          responsibility?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          wallet_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          accepted_snapshot?: Json | null
+          coproduction_id?: string
+          created_at?: string
+          email?: string
+          fixed_amount?: number | null
+          id?: string
+          name?: string
+          participant_tenant_id?: string
+          participant_user_id?: string
+          participation_type?: string
+          percentage?: number
+          rejected_at?: string | null
+          responsibility?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_coproduction_participants_coproduction_id_fkey"
+            columns: ["coproduction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_coproductions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_coproduction_participants_participant_tenant_id_fkey"
+            columns: ["participant_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_coproduction_participants_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_coproductions: {
+        Row: {
+          activated_at: string | null
+          cancelled_at: string | null
+          charge_group_id: string
+          created_at: string
+          created_by: string
+          id: string
+          split_applied_at: string | null
+          split_error: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          activated_at?: string | null
+          cancelled_at?: string | null
+          charge_group_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          split_applied_at?: string | null
+          split_error?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          activated_at?: string | null
+          cancelled_at?: string | null
+          charge_group_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          split_applied_at?: string | null
+          split_error?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_coproductions_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -5822,6 +6100,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      apply_coproduction_split: {
+        Args: { _event_id: string; _items: Json; _payment_id: string }
+        Returns: number
+      }
       apply_payment_event: {
         Args: {
           _estimated_available_at?: string
@@ -5932,8 +6214,16 @@ export type Database = {
         Returns: number
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      refund_coproduction_splits: {
+        Args: { _payment_id: string }
+        Returns: number
+      }
       release_available_balances: {
         Args: { _tenant_id: string }
+        Returns: number
+      }
+      release_coproduction_splits: {
+        Args: { _payment_id: string }
         Returns: number
       }
       release_coupon: { Args: { _payment_id: string }; Returns: undefined }

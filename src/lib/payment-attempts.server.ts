@@ -184,7 +184,12 @@ export async function switchPaymentAttempt(
       dueDate: dueOn,
       description: p.description ?? "Cobrança",
       externalReference: p.id,
-      ...(fee.totalFeeCents > 0 ? { split: [{ walletId: masterWalletId, fixedValue: fee.totalFeeCents / 100 }] } : {}),
+      ...(await (async () => {
+        const { splitFor } = await import("./coproduction.server");
+        const split = await splitFor(admin, p.charge_group_id, q.total, fee.totalFeeCents / 100);
+        if (!split.length && fee.totalFeeCents > 0) return { split: [{ walletId: masterWalletId, fixedValue: fee.totalFeeCents / 100 }] };
+        return split.length ? { split } : {};
+      })()),
       ...extras,
     });
   } catch (e) {

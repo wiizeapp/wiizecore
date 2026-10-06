@@ -141,6 +141,7 @@ export const getCheckout = createServerFn({ method: "GET" })
       }
       return null;
     })();
+    const coproductionPending = await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, groupId);
     const { canSwitch, quote, allowedMethods } = await import("./payment-attempts.server");
     const [appearanceRow, pendingContract] = await Promise.all([appearancePromise, pendingContractPromise]);
     const methodCache = new Map<string, Promise<Awaited<ReturnType<typeof allowedMethods>>>>();
@@ -181,6 +182,7 @@ export const getCheckout = createServerFn({ method: "GET" })
         : null,
       service: service ? { name: service.name, type: service.type, acceptedMethods: service.accepted_methods, frequency: service.frequency } : null,
       pendingContract,
+      coproductionPending,
       couponsAvailable: await (async () => {
         const { count } = await admin.from("coupons").select("id", { count: "exact", head: true }).eq("tenant_id", link.tenant_id).eq("status", "active");
         return (count ?? 0) > 0;
@@ -203,8 +205,8 @@ export const getCheckout = createServerFn({ method: "GET" })
           method: p.method,
           installmentNumber: p.installment_number,
           installmentCount: p.installment_count,
-          invoiceUrl: p.invoice_url,
-          bankSlipUrl: p.bank_slip_url,
+          invoiceUrl: coproductionPending ? null : p.invoice_url,
+          bankSlipUrl: coproductionPending ? null : p.bank_slip_url,
           paidAt: p.paid_at,
           finePercent: Number(p.fine_percent ?? 0),
           interestPercent: Number(p.interest_percent ?? 0),
@@ -231,6 +233,7 @@ export const switchCheckoutMethod = createServerFn({ method: "POST" })
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const resolved = await resolveLink(admin, data.token);
     if (resolved.state !== "ok") throw new Error("Link indisponível.");
+    if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     const { link } = resolved;
     const { consumeRateLimit } = await import("./audit.server");
     const limit = await consumeRateLimit(admin, { scope: "checkout_switch", identifier: data.paymentId, maxAttempts: 6, windowSeconds: 900, blockSeconds: 900 });
@@ -414,6 +417,7 @@ export const getPaymentInstructions = createServerFn({ method: "POST" })
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const resolved = await resolveLink(admin, data.token);
     if (resolved.state !== "ok") throw new Error("Link indisponível.");
+    if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     if (resolved.linkExpired) throw new Error("Cobrança expirada. Use “Regularizar cobrança” para continuar.");
     const { link } = resolved;
     const { data: payment } = await admin
@@ -538,6 +542,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const resolved = await resolveLink(admin, data.token);
     if (resolved.state !== "ok") throw new Error("Link indisponível.");
+    if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     const { link } = resolved;
     const { consumeRateLimit, requestInfo, logAudit } = await import("./audit.server");
     const limit = await consumeRateLimit(admin, { scope: "checkout_card", identifier: data.paymentId, maxAttempts: 5, windowSeconds: 900, blockSeconds: 1800 });

@@ -20,6 +20,7 @@ import { ChargeMethodDialog } from "@/components/charges/charge-method-dialog";
 import { SubscriptionInvoiceDialog } from "@/components/invoices/subscription-invoice-dialog";
 import { DataPagination, paginate, StatusBadge, SummaryStrip, matchesSearch } from "@/components/ds";
 import { INVOICE_STATUS_LABEL, INVOICE_STATUS_TONE, type InvoiceStatus } from "@/lib/invoice-status";
+import { CoproductionCard, coproducersPayload, type CoproducerDraft } from "@/components/charges/coproduction-card";
 import { cancelCharge, createCharge, setCustomerDocument, simulateSandboxPayment, syncChargeStatus, regeneratePaymentLink, revokePaymentLinks } from "@/lib/charges.functions";
 import { Button } from "@/components/ui/button";
 import { CopyChargeLinkButton } from "@/components/charges/copy-charge-link";
@@ -86,6 +87,8 @@ function Cobrancas() {
   const [installmentCount, setInstallmentCount] = useState<number | null>(null);
   const [feeShare, setFeeShare] = useState(0);
   const [dunningPlan, setDunningPlan] = useState<DunningPlanChoice | null>(null);
+  const [coproOn, setCoproOn] = useState(false);
+  const [coproducers, setCoproducers] = useState<CoproducerDraft[]>([]);
   const [dunningEdit, setDunningEdit] = useState<string | null>(null);
   const [methodEdit, setMethodEdit] = useState<string | null>(null);
   const createPixAuto = useServerFn(createPixAutomatic);
@@ -260,6 +263,7 @@ function Cobrancas() {
           collectCustomerData: true,
           feePassShare: selectedService?.type !== "installment" || form.method === "undefined" ? 0 : feeShare,
           dunningPlan,
+          coproducers: coproOn && coproducers.length ? coproducersPayload(coproducers) : null,
           customAmount: selectedService?.custom_amount ? Number(customAmount.replace(/\./g, "").replace(",", ".")) || null : null,
         },
       });
@@ -272,6 +276,8 @@ function Cobrancas() {
       setInstallmentCount(null);
       setFeeShare(0);
       setDunningPlan(null);
+      setCoproOn(false);
+      setCoproducers([]);
       void queryClient.invalidateQueries({ queryKey: ["pix-automatic"] });
       setOpen(false);
       setAttemptedSubmit(false);
@@ -532,6 +538,11 @@ function Cobrancas() {
                       {form.method === "undefined" ? "Escolha a forma de pagamento para repassar a taxa." : feeShare > 0 ? "O valor final é recalculado pelo sistema e o cliente vê a taxa separada no link de pagamento." : "Você recebe o valor do serviço menos a taxa."}
                     </p>
                   </div>
+                ) : null}
+                {selectedService && selectedService.type !== "recurring" ? (
+                  <CoproductionCard enabled={coproOn} onEnabled={setCoproOn} list={coproducers} onChange={setCoproducers}
+                    total={selectedService.custom_amount ? Number(customAmount.replace(/\./g, "").replace(",", ".")) || null : Number(selectedService.amount) || null}
+                    installments={selectedService.type === "installment" ? (installmentCount ?? Number(selectedService.installments ?? 2)) : 1} />
                 ) : null}
                 {!(pixAuto && selectedService?.type === "recurring") ? (
                   <details className="group rounded-lg border border-border">

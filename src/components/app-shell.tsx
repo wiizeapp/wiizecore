@@ -1,5 +1,5 @@
 import { getSecurityStatus } from "@/lib/security.functions";
-import { Plug, Percent, Palette, FolderOpen, TicketPercent } from "lucide-react";
+import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getMyAccess, trackActivity } from "@/lib/team.functions";
 import { PAGE_PERMISSION } from "@/lib/permissions";
@@ -43,7 +43,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
-type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/documentos" | "/cupons";
+type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/documentos" | "/cupons" | "/coproducoes";
 
 const operationItems = [
   { to: "/clientes", label: "Clientes", icon: Users },
@@ -61,6 +61,7 @@ const chargesGroup = { id: "cobrancas", label: "Cobranças", icon: Receipt, chil
   { to: "/cobrancas", label: "Central de Recebimentos", icon: Receipt },
   { to: "/lembrete-de-cobranca", label: "Régua Inteligente", icon: MessagesSquare },
   { to: "/cupons", label: "Cupons & Incentivos", icon: TicketPercent },
+  { to: "/coproducoes", label: "Coproduções", icon: Handshake },
 ] } satisfies { id: string; label: string; icon: typeof Users; children: Array<{ to: AppPath; label: string; icon: typeof Users }> };
 
 const groupedItems = [
@@ -95,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const sidebarCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => {
     if (["/financeiro", "/extrato", "/limites", "/antecipacao", "/multas-e-encargos"].some((path) => pathname.startsWith(path))) return ["financeiro"];
-    if (["/cobrancas", "/lembrete-de-cobranca", "/cupons"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
+    if (["/cobrancas", "/lembrete-de-cobranca", "/cupons", "/coproducoes"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
     if (["/configuracoes", "/checkout-personalizado", "/ativacao", "/seguranca", "/equipe", "/integracoes"].some((path) => pathname.startsWith(path))) return ["configuracoes"];
     return [];
   });
