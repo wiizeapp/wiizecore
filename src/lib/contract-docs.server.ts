@@ -514,7 +514,7 @@ export async function notifyContractSigned(admin: Admin, tenantId: string, contr
     const { notifyTenant, emailPerson, tenantName } = await import("./notify.server");
     const { data: c } = await admin.from("contracts").select("title, customers(name, email)").eq("id", contractId).maybeSingle();
     const title = c?.title ?? "Contrato";
-    await notifyTenant(admin, {
+    await notifyTenant(admin as never, {
       tenantId, kind: fullySigned ? "contract.completed" : "contract.signed", link: `/contratos/${contractId}`,
       dedupeKey: `contract.${fullySigned ? "completed" : "signed"}:${contractId}:${signerName}`,
       title: fullySigned ? "Contrato assinado por todos" : "Nova assinatura no contrato",
@@ -522,12 +522,12 @@ export async function notifyContractSigned(admin: Admin, tenantId: string, contr
       ...(fullySigned ? { email: { subject: `Contrato concluído — ${title}` } } : {}),
     });
     if (!fullySigned) return;
-    const company = await tenantName(admin, tenantId);
+    const company = await tenantName(admin as never, tenantId);
     const cust = c?.customers as { email?: string | null } | null;
     const { data: signers } = await admin.from("contract_signers").select("email").eq("contract_id", contractId).is("removed_at", null);
     const to = [cust?.email, ...((signers ?? []) as { email: string | null }[]).map((s) => s.email)].filter((e): e is string => !!e);
     for (const e of new Set(to)) {
-      await emailPerson(admin, {
+      await emailPerson(admin as never, {
         tenantId, kind: "contract.completed_party", dedupeKey: `contract.completed_party:${contractId}:${e}`,
         email: { to: e, subject: `Contrato concluído — ${title}`, title: "Contrato assinado por todas as partes", intro: `O documento “${title}” de ${company} foi assinado por todos. Você pode conferir a autenticidade a qualquer momento.`, cta: { label: "Verificar documento", url: "/verificar" } },
       });
