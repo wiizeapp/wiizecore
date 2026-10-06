@@ -182,7 +182,14 @@ function AuthPage() {
     if (needConsent()) return;
     setBusyAction("google");
     const returnToAuth = next ? `/auth?next=${encodeURIComponent(next)}` : "/auth";
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}${returnToAuth}` });
+    const redirectTo = `${window.location.origin}${returnToAuth}`;
+    // Fora da Lovable (ex.: Vercel/wiizepay.com) o login Google vai direto pelo Auth do banco de produção.
+    if (!window.location.hostname.endsWith(".lovable.app")) {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo, queryParams: { prompt: "select_account" } } });
+      if (error) { setBusyAction(null); toast.error(ui("Não foi possível entrar com o Google.")); }
+      return;
+    }
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectTo });
     if (result.error) {
       setBusyAction(null);
       toast.error(ui("Não foi possível entrar com o Google."));
