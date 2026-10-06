@@ -116,7 +116,7 @@ export async function recordSplitFromProvider(admin: Admin, paymentId: string, r
   if (!p || p.status !== "paid") return;
   const cp = await activeParticipants(admin, p.charge_group_id);
   if (!cp || !cp.parts.length) return;
-  let split = (remote?.["split"] as { walletId?: string; totalValue?: number; fixedValue?: number }[] | undefined) ?? null;
+  let split = (remote?.["split"] as { walletId?: string; totalValue?: number; fixedValue?: number; status?: string }[] | undefined) ?? null;
   if (!split?.length && p.provider_payment_id) {
     const { getTenantProvider } = await import("./billing.server");
     const conn = await getTenantProvider(admin, p.tenant_id);
@@ -124,7 +124,7 @@ export async function recordSplitFromProvider(admin: Admin, paymentId: string, r
     split = (fresh?.["split"] as typeof split) ?? null;
   }
   const items = cp.parts.map((part) => {
-    const s = split?.find((x) => x.walletId === part.wallet_id);
+    const s = split?.find((x) => x.walletId === part.wallet_id && !["CANCELLED", "REFUSED", "BLOCKED_BY_VALUE_DIVERGENCE"].includes(String(x.status ?? "")));
     return { participant_id: part.id, amount: Number(s?.totalValue ?? s?.fixedValue ?? 0) };
   }).filter((i) => i.amount > 0);
   if (!items.length) {
