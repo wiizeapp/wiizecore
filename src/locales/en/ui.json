@@ -4674,5 +4674,6 @@
   "O arquivo selecionado está vazio.": "The selected file is empty.",
   "O arquivo selecionado não é um PDF válido.": "The selected file is not a valid PDF.",
   "O documento parece cortado. Enquadre os quatro cantos e tente novamente.": "The document appears cropped. Frame all four corners and try again.",
-  "Use uma foto JPG, PNG, WEBP ou um arquivo PDF.": "Use a JPG, PNG or WEBP photo, or a PDF file."
+  "Use uma foto JPG, PNG, WEBP ou um arquivo PDF.": "Use a JPG, PNG or WEBP photo, or a PDF file.",
+  "O valor entra, mas o restante da operação continua manual.": "The money comes in, but the rest of the operation stays manual."
 }
