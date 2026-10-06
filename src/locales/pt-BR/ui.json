@@ -1,0 +1,29 @@
+{
+  "wiize": {
+    "title": "Integrações",
+    "subtitle": "Conecte o Wiize (CRM) para usar seus clientes e vendas nas cobranças da WiizePay.",
+    "status_connected": "Conectado",
+    "status_disconnected": "Desconectado",
+    "account": "Conta conectada",
+    "email": "E-mail",
+    "organization": "Organização",
+    "connected_at": "Conectado em",
+    "permissions": "Permissões",
+    "last_sync": "Última sincronização",
+    "never": "Ainda não sincronizado",
+    "manage": "Gerenciar conexão",
+    "disconnect": "Desconectar",
+    "connect": "Conectar Wiize",
+    "not_available": "A conexão com o Wiize será liberada em breve.",
+    "owner_only": "Somente o dono ou administrador pode conectar.",
+    "security_note": "O login acontece no próprio Wiize. A WiizePay nunca vê nem guarda sua senha ou código de verificação.",
+    "connected_ok": "Wiize conectado com sucesso.",
+    "disconnected_ok": "Wiize desconectado. Seu histórico financeiro foi mantido.",
+    "org_in_use": "Essa organização do Wiize já está conectada a outra empresa.",
+    "connect_error": "Não foi possível conectar o Wiize. Tente novamente.",
+    "continue": "Continuar com Wiize",
+    "no_account": "Não encontramos uma conta WiizePay com esse e-mail do Wiize.",
+    "cancelled": "Cancelado.",
+    "mfa_prompt": "Digite o código de 6 dígitos do autenticador"
+  }
+}

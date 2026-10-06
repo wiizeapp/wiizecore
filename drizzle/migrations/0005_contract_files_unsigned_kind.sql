@@ -1,0 +1,2 @@
+ALTER TABLE public.contract_files DROP CONSTRAINT IF EXISTS contract_files_kind_check;
+ALTER TABLE public.contract_files ADD CONSTRAINT contract_files_kind_check CHECK (kind = ANY (ARRAY['original'::text, 'signed'::text, 'unsigned'::text]));

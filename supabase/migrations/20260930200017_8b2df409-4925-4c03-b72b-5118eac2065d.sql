@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS customers_tenant_document_digits_key ON public.customers (tenant_id, (regexp_replace(document, '\D', '', 'g'))) WHERE document IS NOT NULL AND regexp_replace(document, '\D', '', 'g') <> '';

@@ -1,0 +1,1 @@
+ALTER TABLE public.oauth_clients ADD COLUMN IF NOT EXISTS webhook_secret_enc text;

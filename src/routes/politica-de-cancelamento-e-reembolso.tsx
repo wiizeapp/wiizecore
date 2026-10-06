@@ -1,0 +1,9 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { LegalPage } from "@/components/legal-page";
+export const Route = createFileRoute("/politica-de-cancelamento-e-reembolso")({ head: () => ({ meta: [{ title: "Cancelamento e Reembolso — WiizePay" }, { name: "description", content: "Orientações sobre cancelamentos e reembolsos em pagamentos WiizePay." }, { property: "og:title", content: "Cancelamento e Reembolso — WiizePay" }, { property: "og:description", content: "Como solicitar e acompanhar cancelamentos ou reembolsos." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
+function Page() { return <LegalPage eyebrow="Pagamentos" title="Cancelamento e Reembolso" description="Orientações gerais para pedidos de cancelamento e reembolso. Este conteúdo deve passar por revisão jurídica antes da publicação definitiva." sections={[
+  { title: "1. Responsabilidade do vendedor", paragraphs: ["A empresa identificada no checkout é responsável pelo serviço vendido e pelas condições comerciais de cancelamento. O pagador deve procurar essa empresa primeiro quando a solicitação estiver ligada à entrega do serviço."] },
+  { title: "2. Solicitação", paragraphs: ["Informe o identificador do pagamento, a empresa cobradora, o valor e o motivo. A solicitação será analisada conforme o estado da transação e as condições aplicáveis."] },
+  { title: "3. Processamento", paragraphs: ["O prazo para o valor retornar depende do método de pagamento e das etapas necessárias após a aprovação do reembolso. A confirmação será baseada no estado real informado pelo processamento."] },
+  { title: "4. Disputas", paragraphs: ["Contestações realizadas junto ao emissor ou instituição do pagador seguem procedimentos próprios e podem exigir documentos adicionais."] },
+]} />; }

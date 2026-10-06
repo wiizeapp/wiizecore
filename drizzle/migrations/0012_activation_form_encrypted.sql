@@ -1,0 +1,2 @@
+ALTER TABLE public.payment_activations ADD COLUMN IF NOT EXISTS form_enc text;
+COMMENT ON COLUMN public.payment_activations.form_enc IS 'AES-256-GCM (versioned) JSON of the full activation form; form_data keeps only non-sensitive keys';

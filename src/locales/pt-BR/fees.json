@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "title": "Taxas claras e gestão completa — WiizePay",
+    "description": "Saiba quanto custa receber por Pix, boleto e cartão na WiizePay e veja como cobrança, notas fiscais, contratos, clientes e gestão financeira ficam em um só lugar. Sem mensalidade e sem custos escondidos."
+  },
+  "hero": {
+    "eyebrow": "Preços",
+    "lead": "Taxas claras para cobrar.",
+    "highlight": "Controle completo para crescer.",
+    "subtitle": "Muito mais do que taxas: cobrança, notas fiscais, contratos, clientes e gestão financeira em um só lugar. Veja quanto custa cada forma de receber — sem mensalidade e sem custos escondidos."
+  },
+  "methods": {
+    "eyebrow": "Meios de pagamento",
+    "title": "Meios de pagamento"
+  },
+  "pix": {
+    "title": "Pix",
+    "desc": "Receba instantaneamente com Pix.",
+    "note": "No Pix parcelado ou recorrente, a taxa fixa é aplicada em cada parcela/cobrança, conforme a modalidade.",
+    "single": "Pix à vista",
+    "recurring": "Pix Automático / recorrente",
+    "perTx": "Por transação",
+    "perCharge": "Por cobrança"
+  },
+  "boleto": {
+    "title": "Boleto",
+    "desc": "Ofereça pagamento por boleto à vista ou parcelado.",
+    "note": "A taxa fixa de cada faixa é aplicada em cada boleto/parcela.",
+    "single": "Boleto à vista",
+    "installments": "Boleto parcelado",
+    "perBoleto": "Por boleto",
+    "range": "Boleto de {{min}}x a {{max}}x"
+  },
+  "cards": {
+    "title": "Cartões",
+    "creditTitle": "Cartão de crédito",
+    "desc": "Crédito com parcelamento de até {{max}}x.",
+    "subtitle": "Taxas progressivas de acordo com o número de parcelas.",
+    "mode": "Modalidade",
+    "fee": "Taxa",
+    "debit": "Débito",
+    "creditSingle": "Crédito à vista",
+    "creditRange": "Crédito de {{min}}x a {{max}}x",
+    "note": "A taxa fixa é cobrada uma única vez por venda, mesmo em compras parceladas."
+  },
+  "services": {
+    "title": "Serviços adicionais",
+    "subtitle": "Recursos adicionais podem ser utilizados conforme a necessidade da sua operação.",
+    "service": "Serviço",
+    "value": "Valor",
+    "invoice": "Nota fiscal autorizada",
+    "withdrawal": "Saque via Pix",
+    "minWithdrawal": "Saque mínimo",
+    "free": "Sem taxa"
+  },
+  "anticipation": {
+    "title": "Antecipação",
+    "desc": "Antecipe seus recebíveis quando precisar.",
+    "subtitle": "Receba seus valores antes do prazo original de liquidação.",
+    "perMonth": "por mês antecipado",
+    "boleto": "Boleto",
+    "credit_card_installment": "Cartão parcelado",
+    "credit_card_single": "Cartão à vista",
+    "pix": "Pix",
+    "other": "Outros",
+    "prazos": "Ver prazos"
+  },
+  "sim": {
+    "eyebrow": "Simulador",
+    "title": "Simule sua próxima cobrança.",
+    "subtitle": "Escolha as parcelas e quem paga a taxa. O cálculo usa as mesmas regras da criação da cobrança.",
+    "amount": "Valor da cobrança",
+    "method": "Forma de pagamento",
+    "installments": "Número de parcelas",
+    "cardFixedOnce": "No cartão de crédito e no débito em conta, a taxa fixa é cobrada uma única vez por venda.",
+    "fixedEach": "A taxa fixa é cobrada em cada parcela.",
+    "whoPays": "Quem paga a taxa",
+    "absorb": "Eu absorvo",
+    "customerPays": "Cliente paga",
+    "customerShare": "{{v}}% cliente",
+    "youReceive": "Você recebe",
+    "serviceValue": "Valor do serviço",
+    "feeByCustomer": "Taxa paga pelo cliente",
+    "totalCustomer": "Total pago pelo cliente",
+    "installmentsEst": "{{n}} parcelas estimadas",
+    "installmentsOf": "{{n}}x de {{v}}",
+    "fee": "Taxa WiizePay",
+    "calculating": "Calculando…",
+    "net": "Valor líquido",
+    "disclaimer": "Resultado estimado com as regras vigentes. O valor final é confirmado na criação da cobrança.",
+    "labels": {
+      "pix": "Pix",
+      "pix_recurring": "Pix Recorrente",
+      "boleto": "Boleto",
+      "debit_card": "Cartão de débito",
+      "credit_card": "Cartão de crédito"
+    }
+  },
+  "faq": {
+    "title": "Dúvidas sobre as taxas?",
+    "q1": "A taxa fixa é cobrada por parcela?",
+    "a1": "No Pix e no boleto parcelados, a taxa fixa é cobrada em cada parcela ou cobrança. No cartão de crédito e débito, a taxa fixa é cobrada uma única vez por venda.",
+    "q2": "Existe mensalidade?",
+    "a2": "Não. Você paga apenas as taxas das transações e dos serviços que utilizar.",
+    "q3": "Posso antecipar meus recebíveis?",
+    "a3": "Sim. Somente recebíveis já pagos e disponíveis para antecipação podem ser antecipados, e o custo aparece antes da confirmação."
+  },
+  "cta": {
+    "title": "Pronto para começar?",
+    "subtitle": "Receba pagamentos de forma simples, segura e integrada à sua operação.",
+    "button": "Criar minha conta"
+  },
+  "loading": "Carregando…",
+  "noFee": "Sem taxa",
+  "rate": {
+    "fixed": "Taxa fixa",
+    "percentage": "Percentual"
+  },
+  "debit": {
+    "title": "Débito em conta",
+    "desc": "Receba à vista ou parcelado diretamente por débito em conta.",
+    "single": "Débito à vista",
+    "range": "Débito de {{min}}x a {{max}}x",
+    "note": "A taxa fixa é cobrada uma única vez por venda, inclusive no parcelamento."
+  },
+  "dunning": {
+    "eyebrow": "Lembretes de cobrança",
+    "title": "Receba sem transformar cobrança em trabalho.",
+    "subtitle": "A WiizePay acompanha cada vencimento e mantém seu cliente informado nos canais certos. Menos atrasos, menos conversas repetitivas e mais tempo para fazer seu negócio crescer.",
+    "per": "por cobrança",
+    "popular": "Mais escolhido",
+    "cta": "Quero cobrar melhor",
+    "plans": {
+      "essential": "Lembrete Essencial",
+      "smart": "Lembrete Inteligente",
+      "intensive": "Lembrete Intensivo"
+    },
+    "desc": {
+      "essential": "O toque certo para cobranças simples e objetivas.",
+      "smart": "Mais canais trabalhando juntos para aumentar suas chances de receber.",
+      "intensive": "Acompanhamento completo para cobranças que exigem máxima atenção."
+    },
+    "ch": {
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-mail",
+      "voice": "Ligação automática"
+    },
+    "note": "Preço fixo por cobrança individual, não por mensagem. Em parcelamentos, cada parcela é uma cobrança; em recorrências, cada novo ciclo também. É necessário ter saldo disponível."
+  }
+}

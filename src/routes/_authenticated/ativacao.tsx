@@ -1,0 +1,336 @@
+import { PartnerNotice } from "@/components/partner-notice";
+import { createFileRoute } from "@tanstack/react-router";
+import { TableRowsSkeleton, TableStateRow, ErrorState, ListSkeleton } from "@/components/states";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { BadgeCheck, Building2, Clock, ShieldCheck, User, AlertTriangle, XCircle, ExternalLink, Loader2, RefreshCw, Smartphone, Monitor, Mail, Copy } from "lucide-react";
+import { PageHeader } from "@/components/app-shell";
+import { getActivation, refreshActivationStatus, saveActivationDraft, submitActivation, uploadActivationDocument } from "@/lib/activation.functions";
+import { ActivationBadge, DOC_LABEL } from "@/components/activation-status";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "react-i18next";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { createActivationHandoff } from "@/lib/activation-handoff.functions";
+import { activationFormSchema, BRAZIL_STATES, formatBRLInput, REQUIRED_DOCS, validateActivationStep } from "@/lib/activation-validation";
+import { compressActivationFile } from "@/lib/image-compression";
+import { ActivationDocumentUpload } from "@/components/activation-document-upload";
+
+export const Route = createFileRoute("/_authenticated/ativacao")({
+  head: () => ({
+    meta: [
+      { title: "Ativar pagamentos — WiizePay" },
+      { name: "description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no WiizePay." },
+      { property: "og:title", content: "Ativar pagamentos — WiizePay" },
+      { property: "og:description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no WiizePay." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  component: AtivacaoPage,
+});
+
+type Form = Record<string, string>;
+const EDITABLE = ["not_started", "draft", "in_progress", "action_required"];
+
+function AtivacaoPage() {
+  const fetchA = useServerFn(getActivation);
+  const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
+  return (
+    <div>
+      <PartnerNotice storageKey="activation-asaas" title="Análise feita em parceria com o Asaas">
+        <p>A ativação de recebimentos da WiizePay é realizada em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
+        <p>O Asaas é responsável pela análise dos seus dados e documentos e pela aprovação da conta, seguindo as exigências regulatórias de prevenção à fraude.</p>
+        <p>Você faz tudo por aqui e acompanha cada etapa nesta tela. Avisaremos assim que houver uma resposta.</p>
+      </PartnerNotice>
+      <PageHeader title="Ative seus pagamentos" description="Para receber pelo WiizePay, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos." />
+      {isError ? <ErrorState onRetry={() => refetch()} /> : !isFetchedAfterMount || !data ? <ListSkeleton rows={4} /> : <Content data={data} />}
+    </div>
+  );
+}
+
+function Content({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
+  const editable = EDITABLE.includes(data.status);
+  return (
+    <div className="space-y-6">
+      <StatusCard data={data} />
+      {data.provider?.items?.length ? <ProviderPanel data={data} /> : null}
+      {editable && (data.role === "owner" || data.role === "admin") && <Wizard data={data} />}
+      {editable && !(data.role === "owner" || data.role === "admin") && (
+        <p className="text-muted-foreground">Peça ao proprietário da empresa para concluir a ativação.</p>
+      )}
+    </div>
+  );
+}
+
+function StatusCard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
+  const map: Record<string, { icon: typeof Clock; title: string; text: string }> = {
+    not_started: { icon: ShieldCheck, title: "WiizePay ainda não ativado", text: "Preencha as etapas abaixo e envie para análise. Você pode salvar e continuar depois." },
+    draft: { icon: ShieldCheck, title: "Cadastro em rascunho", text: "Continue de onde parou." },
+    in_progress: { icon: ShieldCheck, title: "Cadastro em preenchimento", text: "Continue de onde parou. Seu progresso fica salvo." },
+    submitted: { icon: Clock, title: "Cadastro enviado", text: "Recebemos seus dados e enviamos para a análise da instituição de pagamento. Você será avisado aqui no sistema." },
+    under_review: { icon: Clock, title: "Cadastro em análise", text: "Seus dados e documentos estão em análise. Você recebe um aviso assim que houver resposta." },
+    action_required: { icon: AlertTriangle, title: "Precisamos de mais informações", text: "Corrija os pontos indicados e envie novamente." },
+    approved: { icon: BadgeCheck, title: "WiizePay ativado", text: "Sua conta foi aprovada. Você já pode criar cobranças e receber pagamentos." },
+    rejected: { icon: XCircle, title: "Cadastro não aprovado", text: "Não foi possível aprovar a ativação. Em caso de dúvida, fale com o suporte: wiizepay@gmail.com." },
+    suspended: { icon: XCircle, title: "Recebimentos suspensos", text: "Os recebimentos desta conta estão suspensos. Fale com o suporte: wiizepay@gmail.com." },
+  };
+  const s = (map[data.status] ?? map["not_started"])!;
+  const Icon = s.icon;
+  return (
+    <section className="surface-panel flex items-start gap-4 p-5 sm:p-6">
+      <div className="rounded-lg bg-primary/10 p-3 text-primary"><Icon className="h-6 w-6" /></div>
+      <div className="space-y-1 flex-1">
+        <div className="flex items-center gap-2 flex-wrap"><h2 className="font-display text-base font-semibold tracking-tight">{s.title}</h2><ActivationBadge status={data.status} /></div>
+        <p className="text-sm text-muted-foreground">{s.text}</p>
+        {data.reviewMessage && ["action_required", "rejected", "suspended"].includes(data.status) && (
+          <p className="mt-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"><strong>Mensagem da análise:</strong> {data.reviewMessage}</p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+const ITEM_STATUS: Record<string, { label: string; cls: string }> = {
+  APPROVED: { label: "Aprovado", cls: "bg-primary/10 text-primary" },
+  AWAITING_APPROVAL: { label: "Em análise", cls: "bg-warning/15 text-foreground" },
+  PENDING: { label: "Pendente", cls: "bg-muted text-muted-foreground" },
+  NOT_SENT: { label: "Não enviado", cls: "bg-muted text-muted-foreground" },
+  REJECTED: { label: "Recusado", cls: "bg-destructive/10 text-destructive" },
+};
+
+function ProviderPanel({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
+  const qc = useQueryClient();
+  const refresh = useServerFn(refreshActivationStatus);
+  const m = useMutation({
+    mutationFn: () => refresh(),
+    onSuccess: () => { toast.success("Situação atualizada."); qc.invalidateQueries({ queryKey: ["activation"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const items = data.provider?.items ?? [];
+  const parts = items.filter((i) => i.kind === "part");
+  const docs = items.filter((i) => i.kind === "document");
+  return (
+    <section className="surface-panel space-y-5 p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div><h2 className="font-display text-base font-semibold">Andamento da análise</h2><p className="text-sm text-muted-foreground">Situação informada pela instituição de pagamento{data.providerSyncedAt ? ` · atualizado em ${new Date(data.providerSyncedAt).toLocaleString("pt-BR")}` : ""}.</p></div>
+        <Button variant="outline" size="sm" disabled={m.isPending} onClick={() => m.mutate()}>{m.isPending ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}Atualizar situação</Button>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {parts.map((p) => { const st = ITEM_STATUS[p.status] ?? ITEM_STATUS["PENDING"]!; return (
+          <div key={p.key} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{p.label}</p><span className={`mt-1.5 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${st.cls}`}>{st.label}</span></div>
+        ); })}
+      </div>
+      {docs.length ? (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold">Documentos pedidos</h3>
+          {docs.map((d) => { const st = ITEM_STATUS[d.status] ?? ITEM_STATUS["PENDING"]!; return (
+            <div key={d.key} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3 text-sm">
+              <div className="min-w-0"><p className="font-medium">{d.label}</p>{d.reason ? <p className="mt-0.5 text-xs text-destructive">O que corrigir: {d.reason}</p> : null}</div>
+              <div className="flex items-center gap-2">
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${st.cls}`}>{st.label}</span>
+                {d.onboardingUrl ? <Button size="sm" asChild><a href={d.onboardingUrl} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" />Concluir etapa segura</a></Button> : null}
+              </div>
+            </div>
+          ); })}
+          {docs.some((d) => d.onboardingUrl) ? <p className="text-xs text-muted-foreground">Algumas etapas, como selfie e prova de vida, são feitas no ambiente seguro da instituição de pagamento. Depois de concluir, volte aqui e clique em Atualizar situação.</p> : null}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+const STEPS = ["Tipo", "Dados pessoais", "Endereço", "Negócio", "Documentos", "Envio"];
+
+function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
+  const { t: ui } = useTranslation("ui");
+  const qc = useQueryClient();
+  const save = useServerFn(saveActivationDraft);
+  const submit = useServerFn(submitActivation);
+  const [step, setStep] = useState(0);
+  const [personType, setPersonType] = useState<"individual" | "company" | null>(data.personType);
+  const [form, setForm] = useState<Form>(data.form ?? {});
+  const [consents, setConsents] = useState<Record<string, boolean>>(data.consents ?? {});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [handoffOpen, setHandoffOpen] = useState(false);
+  const createHandoff = useServerFn(createActivationHandoff);
+  const [handoff, setHandoff] = useState<{ url: string; code: string; expiresAt: string } | null>(null);
+  const handoffM = useMutation({
+    mutationFn: async () => {
+      await save({ data: { personType, form: form as never, consents } });
+      const result = await createHandoff();
+      return { ...result, url: `${window.location.origin}/ativacao-celular/${result.token}` };
+    },
+    onSuccess: (result) => { setHandoff(result); setHandoffOpen(true); },
+    onError: (error: Error) => toast.error(error.message),
+  });
+  useEffect(() => { if (data.personType) setStep((s) => s || 1); }, [data.personType]);
+
+  const saveM = useMutation({
+    mutationFn: () => save({ data: { personType, form: form as never, consents } }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["activation"] }); qc.invalidateQueries(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const submitM = useMutation({
+    mutationFn: async () => { await save({ data: { personType, form: form as never, consents } }); await submit(); },
+    onSuccess: () => { toast.success("Cadastro enviado para análise."); qc.invalidateQueries({ queryKey: ["activation"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const go = async (n: number) => {
+    if (n > step) {
+      const nextErrors = validateActivationStep(personType, activationFormSchema.parse(form), step);
+      if (step === 4) {
+        const have = new Set(data.documents.map((document) => document.kind));
+        for (const kind of REQUIRED_DOCS[company ? "company" : "individual"]) if (!have.has(kind)) nextErrors[kind] = "Envie este documento obrigatório.";
+      }
+      if (Object.keys(nextErrors).length) { setErrors(nextErrors); toast.error("Confira os campos obrigatórios antes de continuar."); return; }
+    }
+    setErrors({}); await saveM.mutateAsync(); setStep(n); window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setForm((f) => ({ ...f, [k]: e.target.value })); setErrors((current) => ({ ...current, [k]: "" })); };
+  const F = ({ k, label, ...p }: { k: string; label: string } & React.ComponentProps<typeof Input>) => (
+    <div className="space-y-1.5"><Label htmlFor={k}>{label}</Label><Input id={k} value={form[k] ?? ""} onChange={set(k)} aria-invalid={!!errors[k]} {...p} />{errors[k] ? <p className="text-xs text-destructive">{errors[k]}</p> : null}</div>
+  );
+  const company = personType === "company";
+
+  return (
+    <section className="surface-panel p-6 space-y-6">
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm"><span className="font-medium">Etapa {step + 1} de {STEPS.length}: {ui(STEPS[step] ?? "")}</span><span className="text-muted-foreground">{Math.round(((step + 1) / STEPS.length) * 100)}%</span></div>
+        <Progress value={((step + 1) / STEPS.length) * 100} />
+      </div>
+
+      {step === 0 && (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {([["individual", "Pessoa Física", "Autônomo ou profissional liberal com CPF.", User], ["company", "Pessoa Jurídica", "Empresa com CNPJ (MEI, ME, LTDA etc.).", Building2]] as const).map(([v, t, d, I]) => (
+            <Button key={v} type="button" variant="outline" onClick={() => { setPersonType(v); setErrors((current) => ({ ...current, personType: "" })); }} className={`h-auto min-h-28 justify-start whitespace-normal p-5 text-left ${personType === v ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "hover:border-primary/50"}`}>
+              <I className="h-6 w-6 text-primary mb-2" /><p className="font-semibold">{t}</p><p className="text-sm text-muted-foreground">{d}</p>
+            </Button>
+          ))}
+          {errors['personType'] ? <p className="text-sm text-destructive sm:col-span-2">{errors['personType']}</p> : null}
+          {personType ? <div className="sm:col-span-2 rounded-lg border border-border p-4"><p className="text-sm font-medium">Onde deseja continuar?</p><div className="mt-3 flex flex-col gap-2 sm:flex-row"><Button type="button" variant="outline" disabled><Monitor className="size-4" />Continuar neste computador</Button><Button type="button" variant="outline" disabled={handoffM.isPending} onClick={() => handoffM.mutate()}>{handoffM.isPending ? <Loader2 className="size-4 animate-spin" /> : <Smartphone className="size-4" />}Continuar no celular</Button><Button type="button" variant="ghost" disabled title="Disponível depois da configuração de e-mail"><Mail className="size-4" />Receber por e-mail — em breve</Button></div></div> : null}
+        </div>
+      )}
+
+      <Dialog open={handoffOpen} onOpenChange={setHandoffOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Continue com segurança no celular</DialogTitle><DialogDescription>Abra o link no celular e informe o código. O acesso expira em 10 minutos e só pode ser usado uma vez.</DialogDescription></DialogHeader>
+          {handoff ? <div className="space-y-4"><div className="rounded-lg border bg-muted/40 p-4 text-center"><p className="text-xs text-muted-foreground">Código de confirmação</p><p className="mt-1 font-mono text-3xl font-bold tracking-widest">{handoff.code}</p></div><div className="space-y-2"><Label>Link seguro</Label><div className="flex gap-2"><Input readOnly value={handoff.url} className="min-w-0" /><Button type="button" size="icon" variant="outline" aria-label="Copiar link seguro" onClick={() => navigator.clipboard.writeText(handoff.url).then(() => toast.success("Link copiado."))}><Copy className="size-4" /></Button></div></div><Button className="w-full" asChild><a href={handoff.url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" />Abrir acesso do celular</a></Button></div> : null}
+        </DialogContent>
+      </Dialog>
+
+      {step === 1 && (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {F({ k: "fullName", label: company ? "Seu nome completo (sócio/administrador)" : "Nome completo" })}
+          {F({ k: "cpf", label: "CPF", inputMode: "numeric" })}
+          {F({ k: "birthDate", label: "Data de nascimento", type: "date" })}
+          {F({ k: "email", label: ui("E-mail"), type: "email" })}
+          {F({ k: "phone", label: "Celular com DDD", inputMode: "tel" })}
+          {company && <>
+            {F({ k: "legalName", label: "Razão social" })}
+            {F({ k: "tradeName", label: "Nome fantasia (opcional)" })}
+            {F({ k: "cnpj", label: "CNPJ", inputMode: "numeric" })}
+            {F({ k: "companyType", label: "Tipo de empresa (MEI, LTDA…)" })}
+            {F({ k: "openedOn", label: "Data de abertura", type: "date" })}
+            {F({ k: "legalRepName", label: "Nome do responsável legal" })}
+            {F({ k: "legalRepCpf", label: "CPF do responsável legal", inputMode: "numeric" })}
+            {F({ k: "legalRepRole", label: "Cargo do responsável (opcional)" })}
+          </>}
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="grid sm:grid-cols-2 gap-4">
+          {F({ k: "zipCode", label: "CEP", inputMode: "numeric" })}
+          {F({ k: "address", label: "Rua / Avenida" })}
+          {F({ k: "number", label: "Número" })}
+          {F({ k: "complement", label: "Complemento (opcional)" })}
+          {F({ k: "district", label: "Bairro" })}
+          {F({ k: "city", label: "Cidade" })}
+          <div className="space-y-1.5"><Label htmlFor="state">Estado</Label><Select value={form["state"] ?? ""} onValueChange={(value) => { setForm((current) => ({ ...current, state: value })); setErrors((current) => ({ ...current, state: "" })); }}><SelectTrigger id="state" aria-invalid={!!errors['state']}><SelectValue placeholder="Selecione o Estado" /></SelectTrigger><SelectContent>{BRAZIL_STATES.map(([uf, name]) => <SelectItem key={uf} value={uf}>{uf} — {name}</SelectItem>)}</SelectContent></Select>{errors['state'] ? <p className="text-xs text-destructive">{errors['state']}</p> : null}</div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="grid gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            {F({ k: "monthlyRevenue", label: "Faturamento mensal aproximado", inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => { setForm((current) => ({ ...current, monthlyRevenue: formatBRLInput(event.target.value) })); setErrors((current) => ({ ...current, monthlyRevenue: "" })); } })}
+            {F({ k: "expectedVolume", label: "Quanto espera receber por mês no WiizePay", inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => { setForm((current) => ({ ...current, expectedVolume: formatBRLInput(event.target.value) })); setErrors((current) => ({ ...current, expectedVolume: "" })); } })}
+          </div>
+          <div className="space-y-1.5"><Label htmlFor="businessModel">O que você vende ou qual serviço presta?</Label><Textarea id="businessModel" value={form["businessModel"] ?? ""} onChange={set("businessModel")} aria-invalid={!!errors['businessModel']} />{errors['businessModel'] ? <p className="text-xs text-destructive">{errors['businessModel']}</p> : null}</div>
+          <div className="space-y-1.5"><Label htmlFor="paymentSources">Como seus clientes costumam pagar pelos seus serviços?</Label><Textarea id="paymentSources" value={form["paymentSources"] ?? ""} onChange={set("paymentSources")} aria-invalid={!!errors['paymentSources']} placeholder="Ex.: Pix, boleto, cartão ou transferência." />{errors['paymentSources'] ? <p className="text-xs text-destructive">{errors['paymentSources']}</p> : null}</div>
+        </div>
+      )}
+
+      {step === 4 && <Documents company={company} docs={data.documents} errors={errors} />}
+
+      {step === 5 && (
+        <div className="space-y-4">
+          {([["truth", "Declaro que todas as informações e documentos enviados são verdadeiros."], ["terms", "Li e aceito os Termos de Uso e a Política de Pagamentos."], ["privacy", "Estou ciente da Política de Privacidade e do uso dos meus dados para análise cadastral."]] as const).map(([k, t]) => (
+            <label key={k} className="flex gap-3 items-start text-sm"><Checkbox checked={!!consents[k]} onCheckedChange={(v) => setConsents((c) => ({ ...c, [k]: v === true }))} /><span>{t}</span></label>
+          ))}
+          <p className="text-sm text-muted-foreground">Após o envio, o cadastro é analisado pelo Asaas. Os recebimentos só são liberados depois da aprovação.</p>
+        </div>
+      )}
+
+      <div className="flex justify-between gap-2 pt-2 border-t">
+        <Button variant="outline" disabled={step === 0 || saveM.isPending} onClick={() => go(step - 1)}>Voltar</Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" disabled={saveM.isPending} onClick={() => saveM.mutate(undefined, { onSuccess: () => toast.success("Progresso salvo.") })}>{ui("Salvar")}</Button>
+          {step < STEPS.length - 1 ? (
+            <Button disabled={saveM.isPending} onClick={() => go(step + 1)}>Continuar</Button>
+          ) : (
+            <Button disabled={submitM.isPending || !consents["truth"] || !consents["terms"] || !consents["privacy"]} onClick={() => submitM.mutate()}>{submitM.isPending ? "Enviando…" : "Enviar para análise"}</Button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Documents({ company, docs, errors }: { company: boolean; docs: { kind: string; created_at: string }[]; errors: Record<string, string> }) {
+  const qc = useQueryClient();
+  const upload = useServerFn(uploadActivationDocument);
+  const [busy, setBusy] = useState<string | null>(null);
+  const kinds = useMemo(() => {
+    const k: [string, boolean][] = [["id_front", true], ["id_back", true], ["selfie", true], ["address_proof", false]];
+    if (company) k.push(["company_doc", true], ["legal_rep_doc", true]);
+    return k;
+  }, [company]);
+  const onFile = async (kind: string, file?: File) => {
+    if (!file) return;
+    setBusy(kind);
+    try {
+      const prepared = await compressActivationFile(file);
+      if (prepared.size > 8 * 1024 * 1024) { toast.error("O arquivo deve ter até 8 MB."); return; }
+      const buf = new Uint8Array(await prepared.arrayBuffer());
+      let bin = ""; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+      await upload({ data: { kind: kind as never, mimeType: prepared.type, base64: btoa(bin) } });
+      toast.success("Documento enviado.");
+      qc.invalidateQueries({ queryKey: ["activation"] });
+    } catch (e) { toast.error((e as Error).message); throw e; } finally { setBusy(null); }
+  };
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-muted-foreground">As fotos são verificadas e reduzidas antes do envio. Você também pode escolher um PDF de até 8 MB.</p>
+      {kinds.map(([k, req]) => {
+        const sent = docs.some((d) => d.kind === k);
+        return (
+          <div key={k} className={`flex flex-col items-stretch justify-between gap-3 rounded-lg border p-4 sm:flex-row sm:items-center ${errors[k] ? "border-destructive" : ""}`}>
+            <div><p className="font-medium text-sm">{DOC_LABEL[k]} {req && <span className="text-destructive">*</span>}</p>
+              <p className="text-xs text-muted-foreground">{sent ? "Enviado ✓ (envie de novo para substituir)" : req ? "Obrigatório" : "Opcional"}</p></div>
+            <ActivationDocumentUpload kind={k} sent={sent} busy={busy !== null} onUpload={(file) => onFile(k, file)} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}

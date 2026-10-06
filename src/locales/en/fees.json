@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "title": "Clear rates and full control — WiizePay",
+    "description": "See what it costs to get paid by Pix, boleto and card with WiizePay, and how billing, invoices, contracts, clients and financial management come together in one place. No monthly fee and no hidden costs."
+  },
+  "hero": {
+    "eyebrow": "Pricing",
+    "lead": "Clear rates to get paid.",
+    "highlight": "Full control to grow.",
+    "subtitle": "So much more than rates: billing, invoices, contracts, clients and financial management in one place. See what each way of getting paid costs — no monthly fee and no hidden costs."
+  },
+  "methods": {
+    "eyebrow": "Payment methods",
+    "title": "Payment methods"
+  },
+  "pix": {
+    "title": "Pix",
+    "desc": "Get paid instantly with Pix.",
+    "note": "For installment or recurring Pix, the fixed fee applies to each installment/charge, depending on the type.",
+    "single": "One-time Pix",
+    "recurring": "Automatic / recurring Pix",
+    "perTx": "Per transaction",
+    "perCharge": "Per charge"
+  },
+  "boleto": {
+    "title": "Boleto",
+    "desc": "Offer boleto payments, one-time or in installments.",
+    "note": "The fixed fee for each tier applies to every boleto/installment.",
+    "single": "One-time boleto",
+    "installments": "Installment boleto",
+    "perBoleto": "Per boleto",
+    "range": "Boleto from {{min}}x to {{max}}x"
+  },
+  "cards": {
+    "title": "Cards",
+    "creditTitle": "Credit card",
+    "desc": "Credit with up to {{max}} installments.",
+    "subtitle": "Progressive fees based on the number of installments.",
+    "mode": "Type",
+    "fee": "Fee",
+    "debit": "Debit",
+    "creditSingle": "Credit, single payment",
+    "creditRange": "Credit from {{min}}x to {{max}}x",
+    "note": "The fixed fee is charged only once per sale, even for installment purchases."
+  },
+  "services": {
+    "title": "Additional services",
+    "subtitle": "Additional features can be used as your operation needs them.",
+    "service": "Service",
+    "value": "Price",
+    "invoice": "Authorized service invoice",
+    "withdrawal": "Pix withdrawal",
+    "minWithdrawal": "Minimum withdrawal",
+    "free": "No fee"
+  },
+  "anticipation": {
+    "title": "Early payout",
+    "desc": "Advance your receivables whenever you need.",
+    "subtitle": "Receive your money before the original settlement date.",
+    "perMonth": "per month advanced",
+    "boleto": "Boleto",
+    "credit_card_installment": "Installment card",
+    "credit_card_single": "Single-payment card",
+    "pix": "Pix",
+    "other": "Other",
+    "prazos": "See settlement times"
+  },
+  "sim": {
+    "eyebrow": "Simulator",
+    "title": "Simulate your next charge.",
+    "subtitle": "Choose installments and who pays the fee. The calculation uses the same rules as charge creation.",
+    "amount": "Charge amount",
+    "method": "Payment method",
+    "installments": "Installments",
+    "cardFixedOnce": "For credit cards, the fixed fee is charged only once per sale.",
+    "fixedEach": "The fixed fee is charged on each installment.",
+    "whoPays": "Who pays the fee",
+    "absorb": "I absorb it",
+    "customerPays": "Customer pays",
+    "customerShare": "{{v}}% customer",
+    "youReceive": "You receive",
+    "serviceValue": "Service amount",
+    "feeByCustomer": "Fee paid by customer",
+    "totalCustomer": "Total paid by customer",
+    "installmentsEst": "{{n}} estimated installments",
+    "installmentsOf": "{{n}}x of {{v}}",
+    "fee": "WiizePay fee",
+    "calculating": "Calculating…",
+    "net": "Net amount",
+    "disclaimer": "Estimate based on current rules. The final amount is confirmed when the charge is created.",
+    "labels": {
+      "pix": "Pix",
+      "pix_recurring": "Recurring Pix",
+      "boleto": "Boleto",
+      "debit_card": "Debit card",
+      "credit_card": "Credit card"
+    }
+  },
+  "faq": {
+    "title": "Questions about fees?",
+    "q1": "Is the fixed fee charged per installment?",
+    "a1": "For installment Pix and boleto, the fixed fee is charged on each installment or charge. For credit cards, the fixed fee is charged only once per sale.",
+    "q2": "Is there a monthly fee?",
+    "a2": "No. You only pay the fees for the transactions and services you use.",
+    "q3": "Can I get early payout on my receivables?",
+    "a3": "Yes. Only receivables that are already paid and eligible can be advanced, and the cost is shown before you confirm."
+  },
+  "cta": {
+    "title": "Ready to start?",
+    "subtitle": "Get paid in a simple, secure way, integrated with your operation.",
+    "button": "Create my account"
+  },
+  "loading": "Loading…",
+  "noFee": "No fee",
+  "rate": {
+    "fixed": "Fixed fee",
+    "percentage": "Percentage"
+  },
+  "debit": {
+    "title": "Account debit",
+    "desc": "Get paid once or in installments directly by account debit.",
+    "single": "One-time debit",
+    "range": "Debit from {{min}}x to {{max}}x",
+    "note": "The fixed fee is charged once per sale, including installment payments."
+  },
+  "dunning": {
+    "eyebrow": "Payment reminders",
+    "title": "Get paid without turning collection into work.",
+    "subtitle": "WiizePay follows every due date and keeps your customer informed through the right channels. Fewer delays, fewer repetitive conversations and more time to grow.",
+    "per": "per charge",
+    "popular": "Most popular",
+    "cta": "I want better collections",
+    "plans": {
+      "essential": "Essential Reminder",
+      "smart": "Smart Reminder",
+      "intensive": "Intensive Reminder"
+    },
+    "desc": {
+      "essential": "The right touch for simple, objective collections.",
+      "smart": "More channels working together to improve your chances of getting paid.",
+      "intensive": "Complete follow-up for payments that need maximum attention."
+    },
+    "ch": {
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "Email",
+      "voice": "Automatic call"
+    },
+    "note": "Flat price per individual charge, not per message. Each installment and each recurring cycle is a separate charge. Available balance is required."
+  }
+}

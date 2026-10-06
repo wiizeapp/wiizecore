@@ -1,0 +1,1 @@
+ALTER TABLE public.fiscal_settings ADD COLUMN invoice_webhook_id text;

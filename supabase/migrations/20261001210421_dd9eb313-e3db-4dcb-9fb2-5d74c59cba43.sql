@@ -1,0 +1,1 @@
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS financial_failed_attempts integer NOT NULL DEFAULT 0, ADD COLUMN IF NOT EXISTS financial_locked_until timestamptz;

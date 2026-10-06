@@ -1,0 +1,2 @@
+ALTER TABLE public.bank_accounts ADD COLUMN IF NOT EXISTS sensitive_enc text;
+COMMENT ON COLUMN public.bank_accounts.sensitive_enc IS 'AES-256-GCM (versioned) JSON with holder_document, agency, account_number, pix_key; plaintext columns keep masked values only';

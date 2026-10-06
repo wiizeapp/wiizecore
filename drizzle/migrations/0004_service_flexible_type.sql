@@ -1,0 +1,2 @@
+ALTER TABLE public.services ADD COLUMN IF NOT EXISTS flexible_type boolean NOT NULL DEFAULT false;
+COMMENT ON COLUMN public.services.flexible_type IS 'Quando true, a forma de cobrança (único/parcelado/recorrente) é escolhida em cada cobrança.';

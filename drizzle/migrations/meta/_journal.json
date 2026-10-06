@@ -1,0 +1,97 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790944772999,
+      "tag": "0000_notification_mark_read",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790946394889,
+      "tag": "0001_payment_link_token_ciphertext",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790948868037,
+      "tag": "0002_activation_provider_onboarding",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790969495827,
+      "tag": "0003_checkout_events",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790970779770,
+      "tag": "0004_service_flexible_type",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790971894491,
+      "tag": "0005_contract_files_unsigned_kind",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791036196351,
+      "tag": "0006_customer_documents_portal",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791154504209,
+      "tag": "0007_coupons",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791163129954,
+      "tag": "0008_user_onboarding",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791196946832,
+      "tag": "0009_mfa_required_restrictive",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791198375017,
+      "tag": "0010_activation_mobile_handoffs_and_required_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791233603642,
+      "tag": "0011_bank_accounts_encrypted",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791233944495,
+      "tag": "0012_activation_form_encrypted",
+      "breakpoints": true
+    }
+  ]
+}

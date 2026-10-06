@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "title": "Tarifas claras y control total — WiizePay",
+    "description": "Conoce cuánto cuesta cobrar por Pix, boleto y tarjeta con WiizePay y cómo cobros, facturas, contratos, clientes y gestión financiera se unen en un solo lugar. Sin mensualidad y sin costos ocultos."
+  },
+  "hero": {
+    "eyebrow": "Precios",
+    "lead": "Tarifas claras para cobrar.",
+    "highlight": "Control total para crecer.",
+    "subtitle": "Mucho más que tarifas: cobros, facturas, contratos, clientes y gestión financiera en un solo lugar. Descubre cuánto cuesta cada forma de cobrar — sin mensualidad y sin costos ocultos."
+  },
+  "methods": {
+    "eyebrow": "Medios de pago",
+    "title": "Medios de pago"
+  },
+  "pix": {
+    "title": "Pix",
+    "desc": "Recibe al instante con Pix.",
+    "note": "En Pix en cuotas o recurrente, la tarifa fija se aplica en cada cuota/cobro, según la modalidad.",
+    "single": "Pix al contado",
+    "recurring": "Pix Automático / recurrente",
+    "perTx": "Por transacción",
+    "perCharge": "Por cobro"
+  },
+  "boleto": {
+    "title": "Boleto",
+    "desc": "Ofrece pago por boleto al contado o en cuotas.",
+    "note": "La tarifa fija de cada tramo se aplica a cada boleto/cuota.",
+    "single": "Boleto al contado",
+    "installments": "Boleto en cuotas",
+    "perBoleto": "Por boleto",
+    "range": "Boleto de {{min}}x a {{max}}x"
+  },
+  "cards": {
+    "title": "Tarjetas",
+    "creditTitle": "Tarjeta de crédito",
+    "desc": "Crédito con hasta {{max}} cuotas.",
+    "subtitle": "Tarifas progresivas según el número de cuotas.",
+    "mode": "Modalidad",
+    "fee": "Tarifa",
+    "debit": "Débito",
+    "creditSingle": "Crédito al contado",
+    "creditRange": "Crédito de {{min}}x a {{max}}x",
+    "note": "La tarifa fija se cobra una sola vez por venta, incluso en compras en cuotas."
+  },
+  "services": {
+    "title": "Servicios adicionales",
+    "subtitle": "Los recursos adicionales se pueden usar según la necesidad de tu operación.",
+    "service": "Servicio",
+    "value": "Valor",
+    "invoice": "Factura de servicio autorizada",
+    "withdrawal": "Retiro por Pix",
+    "minWithdrawal": "Retiro mínimo",
+    "free": "Sin tarifa"
+  },
+  "anticipation": {
+    "title": "Anticipo",
+    "desc": "Anticipa tus cobros cuando lo necesites.",
+    "subtitle": "Recibe tus valores antes del plazo original de liquidación.",
+    "perMonth": "por mes anticipado",
+    "boleto": "Boleto",
+    "credit_card_installment": "Tarjeta en cuotas",
+    "credit_card_single": "Tarjeta al contado",
+    "pix": "Pix",
+    "other": "Otros",
+    "prazos": "Ver plazos"
+  },
+  "sim": {
+    "eyebrow": "Simulador",
+    "title": "Simula tu próximo cobro.",
+    "subtitle": "Elige las cuotas y quién paga la tarifa. El cálculo usa las mismas reglas que la creación del cobro.",
+    "amount": "Valor del cobro",
+    "method": "Forma de pago",
+    "installments": "Número de cuotas",
+    "cardFixedOnce": "En tarjeta de crédito y débito en cuenta, la tarifa fija se cobra una sola vez por venta.",
+    "fixedEach": "La tarifa fija se cobra en cada cuota.",
+    "whoPays": "Quién paga la tarifa",
+    "absorb": "La asumo yo",
+    "customerPays": "Paga el cliente",
+    "customerShare": "{{v}}% cliente",
+    "youReceive": "Recibes",
+    "serviceValue": "Valor del servicio",
+    "feeByCustomer": "Tarifa pagada por el cliente",
+    "totalCustomer": "Total pagado por el cliente",
+    "installmentsEst": "{{n}} cuotas estimadas",
+    "installmentsOf": "{{n}}x de {{v}}",
+    "fee": "Tarifa WiizePay",
+    "calculating": "Calculando…",
+    "net": "Valor neto",
+    "disclaimer": "Resultado estimado con las reglas vigentes. El valor final se confirma al crear el cobro.",
+    "labels": {
+      "pix": "Pix",
+      "pix_recurring": "Pix recurrente",
+      "boleto": "Boleto",
+      "debit_card": "Tarjeta de débito",
+      "credit_card": "Tarjeta de crédito"
+    }
+  },
+  "faq": {
+    "title": "¿Dudas sobre las tarifas?",
+    "q1": "¿La tarifa fija se cobra por cuota?",
+    "a1": "En Pix y boleto en cuotas, la tarifa fija se cobra en cada cuota o cobro. En tarjeta de crédito y débito, la tarifa fija se cobra una sola vez por venta.",
+    "q2": "¿Hay mensualidad?",
+    "a2": "No. Solo pagas las tarifas de las transacciones y servicios que utilices.",
+    "q3": "¿Puedo anticipar mis cobros?",
+    "a3": "Sí. Solo los cobros ya pagados y disponibles para anticipo pueden anticiparse, y el costo aparece antes de la confirmación."
+  },
+  "cta": {
+    "title": "¿Listo para empezar?",
+    "subtitle": "Recibe pagos de forma simple, segura e integrada a tu operación.",
+    "button": "Crear mi cuenta"
+  },
+  "loading": "Cargando…",
+  "noFee": "Sin tarifa",
+  "rate": {
+    "fixed": "Tarifa fija",
+    "percentage": "Porcentaje"
+  },
+  "debit": {
+    "title": "Débito en cuenta",
+    "desc": "Cobra al contado o en cuotas directamente por débito en cuenta.",
+    "single": "Débito al contado",
+    "range": "Débito de {{min}}x a {{max}}x",
+    "note": "La tarifa fija se cobra una sola vez por venta, incluso en cuotas."
+  },
+  "dunning": {
+    "eyebrow": "Recordatorios de cobro",
+    "title": "Cobra sin convertir el seguimiento en trabajo.",
+    "subtitle": "WiizePay acompaña cada vencimiento y mantiene a tu cliente informado en los canales correctos. Menos retrasos y más tiempo para crecer.",
+    "per": "por cobro",
+    "popular": "Más elegido",
+    "cta": "Quiero cobrar mejor",
+    "plans": {
+      "essential": "Recordatorio Esencial",
+      "smart": "Recordatorio Inteligente",
+      "intensive": "Recordatorio Intensivo"
+    },
+    "desc": {
+      "essential": "El toque correcto para cobros simples y objetivos.",
+      "smart": "Más canales trabajando juntos para mejorar tus posibilidades de cobro.",
+      "intensive": "Seguimiento completo para cobros que requieren máxima atención."
+    },
+    "ch": {
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-mail",
+      "voice": "Llamada automática"
+    },
+    "note": "Precio fijo por cobro individual, no por mensaje. Cada cuota y cada ciclo recurrente es un cobro separado. Se requiere saldo disponible."
+  }
+}
