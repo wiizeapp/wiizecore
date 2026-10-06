@@ -471,12 +471,11 @@ export async function checkPaymentDivergence(admin: AdminClient, tenantId: strin
 /** Sininho + e-mails de pagamento recebido ou cobrança em atraso (uma vez por cobrança e situação). */
 export async function notifyPaymentStatus(admin: AdminClient, tenantId: string, paymentId: string, status: string, _eventType: string) {
   if (status !== "paid" && status !== "overdue") return;
-  const { notifyTenant, emailPerson, brl, tenantName } = await import("./notify.server");
+  const { notifyTenant, brl } = await import("./notify.server");
   const { data: p } = await admin.from("payments").select("id, gross_amount, net_amount, description, due_on, invoice_url, customers(name, email)").eq("id", paymentId).eq("tenant_id", tenantId).maybeSingle();
   if (!p) return;
   const c = p.customers as { name?: string | null; email?: string | null } | null;
   const who = c?.name ?? "Cliente";
-  const company = await tenantName(admin, tenantId);
   const kind = status === "paid" ? "payment.received" : "payment.overdue";
   const lines = [
     { label: "Cliente", value: who },
@@ -490,19 +489,11 @@ export async function notifyPaymentStatus(admin: AdminClient, tenantId: string, 
       title: "Pagamento recebido", body: `${who} pagou ${brl(p.gross_amount)}.`,
       email: { subject: `Pagamento recebido de ${who}`, lines: [...lines, { label: "Valor líquido", value: brl(p.net_amount) }] },
     });
-    if (c?.email) await emailPerson(admin, {
-      tenantId, kind: "payment.receipt", dedupeKey: `payment.receipt:${paymentId}`,
-      email: { to: c.email, subject: `Pagamento confirmado — ${company}`, title: "Pagamento confirmado", intro: `Olá, ${who}. Recebemos seu pagamento para ${company}. Obrigado!`, lines },
-    });
   } else {
     await notifyTenant(admin, {
       tenantId, kind, dedupeKey: `${kind}:${paymentId}`, link: "/cobrancas",
       title: "Cobrança em atraso", body: `A cobrança de ${who} (${brl(p.gross_amount)}) venceu e ainda não foi paga.`,
       email: { subject: `Cobrança em atraso — ${who}`, lines },
-    });
-    if (c?.email && p.invoice_url) await emailPerson(admin, {
-      tenantId, kind: "payment.overdue_customer", dedupeKey: `payment.overdue_customer:${paymentId}`,
-      email: { to: c.email, subject: `Pagamento pendente — ${company}`, title: "Seu pagamento está pendente", intro: `Olá, ${who}. A cobrança de ${company} venceu. Se já pagou, desconsidere esta mensagem.`, lines, cta: { label: "Pagar agora", url: p.invoice_url } },
     });
   }
 }
