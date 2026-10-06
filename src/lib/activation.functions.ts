@@ -152,6 +152,12 @@ export const submitActivation = createServerFn({ method: "POST" })
     }
     const { logAudit } = await import("./audit.server");
     await logAudit(admin, { tenantId: m.tenant_id, userId: context.userId, action: "activation.submitted", resource: "payment_activation", resourceId: m.tenant_id });
+    const { notifyTenant } = await import("./notify.server");
+    await notifyTenant(admin, {
+      tenantId: m.tenant_id, kind: "activation.submitted", link: "/ativacao", dedupeKey: `activation.submitted:${m.tenant_id}:${new Date().toISOString().slice(0, 16)}`,
+      title: "Cadastro enviado para análise", body: "Seus dados foram enviados ao Asaas. A análise costuma levar até 3 dias úteis e avisaremos aqui e por e-mail.",
+      email: { subject: "WiizePay — Cadastro enviado para análise" },
+    });
     const { sendActivationToProvider } = await import("./asaas-onboarding.server");
     const { getRequestHeader } = await import("@tanstack/react-start/server");
     await sendActivationToProvider(admin, m.tenant_id, context.userId, getRequestHeader("origin") ?? null);
