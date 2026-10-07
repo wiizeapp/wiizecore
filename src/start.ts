@@ -2,6 +2,7 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachBearer } from "@/lib/auth-bearer";
+import { applySecurityHeaders } from "@/lib/security-headers";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -25,26 +26,19 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
-// Cabeçalhos de segurança em todas as respostas.
-const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
+// Cabeçalhos de segurança em todas as respostas (regras em src/lib/security-headers.ts).
+const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
   const response = (result as { response?: Response }).response;
   if (response instanceof Response) {
     try {
-      const h = response.headers;
-      h.set("X-Content-Type-Options", "nosniff");
-      h.set("Referrer-Policy", "strict-origin-when-cross-origin");
-      h.set("Permissions-Policy", "camera=(self), microphone=(), geolocation=(), payment=()");
-      h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-      h.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-      // Impede que outros sites exibam o WiizePay escondido dentro de uma moldura (clickjacking).
-      h.set(
-        "Content-Security-Policy",
-        "frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev https://lovable.dev; base-uri 'self'; object-src 'none'",
-      );
-      if (new URL(response.url || "http://x/").pathname.startsWith("/api/") || h.get("content-type")?.includes("json")) {
-        h.set("Cache-Control", "no-store");
-      }
+      const url = new URL(request.url);
+      applySecurityHeaders(response.headers, {
+        pathname: url.pathname,
+        host: request.headers.get("host") ?? url.host,
+        supabaseUrl: process.env["SUPABASE_URL"],
+        dev: process.env["NODE_ENV"] !== "production",
+      });
     } catch {
       // cabeçalhos imutáveis: ignora
     }
