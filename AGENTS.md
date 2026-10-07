@@ -35,6 +35,6 @@
 - Environment-specific URLs (site, fallback, Wiize webhook/redirects) live only in `src/lib/deploy-config.ts`. Why: a production copy changes one file.
 - Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: um envio por evento e falha de e-mail nunca quebra a operação financeira.
 - Coproduction (`src/lib/coproduction.server.ts`, math in `src/lib/coproduction-math.ts`) belongs only to a charge; checkout stays blocked until all accept and the split is registered in Asaas; amounts come only from Asaas-confirmed splits. Why: never credit or debit estimated money.
-- Response security headers live only in `src/lib/security-headers.ts` (static: `vercel.json`).
+- Response security headers live only in `src/lib/security-headers.ts`.
 - Roles live in a separate table; server team access goes through `src/lib/member-access.server.ts` (active membership + `src/lib/permissions.ts`), max one active membership per user. Why: block ex-members and restricted roles server-side.
-- Attack alerts go via `src/lib/security-alerts.server.ts`, fired from audit helpers, grouped per 30 min. Why: fast alert, no spam.
+- Attack alerts go via `src/lib/security-alerts.server.ts`, fired from audit helpers, grouped per 30 min.
