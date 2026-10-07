@@ -98,6 +98,8 @@ export const ensureWorkspace = createServerFn({ method: "POST" })
           .maybeSingle(),
       ]);
 
+    await (await import("./launch-promotion.server")).maybeSendLaunchPromoReminder(supabaseAdmin, tenantId!);
+
     const setting = (key: string, fallback: number) => {
       const found = platformSettings?.find((row) => row.key === key);
       return found ? Number(found.value) : fallback;
