@@ -53,19 +53,25 @@ function Rate({ row, promotional = false }: { row?: FeeRow | undefined; promotio
   );
 }
 
-function PromotionNotice({ row }: { row: FeeRow }) {
+/** Aviso discreto, em largura total, sob os cards de Pix e Boleto. */
+function PromoStrip({ rate }: { rate: number }) {
   const { t } = useTranslation("fees");
-  return <p className="mt-2 max-w-xs text-xs leading-5 text-muted-foreground">{t("promo.rateNote", { rate: formatPercent(row.percentage_fee) })}</p>;
+  return (
+    <p className="flex items-start gap-2 rounded-lg border border-border/40 bg-foreground/[0.045] px-4 py-2.5 text-xs leading-5 text-muted-foreground lg:col-span-2">
+      <Info className="mt-0.5 size-3.5 shrink-0" />
+      <span>{t("promo.strip", { rate: formatPercent(rate) })}</span>
+    </p>
+  );
 }
 
-function Block({ icon: Icon, title, desc, note, children, className = "" }: { icon: typeof QrCode; title: string; desc: string; note?: string; children: ReactNode; className?: string }) {
+function Block({ icon: Icon, title, desc, note, noteClass = "", children, className = "" }: { icon: typeof QrCode; title: string; desc: string; note?: string; noteClass?: string; children: ReactNode; className?: string }) {
   return (
     <article className={`rounded-xl border border-border bg-surface p-6 sm:p-8 ${className}`}>
       <header className="flex items-start gap-4">
         <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><Icon className="size-5" /></span>
         <div><h3 className="text-xl font-semibold">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{desc}</p></div>
       </header>
-      {note ? <p className="mt-5 flex gap-2 rounded-lg bg-background/60 px-3.5 py-2.5 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{note}</p> : null}
+      {note ? <p className={`mt-5 flex gap-2 rounded-lg bg-background/60 px-3.5 py-2.5 text-xs leading-5 text-muted-foreground ${noteClass}`.trim()}><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{note}</p> : null}
       <div className="mt-6">{children}</div>
     </article>
   );
@@ -75,7 +81,7 @@ function RateLine({ label, hint, extra, row, promotional = false }: { label: str
   return (
     <div className="flex flex-col gap-2 border-t border-border/60 py-5 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
       <div><p className="font-medium">{label}</p><p className="mt-0.5 text-xs text-muted-foreground">{hint}{extra ? <> · {extra}</> : null}</p></div>
-      <div className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promotional} />{promotional && row ? <PromotionNotice row={row} /> : null}</div>
+      <div className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promotional} /></div>
     </div>
   );
 }
@@ -87,7 +93,7 @@ function TierList({ rows, singleLabel, rangeKey, promoteSingle = false }: { rows
       {rows.map((row) => (
         <div key={row.id} className="flex min-h-16 flex-col justify-center gap-2 border-t border-border/60 py-4 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
           <dt className="text-sm text-muted-foreground">{row.installment_max <= 1 ? singleLabel : t(rangeKey, { min: row.installment_min, max: row.installment_max })}</dt>
-           <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promoteSingle && row.installment_max === 1} />{promoteSingle && row.installment_max === 1 ? <PromotionNotice row={row} /> : null}</dd>
+           <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promoteSingle && row.installment_max === 1} /></dd>
         </div>
       ))}
       {!rows.length ? <p className="py-4 text-sm text-muted-foreground">{t("loading")}</p> : null}
