@@ -57,7 +57,7 @@ export function classifySecurityEvent(eventType: string, severity: string): keyo
 }
 
 export function guideFor(category: string): AlertGuide {
-  return GUIDES[category] ?? GUIDES.generic!;
+  return GUIDES[category] ?? GUIDES["generic"]!;
 }
 
 /** Chave de agrupamento: no máximo 1 e-mail por categoria + origem a cada janela. */
