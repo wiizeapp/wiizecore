@@ -43,3 +43,8 @@
 - [x] Guiar fotos de documentos, aceitar PDF e pré-validar resolução, luz, foco e integridade antes do envio.
 
 - [x] Coproduções MVP
+
+- [ ] Segurança V1: bloquear membros desativados em todas as funções do servidor (aguarda aprovação).
+- [ ] Segurança V2: checar permissões específicas no servidor.
+- [ ] Segurança V3: empresa ativa explícita para quem participa de duas empresas.
+- [ ] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
