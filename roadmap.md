@@ -44,7 +44,7 @@
 
 - [x] Coproduções MVP
 
-- [ ] Segurança V1: bloquear membros desativados em todas as funções do servidor (aguarda aprovação).
-- [ ] Segurança V2: checar permissões específicas no servidor.
-- [ ] Segurança V3: empresa ativa explícita para quem participa de duas empresas.
-- [ ] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
+- [x] Segurança V1: bloquear membros desativados em todas as funções do servidor (aguarda aprovação).
+- [x] Segurança V2: checar permissões específicas no servidor.
+- [x] Segurança V3: empresa ativa explícita para quem participa de duas empresas.
+- [x] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
