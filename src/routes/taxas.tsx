@@ -111,6 +111,8 @@ function FeesPage() {
   const pixRec = by("pix_recurring")[0];
   const boleto = by("boleto");
   const credit = by("credit_card");
+  const boletoSingle = boleto.find((r) => r.installment_max <= 1);
+  const promoRate = pix?.percentage_fee ?? boletoSingle?.percentage_fee;
   const maxCredit = credit.reduce((m, r) => Math.max(m, r.installment_max), 0) || 21;
   const service = data?.serviceFees;
   const anticipation = data?.anticipationFees ?? [];
@@ -143,13 +145,14 @@ function FeesPage() {
           </div>
           <h2 className="text-2xl font-semibold sm:text-3xl">{t("methods.title")}</h2>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")}>
+            <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")} noteClass="lg:min-h-[4.25rem]">
               <RateLine label={t("pix.single")} hint={t("pix.perTx")} row={pix} promotional />
               <RateLine label={t("pix.recurring")} hint={t("pix.perCharge")} row={pixRec} />
             </Block>
-            <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")}>
+            <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")} noteClass="lg:min-h-[4.25rem]">
               <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle />
             </Block>
+            {promoRate != null ? <PromoStrip rate={promoRate} /> : null}
             <Block icon={CreditCard} title={t("cards.title")} desc={t("cards.subtitle")} className="lg:col-span-2">
               <div className="grid gap-5">
                 <section className="rounded-lg border border-border/70 bg-background/35 p-4 sm:p-5">
