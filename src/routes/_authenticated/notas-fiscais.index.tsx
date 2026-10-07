@@ -1,4 +1,5 @@
 import { useServiceFees } from "@/hooks/use-service-fees";
+import { csvCell } from "@/lib/csv-safe";
 import { NameText } from "@/components/ds/name-text";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
@@ -96,7 +97,7 @@ function NotasFiscais() {
   const { t: ui } = useTranslation("ui");
     const head = ["Número", ui("Cliente"), "Serviço", "Valor", "Data", "Origem", "Status"];
     const lines = rows.map((r) => [r.number ?? "", r.customers?.name ?? "", r.fiscal_services?.name ?? "", String(r.value).replace(".", ","), r.effective_date, INVOICE_ORIGIN_LABEL[r.origin] ?? r.origin, INVOICE_STATUS_LABEL[r.status]]);
-    const csv = [head, ...lines].map((l) => l.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
+    const csv = [head, ...lines].map((l) => l.map(csvCell).join(";")).join("\n");
     const url = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a"); a.href = url; a.download = `notas-fiscais-${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(url);
   }
