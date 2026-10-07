@@ -30,7 +30,7 @@ export const saveOnboarding = createServerFn({ method: "POST" })
   }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).limit(1).maybeSingle();
+    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
     const { error } = await supabaseAdmin.from("user_onboarding").upsert({
       user_id: context.userId,
       tenant_id: member?.tenant_id ?? null,
@@ -53,7 +53,7 @@ export const skipOnboarding = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).limit(1).maybeSingle();
+    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
     const { error } = await supabaseAdmin.from("user_onboarding").upsert({
       user_id: context.userId,
       tenant_id: member?.tenant_id ?? null,

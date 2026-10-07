@@ -391,14 +391,15 @@ export async function reimburseProviderFee(admin: AdminClient, paymentId: string
   }
 }
 
-/** Converte a URL do preview para o endereço estável que o Asaas consegue chamar. */
+/**
+ * Endereço que recebe os avisos do Asaas. Só aceita domínios fixos do DEPLOY_CONFIG;
+ * qualquer outra origem enviada pelo navegador é ignorada (nunca vira destino dos avisos).
+ */
 export function publicBaseUrl(origin: string | null | undefined): string | null {
   const stable = DEPLOY_CONFIG.stableFallbackUrl;
-  if (!origin) return stable;
-  const preview = origin.match(/^https:\/\/id-preview--([0-9a-f-]+)\.lovable\.app/);
-  if (preview) return `https://project--${preview[1]}-dev.lovable.app`;
-  if (origin.startsWith("http://localhost") || origin.startsWith("http://127.")) return stable;
-  return origin.replace(/\/$/, "");
+  const allowed = new Set<string>([DEPLOY_CONFIG.publicSiteUrl, `https://www.${DEPLOY_CONFIG.publicSiteUrl.replace(/^https:\/\//, "")}`, stable]);
+  const clean = (origin ?? "").replace(/\/$/, "");
+  return allowed.has(clean) ? clean : stable;
 }
 
 const PROVIDER_STATUS_TO_EVENT: Record<string, string> = {

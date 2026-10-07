@@ -4753,5 +4753,12 @@
   "QR Code expirado ou já usado": "QR Code expired or already used",
   "Por segurança, cada QR Code vale 15 minutos e funciona uma única vez. Gere um novo no computador.": "For security, each QR Code is valid for 15 minutes and works only once. Generate a new one on the computer.",
   "Dados enviados": "Data sent",
-  "Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos.": "This access is valid for 15 minutes and only allows filling in data and sending documents."
+  "Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos.": "This access is valid for 15 minutes and only allows filling in data and sending documents.",
+  "Digite o CPF (11 números) ou CNPJ (14 números) completo.": "Enter your full CPF (11 digits) or CNPJ (14 digits).",
+  "Use o e-mail cadastrado e o seu CPF ou CNPJ completo.": "Use your registered email and your full CPF or CNPJ.",
+  "CPF ou CNPJ completo (só números)": "Full CPF or CNPJ (numbers only)",
+  "E-mail ou documento não conferem. Use o e-mail e o CPF/CNPJ completo cadastrados.": "Email or document do not match. Use the registered email and full CPF/CNPJ.",
+  "Seu acesso à empresa foi desativado. Fale com o proprietário da conta.": "Your access to the company was deactivated. Contact the account owner.",
+  "Você já faz parte de outra empresa ativa. Peça para ser removido dela antes de aceitar este convite.": "You already belong to another active company. Ask to be removed from it before accepting this invite.",
+  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "File type not allowed. Send a PDF, image, spreadsheet or text document."
 }

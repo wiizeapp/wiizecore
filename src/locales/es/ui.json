@@ -4782,5 +4782,12 @@
   "QR Code expirado ou já usado": "Código QR expirado o ya usado",
   "Por segurança, cada QR Code vale 15 minutos e funciona uma única vez. Gere um novo no computador.": "Por seguridad, cada código QR vale 15 minutos y funciona una sola vez. Genere uno nuevo en la computadora.",
   "Dados enviados": "Datos enviados",
-  "Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos.": "Este acceso vale 15 minutos y solo permite completar datos y enviar documentos."
+  "Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos.": "Este acceso vale 15 minutos y solo permite completar datos y enviar documentos.",
+  "Digite o CPF (11 números) ou CNPJ (14 números) completo.": "Ingrese el CPF (11 números) o CNPJ (14 números) completo.",
+  "Use o e-mail cadastrado e o seu CPF ou CNPJ completo.": "Use el correo registrado y su CPF o CNPJ completo.",
+  "CPF ou CNPJ completo (só números)": "CPF o CNPJ completo (solo números)",
+  "E-mail ou documento não conferem. Use o e-mail e o CPF/CNPJ completo cadastrados.": "El correo o documento no coinciden. Use el correo y el CPF/CNPJ completo registrados.",
+  "Seu acesso à empresa foi desativado. Fale com o proprietário da conta.": "Su acceso a la empresa fue desactivado. Hable con el propietario de la cuenta.",
+  "Você já faz parte de outra empresa ativa. Peça para ser removido dela antes de aceitar este convite.": "Ya forma parte de otra empresa activa. Pida ser eliminado de ella antes de aceptar esta invitación.",
+  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "Tipo de archivo no permitido. Envíe PDF, imagen, hoja de cálculo o documento de texto."
 }

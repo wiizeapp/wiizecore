@@ -127,6 +127,13 @@
       "when": 1791320440795,
       "tag": "0017_unique_tenant_document",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791378293154,
+      "tag": "0018_security_active_member_and_file_types",
+      "breakpoints": true
     }
   ]
 }

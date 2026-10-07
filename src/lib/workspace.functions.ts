@@ -50,6 +50,11 @@ export const ensureWorkspace = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
 
+    if (!membership) {
+      // Quem foi desativado não ganha uma empresa nova automaticamente.
+      const { data: past } = await supabaseAdmin.from("tenant_members").select("id").eq("user_id", userId).neq("status", "active").limit(1).maybeSingle();
+      if (past) throw new Error("Seu acesso à empresa foi desativado. Fale com o proprietário da conta.");
+    }
     let tenantId = membership?.tenant_id ?? null;
     let tenantName = (membership?.tenants as { name?: string } | null)?.name ?? "";
     let role = membership?.role ?? "owner";
@@ -154,7 +159,7 @@ export const updateCompany = createServerFn({ method: "POST" })
     const { data: membership } = await context.supabase
       .from("tenant_members")
       .select("tenant_id, role")
-      .eq("user_id", context.userId)
+      .eq("user_id", context.userId).eq("status", "active")
       .limit(1)
       .maybeSingle();
     if (!membership || !["owner", "admin"].includes(membership.role)) {

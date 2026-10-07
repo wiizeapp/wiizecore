@@ -25,7 +25,7 @@ export function cacheControlFor(pathname: string): string {
   return "no-store, max-age=0";
 }
 
-export function buildCsp(opts: { supabaseUrl?: string; preview: boolean; dev: boolean }): string {
+export function buildCsp(opts: { supabaseUrl?: string | undefined; preview: boolean; dev: boolean }): string {
   const supa = opts.supabaseUrl ? new URL(opts.supabaseUrl) : null;
   const supaHttp = supa ? supa.origin : "";
   const supaWs = supa ? `wss://${supa.host}` : "";
@@ -64,7 +64,7 @@ export const PERMISSIONS_POLICY = [
   "browsing-topics=()", "fullscreen=(self)", "clipboard-write=(self)", "publickey-credentials-get=(self)",
 ].join(", ");
 
-export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: string; supabaseUrl?: string; dev: boolean }) {
+export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: string; supabaseUrl?: string | undefined; dev: boolean }) {
   const preview = isPreviewHost(ctx.host);
   h.set("X-Content-Type-Options", "nosniff");
   h.set("Referrer-Policy", "strict-origin-when-cross-origin");

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/api/public/google-drive/callback")({
         if (url.searchParams.get("error") || !url.searchParams.get("code")) return page(false, "Conexão cancelada.");
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { data: mem } = await supabaseAdmin.from("tenant_members").select("role").eq("tenant_id", st.t).eq("user_id", st.u).maybeSingle();
+          const { data: mem } = await supabaseAdmin.from("tenant_members").select("role").eq("tenant_id", st.t).eq("user_id", st.u).eq("status", "active").maybeSingle();
           if (!mem || !["owner", "admin"].includes(mem.role)) return page(false, "Sem permissão para conectar.");
           const t = await d.exchangeCode(url.searchParams.get("code")!, st.o);
           if (!t.refreshToken) return page(false, "O Google não liberou acesso contínuo. Tente de novo.");

@@ -10,7 +10,7 @@ const EDITABLE = ["not_started", "draft", "in_progress", "action_required"];
 export const DOC_KINDS = ["id_front", "id_back", "selfie", "company_doc", "address_proof", "legal_rep_doc"] as const;
 
 async function ownerMembership(context: Ctx) {
-  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
+  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
   if (!data) throw new Error("Empresa não encontrada.");
   return data as { tenant_id: string; role: string };
 }

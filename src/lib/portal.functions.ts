@@ -58,7 +58,7 @@ export const getPortalInfo = createServerFn({ method: "GET" })
   });
 
 export const portalLogin = createServerFn({ method: "POST" })
-  .inputValidator((i: unknown) => z.object({ key: keySchema, email: z.string().trim().email().max(160), doc: z.string().regex(/^\d{6}$/) }).parse(i))
+  .inputValidator((i: unknown) => z.object({ key: keySchema, email: z.string().trim().email().max(160), doc: z.string().regex(/^(\d{11}|\d{14})$/) }).parse(i))
   .handler(async ({ data }) => {
     noStore();
     const admin = await adminClient();
@@ -69,14 +69,17 @@ export const portalLogin = createServerFn({ method: "POST" })
     const limits = await Promise.all([
       consumeRateLimit(admin as never, { scope: "portal_login", identifier: ident, maxAttempts: 5, windowSeconds: 900, blockSeconds: 900 }),
       ip ? consumeRateLimit(admin as never, { scope: "portal_login_ip", identifier: `${data.key}:${ip}`, maxAttempts: 20, windowSeconds: 900, blockSeconds: 900 }) : Promise.resolve({ allowed: true, retryAfterSeconds: 0 }),
+      // Limite por e-mail em todas as empresas e por IP no geral, contra tentativas espalhadas.
+      consumeRateLimit(admin as never, { scope: "portal_login_email_global", identifier: email, maxAttempts: 10, windowSeconds: 3600, blockSeconds: 3600 }),
+      ip ? consumeRateLimit(admin as never, { scope: "portal_login_ip_global", identifier: ip, maxAttempts: 40, windowSeconds: 3600, blockSeconds: 3600 }) : Promise.resolve({ allowed: true, retryAfterSeconds: 0 }),
     ]);
     const blocked = limits.find((l) => !l.allowed);
     if (blocked) throw new Error(`Muitas tentativas. Tente novamente em ${Math.ceil(blocked.retryAfterSeconds / 60)} minuto(s).`);
     const { data: rows } = await admin.from("customers").select("id, document, status").eq("tenant_id", data.key).ilike("email", email.replace(/[\\%_]/g, (m) => `\\${m}`)).limit(20);
-    const match = ((rows ?? []) as { id: string; document: string | null; status?: string; email?: string | null }[]).filter((c) => c.status !== "closed" && c.status !== "suspended").find((c) => (c.document ?? "").replace(/\D/g, "").startsWith(data.doc));
+    const match = ((rows ?? []) as { id: string; document: string | null; status?: string; email?: string | null }[]).filter((c) => c.status !== "closed" && c.status !== "suspended").find((c) => (c.document ?? "").replace(/\D/g, "") === data.doc);
     if (!match) {
       await logAudit(admin as never, { tenantId: data.key, action: "portal.login_failed", resource: "customer_portal_sessions", metadata: { ip } });
-      throw new Error("E-mail ou documento não conferem. Use o e-mail e os 6 primeiros números do CPF/CNPJ cadastrados.");
+      throw new Error("E-mail ou documento não conferem. Use o e-mail e o CPF/CNPJ completo cadastrados.");
     }
     await resetRateLimit(admin as never, "portal_login", ident);
     // Limpa sessões vencidas e mantém no máximo 5 acessos abertos por cliente.

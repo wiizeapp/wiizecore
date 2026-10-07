@@ -7,7 +7,7 @@ export const brl = (v: number | string | null | undefined) =>
 
 /** E-mails de quem administra a empresa (proprietário e administradores). */
 async function tenantManagerEmails(admin: Admin, tenantId: string) {
-  const { data: members } = await admin.from("tenant_members").select("user_id, role").eq("tenant_id", tenantId).in("role", ["owner", "admin"]);
+  const { data: members } = await admin.from("tenant_members").select("user_id, role").eq("tenant_id", tenantId).eq("status", "active").in("role", ["owner", "admin"]);
   const ids = (members ?? []).map((m) => m.user_id);
   if (!ids.length) return [];
   const { data: profiles } = await admin.from("profiles").select("email").in("id", ids);

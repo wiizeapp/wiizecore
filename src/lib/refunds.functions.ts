@@ -5,7 +5,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 type Ctx = { supabase: any; userId: string; claims?: unknown };
 const FINANCE = ["owner", "admin", "finance"];
 async function membership(context: Ctx, write = false) {
-  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
+  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(context.userId, "refunds.view");
   if (!data || (write && !FINANCE.includes(data.role))) throw new Error("Você não tem permissão para esta operação.");
   return data as { tenant_id: string; role: string };
 }

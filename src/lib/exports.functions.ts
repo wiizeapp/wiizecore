@@ -16,7 +16,7 @@ export const authorizeExport = createServerFn({ method: "POST" })
     const { data: m } = await context.supabase
       .from("tenant_members")
       .select("tenant_id, role")
-      .eq("user_id", context.userId)
+      .eq("user_id", context.userId).eq("status", "active")
       .limit(1)
       .maybeSingle();
     if (!m || !["owner", "admin", "finance"].includes(m.role)) throw new Error("Você não tem permissão para exportar dados financeiros.");

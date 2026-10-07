@@ -8,7 +8,8 @@ type Ctx = { supabase: { from: (t: string) => any }; userId: string };
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 async function requireMembership(context: Ctx, roles: string[]) {
-  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
+  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(context.userId, "charges.view");
   if (!data || !roles.includes(data.role)) throw new Error("Você não tem permissão para esta operação.");
   return data as { tenant_id: string; role: string };
 }

@@ -17,8 +17,23 @@ export const DOC_MIMES: Record<string, string> = {
   "text/csv": "Planilha",
 };
 
+/** Confere a assinatura real do arquivo; bloqueia HTML/SVG/scripts disfarçados. */
+function contentMatches(mime: string, bytes: Uint8Array) {
+  const hex = Buffer.from(bytes.subarray(0, 12)).toString("hex");
+  if (mime === "application/pdf") return hex.startsWith("25504446");
+  if (mime === "image/png") return hex.startsWith("89504e47");
+  if (mime === "image/jpeg") return hex.startsWith("ffd8ff");
+  if (mime === "image/webp") return hex.startsWith("52494646") && hex.slice(16, 24) === "57454250";
+  if (mime.includes("openxmlformats")) return hex.startsWith("504b0304");
+  if (mime === "application/msword" || mime === "application/vnd.ms-excel") return hex.startsWith("d0cf11e0");
+  // Texto/CSV: recusa marcação HTML/SVG/script.
+  const head = Buffer.from(bytes.subarray(0, 2048)).toString("utf8").toLowerCase();
+  return !/<\s*(html|script|svg|iframe|!doctype)/.test(head);
+}
+
 async function member(supabase: { from: (t: string) => any }, userId: string, roles: string[]) {
-  const { data } = await supabase.from("tenant_members").select("tenant_id, role").eq("user_id", userId).limit(1).maybeSingle();
+  const { data } = await supabase.from("tenant_members").select("tenant_id, role").eq("user_id", userId).eq("status", "active").limit(1).maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(userId, "documents.view");
   if (!data) throw new Error("Empresa não encontrada.");
   if (!roles.includes(data.role)) throw new Error("Você não tem permissão para esta ação.");
   return data as { tenant_id: string; role: string };
@@ -62,6 +77,7 @@ export const uploadCustomerDocument = createServerFn({ method: "POST" })
     if (!DOC_MIMES[data.mime]) throw new Error("Tipo de arquivo não aceito. Envie PDF, imagem, Word, planilha ou texto.");
     const bytes = new Uint8Array(Buffer.from(data.base64, "base64"));
     if (!bytes.length || bytes.length > DOC_MAX_BYTES) throw new Error("O arquivo precisa ter até 12 MB.");
+    if (!contentMatches(data.mime, bytes)) throw new Error("Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.");
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const { data: customer } = await admin.from("customers").select("id, name").eq("id", data.customerId).eq("tenant_id", m.tenant_id).maybeSingle();
     if (!customer) throw new Error("Cliente não encontrado.");
