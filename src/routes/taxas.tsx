@@ -123,6 +123,12 @@ function FeesPage() {
         </section>
 
         <section className="section-shell py-16 lg:py-20">
+          <div className="mb-10 rounded-lg border border-primary/30 bg-primary/10 p-5 sm:p-6">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">{t("promo.eyebrow")}</span>
+            <p className="mt-2 text-base leading-7">{t("promo.body")}</p>
+            <p className="mt-1 text-sm font-semibold">{t("promo.fixed")}</p>
+            <p className="mt-3 flex gap-2 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{t("promo.note")}</p>
+          </div>
           <h2 className="text-2xl font-semibold sm:text-3xl">{t("methods.title")}</h2>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")}>

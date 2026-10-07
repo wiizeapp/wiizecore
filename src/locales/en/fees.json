@@ -147,5 +147,11 @@
       "voice": "Automatic call"
     },
     "note": "Flat price per individual charge, not per message. Each installment and each recurring cycle is a separate charge. Available balance is required."
+  },
+  "promo": {
+    "eyebrow": "0% fee for 3 months",
+    "body": "New accounts pay a 0% percentage fee on one-time Pix and one-time boleto during the account's first 3 months.",
+    "fixed": "You only pay the fixed fee.",
+    "note": "New accounts only. Installment or recurring Pix, installment boleto, cards and anticipation keep the regular fees. After 3 months, one-time Pix and boleto automatically return to the standard fee shown on this page."
   }
 }

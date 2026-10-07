@@ -79,8 +79,14 @@ export function calculateFeeFromConfig(input: {
 
 export async function calculatePaymentFee(
   admin: AdminClient,
-  input: { paymentMethod: FeeMethod; grossAmount: string | number; installments?: number },
-): Promise<PaymentFeeCalculation> {
+  input: {
+    paymentMethod: FeeMethod;
+    grossAmount: string | number;
+    installments?: number;
+    /** Empresa de uma cobrança ÚNICA à vista (sem parcelas/recorrência). Só assim a promoção de lançamento é avaliada. */
+    launchPromoTenantId?: string;
+  },
+): Promise<PaymentFeeCalculation & { isPromotional: boolean }> {
   const installments = input.installments ?? 1;
   // Faixa da tarifa: cartão, débito em conta e boleto variam por parcelas.
   const tier = input.paymentMethod === "credit_card" || input.paymentMethod === "debit_card" || input.paymentMethod === "boleto" ? installments : 1;
@@ -98,7 +104,17 @@ export async function calculatePaymentFee(
     .limit(1)
     .maybeSingle();
   if (error || !config) throw new Error("Não existe uma tarifa ativa para esta modalidade.");
-  return calculateFeeFromConfig({ grossAmount: input.grossAmount, installments, paymentMethod: input.paymentMethod, config, timestamp: now });
+  // Promoção de lançamento: 0% percentual no Pix/boleto à vista; tarifa fixa mantida. Decidido só aqui, no servidor.
+  let isPromotional = false;
+  if (input.launchPromoTenantId && installments === 1) {
+    const { isLaunchPromoMethod } = await import("./launch-promotion");
+    if (isLaunchPromoMethod(input.paymentMethod, true)) {
+      const { isEligibleForLaunchPromotion } = await import("./launch-promotion.server");
+      isPromotional = await isEligibleForLaunchPromotion(admin, input.launchPromoTenantId, new Date(now));
+    }
+  }
+  const effective = isPromotional ? { ...config, percentage_fee: 0 } : config;
+  return { ...calculateFeeFromConfig({ grossAmount: input.grossAmount, installments, paymentMethod: input.paymentMethod, config: effective, timestamp: now }), isPromotional };
 }
 
 export function calculateAnticipationFromConfig(input: {

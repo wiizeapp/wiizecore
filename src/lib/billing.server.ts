@@ -43,9 +43,11 @@ export async function computePlatformFeeDetails(
   method: string | null,
   installments = 1,
   recurring = false,
+  /** Informe somente para uma cobrança única à vista; parcelas e recorrências nunca recebem a promoção. */
+  launchPromoTenantId?: string,
 ) {
   const feeMethod: FeeMethod = recurring && method === "pix" ? "pix_recurring" : method === "debit_card" ? "debit_card" : method === "credit_card" ? "credit_card" : method === "boleto" ? "boleto" : "pix";
-  return calculatePaymentFee(admin, { paymentMethod: feeMethod, grossAmount, installments });
+  return calculatePaymentFee(admin, { paymentMethod: feeMethod, grossAmount, installments, ...(launchPromoTenantId && !recurring ? { launchPromoTenantId } : {}) });
 }
 
 type WebhookPayload = { id?: string; event?: string; dateCreated?: string; payment?: ProviderPayment & Record<string, unknown> };

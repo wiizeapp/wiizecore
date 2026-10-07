@@ -122,7 +122,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       if (data.method === "undefined") throw new Error("Para repassar a taxa, escolha a forma de pagamento.");
       const { grossUp, fixedFeeCount } = await import("./fee-math");
       const n = service.type === "installment" ? Number(service.installments ?? 2) : 1;
-      const probe = await computePlatformFeeDetails(admin, 100, data.method, data.method === "credit_card" ? n : 1, service.type === "recurring");
+      const probe = await computePlatformFeeDetails(admin, 100, data.method, data.method === "credit_card" ? n : 1, service.type === "recurring", service.type === "one_time" ? tenantId : undefined);
       amount = grossUp(serviceAmount, { fixed: probe.fixedFee, percent: probe.percentageFee }, data.feePassShare, fixedFeeCount(data.method, n)).total;
     }
     const serviceRatio = serviceAmount / amount;
@@ -212,7 +212,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     if (service.type === "installment") firstGross = round2(amount / Number(service.installments ?? 2));
     const feeInstallments = service.type === "installment" ? Number(service.installments ?? 2) : 1;
     const feeGross = service.type === "installment" && method === "credit_card" ? amount : firstGross;
-    const initialFee = await computePlatformFeeDetails(admin, feeGross, method, feeInstallments, service.type === "recurring");
+    const initialFee = await computePlatformFeeDetails(admin, feeGross, method, feeInstallments, service.type === "recurring", service.type === "one_time" ? tenantId : undefined);
     const firstFee = service.type === "installment" && method === "credit_card" ? round2(initialFee.totalFee / feeInstallments) : initialFee.totalFee;
 
     // Coprodução: validada antes de qualquer registro, para não existir cobrança com convite impossível.

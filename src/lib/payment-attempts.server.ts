@@ -170,7 +170,8 @@ export async function switchPaymentAttempt(
     if (e instanceof Error && e.message.includes("confirmado")) throw e;
   }
 
-  const fee = await computePlatformFeeDetails(admin, q.total, input.method);
+  const singleCash = !p.provider_installment_id && !p.subscription_id;
+  const fee = await computePlatformFeeDetails(admin, q.total, input.method, 1, false, singleCash ? p.tenant_id : undefined);
   const extras: Record<string, unknown> = {};
   if (Number(p.fine_percent) > 0) extras["fine"] = { value: Number(p.fine_percent), type: "PERCENTAGE" };
   if (Number(p.interest_percent) > 0) extras["interest"] = { value: Number(p.interest_percent) };

@@ -147,5 +147,11 @@
       "voice": "Ligação automática"
     },
     "note": "Preço fixo por cobrança individual, não por mensagem. Em parcelamentos, cada parcela é uma cobrança; em recorrências, cada novo ciclo também. É necessário ter saldo disponível."
+  },
+  "promo": {
+    "eyebrow": "0% de taxa por 3 meses",
+    "body": "Novas contas têm 0% de taxa percentual no Pix à vista e no boleto à vista durante os 3 primeiros meses da conta.",
+    "fixed": "Você paga apenas a tarifa fixa.",
+    "note": "Exclusivo para contas novas. Pix parcelado ou recorrente, boleto parcelado, cartão e antecipação seguem as tarifas normais. Ao fim dos 3 meses, Pix e boleto à vista voltam automaticamente para a taxa padrão desta página."
   }
 }
