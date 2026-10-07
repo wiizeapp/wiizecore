@@ -32,11 +32,11 @@ const METHODS: Method[] = ["pix", "pix_recurring", "boleto", "credit_card"];
 type FeeRow = { id: string; payment_method: string; installment_min: number; installment_max: number; fixed_fee: number; percentage_fee: number };
 
 /** Valor fixo discreto + percentual em destaque — sempre a partir da configuração oficial. */
-function Rate({ row }: { row?: FeeRow | undefined }) {
+function Rate({ row, promotional = false }: { row?: FeeRow | undefined; promotional?: boolean }) {
   const { t } = useTranslation("fees");
   if (!row) return <span className="text-sm text-muted-foreground">{t("loading")}</span>;
   const fixed = Number(row.fixed_fee) > 0 ? formatBRL(row.fixed_fee) : null;
-  const pct = Number(row.percentage_fee) > 0 ? formatPercent(row.percentage_fee) : null;
+  const pct = promotional ? formatPercent(0) : Number(row.percentage_fee) > 0 ? formatPercent(row.percentage_fee) : null;
   if (!fixed && !pct) return <span className="font-semibold">{t("noFee")}</span>;
   return (
     <span className="numeric-tabular inline-grid min-w-[12rem] grid-cols-[1fr_auto_1fr] items-center gap-2 whitespace-nowrap rounded-lg border border-border/60 bg-background/50 px-3 py-2">
@@ -53,6 +53,11 @@ function Rate({ row }: { row?: FeeRow | undefined }) {
   );
 }
 
+function PromotionNotice({ row }: { row: FeeRow }) {
+  const { t } = useTranslation("fees");
+  return <p className="mt-2 max-w-xs text-xs leading-5 text-muted-foreground">{t("promo.rateNote", { rate: formatPercent(row.percentage_fee) })}</p>;
+}
+
 function Block({ icon: Icon, title, desc, note, children, className = "" }: { icon: typeof QrCode; title: string; desc: string; note?: string; children: ReactNode; className?: string }) {
   return (
     <article className={`rounded-xl border border-border bg-surface p-6 sm:p-8 ${className}`}>
@@ -66,23 +71,23 @@ function Block({ icon: Icon, title, desc, note, children, className = "" }: { ic
   );
 }
 
-function RateLine({ label, hint, extra, row }: { label: string; hint: string; extra?: string | undefined; row?: FeeRow | undefined }) {
+function RateLine({ label, hint, extra, row, promotional = false }: { label: string; hint: string; extra?: string | undefined; row?: FeeRow | undefined; promotional?: boolean }) {
   return (
     <div className="flex flex-col gap-2 border-t border-border/60 py-5 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
       <div><p className="font-medium">{label}</p><p className="mt-0.5 text-xs text-muted-foreground">{hint}{extra ? <> · {extra}</> : null}</p></div>
-      <Rate row={row} />
+      <div className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promotional} />{promotional && row ? <PromotionNotice row={row} /> : null}</div>
     </div>
   );
 }
 
-function TierList({ rows, singleLabel, rangeKey }: { rows: FeeRow[]; singleLabel: string; rangeKey: string }) {
+function TierList({ rows, singleLabel, rangeKey, promoteSingle = false }: { rows: FeeRow[]; singleLabel: string; rangeKey: string; promoteSingle?: boolean }) {
   const { t } = useTranslation("fees");
   return (
     <dl>
       {rows.map((row) => (
         <div key={row.id} className="flex min-h-16 flex-col justify-center gap-2 border-t border-border/60 py-4 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
           <dt className="text-sm text-muted-foreground">{row.installment_max <= 1 ? singleLabel : t(rangeKey, { min: row.installment_min, max: row.installment_max })}</dt>
-          <dd><Rate row={row} /></dd>
+           <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promoteSingle && row.installment_max === 1} />{promoteSingle && row.installment_max === 1 ? <PromotionNotice row={row} /> : null}</dd>
         </div>
       ))}
       {!rows.length ? <p className="py-4 text-sm text-muted-foreground">{t("loading")}</p> : null}
@@ -123,20 +128,21 @@ function FeesPage() {
         </section>
 
         <section className="section-shell py-16 lg:py-20">
-          <div className="mb-10 rounded-lg border border-primary/30 bg-primary/10 p-5 sm:p-6">
-            <span className="text-xs font-semibold uppercase tracking-wider text-primary">{t("promo.eyebrow")}</span>
-            <p className="mt-2 text-base leading-7">{t("promo.body")}</p>
-            <p className="mt-1 text-sm font-semibold">{t("promo.fixed")}</p>
-            <p className="mt-3 flex gap-2 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{t("promo.note")}</p>
+          <div className="mb-10 overflow-hidden rounded-lg border border-primary/30 bg-primary/5">
+            <div className="grid gap-5 p-5 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-8 sm:p-7">
+              <div className="sm:border-r sm:border-primary/20 sm:pr-8"><p className="numeric-tabular text-5xl font-bold leading-none text-primary">{formatPercent(0)}</p><p className="mt-2 text-sm font-medium">{t("promo.duration")}</p></div>
+              <div><p className="text-xs font-semibold uppercase text-primary">{t("promo.eyebrow")}</p><h2 className="mt-2 text-xl font-semibold sm:text-2xl">{t("promo.body")}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{t("promo.fixed")}</p></div>
+            </div>
+            <p className="flex gap-2 border-t border-primary/15 px-5 py-3 text-xs leading-5 text-muted-foreground sm:px-7"><Info className="mt-0.5 size-3.5 shrink-0" />{t("promo.note")}</p>
           </div>
           <h2 className="text-2xl font-semibold sm:text-3xl">{t("methods.title")}</h2>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")}>
-              <RateLine label={t("pix.single")} hint={t("pix.perTx")} row={pix} />
+              <RateLine label={t("pix.single")} hint={t("pix.perTx")} row={pix} promotional />
               <RateLine label={t("pix.recurring")} hint={t("pix.perCharge")} row={pixRec} />
             </Block>
             <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")}>
-              <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" />
+              <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle />
             </Block>
             <Block icon={CreditCard} title={t("cards.title")} desc={t("cards.subtitle")} className="lg:col-span-2">
               <div className="grid gap-5">
