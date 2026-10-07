@@ -105,7 +105,7 @@ function PortalLogin({ portalKey, providerName, onSuccess }: { portalKey: string
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (doc.length !== 6) { setError("Digite os 6 primeiros números do seu CPF ou CNPJ."); return; }
+    if (doc.length !== 11 && doc.length !== 14) { setError("Digite o CPF (11 números) ou CNPJ (14 números) completo."); return; }
     setBusy(true);
     try { const r = await login({ data: { key: portalKey, email, doc } }); onSuccess(r.token, r.expiresAt); }
     catch (err) { setError(err instanceof Error ? err.message : "Não foi possível entrar. Tente novamente."); }
@@ -126,15 +126,15 @@ function PortalLogin({ portalKey, providerName, onSuccess }: { portalKey: string
       <form onSubmit={submit} className="rounded-[calc(var(--radius)+6px)] border border-border bg-card p-6 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.35)] sm:p-8">
         <span className="grid size-11 place-items-center rounded-[var(--radius)] bg-primary/10"><ShieldCheck className="size-5 text-primary" /></span>
         <h2 className="mt-4 font-display text-xl font-semibold tracking-tight">Acessar portal do cliente</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Use o e-mail cadastrado e os 6 primeiros números do seu CPF ou CNPJ.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Use o e-mail cadastrado e o seu CPF ou CNPJ completo.</p>
         <div className="mt-6 space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="portal-email">E-mail</Label>
             <div className="relative"><Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input id="portal-email" type="email" inputMode="email" autoComplete="email" required className="h-12 pl-9" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" /></div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="portal-doc">6 primeiros números do CPF/CNPJ</Label>
-            <Input id="portal-doc" inputMode="numeric" autoComplete="off" required maxLength={6} className="h-12 text-center font-mono text-lg tracking-[0.5em]" value={doc} onChange={(e) => setDoc(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="••••••" />
+            <Label htmlFor="portal-doc">CPF ou CNPJ completo (só números)</Label>
+            <Input id="portal-doc" inputMode="numeric" autoComplete="off" required maxLength={14} className="h-12 text-center font-mono text-lg tracking-[0.2em]" value={doc} onChange={(e) => setDoc(e.target.value.replace(/\D/g, "").slice(0, 14))} placeholder="Somente números" />
           </div>
           {error ? <p role="alert" className="rounded-[var(--radius)] border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p> : null}
           <Button type="submit" className="h-12 w-full text-base" disabled={busy}>{busy ? <><Loader2 className="size-4 animate-spin" />Entrando…</> : <>Entrar<ArrowRight className="size-4" /></>}</Button>
