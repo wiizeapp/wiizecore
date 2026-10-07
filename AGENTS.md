@@ -36,4 +36,4 @@
 - Environment-specific URLs (site, fallback, Wiize webhook/redirects) live only in `src/lib/deploy-config.ts`. Why: a production copy changes one file.
 - Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: um envio por evento e falha de e-mail nunca quebra a operação financeira.
 - Coproduction (`src/lib/coproduction.server.ts`, math in `src/lib/coproduction-math.ts`) belongs only to a charge; checkout stays blocked until all accept and the split is registered in Asaas; participant amounts are recorded only from the split Asaas returns on a confirmed payment via `apply_coproduction_split`; refunds send proportional `splitRefunds` and sync cumulatively from Asaas `refundedSplits`. Why: never credit or debit estimated money.
-- Response security headers live only in `src/lib/security-headers.ts` (static: `vercel.json`). Why: one auditable place.
+- Response security headers live only in `src/lib/security-headers.ts` (static: `vercel.json`).
