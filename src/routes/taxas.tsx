@@ -53,26 +53,26 @@ function Rate({ row, promotional = false }: { row?: FeeRow | undefined; promotio
   );
 }
 
-/** Aviso discreto, em largura total, sob os cards de Pix e Boleto. */
-function PromoStrip({ rate }: { rate: number }) {
-  const { t } = useTranslation("fees");
+/** Aviso discreto, em largura total, dentro do próprio card. */
+function PromoNote({ text }: { text: string }) {
   return (
-    <p className="flex items-start gap-2 rounded-lg border border-border/40 bg-foreground/[0.045] px-4 py-2.5 text-xs leading-5 text-muted-foreground lg:col-span-2">
+    <p className="flex items-start gap-2 rounded-lg border border-border/40 bg-foreground/[0.045] px-4 py-2.5 text-xs leading-5 text-muted-foreground">
       <Info className="mt-0.5 size-3.5 shrink-0" />
-      <span>{t("promo.strip", { rate: formatPercent(rate) })}</span>
+      <span>{text}</span>
     </p>
   );
 }
 
-function Block({ icon: Icon, title, desc, note, noteClass = "", children, className = "" }: { icon: typeof QrCode; title: string; desc: string; note?: string; noteClass?: string; children: ReactNode; className?: string }) {
+function Block({ icon: Icon, title, desc, note, noteClass = "", footer, children, className = "" }: { icon: typeof QrCode; title: string; desc: string; note?: string; noteClass?: string; footer?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <article className={`rounded-xl border border-border bg-surface p-6 sm:p-8 ${className}`}>
+    <article className={`flex flex-col rounded-xl border border-border bg-surface p-6 sm:p-8 ${className}`}>
       <header className="flex items-start gap-4">
         <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><Icon className="size-5" /></span>
         <div><h3 className="text-xl font-semibold">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{desc}</p></div>
       </header>
       {note ? <p className={`mt-5 flex gap-2 rounded-lg bg-background/60 px-3.5 py-2.5 text-xs leading-5 text-muted-foreground ${noteClass}`.trim()}><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{note}</p> : null}
       <div className="mt-6">{children}</div>
+      {footer ? <div className="mt-auto pt-6">{footer}</div> : null}
     </article>
   );
 }
@@ -145,14 +145,13 @@ function FeesPage() {
           </div>
           <h2 className="text-2xl font-semibold sm:text-3xl">{t("methods.title")}</h2>
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")} noteClass="lg:min-h-[4.25rem]">
+            <Block icon={QrCode} title={t("pix.title")} desc={t("pix.desc")} note={t("pix.note")} noteClass="lg:min-h-[4.25rem]" footer={promoRate != null ? <PromoNote text={t("promo.stripPix", { rate: formatPercent(promoRate) })} /> : undefined}>
               <RateLine label={t("pix.single")} hint={t("pix.perTx")} row={pix} promotional />
               <RateLine label={t("pix.recurring")} hint={t("pix.perCharge")} row={pixRec} />
             </Block>
-            <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")} noteClass="lg:min-h-[4.25rem]">
+            <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")} noteClass="lg:min-h-[4.25rem]" footer={promoRate != null ? <PromoNote text={t("promo.stripBoleto", { rate: formatPercent(promoRate) })} /> : undefined}>
               <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle />
             </Block>
-            {promoRate != null ? <PromoStrip rate={promoRate} /> : null}
             <Block icon={CreditCard} title={t("cards.title")} desc={t("cards.subtitle")} className="lg:col-span-2">
               <div className="grid gap-5">
                 <section className="rounded-lg border border-border/70 bg-background/35 p-4 sm:p-5">

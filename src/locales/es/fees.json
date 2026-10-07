@@ -154,6 +154,7 @@
     "body": "Pix y boleto al contado: solo la tarifa fija.",
     "fixed": "Durante los 3 primeros meses después de crear tu cuenta, el porcentaje es cero. Se sigue aplicando la tarifa fija por cobro.",
     "note": "Exclusivo para cuentas nuevas. Pix en cuotas o recurrente, boleto en cuotas, tarjeta y anticipo mantienen las tarifas normales.",
-    "strip": "0% de tasa porcentual para cuentas nuevas durante los primeros 3 meses. Después, Pix y boleto al contado vuelven a {{rate}} + tarifa fija."
+    "stripPix": "0% de tasa porcentual para cuentas nuevas durante los primeros 3 meses. Después, el Pix al contado vuelve a {{rate}} + tarifa fija.",
+    "stripBoleto": "0% de tasa porcentual para cuentas nuevas durante los primeros 3 meses. Después, el boleto al contado vuelve a {{rate}} + tarifa fija."
   }
 }
