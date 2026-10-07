@@ -176,6 +176,7 @@ export async function switchPaymentAttempt(
   if (Number(p.fine_percent) > 0) extras["fine"] = { value: Number(p.fine_percent), type: "PERCENTAGE" };
   if (Number(p.interest_percent) > 0) extras["interest"] = { value: Number(p.interest_percent) };
 
+  let coverCents = 0;
   let created: { id: string; invoiceUrl?: string | null; bankSlipUrl?: string | null };
   try {
     created = await conn.provider.createPayment({
@@ -188,7 +189,17 @@ export async function switchPaymentAttempt(
       ...(await (async () => {
         const { splitFor } = await import("./coproduction.server");
         const split = await splitFor(admin, p.charge_group_id, q.total, fee.totalFeeCents / 100);
-        if (!split.length && fee.totalFeeCents > 0) return { split: [{ walletId: masterWalletId, fixedValue: fee.totalFeeCents / 100 }] };
+        if (!split.length && fee.totalFeeCents > 0) {
+          // À vista sem coprodução: o Asaas retém o custo dele e a WiizePay recebe só a diferença.
+          if (singleCash && conn.provider.getMyFees) {
+            try {
+              const { estimateProviderFeeCents, coveredProviderFeeCents } = await import("./provider-fee-quote");
+              coverCents = coveredProviderFeeCents(fee.totalFeeCents, estimateProviderFeeCents(await conn.provider.getMyFees() as never, input.method, Math.round(q.total * 100)));
+            } catch { coverCents = 0; }
+          }
+          const wiize = fee.totalFeeCents - coverCents;
+          return wiize > 0 ? { split: [{ walletId: masterWalletId, fixedValue: wiize / 100 }] } : {};
+        }
         return split.length ? { split } : {};
       })()),
       ...extras,
@@ -217,6 +228,7 @@ export async function switchPaymentAttempt(
     gross_amount: q.total,
     due_on: dueOn,
     platform_fee_amount: fee.totalFee,
+    provider_fee_covered_amount: coverCents / 100,
     fee_configuration_id: fee.feeConfigurationId,
     fee_fixed_amount: fee.fixedFee,
     fee_percentage: fee.percentageFee,

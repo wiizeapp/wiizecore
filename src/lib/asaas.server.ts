@@ -80,6 +80,7 @@ export interface PaymentProvider {
   registerWebhook(input: { url: string; email: string; authToken: string }): Promise<{ id: string }>;
   createSubaccount(input: Record<string, unknown>): Promise<ProviderSubaccount>;
   getAccountStatus(): Promise<Record<string, unknown>>;
+  getMyFees?(): Promise<Record<string, unknown>>;
   listMyDocuments(): Promise<AsaasDocumentsResponse>;
   uploadMyDocument(groupId: string, type: string, file: { bytes: Uint8Array; mime: string; name: string }): Promise<unknown>;
   getBalance(): Promise<{ balance: number }>;
@@ -290,6 +291,10 @@ export class AsaasProvider implements PaymentProvider {
   }
   getAccountStatus() {
     return this.request<Record<string, unknown>>("GET", "/myAccount/status");
+  }
+  /** Taxas atuais da conta (custo do Asaas por forma de pagamento). */
+  getMyFees() {
+    return this.request<Record<string, unknown>>("GET", "/myAccount/fees");
   }
   listMyDocuments() {
     return this.request<AsaasDocumentsResponse>("GET", "/myAccount/documents");

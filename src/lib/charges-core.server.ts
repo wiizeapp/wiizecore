@@ -11,6 +11,15 @@ function wiizePaySplit(totalFeeCents: number, walletId: string, mode: "single" |
   return [{ walletId, [field]: centsToAmount(totalFeeCents) }];
 }
 
+/** Custo do Asaas desta cobrança à vista, lido da API da própria conta; null = usa o fluxo antigo. */
+async function providerCoverCents(provider: { getMyFees?: () => Promise<Record<string, unknown>> }, method: string | null, amount: number, totalFeeCents: number) {
+  try {
+    const { estimateProviderFeeCents, coveredProviderFeeCents } = await import("./provider-fee-quote");
+    const fees = provider.getMyFees ? await provider.getMyFees() : null;
+    return coveredProviderFeeCents(totalFeeCents, estimateProviderFeeCents(fees as never, method, Math.round(amount * 100)));
+  } catch { return 0; }
+}
+
 function todayBR() {
   return new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
 }
@@ -247,6 +256,8 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
 
     try {
       if (service.type === "one_time") {
+        const coverCents = await providerCoverCents(conn.provider, method, amount, initialFee.totalFeeCents);
+        if (coverCents > 0) await admin.from("payments").update({ provider_fee_covered_amount: centsToAmount(coverCents) }).eq("id", placeholder.id);
         const p = await conn.provider.createPayment({
           customer: providerCustomerId,
           billingType,
@@ -254,7 +265,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           dueDate: dueOn,
           description,
           externalReference: placeholder.id,
-          split: wiizePaySplit(initialFee.totalFeeCents, masterWalletId),
+          split: wiizePaySplit(initialFee.totalFeeCents - coverCents, masterWalletId),
           ...extras,
         });
         await admin

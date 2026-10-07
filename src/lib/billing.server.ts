@@ -368,9 +368,11 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
  */
 export async function reimburseProviderFee(admin: AdminClient, paymentId: string) {
   const { data: p } = await admin.from("payments")
-    .select("tenant_id, provider_fee_amount, provider_fee_reimbursement_id")
+    .select("tenant_id, provider_fee_amount, provider_fee_covered_amount, provider_fee_reimbursement_id")
     .eq("id", paymentId).single();
-  const fee = Number(p?.provider_fee_amount ?? 0);
+  // Só devolve a parte do custo real que a divisão da cobrança ainda não cobriu.
+  const { reimbursementCents } = await import("./provider-fee-quote");
+  const fee = reimbursementCents(Math.round(Number(p?.provider_fee_amount ?? 0) * 100), Math.round(Number(p?.provider_fee_covered_amount ?? 0) * 100)) / 100;
   if (!p || p.provider_fee_reimbursement_id || fee <= 0) return;
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
   const { data: conn } = await admin.from("provider_connections").select("wallet_id").eq("tenant_id", p.tenant_id).eq("provider", "asaas").eq("status", "connected").limit(1).maybeSingle();
@@ -465,7 +467,7 @@ export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId:
 
 /** Conferência: compara valor bruto e taxa WiizePay com o registrado no provedor. */
 export async function checkPaymentDivergence(admin: AdminClient, tenantId: string, paymentId: string, remote: ProviderPayment) {
-  const { data: p } = await admin.from("payments").select("gross_amount, platform_fee_amount").eq("id", paymentId).maybeSingle();
+  const { data: p } = await admin.from("payments").select("gross_amount, platform_fee_amount, provider_fee_covered_amount").eq("id", paymentId).maybeSingle();
   if (!p) return;
   const r = remote as ProviderPayment & Record<string, unknown>;
   const issues: { kind: string; expected: number; actual: number }[] = [];
@@ -475,7 +477,8 @@ export async function checkPaymentDivergence(admin: AdminClient, tenantId: strin
   const mine = split.find((s) => s.walletId === process.env["ASAAS_MASTER_WALLET_ID"]);
   if (mine) {
     const v = Number(mine.totalValue ?? mine.fixedValue ?? 0);
-    if (Math.abs(v - Number(p.platform_fee_amount)) > 0.009) issues.push({ kind: "platform_fee", expected: Number(p.platform_fee_amount), actual: v });
+    const expected = Math.round((Number(p.platform_fee_amount) - Number(p.provider_fee_covered_amount ?? 0)) * 100) / 100;
+    if (Math.abs(v - expected) > 0.009) issues.push({ kind: "platform_fee", expected, actual: v });
   }
   for (const i of issues) {
     await (admin as any).from("reconciliation_issues").upsert({ tenant_id: tenantId, payment_id: paymentId, ...i }, { onConflict: "payment_id,kind" });
