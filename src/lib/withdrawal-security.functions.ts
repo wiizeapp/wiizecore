@@ -50,7 +50,7 @@ export const setWithdrawalSecurity = createServerFn({ method: "POST" })
       severity: data.required ? "info" : "warning",
       metadata: {},
     });
-    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).limit(1).maybeSingle();
+    const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
     if (member) {
       await supabaseAdmin.from("notifications").insert({
         tenant_id: member.tenant_id,

@@ -154,7 +154,7 @@ export const updateCompany = createServerFn({ method: "POST" })
     const { data: membership } = await context.supabase
       .from("tenant_members")
       .select("tenant_id, role")
-      .eq("user_id", context.userId)
+      .eq("user_id", context.userId).eq("status", "active")
       .limit(1)
       .maybeSingle();
     if (!membership || !["owner", "admin"].includes(membership.role)) {

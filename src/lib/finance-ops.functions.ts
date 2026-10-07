@@ -9,7 +9,8 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const money = z.number().positive().max(1e10).refine((n) => Math.abs(Math.round(n * 100) - n * 100) < 1e-6, "Máximo de 2 casas decimais");
 
 async function membership(context: Ctx, write = false) {
-  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
+  const { data } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(context.userId, "finance.view");
   if (!data || (write && !WRITE.includes(data.role))) throw new Error("Você não tem permissão para esta operação.");
   return data as { tenant_id: string; role: string };
 }

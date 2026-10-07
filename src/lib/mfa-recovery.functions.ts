@@ -16,7 +16,7 @@ async function removeAllFactors(admin: Admin, userId: string) {
 }
 
 async function notifyUser(admin: Admin, userId: string, title: string, body: string) {
-  const { data: m } = await admin.from("tenant_members").select("tenant_id").eq("user_id", userId).limit(1).maybeSingle();
+  const { data: m } = await admin.from("tenant_members").select("tenant_id").eq("user_id", userId).eq("status", "active").limit(1).maybeSingle();
   if (m?.tenant_id) {
     await admin.from("notifications").insert({ tenant_id: m.tenant_id, kind: "security", title, body, link: "/seguranca" });
   }

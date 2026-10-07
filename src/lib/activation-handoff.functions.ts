@@ -7,7 +7,7 @@ import { activationFormSchema } from "./activation-validation";
 const TOKEN_TTL_MS = 15 * 60 * 1000;
 
 export const createActivationHandoff = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
-  const { data: member } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).limit(1).maybeSingle();
+  const { data: member } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
   if (!member || !["owner", "admin"].includes(member.role)) throw new Error("Você não tem permissão para gerar este acesso.");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { randomToken, randomNumericCode, tokenFingerprint, hashSecretValue } = await import("./crypto.server");
@@ -26,7 +26,7 @@ export const createActivationHandoff = createServerFn({ method: "POST" }).middle
 export const getActivationHandoffStatus = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ token: z.string().min(20).max(100) }).parse(input))
   .handler(async ({ data, context }) => {
-    const { data: member } = await context.supabase.from("tenant_members").select("tenant_id").eq("user_id", context.userId).limit(1).maybeSingle();
+    const { data: member } = await context.supabase.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
     if (!member) throw new Error("Sem acesso.");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { tokenFingerprint } = await import("./crypto.server");

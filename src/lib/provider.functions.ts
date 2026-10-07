@@ -7,9 +7,10 @@ async function requireFinanceMembership(supabase: { from: (t: string) => any }, 
   const { data } = await supabase
     .from("tenant_members")
     .select("tenant_id, role")
-    .eq("user_id", userId)
+    .eq("user_id", userId).eq("status", "active")
     .limit(1)
     .maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(userId, "settings.view");
   if (!data || !["owner", "admin", "finance"].includes(data.role)) {
     throw new Error("Você não tem permissão para gerenciar a conexão de pagamentos.");
   }
@@ -22,7 +23,7 @@ export const getProviderConnection = createServerFn({ method: "GET" })
     const { data: membership } = await context.supabase
       .from("tenant_members")
       .select("tenant_id")
-      .eq("user_id", context.userId)
+      .eq("user_id", context.userId).eq("status", "active")
       .limit(1)
       .maybeSingle();
     if (!membership) return null;

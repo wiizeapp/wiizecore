@@ -3,7 +3,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { logAudit } from "./audit.server";
 
 async function member(supabase: { from: (t: string) => any }, userId: string, roles: string[]) {
-  const { data } = await supabase.from("tenant_members").select("tenant_id, role").eq("user_id", userId).limit(1).maybeSingle();
+  const { data } = await supabase.from("tenant_members").select("tenant_id, role").eq("user_id", userId).eq("status", "active").limit(1).maybeSingle();
+  await (await import("./member-access.server")).requireModulePerm(userId, "integrations.view");
   if (!data) throw new Error("Empresa não encontrada.");
   if (!roles.includes(data.role)) throw new Error("Você não tem permissão para esta ação.");
   return data as { tenant_id: string; role: string };

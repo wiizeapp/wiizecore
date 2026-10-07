@@ -11,7 +11,7 @@ function lockMessage(until: string) {
 }
 
 async function tenantOf(admin: AdminClient, userId: string) {
-  const { data } = await admin.from("tenant_members").select("tenant_id").eq("user_id", userId).limit(1).maybeSingle();
+  const { data } = await admin.from("tenant_members").select("tenant_id").eq("user_id", userId).eq("status", "active").limit(1).maybeSingle();
   return data?.tenant_id ?? null;
 }
 
