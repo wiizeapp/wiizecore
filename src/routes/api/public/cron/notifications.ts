@@ -41,7 +41,13 @@ async function run(request: Request) {
       email: { subject: "Contrato aguardando assinatura" },
     });
   }
-  return Response.json({ ok: true, reminders: sent });
+  // Nova tentativa das devoluções da taxa do Asaas que falharam (cada uma continua travada contra duplicidade).
+  const { reimburseProviderFee } = await import("@/lib/billing.server");
+  const { data: pendingFees } = await admin.from("payments").select("id")
+    .eq("status", "paid").is("provider_fee_reimbursement_id", null).gt("provider_fee_amount", 0).limit(200);
+  let retried = 0;
+  for (const p of pendingFees ?? []) { await reimburseProviderFee(admin, p.id); retried++; }
+  return Response.json({ ok: true, reminders: sent, feeRetries: retried });
 }
 
 export const Route = createFileRoute("/api/public/cron/notifications")({
