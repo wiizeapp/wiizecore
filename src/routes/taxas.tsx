@@ -72,7 +72,7 @@ function Block({ icon: Icon, title, desc, note, noteClass = "", footer, children
       </header>
       {note ? <p className={`mt-5 flex gap-2 rounded-lg bg-background/60 px-3.5 py-2.5 text-xs leading-5 text-muted-foreground ${noteClass}`.trim()}><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{note}</p> : null}
       <div className="mt-6">{children}</div>
-      {footer ? <div className="mt-6 pt-1">{footer}</div> : null}
+      {footer ? <div className="mt-auto pt-6">{footer}</div> : null}
     </article>
   );
 }
