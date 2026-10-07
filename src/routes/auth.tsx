@@ -15,12 +15,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Brand } from "@/components/brand";
 import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
-import { startWiizeLogin } from "@/lib/wiize-integration.functions";
 import { recoverWithCode } from "@/lib/mfa-recovery.functions";
 import { applyOAuthUiTheme, themeFromOAuthReturnPath } from "@/lib/oauth-ui-theme";
 import { readTheme } from "@/lib/theme";
-import wiizeLogoUrl from "@/assets/ecosystem-wiize.png";
-const wiizeLogo = { url: wiizeLogoUrl };
 
 function GoogleIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.6h3.3c1.9-1.8 2.9-4.4 2.9-7.5Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.3l-3.3-2.6c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.7A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.5 14a6 6 0 0 1 0-3.9V7.4H3.1a10 10 0 0 0 0 9.2L6.5 14Z"/><path fill="#EA4335" d="M12 6a5.4 5.4 0 0 1 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 12 2a10 10 0 0 0-8.9 5.4l3.4 2.7A5.9 5.9 0 0 1 12 6Z"/></svg>;
@@ -170,13 +167,6 @@ function AuthPage() {
     toast.success(ui("Conta criada! Confirme o e-mail que enviamos para continuar."));
   }
 
-  const wiizeLogin = useServerFn(startWiizeLogin);
-  async function handleWiize() {
-    if (needConsent()) return;
-    setBusyAction("wiize");
-    try { const { url } = await wiizeLogin(); window.location.href = url; }
-    catch (e) { setBusyAction(null); toast.error(e instanceof Error ? e.message : ui("wiize.connect_error")); }
-  }
   useEffect(() => {
     const p = new URLSearchParams(window.location.search).get("wiize");
     if (p === "sem-conta") toast.error(ui("wiize.no_account"));
@@ -228,7 +218,6 @@ function AuthPage() {
         <header className="mb-5 flex flex-col items-center text-center sm:mb-8">
           <Link to="/" aria-label={ui("Ir para a página inicial")}><Brand /></Link>
           <h1 className="mt-4 text-xl font-semibold leading-snug sm:mt-6 sm:text-2xl">{ui("Bem-vindo à WiizePay")}</h1>
-          <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{ui("Entre na sua conta ou crie seu acesso para continuar.")}</p>
         </header>
 
         {mfaFactor ? (
@@ -341,7 +330,6 @@ function AuthPage() {
           <Button variant="outline" className="w-full gap-3" onClick={handleGoogle} disabled={busy}>
              {busyAction === "google" ? <Loader2 className="animate-spin" /> : <GoogleIcon />}{ui(busyAction === "google" ? "Conectando..." : "Continuar com Google")}
           </Button>
-          <Button variant="outline" className="mt-2 w-full gap-3" onClick={handleWiize} disabled={busy}>{busyAction === "wiize" ? <Loader2 className="animate-spin" /> : <img src={wiizeLogo.url} alt="" className="size-5 rounded" />}{ui(busyAction === "wiize" ? "Conectando..." : "wiize.continue")}</Button>
         </div>
         )}
          <p className="mt-6 border-t border-border pt-6 text-center text-xs leading-5 text-muted-foreground">{ui("Ao continuar, você declara ciência dos")} <Link to="/termos-de-uso" className="font-medium text-primary hover:underline">{ui("Termos de Uso")}</Link> {ui("e da")} <Link to="/politica-de-privacidade" className="font-medium text-primary hover:underline">{ui("Política de Privacidade")}</Link>.</p>
