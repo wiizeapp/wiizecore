@@ -17,7 +17,7 @@
 - Área interna usa `src/components/ds` e estados de `src/components/states`; nunca mostrar valores falsos durante carregamento.
 - PT-BR/EN/ES usam `src/locales`; PT-BR é padrão/fallback e a moeda permanece BRL.
 - Every new visible PT-BR string gets an entry keyed by the PT text in `src/locales/{en,es}/ui.json` in the same change. Why: missing keys mix languages.
-- Integração Wiize usa OAuth+PKCE e APIs assinadas; tokens são criptografados e cada conexão é isolada por empresa.
+- Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, conexão isolada por empresa.
 - `ui_theme` é somente visual e temporário no consentimento OAuth; nunca integra state, PKCE, redirect URI ou escopos.
 - Lembretes de cobrança: taxa por parcela/ciclo via RPC `dunning_charge_fee` (idempotente, sem saldo negativo); regras puras em `src/lib/dunning-rules.ts`; avisos aplicados nas notificações existentes do cliente no Asaas. Why: preço por cobrança individual, não por mensagem, e canais limitados ao plano no servidor.
 - Public checkout order: customer data → sign current contract version (if linked) → payment; no step can be bypassed. Why: clear steps and guaranteed contract acceptance.
@@ -36,3 +36,4 @@
 - Environment-specific URLs (site, fallback, Wiize webhook/redirects) live only in `src/lib/deploy-config.ts`. Why: a production copy changes one file.
 - Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: um envio por evento e falha de e-mail nunca quebra a operação financeira.
 - Coproduction (`src/lib/coproduction.server.ts`, math in `src/lib/coproduction-math.ts`) belongs only to a charge; checkout stays blocked until all accept and the split is registered in Asaas; participant amounts are recorded only from the split Asaas returns on a confirmed payment via `apply_coproduction_split`; refunds send proportional `splitRefunds` and sync cumulatively from Asaas `refundedSplits`. Why: never credit or debit estimated money.
+- Response security headers live only in `src/lib/security-headers.ts` (static: `vercel.json`).
