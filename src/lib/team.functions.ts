@@ -249,6 +249,9 @@ export const acceptInvite = createServerFn({ method: "POST" })
       await logSecurityEvent(db, { userId: context.userId, tenantId: inv.tenant_id, eventType: "team.invite.email_mismatch", severity: "warning" });
       throw new Error("Entre com o mesmo e-mail que recebeu o convite.");
     }
+    // Uma pessoa só pode estar ativa em uma empresa por vez.
+    const { data: other } = await db.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").neq("tenant_id", inv.tenant_id).limit(1).maybeSingle();
+    if (other) throw new Error("Você já faz parte de outra empresa ativa. Peça para ser removido dela antes de aceitar este convite.");
     const { data: claimed } = await db
       .from("tenant_invitations")
       .update({ status: "accepted", accepted_at: new Date().toISOString(), accepted_by: context.userId })
