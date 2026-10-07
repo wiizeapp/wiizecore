@@ -61,6 +61,10 @@ export async function logSecurityEvent(
     user_agent: userAgent,
     metadata: (entry.metadata ?? {}) as never,
   });
+  if (entry.severity && entry.severity !== "info") {
+    const { alertSecurityIncident } = await import("./security-alerts.server");
+    await alertSecurityIncident(admin, { eventType: entry.eventType, severity: entry.severity, ip, tenantId: entry.tenantId });
+  }
 }
 
 /**
@@ -108,9 +112,12 @@ export async function consumeRateLimit(
     })
     .eq("id", existing.id);
 
-  return shouldBlock
-    ? { allowed: false, retryAfterSeconds: options.blockSeconds }
-    : { allowed: true, retryAfterSeconds: 0 };
+  if (shouldBlock) {
+    const { alertSecurityIncident } = await import("./security-alerts.server");
+    await alertSecurityIncident(admin, { eventType: "rate_limit_blocked", severity: "warning", ip: requestInfo().ip, scope: options.scope });
+    return { allowed: false, retryAfterSeconds: options.blockSeconds };
+  }
+  return { allowed: true, retryAfterSeconds: 0 };
 }
 
 export async function resetRateLimit(admin: AdminClient, scope: string, identifier: string) {
