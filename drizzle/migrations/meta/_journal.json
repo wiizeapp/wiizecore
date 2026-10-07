@@ -141,6 +141,13 @@
       "when": 1791381208001,
       "tag": "0019_lock_tenant_created_at",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1791384752422,
+      "tag": "0020_provider_fee_covered_amount",
+      "breakpoints": true
     }
   ]
 }

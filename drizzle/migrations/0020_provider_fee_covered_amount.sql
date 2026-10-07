@@ -1,0 +1,2 @@
+ALTER TABLE public.payments ADD COLUMN IF NOT EXISTS provider_fee_covered_amount numeric(14,2) NOT NULL DEFAULT 0 CHECK (provider_fee_covered_amount >= 0);
+COMMENT ON COLUMN public.payments.provider_fee_covered_amount IS 'Parte do custo do Asaas já descontada da taxa WiizePay na divisão da cobrança; a devolução posterior cobre só o restante.';
