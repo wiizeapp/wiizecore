@@ -373,7 +373,12 @@ export async function reimburseProviderFee(admin: AdminClient, paymentId: string
   // Só devolve a parte do custo real que a divisão da cobrança ainda não cobriu.
   const { reimbursementCents } = await import("./provider-fee-quote");
   const fee = reimbursementCents(Math.round(Number(p?.provider_fee_amount ?? 0) * 100), Math.round(Number(p?.provider_fee_covered_amount ?? 0) * 100)) / 100;
-  if (!p || p.provider_fee_reimbursement_id || fee <= 0) return;
+  if (!p || p.provider_fee_reimbursement_id) return;
+  if (fee <= 0) {
+    // Custo já coberto pela divisão: marca para a rotina diária não tentar de novo.
+    if (Number(p.provider_fee_amount ?? 0) > 0) await admin.from("payments").update({ provider_fee_reimbursement_id: "covered_by_split" }).eq("id", paymentId).is("provider_fee_reimbursement_id", null);
+    return;
+  }
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
   const { data: conn } = await admin.from("provider_connections").select("wallet_id").eq("tenant_id", p.tenant_id).eq("provider", "asaas").eq("status", "connected").limit(1).maybeSingle();
   if (!masterKey || !conn?.wallet_id) return;
