@@ -38,3 +38,4 @@
 - Response security headers live only in `src/lib/security-headers.ts`.
 - Roles live in a separate table; server team access goes through `src/lib/member-access.server.ts` (active membership + `src/lib/permissions.ts`), max one active membership per user. Why: block ex-members and restricted roles server-side.
 - Attack alerts go via `src/lib/security-alerts.server.ts`, fired from audit helpers, grouped per 30 min.
+- New-account launch promo (0% percentage on single cash Pix/boleto, fixed fee kept) is decided only in `calculatePaymentFee` via `launch-promotion.server.ts` from DB-locked `tenants.created_at`.
