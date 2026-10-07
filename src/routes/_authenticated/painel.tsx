@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { csvCell } from "@/lib/csv-safe";
 import { listRefunds } from "@/lib/refunds.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
@@ -203,7 +204,7 @@ function Dashboard() {
   const exportCsv = () => {
     const head = "id;descricao;valor;status;metodo;criado_em;pago_em";
     const lines = s.periodRows.map((r) =>
-      [r.id, (r.description ?? "").replaceAll(";", ","), Number(r.gross_amount).toFixed(2).replace(".", ","), r.status, r.method ?? "", r.created_at, r.paid_at ?? ""].join(";"),
+      [r.id, r.description ?? "", Number(r.gross_amount).toFixed(2).replace(".", ","), r.status, r.method ?? "", r.created_at, r.paid_at ?? ""].map(csvCell).join(";"),
     );
     const blob = new Blob([`\uFEFF${[head, ...lines].join("\n")}`], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
