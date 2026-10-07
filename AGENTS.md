@@ -17,7 +17,7 @@
 - Área interna usa `src/components/ds` e estados de `src/components/states`; nunca mostrar valores falsos durante carregamento.
 - PT-BR/EN/ES usam `src/locales`; PT-BR é padrão/fallback e a moeda permanece BRL.
 - Every new visible PT-BR string gets an entry keyed by the PT text in `src/locales/{en,es}/ui.json` in the same change. Why: missing keys mix languages.
-- Integração Wiize usa OAuth+PKCE e APIs assinadas; tokens são criptografados e cada conexão é isolada por empresa.
+- Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, conexão isolada por empresa.
 - `ui_theme` é somente visual e temporário no consentimento OAuth; nunca integra state, PKCE, redirect URI ou escopos.
 - Lembretes de cobrança: taxa por parcela/ciclo via RPC `dunning_charge_fee` (idempotente, sem saldo negativo); regras puras em `src/lib/dunning-rules.ts`; avisos aplicados nas notificações existentes do cliente no Asaas. Why: preço por cobrança individual, não por mensagem, e canais limitados ao plano no servidor.
 - Public checkout order: customer data → sign current contract version (if linked) → payment; no step can be bypassed. Why: clear steps and guaranteed contract acceptance.
