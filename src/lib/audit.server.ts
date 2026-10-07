@@ -63,7 +63,7 @@ export async function logSecurityEvent(
   });
   if (entry.severity && entry.severity !== "info") {
     const { alertSecurityIncident } = await import("./security-alerts.server");
-    await alertSecurityIncident(admin, { eventType: entry.eventType, severity: entry.severity, ip, tenantId: entry.tenantId });
+    await alertSecurityIncident(admin, { eventType: entry.eventType, severity: entry.severity, ip, tenantId: entry.tenantId ?? null });
   }
 }
 
