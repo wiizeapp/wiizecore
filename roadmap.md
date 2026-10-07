@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
+
 - [x] Corrigir contraste da marca WiizePay na prévia do checkout.
 - [x] Ordenar a jornada entre dados, contrato e pagamento.
 - [x] Reposicionar o aceite legal junto da ação final.

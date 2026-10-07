@@ -149,9 +149,11 @@
     "note": "Precio fijo por cobro individual, no por mensaje. Cada cuota y cada ciclo recurrente es un cobro separado. Se requiere saldo disponible."
   },
   "promo": {
-    "eyebrow": "0% de tasa por 3 meses",
-    "body": "Las cuentas nuevas tienen 0% de tasa porcentual en Pix al contado y boleto al contado durante los 3 primeros meses de la cuenta.",
-    "fixed": "Solo pagas la tarifa fija.",
-    "note": "Exclusivo para cuentas nuevas. Pix en cuotas o recurrente, boleto en cuotas, tarjeta y anticipo mantienen las tarifas normales. Al cabo de 3 meses, Pix y boleto al contado vuelven automáticamente a la tasa estándar de esta página."
+    "eyebrow": "Beneficio para cuentas nuevas",
+    "duration": "de tasa porcentual por 3 meses",
+    "body": "Pix y boleto al contado: solo la tarifa fija.",
+    "fixed": "Durante los 3 primeros meses después de crear tu cuenta, el porcentaje es cero. Se sigue aplicando la tarifa fija por cobro.",
+    "note": "Exclusivo para cuentas nuevas. Pix en cuotas o recurrente, boleto en cuotas, tarjeta y anticipo mantienen las tarifas normales.",
+    "rateNote": "0% para cuentas nuevas durante los primeros 3 meses. Después: {{rate}} + tarifa fija."
   }
 }

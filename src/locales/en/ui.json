@@ -1,4 +1,10 @@
 {
+  "Benefício para novas contas": "New account benefit",
+  "de taxa percentual por 3 meses": "percentage fee for 3 months",
+  "Pix e boleto à vista: só a tarifa fixa.": "One-time Pix and boleto: only the fixed fee.",
+  "Nos 3 primeiros meses após criar sua conta, o percentual é zero. A tarifa fixa por cobrança continua sendo aplicada.": "For the first 3 months after creating your account, the percentage is zero. The fixed fee per charge still applies.",
+  "Exclusivo para contas novas. Pix parcelado ou recorrente, boleto parcelado, cartão e antecipação mantêm as tarifas normais.": "New accounts only. Installment or recurring Pix, installment boleto, cards and anticipation keep their regular fees.",
+  "0% para novas contas nos primeiros 3 meses. Depois: {{rate}} + tarifa fixa.": "0% for new accounts during the first 3 months. Afterward: {{rate}} + fixed fee.",
   "Pagamentos simples para quem": "Simple payments for those who",
   "Vende serviços B2B": "sell B2B services",
   "Começar agora": "Get started",
