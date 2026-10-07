@@ -154,6 +154,6 @@
     "body": "One-time Pix and boleto: only the fixed fee.",
     "fixed": "For the first 3 months after creating your account, the percentage is zero. The fixed fee per charge still applies.",
     "note": "New accounts only. Installment or recurring Pix, installment boleto, cards and anticipation keep their regular fees.",
-    "rateNote": "0% for new accounts during the first 3 months. Afterward: {{rate}} + fixed fee."
+    "strip": "0% percentage fee for new accounts during the first 3 months. Afterward, one-time Pix and boleto return to {{rate}} + fixed fee."
   }
 }
