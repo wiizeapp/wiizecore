@@ -154,6 +154,7 @@
     "body": "Pix e boleto à vista: só a tarifa fixa.",
     "fixed": "Nos 3 primeiros meses após criar sua conta, o percentual é zero. A tarifa fixa por cobrança continua sendo aplicada.",
     "note": "Exclusivo para contas novas. Pix parcelado ou recorrente, boleto parcelado, cartão e antecipação mantêm as tarifas normais.",
-    "strip": "0% de taxa percentual para contas novas nos 3 primeiros meses. Depois, Pix e boleto à vista voltam para {{rate}} + tarifa fixa."
+    "stripPix": "0% de taxa percentual para contas novas nos 3 primeiros meses. Depois, o Pix à vista volta para {{rate}} + tarifa fixa.",
+    "stripBoleto": "0% de taxa percentual para contas novas nos 3 primeiros meses. Depois, o boleto à vista volta para {{rate}} + tarifa fixa."
   }
 }
