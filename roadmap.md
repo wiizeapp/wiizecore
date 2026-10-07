@@ -50,3 +50,4 @@
 - [x] Segurança V2: checar permissões específicas no servidor.
 - [x] Segurança V3: empresa ativa explícita para quem participa de duas empresas.
 - [x] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
+- [x] Alinhar as caixas de taxa 0% às demais e mover o aviso da promoção para uma faixa discreta em largura total abaixo dos cards de Pix e Boleto.
