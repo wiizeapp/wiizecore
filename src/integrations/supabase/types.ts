@@ -3975,6 +3975,7 @@ export type Database = {
           provider: string
           provider_cost_config_id: string | null
           provider_fee_amount: number
+          provider_fee_covered_amount: number
           provider_fee_reimbursed_at: string | null
           provider_fee_reimbursement_id: string | null
           provider_installment_id: string | null
@@ -4035,6 +4036,7 @@ export type Database = {
           provider?: string
           provider_cost_config_id?: string | null
           provider_fee_amount?: number
+          provider_fee_covered_amount?: number
           provider_fee_reimbursed_at?: string | null
           provider_fee_reimbursement_id?: string | null
           provider_installment_id?: string | null
@@ -4095,6 +4097,7 @@ export type Database = {
           provider?: string
           provider_cost_config_id?: string | null
           provider_fee_amount?: number
+          provider_fee_covered_amount?: number
           provider_fee_reimbursed_at?: string | null
           provider_fee_reimbursement_id?: string | null
           provider_installment_id?: string | null
