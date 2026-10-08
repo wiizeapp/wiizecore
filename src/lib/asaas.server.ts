@@ -1,12 +1,13 @@
 /**
+ * Abstração do provedor de pagamentos. O restante do sistema fala com
+ * `PaymentProvider`; o Asaas é apenas a primeira implementação.
+ */
 
 /** Erro devolvido pelo provedor (ex.: validação do cadastro). A mensagem é a descrição oficial do Asaas, sem dados internos. */
 export class ProviderRequestError extends Error {
   constructor(message: string, readonly status: number) { super(message); this.name = "ProviderRequestError"; }
 }
- * Abstração do provedor de pagamentos. O restante do sistema fala com
- * `PaymentProvider`; o Asaas é apenas a primeira implementação.
- */
+
 export type ProviderBillingType = "UNDEFINED" | "PIX" | "BOLETO" | "CREDIT_CARD";
 
 export type ProviderPayment = {
