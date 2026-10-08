@@ -69,6 +69,33 @@ export function CookieConsent() {
     return () => { window.removeEventListener("wiize:open-cookie-settings", open); };
   }, []);
 
+  // Logado: a decisão salva no servidor vale para sempre, em qualquer navegador.
+  useEffect(() => {
+    if (!user?.id) return;
+    let off = false;
+    void (async () => {
+      const { data } = await supabase.from("cookie_consents")
+        .select("functional, analytics, marketing").eq("user_id", user.id)
+        .order("created_at", { ascending: false }).limit(1).maybeSingle();
+      if (off) return;
+      if (data) {
+        if (!hasConsentDecision()) {
+          saveConsent({ necessary: true, functional: data.functional, analytics: data.analytics, marketing: data.marketing });
+          setVisible(false); setShow(false);
+        }
+      } else if (hasConsentDecision()) {
+        const p = getConsent();
+        await supabase.from("cookie_consents").insert({
+          user_id: user.id, anon_id: getAnonId(), necessary: true,
+          functional: p.functional, analytics: p.analytics, marketing: p.marketing,
+          policy_version: CONSENT_VERSION, page_url: window.location.href.slice(0, 2048),
+          user_agent: navigator.userAgent.slice(0, 512), language: (i18n.language || "pt-BR").slice(0, 10),
+        });
+      }
+    })();
+    return () => { off = true; };
+  }, [user?.id]);
+
   useEffect(() => {
     if (!cfg) return;
     if (hasConsentDecision()) applyTags(cfg, getConsent());
@@ -95,7 +122,7 @@ export function CookieConsent() {
     });
   };
 
-  if (!show || HIDDEN.some((r) => r.test(pathname)) || (typeof window !== "undefined" && (window.parent !== window || new URLSearchParams(location.search).get("embed") === "1"))) return null;
+  if (!show || HIDDEN.some((r) => r.test(pathname)) || (typeof window !== "undefined" && new URLSearchParams(location.search).get("embed") === "1")) return null;
 
   const cats: { key: keyof ConsentPrefs; title: string; desc: string }[] = [
     { key: "necessary", title: "Necessários", desc: "Login, segurança e funcionamento do site. Sempre ativos." },
