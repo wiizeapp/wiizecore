@@ -46,20 +46,42 @@ function MobileActivationPage() {
   const [busyDoc, setBusyDoc] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   useEffect(() => { setSessionToken(sessionStorage.getItem(storageKey)); setReady(true); }, [storageKey]);
+  // Mesmo tema do computador que gerou o QR Code (?tema=light|dark).
+  useEffect(() => {
+    const tema = new URLSearchParams(window.location.search).get("tema");
+    if (tema !== "light" && tema !== "dark") return;
+    document.documentElement.classList.toggle("dark", tema === "dark");
+    document.documentElement.style.colorScheme = tema;
+  }, []);
   // Abre direto pelo QR Code: o próprio link é o acesso, válido por 15 minutos e uma única vez.
   const [verifyFailed, setVerifyFailed] = useState(false);
   useEffect(() => { if (ready && !sessionToken && !verifyFailed) verify({ data: { token } }).then((r) => { sessionStorage.setItem(storageKey, r.sessionToken); setSessionToken(r.sessionToken); }).catch(() => setVerifyFailed(true)); }, [ready, sessionToken, verifyFailed, token, storageKey, verify]);
   const query = useQuery({ queryKey: ["mobile-activation", sessionToken], queryFn: () => load({ data: { sessionToken: sessionToken ?? "" } }), enabled: ready && !!sessionToken, retry: false });
-  useEffect(() => { if (query.data) { setForm(query.data.form); setPersonType(query.data.personType); } }, [query.data]);
+  // Os dados do servidor só preenchem o formulário uma vez; recarregar a lista de documentos não apaga o que foi digitado.
+  const hydrated = useRef(false);
+  const dirty = useRef(false);
+  useEffect(() => { if (query.data && !hydrated.current) { hydrated.current = true; setForm(query.data.form); setPersonType(query.data.personType); } }, [query.data]);
   const verifyM = useMutation({ mutationFn: () => verify({ data: { token } }), onSuccess: (result) => { sessionStorage.setItem(storageKey, result.sessionToken); setSessionToken(result.sessionToken); }, onError: (error: Error) => toast.error(error.message) });
-  const saveM = useMutation({ mutationFn: () => save({ data: { sessionToken: sessionToken ?? "", personType: personType ?? "individual", form: activationFormSchema.parse(form) } }), onSuccess: () => toast.success("Dados salvos com segurança."), onError: (error: Error) => toast.error(error.message) });
-  const finishM = useMutation({ mutationFn: async () => { await saveM.mutateAsync(); await finish({ data: { sessionToken: sessionToken ?? "" } }); }, onSuccess: () => { sessionStorage.removeItem(storageKey); setCompleted(true); }, onError: (error: Error) => toast.error(error.message) });
-  const set = (key: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setForm((current) => ({ ...current, [key]: event.target.value })); setErrors((current) => ({ ...current, [key]: "" })); };
+  const saveDraft = useCallback(async () => {
+    if (!sessionToken || !hydrated.current) return;
+    dirty.current = false;
+    await save({ data: { sessionToken, personType: personType ?? "individual", form: activationFormSchema.parse(form) } });
+  }, [sessionToken, personType, form, save]);
+  // Salva sozinho enquanto a pessoa digita: se o celular recarregar a página ao abrir a câmera, nada se perde.
+  useEffect(() => {
+    if (!hydrated.current || !dirty.current) return;
+    const timer = setTimeout(() => { void saveDraft().catch(() => { dirty.current = true; }); }, 800);
+    return () => clearTimeout(timer);
+  }, [form, saveDraft]);
+  const saveM = useMutation({ mutationFn: () => saveDraft(), onSuccess: () => toast.success("Dados salvos com segurança."), onError: (error: Error) => toast.error(error.message) });
+  const finishM = useMutation({ mutationFn: async () => { await saveDraft(); await finish({ data: { sessionToken: sessionToken ?? "" } }); }, onSuccess: () => { sessionStorage.removeItem(storageKey); setCompleted(true); }, onError: (error: Error) => toast.error(error.message) });
+  const set = (key: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { dirty.current = true; setForm((current) => ({ ...current, [key]: event.target.value })); setErrors((current) => ({ ...current, [key]: "" })); };
+  const setValue = (key: string, value: string) => { dirty.current = true; setForm((current) => ({ ...current, [key]: value })); setErrors((current) => ({ ...current, [key]: "" })); };
   const field = (key: string, label: string, props?: React.ComponentProps<typeof Input>) => <div className="space-y-1.5"><Label htmlFor={key}>{label}</Label><Input id={key} value={form[key] ?? ""} onChange={set(key)} aria-invalid={!!errors[key]} {...props} />{errors[key] ? <p className="text-xs text-destructive">{errors[key]}</p> : null}</div>;
   async function onFile(kind: string, file?: File) {
     if (!file || !sessionToken) return;
     setBusyDoc(kind);
-    try { const prepared = await compressActivationFile(file); if (prepared.size > 8 * 1024 * 1024) throw new Error("O arquivo deve ter até 8 MB."); const bytes = new Uint8Array(await prepared.arrayBuffer()); let binary = ""; for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); await upload({ data: { sessionToken, kind: kind as never, mimeType: prepared.type, base64: btoa(binary) } }); await qc.invalidateQueries({ queryKey: ["mobile-activation", sessionToken] }); toast.success("Documento enviado."); } catch (error) { toast.error((error as Error).message); throw error; } finally { setBusyDoc(null); }
+    try { await saveDraft().catch(() => undefined); const prepared = await compressActivationFile(file); if (prepared.size > 8 * 1024 * 1024) throw new Error("O arquivo deve ter até 8 MB."); const bytes = new Uint8Array(await prepared.arrayBuffer()); let binary = ""; for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); await upload({ data: { sessionToken, kind: kind as never, mimeType: prepared.type, base64: btoa(binary) } }); await qc.invalidateQueries({ queryKey: ["mobile-activation", sessionToken] }); setErrors((current) => ({ ...current, [kind]: "" })); toast.success("Documento enviado."); } catch (error) { toast.error((error as Error).message); throw error; } finally { setBusyDoc(null); }
   }
   function validateAll() { const parsed = activationFormSchema.parse(form); const next = { ...validateActivationStep(personType, parsed, 0), ...validateActivationStep(personType, parsed, 1), ...validateActivationStep(personType, parsed, 2), ...validateActivationStep(personType, parsed, 3) }; const have = new Set(query.data?.documents.map((document) => document.kind) ?? []); for (const kind of REQUIRED_DOCS[personType === "company" ? "company" : "individual"]) if (!have.has(kind)) next[kind] = "Envie este documento obrigatório."; setErrors(next); if (Object.keys(next).length) toast.error("Confira os campos e documentos obrigatórios."); return !Object.keys(next).length; }
 
