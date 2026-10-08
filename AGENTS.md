@@ -14,10 +14,8 @@
 - Asaas usa subcontas/split; liquidação só após confirmação do provedor; antecipação segue `docs/antecipacao.md`.
 - Taxas e custos ficam nas configurações versionadas; cálculos em `src/lib/fee-math.ts`; totais em `src/lib/financial-summary.ts`.
 - Área interna usa `src/components/ds` e estados de `src/components/states`; nunca mostrar valores falsos durante carregamento.
-- PT-BR/EN/ES usam `src/locales`; PT-BR é padrão/fallback e a moeda permanece BRL.
-- Every new visible PT-BR string gets an entry keyed by the PT text in `src/locales/{en,es}/ui.json` in the same change.
-- Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, conexão isolada por empresa.
-- `ui_theme` é somente visual e temporário no consentimento OAuth; nunca integra state, PKCE, redirect URI ou escopos.
+- PT-BR (default/fallback, BRL)/EN/ES in `src/locales`; every new visible PT string gets a PT-keyed entry in `{en,es}/ui.json` in the same change.
+- Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, isolado por empresa; `ui_theme` só visual, fora de state/PKCE/redirect/escopos.
 - Lembretes de cobrança: taxa por parcela/ciclo via RPC `dunning_charge_fee` (idempotente, sem saldo negativo); regras puras em `src/lib/dunning-rules.ts`; avisos aplicados nas notificações existentes do cliente no Asaas. Why: preço por cobrança, canais limitados no servidor.
 - Public checkout order: customer data → sign current contract version (if linked) → payment; no step can be bypassed.
 - Payment method changes and regularization create a new `payment_attempts` row for the same `payments` row via `src/lib/payment-attempts.server.ts` (create new → cancel old → activate); webhooks for superseded attempts are discarded.
@@ -35,9 +33,9 @@
 - Environment-specific URLs (site, fallback, Wiize webhook/redirects) live only in `src/lib/deploy-config.ts`. Why: a production copy changes one file.
 - Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: falha de e-mail nunca quebra operação financeira.
 - Coproduction (`src/lib/coproduction.server.ts`, math in `src/lib/coproduction-math.ts`) belongs only to a charge; checkout stays blocked until all accept and the split is registered in Asaas; amounts come only from Asaas-confirmed splits.
-- Response security headers live only in `src/lib/security-headers.ts`.
+- Security headers only in `src/lib/security-headers.ts`.
 - Roles live in a separate table; server team access goes through `src/lib/member-access.server.ts` (active membership + `src/lib/permissions.ts`), max one active membership per user. Why: block ex-members and restricted roles server-side.
 - Attack alerts go via `src/lib/security-alerts.server.ts`, fired from audit helpers, grouped per 30 min.
 - New-account launch promo (0% percentage on single cash Pix/boleto, fixed fee kept) is decided only in `calculatePaymentFee` via `launch-promotion.server.ts` from DB-locked `tenants.created_at`.
 - One-time charges deduct the Asaas cost (subaccount fees API incl. still-valid promo price with safety margin, `src/lib/provider-fee-quote.ts`) from the WiizePay split, stored in `payments.provider_fee_covered_amount`; only the uncovered rest is reimbursed. Why: no round-trip transfer.
-- Wiize CRM embeds `/embed/*` open with a one-time 2-min ticket (in URL hash) exchanged for a 30-min in-memory session via `src/lib/embed-session.server.ts`; framing allowed only for `DEPLOY_CONFIG.wiizeEmbedOrigins`. Why: no third-party cookies, no token in logs.
+- Wiize `/embed/*`: one-time 2-min hash ticket → 30-min in-memory session (`embed-session.server.ts`); framing only for `wiizeEmbedOrigins`. Why: no 3rd-party cookies/token logs.
