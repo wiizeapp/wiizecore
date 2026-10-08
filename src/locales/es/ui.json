@@ -4811,5 +4811,13 @@
   "Cobrança criada. O link de pagamento já foi enviado para o Wiize.": "Cobro creado. El enlace de pago ya fue enviado a Wiize.",
   "Não foi possível criar o serviço.": "No fue posible crear el servicio.",
   "Há um item para concluir na ativação": "Hay un elemento pendiente en tu activación",
-  "Sua ativação ainda tem pendências": "Tu activación aún tiene pendientes"
+  "Sua ativação ainda tem pendências": "Tu activación aún tiene pendientes",
+  "Caixa de entrada": "Bandeja de entrada",
+  "Carregando mensagens…": "Cargando mensajes…",
+  "Nenhuma mensagem recebida": "Ningún mensaje recibido",
+  "Os e-mails enviados pelo parceiro para as contas das empresas aparecem aqui.": "Los correos enviados por el socio a las cuentas de las empresas aparecen aquí.",
+  "Empresa não identificada": "Empresa no identificada",
+  "Nova": "Nueva",
+  "(sem assunto)": "(sin asunto)",
+  "Sem conteúdo em texto.": "Sin contenido de texto."
 }

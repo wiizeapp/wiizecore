@@ -84,6 +84,7 @@ import { Route as ApiPublicV1CustomersRouteImport } from './routes/api/public/v1
 import { Route as ApiPublicV1EmbedTicketsRouteImport } from './routes/api/public/v1/embed-tickets'
 import { Route as ApiPublicV1ServicesRouteImport } from './routes/api/public/v1/services'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
+import { Route as ApiPublicWebhooksResendInboundRouteImport } from './routes/api/public/webhooks/resend-inbound'
 import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/public/wiize-pay/deliver'
 import { Route as ApiPublicWiizeCallbackRouteImport } from './routes/api/public/wiize/callback'
 import { Route as ApiPublicWiizeDeliverRouteImport } from './routes/api/public/wiize/deliver'
@@ -480,6 +481,12 @@ const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
   path: '/api/public/webhooks/asaas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksResendInboundRoute =
+  ApiPublicWebhooksResendInboundRouteImport.update({
+    id: '/api/public/webhooks/resend-inbound',
+    path: '/api/public/webhooks/resend-inbound',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWiizePayDeliverRoute =
   ApiPublicWiizePayDeliverRouteImport.update({
     id: '/api/public/wiize-pay/deliver',
@@ -588,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
   '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
+  '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
@@ -670,6 +678,7 @@ export interface FileRoutesByTo {
   '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
   '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
+  '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
@@ -754,6 +763,7 @@ export interface FileRoutesById {
   '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
   '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
+  '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
@@ -838,6 +848,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/embed-tickets'
     | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
+    | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
@@ -920,6 +931,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/embed-tickets'
     | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
+    | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
@@ -1003,6 +1015,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/embed-tickets'
     | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
+    | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
@@ -1057,6 +1070,7 @@ export interface RootRouteChildren {
   ApiPublicV1EmbedTicketsRoute: typeof ApiPublicV1EmbedTicketsRoute
   ApiPublicV1ServicesRoute: typeof ApiPublicV1ServicesRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
+  ApiPublicWebhooksResendInboundRoute: typeof ApiPublicWebhooksResendInboundRoute
   ApiPublicWiizePayDeliverRoute: typeof ApiPublicWiizePayDeliverRoute
   ApiPublicWiizeCallbackRoute: typeof ApiPublicWiizeCallbackRoute
   ApiPublicWiizeDeliverRoute: typeof ApiPublicWiizeDeliverRoute
@@ -1590,6 +1604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksAsaasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/resend-inbound': {
+      id: '/api/public/webhooks/resend-inbound'
+      path: '/api/public/webhooks/resend-inbound'
+      fullPath: '/api/public/webhooks/resend-inbound'
+      preLoaderRoute: typeof ApiPublicWebhooksResendInboundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/wiize-pay/deliver': {
       id: '/api/public/wiize-pay/deliver'
       path: '/api/public/wiize-pay/deliver'
@@ -1774,6 +1795,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicV1EmbedTicketsRoute: ApiPublicV1EmbedTicketsRoute,
   ApiPublicV1ServicesRoute: ApiPublicV1ServicesRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
+  ApiPublicWebhooksResendInboundRoute: ApiPublicWebhooksResendInboundRoute,
   ApiPublicWiizePayDeliverRoute: ApiPublicWiizePayDeliverRoute,
   ApiPublicWiizeCallbackRoute: ApiPublicWiizeCallbackRoute,
   ApiPublicWiizeDeliverRoute: ApiPublicWiizeDeliverRoute,

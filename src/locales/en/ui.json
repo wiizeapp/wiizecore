@@ -4782,5 +4782,13 @@
   "Cobrança criada. O link de pagamento já foi enviado para o Wiize.": "Charge created. The payment link was sent to Wiize.",
   "Não foi possível criar o serviço.": "Could not create the service.",
   "Há um item para concluir na ativação": "There is an item to complete in your activation",
-  "Sua ativação ainda tem pendências": "Your activation still has pending items"
+  "Sua ativação ainda tem pendências": "Your activation still has pending items",
+  "Caixa de entrada": "Inbox",
+  "Carregando mensagens…": "Loading messages…",
+  "Nenhuma mensagem recebida": "No messages received",
+  "Os e-mails enviados pelo parceiro para as contas das empresas aparecem aqui.": "Emails sent by the partner to company accounts appear here.",
+  "Empresa não identificada": "Unidentified company",
+  "Nova": "New",
+  "(sem assunto)": "(no subject)",
+  "Sem conteúdo em texto.": "No text content."
 }
