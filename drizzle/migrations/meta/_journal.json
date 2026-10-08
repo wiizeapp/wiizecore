@@ -162,6 +162,13 @@
       "when": 1791420294714,
       "tag": "0022_activation_single_submitted_notice",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791422891833,
+      "tag": "0023_inbound_emails",
+      "breakpoints": true
     }
   ]
 }

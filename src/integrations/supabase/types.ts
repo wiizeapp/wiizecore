@@ -3018,6 +3018,45 @@ export type Database = {
           },
         ]
       }
+      inbound_emails: {
+        Row: {
+          from_address: string
+          id: string
+          links: Json
+          provider_email_id: string
+          read_at: string | null
+          received_at: string
+          subject: string | null
+          tenant_id: string | null
+          text_body: string | null
+          to_address: string
+        }
+        Insert: {
+          from_address: string
+          id?: string
+          links?: Json
+          provider_email_id: string
+          read_at?: string | null
+          received_at?: string
+          subject?: string | null
+          tenant_id?: string | null
+          text_body?: string | null
+          to_address: string
+        }
+        Update: {
+          from_address?: string
+          id?: string
+          links?: Json
+          provider_email_id?: string
+          read_at?: string | null
+          received_at?: string
+          subject?: string | null
+          tenant_id?: string | null
+          text_body?: string | null
+          to_address?: string
+        }
+        Relationships: []
+      }
       integration_audit_log: {
         Row: {
           action: string
