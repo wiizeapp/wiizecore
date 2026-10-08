@@ -19,7 +19,6 @@ const PUBLIC_ALLOWED: Record<string, string[]> = {
   // Celular: protegido por link de uso único + código, sessão curta.
   "activation-handoff.functions.ts": ["verifyActivationHandoff", "getMobileActivation", "saveMobileActivation", "uploadMobileActivationDocument", "finishActivationHandoff"],
   // Janelas embutidas da Wiize: protegidas por passe de uso único + sessão curta de 30 min.
-  "embed.functions.ts": ["*"],
 };
 
 describe("funções do servidor exigem login", () => {
