@@ -187,7 +187,7 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
 function friendlySendError(e: unknown): string {
   const raw = e instanceof Error ? e.message : "";
   if (e instanceof Error && e.name === "ProviderRequestError" && (e as Error & { status?: number }).status && (e as Error & { status: number }).status < 500 && raw) {
-    return `A instituição de pagamento não aceitou o cadastro: ${raw.slice(0, 240)} Corrija este ponto e envie novamente.`;
+    return `A instituição de pagamento não aceitou o cadastro: ${raw.slice(0, 240).replace(/[.\s]*$/, ".")} Corrija este ponto e envie novamente.`;
   }
   if (/conta principal|criptografia/i.test(raw)) return "O envio para análise está temporariamente indisponível por uma configuração da WiizePay. Seus dados ficaram salvos; tente novamente mais tarde ou fale com o suporte.";
   return "Não foi possível falar com a instituição de pagamento agora. Seus dados ficaram salvos; tente novamente em alguns minutos.";
