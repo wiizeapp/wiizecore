@@ -18,7 +18,7 @@ export const DEPLOY_CONFIG = {
     "https://wiize-lb2.lovable.app/configuracoes/integracoes/wiize-pay/callback",
   ],
   /** Domínio dos e-mails de cadastro criados para cada empresa no Asaas (redirecionados para a caixa da WiizePay). */
-  providerSignupEmailDomain: "contas.wiize.com.br",
+  providerSignupEmailDomain: "wiizepay.com",
   /** Únicos sites que podem mostrar as janelas /embed/* e trocar mensagens com elas. */
   wiizeEmbedOrigins: [
     "https://wiize.com.br",
