@@ -31,7 +31,7 @@ export function validateActivationStep(personType: "individual" | "company" | nu
   const need = (key: keyof ActivationForm, label: string) => { if (!form[key]?.trim()) errors[key] = `Preencha ${label.toLowerCase()}.`; };
   if (step === 0 && !personType) errors['personType'] = "Escolha Pessoa Física ou Pessoa Jurídica.";
   const common: [keyof ActivationForm, string][][] = [
-    [["fullName", "nome completo"], ["cpf", "CPF"], ["birthDate", "data de nascimento"], ["email", "e-mail"], ["phone", "celular com DDD"]],
+    [["fullName", "nome completo"], ["cpf", "CPF"], ["birthDate", "data de nascimento"], ["phone", "celular com DDD"]],
     [["zipCode", "CEP"], ["address", "rua ou avenida"], ["number", "número"], ["district", "bairro"], ["city", "cidade"], ["state", "Estado"]],
     [["monthlyRevenue", "faturamento mensal"], ["expectedVolume", "valor mensal esperado"], ["businessModel", "serviço prestado"], ["paymentSources", "formas de pagamento dos clientes"]],
   ];
@@ -42,7 +42,6 @@ export function validateActivationStep(personType: "individual" | "company" | nu
   if (step === 1 && form['cpf'] && !validCpf(form['cpf'])) errors['cpf'] = "Informe um CPF válido.";
   if (step === 1 && personType === "company" && form['cnpj'] && !validCnpj(form['cnpj'])) errors['cnpj'] = "Informe um CNPJ válido.";
   if (step === 1 && personType === "company" && form['legalRepCpf'] && !validCpf(form['legalRepCpf'])) errors['legalRepCpf'] = "Informe um CPF válido.";
-  if (step === 1 && form['email'] && !z.string().email().safeParse(form['email']).success) errors['email'] = "Informe um e-mail válido.";
   if (step === 2 && form['state'] && !BRAZIL_STATES.some(([uf]) => uf === form['state'])) errors['state'] = "Selecione um Estado válido.";
   return errors;
 }

@@ -41,6 +41,18 @@ async function run(request: Request) {
       email: { subject: "Contrato aguardando assinatura" },
     });
   }
+  // Lembrete diário enquanto a ativação tiver pendência há mais de 24 horas.
+  const dayKey = new Date().toISOString().slice(0, 10);
+  const { data: pendingActs } = await admin.from("payment_activations").select("tenant_id, review_message")
+    .eq("status", "action_required").lt("updated_at", new Date(Date.now() - 86400000).toISOString()).limit(500);
+  for (const a of pendingActs ?? []) {
+    await notifyTenant(admin, {
+      tenantId: a.tenant_id, kind: "activation.reminder", dedupeKey: `activation.reminder:${a.tenant_id}:${dayKey}`, link: "/ativacao",
+      title: "Sua ativação ainda tem pendências", body: a.review_message ? String(a.review_message).slice(0, 200) : "Abra Ative seus pagamentos para concluir o que falta.",
+      email: { subject: "WiizePay — Conclua a ativação de pagamentos" },
+    });
+    sent++;
+  }
   // Nova tentativa das devoluções da taxa do Asaas que falharam (cada uma continua travada contra duplicidade).
   const { reimburseProviderFee } = await import("@/lib/billing.server");
   const { data: pendingFees } = await admin.from("payments").select("id")

@@ -337,7 +337,6 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
           {F({ k: "fullName", label: company ? "Seu nome completo (sócio/administrador)" : "Nome completo" })}
           {F({ k: "cpf", label: "CPF", inputMode: "numeric" })}
           {F({ k: "birthDate", label: "Data de nascimento", type: "date" })}
-          {F({ k: "email", label: ui("E-mail"), type: "email" })}
           {F({ k: "phone", label: "Celular com DDD", inputMode: "tel" })}
           {company && <>
             {F({ k: "legalName", label: "Razão social" })}
