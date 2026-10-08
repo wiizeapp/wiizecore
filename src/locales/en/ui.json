@@ -4766,5 +4766,19 @@
   "E-mail ou documento não conferem. Use o e-mail e o CPF/CNPJ completo cadastrados.": "Email or document do not match. Use the registered email and full CPF/CNPJ.",
   "Seu acesso à empresa foi desativado. Fale com o proprietário da conta.": "Your access to the company was deactivated. Contact the account owner.",
   "Você já faz parte de outra empresa ativa. Peça para ser removido dela antes de aceitar este convite.": "You already belong to another active company. Ask to be removed from it before accepting this invite.",
-  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "File type not allowed. Send a PDF, image, spreadsheet or text document."
+  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "File type not allowed. Send a PDF, image, spreadsheet or text document.",
+  "Carregando...": "Loading...",
+  "Acesso expirado. Abra a janela novamente.": "Access expired. Open the window again.",
+  "Escolher serviço existente": "Choose existing service",
+  "Criar novo serviço": "Create new service",
+  "À vista": "Single payment",
+  "Recorrente (mensal)": "Recurring (monthly)",
+  "Criar serviço": "Create service",
+  "Serviço escolhido. Você já pode continuar no Wiize.": "Service selected. You can continue in Wiize.",
+  "Escolher contrato existente": "Choose existing contract",
+  "Criar novo contrato": "Create new contract",
+  "Fim (opcional)": "End (optional)",
+  "Contrato escolhido. A assinatura acontece no link de pagamento, antes do pagamento.": "Contract selected. It is signed in the payment link, before payment.",
+  "Cobrança criada. O link de pagamento já foi enviado para o Wiize.": "Charge created. The payment link was sent to Wiize.",
+  "Não foi possível criar o serviço.": "Could not create the service."
 }

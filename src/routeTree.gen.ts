@@ -60,6 +60,9 @@ import { Route as AtivacaoCelularTokenRouteImport } from './routes/ativacao-celu
 import { Route as AutorizarTokenRouteImport } from './routes/autorizar.$token'
 import { Route as CTokenRouteImport } from './routes/c.$token'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
+import { Route as EmbedCobrancaRouteImport } from './routes/embed.cobranca'
+import { Route as EmbedContratoRouteImport } from './routes/embed.contrato'
+import { Route as EmbedServicoRouteImport } from './routes/embed.servico'
 import { Route as OauthAuthorizeRouteImport } from './routes/oauth.authorize'
 import { Route as PagarTokenRouteImport } from './routes/pagar.$token'
 import { Route as PortalKeyRouteImport } from './routes/portal.$key'
@@ -350,6 +353,21 @@ const ConviteTokenRoute = ConviteTokenRouteImport.update({
   path: '/convite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmbedCobrancaRoute = EmbedCobrancaRouteImport.update({
+  id: '/embed/cobranca',
+  path: '/embed/cobranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmbedContratoRoute = EmbedContratoRouteImport.update({
+  id: '/embed/contrato',
+  path: '/embed/contrato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmbedServicoRoute = EmbedServicoRouteImport.update({
+  id: '/embed/servico',
+  path: '/embed/servico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OauthAuthorizeRoute = OauthAuthorizeRouteImport.update({
   id: '/oauth/authorize',
   path: '/oauth/authorize',
@@ -546,6 +564,9 @@ export interface FileRoutesByFullPath {
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
+  '/embed/cobranca': typeof EmbedCobrancaRoute
+  '/embed/contrato': typeof EmbedContratoRoute
+  '/embed/servico': typeof EmbedServicoRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
@@ -625,6 +646,9 @@ export interface FileRoutesByTo {
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
+  '/embed/cobranca': typeof EmbedCobrancaRoute
+  '/embed/contrato': typeof EmbedContratoRoute
+  '/embed/servico': typeof EmbedServicoRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
@@ -706,6 +730,9 @@ export interface FileRoutesById {
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
+  '/embed/cobranca': typeof EmbedCobrancaRoute
+  '/embed/contrato': typeof EmbedContratoRoute
+  '/embed/servico': typeof EmbedServicoRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
@@ -787,6 +814,9 @@ export interface FileRouteTypes {
     | '/autorizar/$token'
     | '/c/$token'
     | '/convite/$token'
+    | '/embed/cobranca'
+    | '/embed/contrato'
+    | '/embed/servico'
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
@@ -866,6 +896,9 @@ export interface FileRouteTypes {
     | '/autorizar/$token'
     | '/c/$token'
     | '/convite/$token'
+    | '/embed/cobranca'
+    | '/embed/contrato'
+    | '/embed/servico'
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
@@ -946,6 +979,9 @@ export interface FileRouteTypes {
     | '/autorizar/$token'
     | '/c/$token'
     | '/convite/$token'
+    | '/embed/cobranca'
+    | '/embed/contrato'
+    | '/embed/servico'
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
@@ -1003,6 +1039,9 @@ export interface RootRouteChildren {
   AutorizarTokenRoute: typeof AutorizarTokenRoute
   CTokenRoute: typeof CTokenRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
+  EmbedCobrancaRoute: typeof EmbedCobrancaRoute
+  EmbedContratoRoute: typeof EmbedContratoRoute
+  EmbedServicoRoute: typeof EmbedServicoRoute
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
   PagarTokenRoute: typeof PagarTokenRoute
   PortalKeyRoute: typeof PortalKeyRoute
@@ -1383,6 +1422,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/embed/cobranca': {
+      id: '/embed/cobranca'
+      path: '/embed/cobranca'
+      fullPath: '/embed/cobranca'
+      preLoaderRoute: typeof EmbedCobrancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/embed/contrato': {
+      id: '/embed/contrato'
+      path: '/embed/contrato'
+      fullPath: '/embed/contrato'
+      preLoaderRoute: typeof EmbedContratoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/embed/servico': {
+      id: '/embed/servico'
+      path: '/embed/servico'
+      fullPath: '/embed/servico'
+      preLoaderRoute: typeof EmbedServicoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/oauth/authorize': {
       id: '/oauth/authorize'
       path: '/oauth/authorize'
@@ -1696,6 +1756,9 @@ const rootRouteChildren: RootRouteChildren = {
   AutorizarTokenRoute: AutorizarTokenRoute,
   CTokenRoute: CTokenRoute,
   ConviteTokenRoute: ConviteTokenRoute,
+  EmbedCobrancaRoute: EmbedCobrancaRoute,
+  EmbedContratoRoute: EmbedContratoRoute,
+  EmbedServicoRoute: EmbedServicoRoute,
   OauthAuthorizeRoute: OauthAuthorizeRoute,
   PagarTokenRoute: PagarTokenRoute,
   PortalKeyRoute: PortalKeyRoute,
