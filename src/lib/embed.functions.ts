@@ -21,13 +21,17 @@ export const startEmbedSession = createServerFn({ method: "POST" })
     const r = await exchangeTicket(data.ticket);
     if (!r) throw new Error("Acesso expirado. Abra a janela novamente.");
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
-    const [{ data: c }, { data: t }] = await Promise.all([
+    const s = await import("./wiize-pay-oauth.server");
+    const [{ data: c }, { data: t }, { data: services }, { data: contracts }] = await Promise.all([
       r.customerId ? db.from("customers").select("id, name").eq("tenant_id", r.tenantId).eq("id", r.customerId).maybeSingle() : Promise.resolve({ data: null }),
       db.from("tenants").select("name").eq("id", r.tenantId).maybeSingle(),
+      db.from("services").select("id, name, amount, type, installments, accepted_methods").eq("tenant_id", r.tenantId).eq("active", true).order("created_at", { ascending: false }).limit(100),
+      r.customerId
+        ? db.from("contracts").select("id, title, amount, status, service_id, starts_on, ends_on").eq("tenant_id", r.tenantId).eq("customer_id", r.customerId).neq("status", "cancelled").order("created_at", { ascending: false }).limit(50)
+        : Promise.resolve({ data: [] as never[] }),
+      s.audit(db, { tenantId: r.tenantId, userId: r.userId, action: "wiize_pay.embed.opened", details: { kind: r.kind } }),
     ]);
-    const s = await import("./wiize-pay-oauth.server");
-    await s.audit(db, { tenantId: r.tenantId, userId: r.userId, action: "wiize_pay.embed.opened", details: { kind: r.kind } });
-    return { session: r.session, expiresAt: r.expiresAt, kind: r.kind, theme: r.theme, customer: c ? { id: c.id, name: c.name } : null, companyName: t?.name ?? null };
+    return { session: r.session, expiresAt: r.expiresAt, kind: r.kind, theme: r.theme, customer: c ? { id: c.id, name: c.name } : null, companyName: t?.name ?? null, options: { services: services ?? [], contracts: contracts ?? [] } };
   });
 
 export const embedOptions = createServerFn({ method: "POST" })
