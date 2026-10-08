@@ -52,12 +52,13 @@ export async function buildSalePayload(db: Db, tenantId: string, chargeGroupId: 
   const count = Math.max(...rows.map((r) => r.installment_count ?? 1), rows.length);
   const kind: "one_time" | "installment" | "recurring" = subId ? "recurring" : count > 1 ? "installment" : "one_time";
 
-  const [{ data: cust }, { data: link }, { data: sub }, { data: contract }, { data: service }] = await Promise.all([
+  const [{ data: cust }, { data: link }, { data: sub }, { data: contract }, { data: service }, { data: conn }] = await Promise.all([
     first.customer_id ? db.from("customers").select("name, document, email").eq("id", first.customer_id).eq("tenant_id", tenantId).maybeSingle() : Promise.resolve({ data: null }),
     first.customer_id ? db.from("wiize_customer_links").select("wiize_customer_id").eq("tenant_id", tenantId).eq("customer_id", first.customer_id).maybeSingle() : Promise.resolve({ data: null }),
     subId ? db.from("subscriptions").select("amount, frequency, starts_on, ends_on, active").eq("id", subId).maybeSingle() : Promise.resolve({ data: null }),
     first.contract_id ? db.from("contracts").select("id, ends_on").eq("id", first.contract_id).eq("tenant_id", tenantId).maybeSingle() : Promise.resolve({ data: null }),
     first.service_id ? db.from("services").select("id, name").eq("id", first.service_id).eq("tenant_id", tenantId).maybeSingle() : Promise.resolve({ data: null }),
+    db.from("wiize_connections").select("wiize_organization_id").eq("tenant_id", tenantId).maybeSingle(),
   ]);
 
   const live = rows.filter((r) => !["cancelled", "failed"].includes(r.status));
@@ -72,6 +73,8 @@ export async function buildSalePayload(db: Db, tenantId: string, chargeGroupId: 
 
   return {
     sale_id: chargeGroupId,
+    organization_id: conn?.wiize_organization_id ?? null, // código da conta no Wiize
+    tenant_id: tenantId,
     customer: link?.wiize_customer_id
       ? { source: "wiize", wiize_customer_id: link.wiize_customer_id }
       : { source: "wiizepay", name: cust?.name ?? null, document: cust?.document ?? null, email: cust?.email ?? null },
