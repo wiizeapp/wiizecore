@@ -40,3 +40,4 @@
 - Attack alerts go via `src/lib/security-alerts.server.ts`, fired from audit helpers, grouped per 30 min.
 - New-account launch promo (0% percentage on single cash Pix/boleto, fixed fee kept) is decided only in `calculatePaymentFee` via `launch-promotion.server.ts` from DB-locked `tenants.created_at`.
 - One-time charges deduct the Asaas cost (subaccount fees API incl. still-valid promo price with safety margin, `src/lib/provider-fee-quote.ts`) from the WiizePay split, stored in `payments.provider_fee_covered_amount`; only the uncovered rest is reimbursed. Why: no round-trip transfer.
+- Wiize CRM embeds `/embed/*` open with a one-time 2-min ticket (in URL hash) exchanged for a 30-min in-memory session via `src/lib/embed-session.server.ts`; framing allowed only for `DEPLOY_CONFIG.wiizeEmbedOrigins`. Why: no third-party cookies, no token in logs.
