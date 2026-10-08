@@ -109,10 +109,12 @@ function AuthPage() {
     setMfaFactor(null); setMfaCode(""); setMfaBackup(false);
   }
 
-  // Cookies nunca bloqueiam o login; o aviso continua visível para o visitante decidir.
+  // Entrar e criar conta exigem responder o aviso de cookies antes.
   function needConsent() {
-    void hasConsentDecision;
-    return false;
+    if (hasConsentDecision()) return false;
+    toast.error(ui("Para entrar, aceite ou escolha suas preferências de cookies no aviso abaixo."));
+    window.dispatchEvent(new Event("wiize:open-cookie-settings"));
+    return true;
   }
 
   async function handleSignIn(event: React.FormEvent) {
@@ -134,6 +136,7 @@ function AuthPage() {
 
   async function handleSignUp(event: React.FormEvent) {
     event.preventDefault();
+    if (needConsent()) return;
     const problems = passwordProblems(password);
     if (problems.length) {
       toast.error(ui("Sua senha precisa ter: {{problems}}.", { problems: problems.map((problem) => ui(problem).toLowerCase()).join(", ") }));
