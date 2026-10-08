@@ -30,6 +30,8 @@ Validação obrigatória, nesta ordem:
   "occurred_at": "2026-10-08T13:20:00Z",
   "data": {
     "sale_id": "uuid (id estável da venda na WiizePay)",
+    "organization_id": "código da conta no Wiize (null se a empresa não conectou a sincronização de clientes)",
+    "tenant_id": "uuid da empresa na WiizePay",
     "customer": { "source": "wiize", "wiize_customer_id": "id do lead/cliente no Wiize" }
              /* ou */ { "source": "wiizepay", "name": "Fulano", "document": "12345678901", "email": "a@b.com" },
     "type": "one_time | installment | recurring",
