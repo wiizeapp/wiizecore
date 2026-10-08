@@ -1,26 +1,42 @@
-# E-mail já usado no Asaas na ativação de pagamentos
+# E-mail de cadastro automático (sem mostrar a parceira)
 
 ## O problema
-Para aprovar a conta de recebimentos, a WiizePay cria um cadastro no Asaas usando o e-mail informado na ativação. O Asaas não aceita um e-mail que já tenha conta lá. Por isso, quem veio do Asaas trava nesse passo.
+Para aprovar os recebimentos, a WiizePay abre uma conta na parceira de pagamentos. Esse cadastro precisa de um e-mail que ainda não exista lá. Clientes que já tinham conta na parceira travam nesse passo. Além disso, o cliente não deve ficar sabendo da parceira.
 
-O e-mail de **login** na WiizePay não muda e pode continuar o mesmo. Só o **e-mail da conta de recebimentos**, enviado ao Asaas, precisa ser diferente.
+## A solução
+A WiizePay cria sozinha, para cada empresa, um **e-mail exclusivo de cadastro** no domínio da WiizePay. Exemplo: `conta-7f3a91c2@contas.wiize.com.br`. Esse e-mail é usado apenas no cadastro da parceira.
 
-## O que muda para o usuário
-1. **Na etapa de dados**, o campo "E-mail" passa a se chamar **"E-mail da conta de recebimentos"**. Embaixo dele aparece este aviso:
-   > Este e-mail é usado para criar sua conta na nossa parceira Asaas. Se você já tem conta no Asaas com este e-mail, use outro. Dica: no Gmail você pode usar seuemail+wiizepay@gmail.com, e as mensagens continuam chegando na mesma caixa.
-2. **Botão "Usar uma variação do meu e-mail":** preenche sozinho o formato `seuemail+wiizepay@...`. Esse formato funciona no Gmail e no Outlook.
-3. **Se o Asaas recusar por e-mail já cadastrado**, o envio para e mostra uma mensagem clara:
-   > Este e-mail já está vinculado a uma conta na nossa parceira Asaas e não pode ser usado de novo. Informe outro e-mail da conta de recebimentos e reenvie.
-   Ao lado, aparecem um botão que leva direto ao campo do e-mail e o botão "Reenviar para análise". Dados e documentos continuam salvos.
-4. **O mesmo vale para o celular:** a ativação pelo QR Code ganha o mesmo nome do campo, o mesmo aviso e o mesmo botão.
+- O cliente continua digitando o próprio e-mail normalmente. Ele é usado no login, nos avisos e no contato.
+- O cliente nunca vê o e-mail de cadastro nem o nome da parceira.
+- Como esse e-mail é único e novo, nunca dá conflito, mesmo para quem já tinha conta na parceira.
 
-## O que não muda
-- O login e o e-mail de acesso à WiizePay.
-- Os avisos da WiizePay continuam indo para o e-mail de login da empresa.
+## Textos sem o nome da parceira
+- Na tela de ativação, nas etapas e nos erros, "Asaas" vira "análise da WiizePay" ou "instituição de pagamento".
+  - Exemplo: "Conta criada na instituição de pagamento" passa a ser "Cadastro registrado".
+  - Exemplo: "Análise do Asaas" passa a ser "Análise de segurança".
+- Mensagens de recusa que vêm da parceira são reescritas antes de aparecer para o cliente. Nomes e links da parceira são removidos.
+- Isso também vale para o sininho e para o e-mail de "Cadastro enviado para análise".
+
+## O que você precisa fazer (uma vez)
+A parceira manda para o e-mail de cadastro algumas mensagens importantes, como confirmações e avisos da conta. Para você recebê-las, é preciso criar no seu provedor de e-mail um **redirecionamento "pega-tudo"**:
+
+- Tudo que chegar em `*@contas.wiize.com.br` vai para uma caixa da WiizePay, por exemplo `wiizepay@gmail.com`.
+- Dá para fazer isso de graça, por exemplo com o redirecionamento de e-mail da Cloudflare ou com o painel do seu domínio.
+- Sem esse redirecionamento, o cadastro funciona, mas você não recebe essas mensagens.
+
+O domínio usado vai ficar num único lugar de configuração, para você poder trocar depois.
+
+## Observação
+O cliente informa o próprio celular, CPF/CNPJ e documentos. Isso continua igual, porque a parceira exige essas informações para aprovar. Por isso, o CPF/CNPJ continua precisando ser único. Quem já tem conta na parceira com o mesmo CPF/CNPJ ainda pode ser recusado. Nesse caso, a mensagem pede para falar com o suporte WiizePay, sem citar a parceira.
 
 ## Detalhes técnicos
-- `src/lib/asaas-onboarding.server.ts`: em `friendlySendError`, reconhecer o erro de e-mail duplicado do Asaas (status 400 com "email" e "já"/"utilizado"/"cadastrado"/"in use"). Nesse caso, gravar `provider_onboarding.lastErrorCode = "email_in_use"` e usar a mensagem amigável.
-- `src/routes/_authenticated/ativacao.tsx`: novo nome do campo, aviso, botão da variação de e-mail e tratamento de `lastErrorCode === "email_in_use"` em `ProcessSteps`, com o botão "Corrigir e-mail", que abre a etapa de dados com o campo em foco.
-- `src/routes/ativacao-celular.$token.tsx`: mesmo nome do campo, mesmo aviso e mesmo botão.
-- `src/lib/activation.functions.ts`: validar o formato do e-mail antes do envio. Sem mudança no banco: o campo de e-mail continua criptografado no formulário.
-- Traduções EN/ES para os textos novos em `src/locales/{en,es}/ui.json`.
+- `src/lib/deploy-config.ts`: nova configuração `providerSignupEmailDomain` (padrão `contas.wiize.com.br`).
+- `src/lib/asaas-onboarding.server.ts`, em `ensureSubaccount`:
+  - O `email` da subconta passa a ser `conta-<8 primeiros caracteres do hash HMAC do tenantId>@<domínio>`, sempre o mesmo para a empresa.
+  - O e-mail do cliente vai como `email` apenas se o provedor exigir. Caso contrário, vai só para o contato interno.
+  - O alias fica gravado em `provider_connections` (campo de metadados existente) para auditoria.
+  - `friendlySendError` filtra menções a "Asaas" e URLs do provedor e trata o erro de documento duplicado com uma mensagem própria.
+- `src/lib/activation.functions.ts`: textos do aviso de envio sem o nome da parceira.
+- `src/routes/_authenticated/ativacao.tsx`: rótulos das etapas, `NextSteps`, `StatusCard` e `ProviderPanel` sem o nome da parceira.
+- Traduções EN/ES em `src/locales/{en,es}/ui.json`.
+- Sem mudança no banco de dados.
