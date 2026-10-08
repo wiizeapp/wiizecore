@@ -3,7 +3,6 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachBearer } from "@/lib/auth-bearer";
 import { applySecurityHeaders } from "@/lib/security-headers";
-import { DEPLOY_CONFIG } from "@/lib/deploy-config";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
