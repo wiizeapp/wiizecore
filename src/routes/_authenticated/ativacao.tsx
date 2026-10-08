@@ -177,6 +177,7 @@ function ProviderPanel({ data }: { data: Awaited<ReturnType<typeof getActivation
   );
 }
 
+const REVIEW_FLAG = "wiizepay-activation-review";
 const STEPS = ["Tipo", "Dados pessoais", "Endereço", "Negócio", "Documentos", "Envio"];
 
 function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
@@ -203,6 +204,7 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
     if (handoffStatus.data?.state === "done") {
       toast.success("Dados recebidos do celular.");
       setHandoffOpen(false);
+      sessionStorage.setItem(REVIEW_FLAG, "1");
       void qc.invalidateQueries({ queryKey: ["activation"] }).then(() => window.location.reload());
     }
   }, [handoffStatus.data?.state, qc]);
@@ -212,7 +214,8 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
     mutationFn: async () => {
       await save({ data: { personType, form: form as never, consents } });
       const result = await createHandoff();
-      const url = `${window.location.origin}/ativacao-celular/${result.token}`;
+      const tema = document.documentElement.classList.contains("dark") ? "dark" : "light";
+      const url = `${window.location.origin}/ativacao-celular/${result.token}?tema=${tema}`;
       const qr = await QRCode.toDataURL(url, { margin: 1, width: 260 });
       return { ...result, url, qr };
     },
@@ -220,6 +223,8 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
     onError: (error: Error) => toast.error(error.message),
   });
   useEffect(() => { if (data.personType) setStep((s) => s || 1); }, [data.personType]);
+  // Ao voltar do celular, abre direto a etapa final com as declarações e o botão de envio.
+  useEffect(() => { if (sessionStorage.getItem(REVIEW_FLAG)) { sessionStorage.removeItem(REVIEW_FLAG); setStep(STEPS.length - 1); } }, []);
 
   const saveM = useMutation({
     mutationFn: () => save({ data: { personType, form: form as never, consents } }),
@@ -228,8 +233,9 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
   });
   const submitM = useMutation({
     mutationFn: async () => { await save({ data: { personType, form: form as never, consents } }); await submit(); },
-    onSuccess: () => { toast.success("Cadastro enviado para análise."); qc.invalidateQueries({ queryKey: ["activation"] }); },
-    onError: (e: Error) => toast.error(e.message),
+    onSuccess: () => { toast.success("Cadastro enviado para análise."); },
+    onError: (e: Error) => toast.error(e.message, { duration: 10000 }),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ["activation"] }); },
   });
   const go = async (n: number) => {
     if (n > step) {
