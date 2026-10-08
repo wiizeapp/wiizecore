@@ -19,7 +19,7 @@ export function AdminInbox() {
   if (q.isLoading) return <div className="surface-panel p-6 text-sm text-muted-foreground">Carregando mensagens…</div>;
   if (q.error) return <div className="surface-panel p-6 text-sm text-destructive">{(q.error as Error).message}</div>;
   const items = q.data ?? [];
-  if (!items.length) return <EmptyState title="Nenhuma mensagem recebida" description="Os e-mails enviados pelo parceiro para as contas das empresas aparecem aqui." />;
+  if (!items.length) return <EmptyState title="Nenhuma mensagem recebida" text="Os e-mails enviados pelo parceiro para as contas das empresas aparecem aqui." />;
 
   return (
     <div className="surface-panel divide-y divide-border">
