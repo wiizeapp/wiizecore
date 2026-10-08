@@ -14,7 +14,7 @@ import {
 type Tracking = { enabled: boolean; gtm_id: string | null; ga4_id: string | null; meta_pixel_id: string | null };
 
 // Aviso só nas páginas públicas. Área interna e páginas de pagamento ficam de fora.
-const INTERNAL = ["antecipacao","integracoes","lembrete-de-cobranca","regua-de-cobranca","ativacao","clientes","cobrancas","configuracoes","contratos","equipe","extrato","financas","financeiro","limites","nimda","notas-fiscais","painel","perfil","recebiveis","seguranca","servicos","pagar","c","oauth","assinar","autorizar","convite"];
+const INTERNAL = ["antecipacao","integracoes","lembrete-de-cobranca","regua-de-cobranca","ativacao","clientes","cobrancas","configuracoes","contratos","equipe","extrato","financas","financeiro","limites","nimda","notas-fiscais","painel","perfil","recebiveis","seguranca","servicos","pagar","c","oauth","assinar","autorizar","convite","embed"];
 const HIDDEN = [new RegExp(`^/(${INTERNAL.join("|")})(/|$)`)];
 
 const loaded = new Set<string>();
@@ -95,7 +95,7 @@ export function CookieConsent() {
     });
   };
 
-  if (!show || HIDDEN.some((r) => r.test(pathname))) return null;
+  if (!show || HIDDEN.some((r) => r.test(pathname)) || (typeof window !== "undefined" && (window.parent !== window || new URLSearchParams(location.search).get("embed") === "1"))) return null;
 
   const cats: { key: keyof ConsentPrefs; title: string; desc: string }[] = [
     { key: "necessary", title: "Necessários", desc: "Login, segurança e funcionamento do site. Sempre ativos." },

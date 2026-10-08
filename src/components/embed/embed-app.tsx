@@ -16,6 +16,8 @@ const ORIGINS: readonly string[] = DEPLOY_CONFIG.wiizeEmbedOrigins;
 function applyTheme(t: Theme) {
   document.documentElement.classList.toggle("dark", t === "dark");
   document.documentElement.style.colorScheme = t;
+  document.documentElement.style.background = "transparent";
+  document.body.style.background = "transparent";
 }
 
 /** Só identificadores e status; nunca dados pessoais. Enviado apenas para os endereços oficiais do Wiize. */
@@ -60,7 +62,7 @@ export function EmbedApp({ kind }: { kind: Kind }) {
         applyTheme(r.theme);
         setSession(r.session);
         setInfo({ customer: r.customer, companyName: r.companyName });
-        setOpts(await loadOpts({ data: { session: r.session } }));
+        setOpts(r.options ?? await loadOpts({ data: { session: r.session } }));
         notify("wiizepay:ready", { kind });
       })
       .catch((e) => { setError(e instanceof Error ? e.message : "Acesso expirado. Abra a janela novamente."); notify("wiizepay:error", { kind }); });
@@ -80,12 +82,9 @@ export function EmbedApp({ kind }: { kind: Kind }) {
 
 function Shell({ children, subtitle }: { children: ReactNode; subtitle?: string | null }) {
   return (
-    <main className="min-h-screen bg-background p-4 text-foreground">
-      <div className="mx-auto max-w-xl space-y-4">
-        <header>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">WiizePay</p>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-        </header>
+    <main className="h-dvh overflow-y-auto bg-transparent p-1 text-foreground">
+      <div className="space-y-4">
+        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
         {children}
       </div>
     </main>
@@ -111,7 +110,7 @@ function Pick({ title, items, onPick }: { title: string; items: { id: string; la
 }
 
 function Done({ text }: { text: string }) {
-  return <p className="rounded-md border border-border bg-card p-3 text-sm">{text}</p>;
+  return <p className="text-sm">{text}</p>;
 }
 
 function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
@@ -120,7 +119,7 @@ function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [type, setType] = useState<"one_time" | "installment" | "recurring">("one_time");
-  const pick = (id: string) => { const s = opts.services.find((x) => x.id === id); notify("wiizepay:service.selected", { service_id: id, name: s?.name, amount_cents: s ? Math.round(Number(s.amount) * 100) : undefined, type: s?.type }); setDone(true); };
+  const pick = (id: string) => { const s = opts.services.find((x) => x.id === id); notify("wiizepay:service.selected", { service_id: id, name: s?.name, amount_cents: s ? Math.round(Number(s.amount) * 100) : undefined, service_type: s?.type, type: s?.type }); setDone(true); };
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); setMsg(null);
     const f = new FormData(e.currentTarget);
@@ -128,7 +127,7 @@ function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
     setBusy(true);
     try {
       const r = await create({ data: { session, name: String(f.get("name") ?? ""), amount: Number(String(f.get("amount") ?? "").replace(",", ".")), type, installments: type === "installment" ? Number(f.get("installments") || 2) : null, methods } });
-      notify("wiizepay:service.selected", { service_id: r.id, name: r.name, amount_cents: Math.round(r.amount * 100), type, created: true });
+      notify("wiizepay:service.selected", { service_id: r.id, name: r.name, amount_cents: Math.round(r.amount * 100), service_type: type, type, created: true });
       setDone(true);
     } catch (err) { setMsg(err instanceof Error ? err.message : "Não foi possível criar o serviço."); } finally { setBusy(false); }
   }
@@ -136,7 +135,7 @@ function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
   return (
     <>
       <Pick title="Escolher serviço existente" items={opts.services.map((s) => ({ id: s.id, label: s.name, sub: formatBRL(Number(s.amount)) }))} onPick={pick} />
-      <form onSubmit={submit} className="space-y-3 rounded-md border border-border bg-card p-3">
+      <form onSubmit={submit} className="space-y-3">
         <h2 className="text-sm font-semibold">Criar novo serviço</h2>
         <div className="space-y-1"><Label htmlFor="name">Nome</Label><Input id="name" name="name" required minLength={2} maxLength={160} /></div>
         <div className="space-y-1"><Label htmlFor="amount">Valor total (R$)</Label><Input id="amount" name="amount" required inputMode="decimal" /></div>
@@ -177,7 +176,7 @@ function ContractStep({ session, opts }: { session: string; opts: Opts }) {
   return (
     <>
       <Pick title="Escolher contrato existente" items={opts.contracts.map((c) => ({ id: c.id, label: c.title, sub: formatBRL(Number(c.amount)) }))} onPick={pick} />
-      <form onSubmit={submit} className="space-y-3 rounded-md border border-border bg-card p-3">
+      <form onSubmit={submit} className="space-y-3">
         <h2 className="text-sm font-semibold">Criar novo contrato</h2>
         <div className="space-y-1"><Label htmlFor="title">Título</Label><Input id="title" name="title" required minLength={2} maxLength={160} /></div>
         <div className="space-y-1"><Label htmlFor="serviceId">Serviço</Label>
@@ -214,7 +213,7 @@ function ChargeStep({ session, opts }: { session: string; opts: Opts }) {
   }
   if (url) return <Done text="Cobrança criada. O link de pagamento já foi enviado para o Wiize." />;
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-md border border-border bg-card p-3">
+    <form onSubmit={submit} className="space-y-3">
       <h2 className="text-sm font-semibold">Criar cobrança</h2>
       <div className="space-y-1"><Label htmlFor="serviceId">Serviço</Label>
         <select id="serviceId" name="serviceId" required className={selectCls}>

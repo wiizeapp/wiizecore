@@ -39,7 +39,10 @@ export const Route = createFileRoute("/api/public/v1/embed-tickets")({
         const { issueTicket } = await import("@/lib/embed-session.server");
         const t = await issueTicket({ tenantId: tok.tenant_id, userId: tok.user_id, clientId: tok.client_id, kind: p.data.kind, customerId, theme: p.data.theme });
         const path = { contract: "contrato", service: "servico", charge: "cobranca" }[p.data.kind];
-        const url = `${api.checkoutOrigin(request)}/embed/${path}#t=${encodeURIComponent(t.ticket)}&theme=${p.data.theme}`;
+        const { DEPLOY_CONFIG } = await import("@/lib/deploy-config");
+        const reqHost = new URL(request.url).hostname;
+        const base = /(^|\.)wiizepay\.com(\.br)?$/.test(reqHost) ? DEPLOY_CONFIG.publicSiteUrl : api.checkoutOrigin(request);
+        const url = `${base}/embed/${path}#t=${encodeURIComponent(t.ticket)}&theme=${p.data.theme}`;
         await s.audit(db, { tenantId: tok.tenant_id, userId: tok.user_id, action: "wiize_pay.embed.ticket_issued", details: { kind: p.data.kind } });
         return api.apiJson({ url, expires_at: t.expiresAt }, 201);
       },
