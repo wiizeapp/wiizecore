@@ -1,28 +1,33 @@
-# E-mail de cadastro automático na ativação de pagamentos
+# Aviso "você já tem conta no Asaas" na ativação
 
-## O problema
-O Asaas não aceita um e-mail que já tenha conta lá. Clientes que vieram do Asaas travam na ativação.
+## Ideia
+O cadastro continua igual: mesmo e-mail, mesmo CPF/CNPJ, mesmo fluxo. A única novidade é para quando o Asaas recusar o envio porque o e-mail ou o CPF/CNPJ já tem uma conta lá. Nesse caso, a WiizePay mostra um popup explicando o que fazer.
 
-## A solução
-- **O campo "E-mail" sai da ativação**, no computador e no celular.
-- **A WiizePay cria sozinha um e-mail exclusivo de cadastro** para cada empresa, por exemplo `conta-7f3a91c2@contas.wiize.com.br`. Ele é usado só no cadastro do Asaas, é sempre o mesmo para aquela empresa e nunca dá conflito.
-- **O cliente não vê esse e-mail.** Todos os avisos (enviado, em análise, aprovado, correção pedida) chegam pela WiizePay: no sininho e no e-mail de login da conta.
-- **O texto da parceria continua:** "análise em parceria com o Asaas" segue aparecendo como hoje.
-- Pendências que o Asaas pedir, como uma etapa segura de selfie, aparecem na tela "Andamento da análise", com botão. O cliente não depende de nenhum e-mail do Asaas.
+## O popup
+Ele usa o mesmo visual do aviso de parceria que já existe: logo da WiizePay, logo do Asaas e o mesmo estilo de janela. O texto sugerido é:
 
-## Redirecionamento de e-mails: não é necessário
-Os e-mails que o Asaas mandar para o endereço de cadastro não chegam a ninguém. Isso não atrapalha: a WiizePay consulta a situação direto no Asaas e avisa o cliente sozinha.
+> **Encontramos uma conta Asaas com seus dados**
+> A WiizePay funciona de forma independente, em parceria com o Asaas, que cuida da parte de pagamentos. Por isso, o mesmo e-mail ou CPF/CNPJ não pode ser usado em duas contas ao mesmo tempo.
+>
+> **Para ativar a WiizePay, você pode:**
+> 1. Informar outro e-mail na etapa de dados e reenviar. Isso resolve quando o conflito é só o e-mail.
+> 2. Encerrar sua conta no Asaas e depois clicar em "Reenviar para análise". Isso é necessário quando o conflito é o CPF/CNPJ.
+>
+> Seus dados e documentos continuam salvos.
 
-## CPF/CNPJ que já tem conta no Asaas
-Aceitar ou não um CPF/CNPJ que já tem conta lá depende de uma liberação na sua conta principal do Asaas. Isso deve ser pedido ao gerente ou ao suporte do Asaas. Enquanto não for liberado, quem for recusado por esse motivo vê uma mensagem clara pedindo para falar com o suporte WiizePay, e o botão "Reenviar para análise" continua disponível.
+Botões do popup:
+- **"Trocar e-mail":** leva direto ao campo de e-mail. Aparece só quando o conflito é o e-mail.
+- **"Reenviar para análise".**
+- **"Fechar".**
+
+O popup abre sozinho na tela de ativação sempre que esse tipo de recusa estiver pendente. Ele também pode ser reaberto pela caixa "O que deu errado", nas etapas do envio.
 
 ## Detalhes técnicos
-- `src/lib/deploy-config.ts`: nova configuração `providerSignupEmailDomain`, com padrão `contas.wiize.com.br`.
-- `src/lib/asaas-onboarding.server.ts`:
-  - Em `ensureSubaccount`, o `email` da subconta passa a ser `conta-<HMAC curto do tenantId>@<domínio>`, sempre igual para a mesma empresa. O endereço fica guardado nos dados da conexão, para auditoria.
-  - `friendlySendError` ganha uma mensagem própria para CPF/CNPJ já cadastrado.
-- `src/lib/activation.functions.ts`: tirar `email` dos campos obrigatórios. Os avisos usam o e-mail de login da empresa, que `notify.server.ts` já usa.
-- `src/routes/_authenticated/ativacao.tsx` e `src/routes/ativacao-celular.$token.tsx`: remover o campo de e-mail.
-- `src/lib/activation-validation.ts`: deixar de exigir e validar o e-mail.
-- Traduções EN/ES dos textos novos.
+- `src/lib/asaas-onboarding.server.ts`: em `friendlySendError`/`sendActivationToProvider`, reconhecer recusas 4xx do Asaas que falam de e-mail ou CPF/CNPJ "já" cadastrado, utilizado ou em uso. Gravar `provider_onboarding.lastErrorCode` como `email_in_use` ou `document_in_use`, junto com a mensagem amigável.
+- `src/components/partner-notice.tsx`: extrair o visual (logos + estrutura do diálogo) para um `PartnerDialog` controlado, reutilizado pelo aviso atual e pelo novo popup. O aviso atual continua igual.
+- `src/routes/_authenticated/ativacao.tsx`: novo `AsaasConflictDialog`, que abre quando `lastErrorCode` indica conflito, com as ações acima. `ProcessSteps` ganha o link "Ver como resolver".
+- Traduções EN/ES dos textos novos em `src/locales/{en,es}/ui.json`.
 - Sem mudança no banco de dados.
+
+## Observação
+Qual opção resolve depende da regra do Asaas, e o código não tem como garantir isso. Vale confirmar com o seu gerente do Asaas se encerrar a conta antiga libera o CPF/CNPJ para a nova.
