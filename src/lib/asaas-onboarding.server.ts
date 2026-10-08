@@ -15,6 +15,15 @@ const PART_LABEL: Record<string, string> = {
   general: "Situação geral",
 };
 const COMPANY_TYPES = ["MEI", "LIMITED", "INDIVIDUAL", "ASSOCIATION"];
+/** O Asaas exige o tipo de empresa em CNPJ; aceita o que a pessoa escreve (MEI, LTDA, EIRELI…). */
+function companyType(v?: string | null): string {
+  const t = (v ?? "").toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
+  if (COMPANY_TYPES.includes(t)) return t;
+  if (t.includes("MEI") || t.includes("MICROEMPREENDEDOR")) return "MEI";
+  if (t.includes("ASSOC") || t.includes("ONG") || t.includes("INSTITUTO") || t.includes("FUNDACAO")) return "ASSOCIATION";
+  if (t === "EI" || t.includes("EIRELI") || t.includes("INDIVIDUAL")) return "INDIVIDUAL";
+  return "LIMITED";
+}
 
 export type OnboardingItem = { key: string; label: string; status: string; reason?: string | null; onboardingUrl?: string | null; kind: "part" | "document" };
 export type ProviderOnboarding = { items: OnboardingItem[]; rejectReasons?: string | null; uploaded?: Record<string, string>; lastError?: string | null };
@@ -46,7 +55,7 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
     email: f["email"] || tenant?.email,
     cpfCnpj: company ? digits(f["cnpj"]) : digits(f["cpf"]),
     birthDate: company ? undefined : birth,
-    companyType: company && COMPANY_TYPES.includes((f["companyType"] ?? "").toUpperCase()) ? f["companyType"]!.toUpperCase() : undefined,
+    companyType: company ? companyType(f["companyType"]) : undefined,
     phone, mobilePhone: phone,
     address: f["address"], addressNumber: f["number"], complement: f["complement"] || undefined,
     province: f["district"], postalCode: digits(f["zipCode"]), city: f["city"], state: f["state"],
@@ -174,19 +183,31 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
   return { status: mirror ? next : current, items };
 }
 
+/** Explica ao cliente, sem expor detalhes internos, por que a subconta não foi criada. */
+function friendlySendError(e: unknown): string {
+  const raw = e instanceof Error ? e.message : "";
+  if (e instanceof Error && e.name === "ProviderRequestError" && (e as Error & { status?: number }).status && (e as Error & { status: number }).status < 500 && raw) {
+    return `A instituição de pagamento não aceitou o cadastro: ${raw.slice(0, 240)} Corrija este ponto e envie novamente.`;
+  }
+  if (/conta principal|criptografia/i.test(raw)) return "O envio para análise está temporariamente indisponível por uma configuração da WiizePay. Seus dados ficaram salvos; tente novamente mais tarde ou fale com o suporte.";
+  return "Não foi possível falar com a instituição de pagamento agora. Seus dados ficaram salvos; tente novamente em alguns minutos.";
+}
+
 /** Envia o cadastro para análise do Asaas: subconta, documentos e primeira leitura da situação. */
 export async function sendActivationToProvider(admin: Admin, tenantId: string, userId: string, origin: string | null) {
+  // 1) Criar a subconta é o passo decisivo: se falhar, o cadastro volta para correção com o motivo.
   try {
     await ensureSubaccount(admin, tenantId, userId, origin);
-    await pushDocuments(admin, tenantId);
-    return await syncProviderOnboarding(admin, tenantId);
   } catch (e) {
-    const internalMessage = e instanceof Error ? e.message : "Não foi possível enviar ao Asaas.";
-    console.error("ativação Asaas", internalMessage);
-    const message = "Não foi possível concluir o envio agora. Confira os dados e tente novamente em alguns minutos.";
+    console.error("ativação Asaas: subconta", e instanceof Error ? `${e.name}: ${e.message}` : "falhou");
+    const message = friendlySendError(e);
     const { data: act } = await admin.from("payment_activations").select("provider_onboarding").eq("tenant_id", tenantId).single();
     await admin.from("payment_activations").update({ status: "action_required", review_message: message, provider_onboarding: { ...(act?.provider_onboarding ?? {}), lastError: message } }).eq("tenant_id", tenantId);
     await admin.from("activation_events").insert({ tenant_id: tenantId, from_status: "submitted", to_status: "action_required", message });
     throw new Error(message);
   }
+  // 2) Com a subconta criada, o cadastro já está em análise. Documentos e situação podem
+  // demorar a ficar disponíveis no Asaas; uma falha aqui não desfaz o envio e é refeita em "Atualizar situação".
+  try { await pushDocuments(admin, tenantId); } catch (e) { console.error("ativação Asaas: documentos", e instanceof Error ? e.message : "falhou"); }
+  try { return await syncProviderOnboarding(admin, tenantId); } catch (e) { console.error("ativação Asaas: situação", e instanceof Error ? e.message : "falhou"); return null; }
 }
