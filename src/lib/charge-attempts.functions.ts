@@ -64,5 +64,10 @@ export const providerSwitchMethod = createServerFn({ method: "POST" })
       tenantId: m.tenant_id, paymentId: data.paymentId, method: data.method, reason: "method_change",
       actor: "provider", userId: ctx.userId, idempotencyKey: data.idempotencyKey,
     });
+    const { data: grp } = await admin.from("payments").select("charge_group_id").eq("id", data.paymentId).eq("tenant_id", m.tenant_id).maybeSingle();
+    if (grp?.charge_group_id) {
+      const { enqueueWiizeSaleEvent } = await import("./wiize-sale-sync.server");
+      await enqueueWiizeSaleEvent(admin, m.tenant_id, grp.charge_group_id, "updated");
+    }
     return { ok: true };
   });

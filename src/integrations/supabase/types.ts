@@ -6123,6 +6123,62 @@ export type Database = {
           },
         ]
       }
+      wiize_sale_events: {
+        Row: {
+          attempts: number
+          body: Json
+          charge_group_id: string
+          created_at: string
+          delivered_at: string | null
+          event_id: string
+          id: string
+          last_error: string | null
+          last_status: number | null
+          next_attempt_at: string
+          status: string
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          attempts?: number
+          body: Json
+          charge_group_id: string
+          created_at?: string
+          delivered_at?: string | null
+          event_id: string
+          id?: string
+          last_error?: string | null
+          last_status?: number | null
+          next_attempt_at?: string
+          status?: string
+          tenant_id: string
+          type: string
+        }
+        Update: {
+          attempts?: number
+          body?: Json
+          charge_group_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          event_id?: string
+          id?: string
+          last_error?: string | null
+          last_status?: number | null
+          next_attempt_at?: string
+          status?: string
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wiize_sale_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wiize_tokens: {
         Row: {
           access_token_enc: string

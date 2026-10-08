@@ -94,6 +94,48 @@ export const Route = createFileRoute("/api/public/wiize-pay/deliver")({
               });
           }
         }
+        // Avisos de vendas (cobranças criadas, alteradas, pagas, atrasadas, canceladas).
+        const { data: sales } = await db
+          .from("wiize_sale_events")
+          .select("*")
+          .eq("status", "pending")
+          .lte("next_attempt_at", new Date().toISOString())
+          .order("created_at")
+          .limit(100);
+        for (const e of sales ?? []) {
+          const body = JSON.stringify(e.body);
+          const ts = String(Math.floor(Date.now() / 1000));
+          const nonce = s.randomSecret(24);
+          let status = 0;
+          try {
+            const res = await fetch(s.WIIZE_WEBHOOK_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Wiize-Pay-Timestamp": ts,
+                "X-Wiize-Pay-Nonce": nonce,
+                "X-Wiize-Pay-Signature": s.signWebhook(secret, ts, nonce, body),
+                "Idempotency-Key": e.event_id,
+              },
+              body,
+              redirect: "error",
+            });
+            status = res.status;
+            if (!res.ok) throw new Error(String(res.status));
+            await db.from("wiize_sale_events").update({ status: "delivered", delivered_at: new Date().toISOString(), attempts: e.attempts + 1, last_status: status, last_error: null }).eq("id", e.id);
+            sent++;
+          } catch (err) {
+            const attempts = e.attempts + 1;
+            const delay = s.RETRY_DELAYS_S[attempts - 1];
+            await db.from("wiize_sale_events").update({
+              attempts,
+              last_status: status || null,
+              status: delay ? "pending" : "failed",
+              last_error: err instanceof Error ? err.message.slice(0, 200) : "erro",
+              next_attempt_at: new Date(Date.now() + (delay ?? 0) * 1000).toISOString(),
+            }).eq("id", e.id);
+          }
+        }
         return Response.json({ sent });
       },
     },
