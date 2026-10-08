@@ -65,6 +65,7 @@ function Content({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) 
   return (
     <div className="space-y-6">
       <StatusCard data={data} />
+      {data.submittedAt || data.status !== "not_started" && data.events.length ? <ProcessSteps data={data} /> : null}
       {["submitted", "under_review", "approved"].includes(data.status) ? <NextSteps status={data.status} /> : null}
       {data.provider?.items?.length ? <ProviderPanel data={data} /> : null}
       {editable && (data.role === "owner" || data.role === "admin") && <Wizard data={data} />}
@@ -72,6 +73,48 @@ function Content({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) 
         <p className="text-muted-foreground">Peça ao proprietário da empresa para concluir a ativação.</p>
       )}
     </div>
+  );
+}
+
+function ProcessSteps({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
+  const qc = useQueryClient();
+  const submit = useServerFn(submitActivation);
+  const resend = useMutation({
+    mutationFn: () => submit(),
+    onSuccess: () => { toast.success("Cadastro reenviado para análise."); qc.invalidateQueries({ queryKey: ["activation"] }); },
+    onError: (e: Error) => { toast.error(e.message, { duration: 10000 }); qc.invalidateQueries({ queryKey: ["activation"] }); },
+  });
+  const failed = data.status === "action_required" && !!data.provider?.lastError;
+  const sent = !!data.submittedAt;
+  const items = data.provider?.items ?? [];
+  const hasAccount = items.length > 0;
+  const docsSent = hasAccount && items.filter((i) => i.kind === "document").every((i) => i.status !== "NOT_SENT");
+  const done = data.status === "approved";
+  const steps = [
+    { label: "Termos aceitos e dados conferidos", ok: sent },
+    { label: "Conta criada na instituição de pagamento", ok: hasAccount, fail: failed && !hasAccount },
+    { label: "Documentos enviados", ok: docsSent, fail: failed && hasAccount && !docsSent },
+    { label: "Análise do Asaas", ok: done, fail: data.status === "rejected" },
+  ];
+  return (
+    <section className="surface-panel space-y-4 p-5 sm:p-6">
+      <h2 className="font-display text-base font-semibold">Etapas do envio</h2>
+      <ol className="space-y-2">
+        {steps.map((st) => (
+          <li key={st.label} className="flex items-center gap-2 text-sm">
+            {st.ok ? <BadgeCheck className="size-4 text-primary" /> : st.fail ? <XCircle className="size-4 text-destructive" /> : <Clock className="size-4 text-muted-foreground" />}
+            <span className={st.fail ? "text-destructive" : st.ok ? "" : "text-muted-foreground"}>{st.label}</span>
+          </li>
+        ))}
+      </ol>
+      {failed ? (
+        <div className="space-y-3 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm">
+          <p><strong>O que deu errado:</strong> {data.provider?.lastError}</p>
+          <p className="text-muted-foreground">Seus dados e documentos continuam salvos. Corrija o que foi indicado, se precisar, e reenvie.</p>
+          <Button size="sm" disabled={resend.isPending} onClick={() => resend.mutate()}>{resend.isPending ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}Reenviar para análise</Button>
+        </div>
+      ) : null}
+    </section>
   );
 }
 

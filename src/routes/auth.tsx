@@ -135,7 +135,6 @@ function AuthPage() {
 
   async function handleSignUp(event: React.FormEvent) {
     event.preventDefault();
-    if (needConsent()) return;
     const problems = passwordProblems(password);
     if (problems.length) {
       toast.error(ui("Sua senha precisa ter: {{problems}}.", { problems: problems.map((problem) => ui(problem).toLowerCase()).join(", ") }));
@@ -155,7 +154,7 @@ function AuthPage() {
       toast.error(
         error.message.includes("already registered")
           ? ui("Este e-mail já tem conta. Faça login.")
-          : ui("Não foi possível criar a conta."),
+          : `${ui("Não foi possível criar a conta.")} ${error.message}`,
       );
       return;
     }
