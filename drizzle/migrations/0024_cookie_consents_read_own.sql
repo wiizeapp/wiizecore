@@ -1,0 +1,1 @@
+CREATE POLICY "Users read own consent" ON public.cookie_consents FOR SELECT TO authenticated USING (user_id = auth.uid());

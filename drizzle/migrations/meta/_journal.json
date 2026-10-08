@@ -169,6 +169,13 @@
       "when": 1791422891833,
       "tag": "0023_inbound_emails",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791461869080,
+      "tag": "0024_cookie_consents_read_own",
+      "breakpoints": true
     }
   ]
 }
