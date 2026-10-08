@@ -76,7 +76,10 @@ import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/p
 import { Route as ApiPublicOauthRevokeRouteImport } from './routes/api/public/oauth/revoke'
 import { Route as ApiPublicOauthTokenRouteImport } from './routes/api/public/oauth/token'
 import { Route as ApiPublicV1ChargesRouteImport } from './routes/api/public/v1/charges'
+import { Route as ApiPublicV1ContractsRouteImport } from './routes/api/public/v1/contracts'
 import { Route as ApiPublicV1CustomersRouteImport } from './routes/api/public/v1/customers'
+import { Route as ApiPublicV1EmbedTicketsRouteImport } from './routes/api/public/v1/embed-tickets'
+import { Route as ApiPublicV1ServicesRouteImport } from './routes/api/public/v1/services'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/public/wiize-pay/deliver'
 import { Route as ApiPublicWiizeCallbackRouteImport } from './routes/api/public/wiize/callback'
@@ -434,9 +437,24 @@ const ApiPublicV1ChargesRoute = ApiPublicV1ChargesRouteImport.update({
   path: '/api/public/v1/charges',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1ContractsRoute = ApiPublicV1ContractsRouteImport.update({
+  id: '/api/public/v1/contracts',
+  path: '/api/public/v1/contracts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1CustomersRoute = ApiPublicV1CustomersRouteImport.update({
   id: '/api/public/v1/customers',
   path: '/api/public/v1/customers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1EmbedTicketsRoute = ApiPublicV1EmbedTicketsRouteImport.update({
+  id: '/api/public/v1/embed-tickets',
+  path: '/api/public/v1/embed-tickets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ServicesRoute = ApiPublicV1ServicesRouteImport.update({
+  id: '/api/public/v1/services',
+  path: '/api/public/v1/services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
@@ -544,7 +562,10 @@ export interface FileRoutesByFullPath {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/charges': typeof ApiPublicV1ChargesRouteWithChildren
+  '/api/public/v1/contracts': typeof ApiPublicV1ContractsRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
+  '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
@@ -620,7 +641,10 @@ export interface FileRoutesByTo {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/charges': typeof ApiPublicV1ChargesRouteWithChildren
+  '/api/public/v1/contracts': typeof ApiPublicV1ContractsRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
+  '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
@@ -698,7 +722,10 @@ export interface FileRoutesById {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/charges': typeof ApiPublicV1ChargesRouteWithChildren
+  '/api/public/v1/contracts': typeof ApiPublicV1ContractsRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/v1/embed-tickets': typeof ApiPublicV1EmbedTicketsRoute
+  '/api/public/v1/services': typeof ApiPublicV1ServicesRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
@@ -776,7 +803,10 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/charges'
+    | '/api/public/v1/contracts'
     | '/api/public/v1/customers'
+    | '/api/public/v1/embed-tickets'
+    | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
@@ -852,7 +882,10 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/charges'
+    | '/api/public/v1/contracts'
     | '/api/public/v1/customers'
+    | '/api/public/v1/embed-tickets'
+    | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
@@ -929,7 +962,10 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/charges'
+    | '/api/public/v1/contracts'
     | '/api/public/v1/customers'
+    | '/api/public/v1/embed-tickets'
+    | '/api/public/v1/services'
     | '/api/public/webhooks/asaas'
     | '/api/public/wiize-pay/deliver'
     | '/api/public/wiize/callback'
@@ -977,7 +1013,10 @@ export interface RootRouteChildren {
   ApiPublicOauthRevokeRoute: typeof ApiPublicOauthRevokeRoute
   ApiPublicOauthTokenRoute: typeof ApiPublicOauthTokenRoute
   ApiPublicV1ChargesRoute: typeof ApiPublicV1ChargesRouteWithChildren
+  ApiPublicV1ContractsRoute: typeof ApiPublicV1ContractsRoute
   ApiPublicV1CustomersRoute: typeof ApiPublicV1CustomersRoute
+  ApiPublicV1EmbedTicketsRoute: typeof ApiPublicV1EmbedTicketsRoute
+  ApiPublicV1ServicesRoute: typeof ApiPublicV1ServicesRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
   ApiPublicWiizePayDeliverRoute: typeof ApiPublicWiizePayDeliverRoute
   ApiPublicWiizeCallbackRoute: typeof ApiPublicWiizeCallbackRoute
@@ -1456,11 +1495,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1ChargesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/contracts': {
+      id: '/api/public/v1/contracts'
+      path: '/api/public/v1/contracts'
+      fullPath: '/api/public/v1/contracts'
+      preLoaderRoute: typeof ApiPublicV1ContractsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/customers': {
       id: '/api/public/v1/customers'
       path: '/api/public/v1/customers'
       fullPath: '/api/public/v1/customers'
       preLoaderRoute: typeof ApiPublicV1CustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/embed-tickets': {
+      id: '/api/public/v1/embed-tickets'
+      path: '/api/public/v1/embed-tickets'
+      fullPath: '/api/public/v1/embed-tickets'
+      preLoaderRoute: typeof ApiPublicV1EmbedTicketsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/services': {
+      id: '/api/public/v1/services'
+      path: '/api/public/v1/services'
+      fullPath: '/api/public/v1/services'
+      preLoaderRoute: typeof ApiPublicV1ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/webhooks/asaas': {
@@ -1646,7 +1706,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicOauthRevokeRoute: ApiPublicOauthRevokeRoute,
   ApiPublicOauthTokenRoute: ApiPublicOauthTokenRoute,
   ApiPublicV1ChargesRoute: ApiPublicV1ChargesRouteWithChildren,
+  ApiPublicV1ContractsRoute: ApiPublicV1ContractsRoute,
   ApiPublicV1CustomersRoute: ApiPublicV1CustomersRoute,
+  ApiPublicV1EmbedTicketsRoute: ApiPublicV1EmbedTicketsRoute,
+  ApiPublicV1ServicesRoute: ApiPublicV1ServicesRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
   ApiPublicWiizePayDeliverRoute: ApiPublicWiizePayDeliverRoute,
   ApiPublicWiizeCallbackRoute: ApiPublicWiizeCallbackRoute,

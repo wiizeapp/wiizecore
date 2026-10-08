@@ -64,10 +64,14 @@ export const PERMISSIONS_POLICY = [
   "browsing-topics=()", "fullscreen=(self)", "clipboard-write=(self)", "publickey-credentials-get=(self)",
 ].join(", ");
 
-export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: string; supabaseUrl?: string | undefined; dev: boolean }) {
+/** Janelas da WiizePay mostradas dentro do Wiize CRM. */
+export const isEmbedPath = (pathname: string) => pathname === "/embed" || pathname.startsWith("/embed/");
+
+export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: string; supabaseUrl?: string | undefined; dev: boolean; embedOrigins?: readonly string[] }) {
   const preview = isPreviewHost(ctx.host);
+  const embed = isEmbedPath(ctx.pathname) && (ctx.embedOrigins?.length ?? 0) > 0;
   h.set("X-Content-Type-Options", "nosniff");
-  h.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  h.set("Referrer-Policy", embed ? "no-referrer" : "strict-origin-when-cross-origin");
   h.set("Permissions-Policy", PERMISSIONS_POLICY);
   h.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
   h.set("X-Permitted-Cross-Domain-Policies", "none");
@@ -75,14 +79,20 @@ export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: 
   h.set("Cross-Origin-Resource-Policy", "same-origin");
   // Preview usa janela de login do editor; produção usa redirecionamento e pode isolar totalmente.
   h.set("Cross-Origin-Opener-Policy", preview ? "same-origin-allow-popups" : "same-origin");
-  const csp = buildCsp({ supabaseUrl: ctx.supabaseUrl, preview, dev: ctx.dev });
+  let csp = buildCsp({ supabaseUrl: ctx.supabaseUrl, preview, dev: ctx.dev });
+  if (embed) {
+    // Só o Wiize oficial (e o editor, no preview) pode exibir estas telas.
+    const fa = `'self' ${ctx.embedOrigins!.join(" ")}${preview ? " https://lovable.dev https://*.lovable.dev https://*.lovable.app https://*.lovableproject.com" : ""}`;
+    csp = csp.replace(/frame-ancestors [^;]+/, `frame-ancestors ${fa}`);
+  }
   if (preview) {
     // No editor só a proteção de moldura é obrigatória; o resto é monitorado para não quebrar ferramentas do editor.
     h.set("Content-Security-Policy", `frame-ancestors ${csp.match(/frame-ancestors ([^;]+)/)?.[1] ?? "'self'"}; base-uri 'self'; object-src 'none'`);
     h.set("Content-Security-Policy-Report-Only", csp);
   } else {
     h.set("Content-Security-Policy", csp);
-    h.set("X-Frame-Options", "SAMEORIGIN");
+    if (embed) h.delete("X-Frame-Options");
+    else h.set("X-Frame-Options", "SAMEORIGIN");
   }
   h.set("Cache-Control", cacheControlFor(ctx.pathname));
   if (!cacheControlFor(ctx.pathname).startsWith("public")) h.set("Pragma", "no-cache");
