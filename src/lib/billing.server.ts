@@ -337,6 +337,11 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     try {
       const { enqueueWiizeChargeEvent } = await import("./wiize-pay-oauth.server");
       await enqueueWiizeChargeEvent(admin, paymentId, status);
+      const { data: grp } = await admin.from("payments").select("charge_group_id").eq("id", paymentId).maybeSingle();
+      if (grp?.charge_group_id) {
+        const { enqueueWiizeSaleEvent, triggerForStatus } = await import("./wiize-sale-sync.server");
+        await enqueueWiizeSaleEvent(admin, event.tenant_id, grp.charge_group_id, triggerForStatus(status));
+      }
     } catch (e) {
       console.error("wiize-pay enqueue", e instanceof Error ? e.message : "x");
     }

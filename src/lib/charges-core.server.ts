@@ -431,6 +431,10 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       const { createCoproduction } = await import("./coproduction.server");
       await createCoproduction(admin, { tenantId, chargeGroupId, userId, participants: coproducers });
     }
+    {
+      const { enqueueWiizeSaleEvent } = await import("./wiize-sale-sync.server");
+      await enqueueWiizeSaleEvent(admin, tenantId, chargeGroupId, "created");
+    }
     const link = await issueLink(admin, { tenantId, chargeGroupId, customerId: customer.id, serviceId: service.id, contractId, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
     await logAudit(admin, {
       tenantId,

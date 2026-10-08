@@ -202,6 +202,10 @@ export const cancelCharge = createServerFn({ method: "POST" })
       .eq("tenant_id", m.tenant_id)
       .eq("charge_group_id", data.chargeGroupId)
       .is("revoked_at", null);
+    {
+      const { enqueueWiizeSaleEvent } = await import("./wiize-sale-sync.server");
+      await enqueueWiizeSaleEvent(admin, m.tenant_id, data.chargeGroupId, "cancelled");
+    }
     await logAudit(admin, { tenantId: m.tenant_id, userId: context.userId, action: "charge.cancel_requested", resource: "payments", resourceId: data.chargeGroupId });
     return { ok: true, cancelled: cancellableIds.length };
   });
