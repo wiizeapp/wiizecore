@@ -125,7 +125,7 @@ export const submitActivation = createServerFn({ method: "POST" })
     const row = await ensureRow(admin, m.tenant_id);
     const f = (await import("./activation-form-crypto.server")).openForm(row);
     const missing: string[] = [];
-    const need = ["fullName", "cpf", "birthDate", "email", "phone", "zipCode", "address", "number", "district", "city", "state"];
+    const need = ["fullName", "cpf", "birthDate", "phone", "zipCode", "address", "number", "district", "city", "state"];
     if (row.person_type === "company") need.push("legalName", "cnpj", "monthlyRevenue", "businessModel", "paymentSources", "expectedVolume", "legalRepName", "legalRepCpf");
     else need.push("monthlyRevenue", "businessModel", "paymentSources", "expectedVolume");
     for (const k of need) if (!f[k]?.trim()) missing.push(k);

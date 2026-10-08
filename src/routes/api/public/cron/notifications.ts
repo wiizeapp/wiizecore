@@ -11,7 +11,7 @@ async function run(request: Request) {
   const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
   const { notifyTenant, brl } = await import("@/lib/notify.server");
   const day = (n: number) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
-  const sent = 0;
+  let sent = 0;
 
   for (const d of [1, 3, 7]) {
     const { data: rows } = await admin.from("payments")
@@ -40,6 +40,18 @@ async function run(request: Request) {
       title: "Link de assinatura perto de vencer", body: `O link do contrato “${c.title ?? "Contrato"}” vence em até 2 dias e ainda faltam assinaturas.`,
       email: { subject: "Contrato aguardando assinatura" },
     });
+  }
+  // Lembrete diário enquanto a ativação tiver pendência há mais de 24 horas.
+  const dayKey = new Date().toISOString().slice(0, 10);
+  const { data: pendingActs } = await admin.from("payment_activations").select("tenant_id, review_message")
+    .eq("status", "action_required").lt("updated_at", new Date(Date.now() - 86400000).toISOString()).limit(500);
+  for (const a of pendingActs ?? []) {
+    await notifyTenant(admin, {
+      tenantId: a.tenant_id, kind: "activation.reminder", dedupeKey: `activation.reminder:${a.tenant_id}:${dayKey}`, link: "/ativacao",
+      title: "Sua ativação ainda tem pendências", body: a.review_message ? String(a.review_message).slice(0, 200) : "Abra Ative seus pagamentos para concluir o que falta.",
+      email: { subject: "WiizePay — Conclua a ativação de pagamentos" },
+    });
+    sent++;
   }
   // Nova tentativa das devoluções da taxa do Asaas que falharam (cada uma continua travada contra duplicidade).
   const { reimburseProviderFee } = await import("@/lib/billing.server");

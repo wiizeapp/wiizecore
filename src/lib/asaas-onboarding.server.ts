@@ -50,9 +50,13 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
   const master = new AsaasProvider(masterKey, environment);
   const phone = digits(f["phone"] || tenant?.phone);
   const birth = f["birthDate"] && /^\d{4}-\d{2}-\d{2}$/.test(f["birthDate"]) ? f["birthDate"] : undefined;
+  // E-mail exclusivo de cadastro, sempre o mesmo para a empresa: evita conflito com contas já existentes no Asaas.
+  const { DEPLOY_CONFIG } = await import("./deploy-config");
+  const { createHmac } = await import("crypto");
+  const signupEmail = `conta-${createHmac("sha256", "wiizepay-signup-email").update(tenantId).digest("hex").slice(0, 12)}@${DEPLOY_CONFIG.providerSignupEmailDomain}`;
   const created = await master.createSubaccount({
     name: company ? (f["legalName"] || tenant?.legal_name || tenant?.name) : (f["fullName"] || tenant?.name),
-    email: f["email"] || tenant?.email,
+    email: signupEmail,
     cpfCnpj: company ? digits(f["cnpj"]) : digits(f["cpf"]),
     birthDate: company ? undefined : birth,
     companyType: company ? companyType(f["companyType"]) : undefined,
@@ -76,7 +80,7 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
     console.error("webhook da subconta pendente", e instanceof Error ? e.message : "x");
   }
   const { logAudit } = await import("./audit.server");
-  await logAudit(admin, { tenantId, userId, action: "provider.subaccount.created", resource: "provider_connections", metadata: { environment, source: "activation" } });
+  await logAudit(admin, { tenantId, userId, action: "provider.subaccount.created", resource: "provider_connections", metadata: { environment, source: "activation", signupEmail } });
 }
 
 /** Quais arquivos do cadastro atendem cada tipo de documento pedido pelo Asaas. */
@@ -179,6 +183,18 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
         email: { subject: `WiizePay — ${n.title}`, ...(next === "action_required" && patch["review_message"] ? { lines: [{ label: "O que falta", value: String(patch["review_message"]).slice(0, 200) }] } : {}) },
       });
     }
+  }
+  // Aviso quando surge um documento recusado ou etapa nova pendente (uma vez por item e situação).
+  const prevKeys = new Set(((prev.items ?? []) as OnboardingItem[]).filter((i) => i.status === "REJECTED" || i.onboardingUrl).map((i) => `${i.key}:${i.status}`));
+  const fresh = items.filter((i) => (i.status === "REJECTED" || i.onboardingUrl) && !prevKeys.has(`${i.key}:${i.status}`));
+  if (fresh.length && !(mirror && next !== current && next === "action_required")) {
+    const { notifyTenant } = await import("./notify.server");
+    await notifyTenant(admin, {
+      tenantId, kind: "activation.pending_item", link: "/ativacao",
+      dedupeKey: `activation.pending_item:${tenantId}:${fresh.map((i) => `${i.key}:${i.status}`).sort().join(",")}`,
+      title: "Há um item para concluir na ativação", body: `Confira em Ative seus pagamentos: ${fresh.map((i) => i.label).join(", ").slice(0, 160)}.`,
+      email: { subject: "WiizePay — Item pendente na ativação" },
+    });
   }
   return { status: mirror ? next : current, items };
 }

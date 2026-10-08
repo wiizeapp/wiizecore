@@ -4809,5 +4809,7 @@
   "Fim (opcional)": "Fin (opcional)",
   "Contrato escolhido. A assinatura acontece no link de pagamento, antes do pagamento.": "Contrato elegido. La firma ocurre en el enlace de pago, antes del pago.",
   "Cobrança criada. O link de pagamento já foi enviado para o Wiize.": "Cobro creado. El enlace de pago ya fue enviado a Wiize.",
-  "Não foi possível criar o serviço.": "No fue posible crear el servicio."
+  "Não foi possível criar o serviço.": "No fue posible crear el servicio.",
+  "Há um item para concluir na ativação": "Hay un elemento pendiente en tu activación",
+  "Sua ativação ainda tem pendências": "Tu activación aún tiene pendientes"
 }
