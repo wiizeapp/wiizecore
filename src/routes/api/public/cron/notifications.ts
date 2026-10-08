@@ -11,7 +11,7 @@ async function run(request: Request) {
   const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
   const { notifyTenant, brl } = await import("@/lib/notify.server");
   const day = (n: number) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
-  const sent = 0;
+  let sent = 0;
 
   for (const d of [1, 3, 7]) {
     const { data: rows } = await admin.from("payments")

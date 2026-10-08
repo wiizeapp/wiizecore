@@ -54,7 +54,7 @@ function AtivacaoPage() {
         <p>O Asaas é responsável pela análise dos seus dados e documentos e pela aprovação da conta, seguindo as exigências regulatórias de prevenção à fraude.</p>
         <p>Você faz tudo por aqui e acompanha cada etapa nesta tela. Avisaremos assim que houver uma resposta.</p>
       </PartnerNotice>
-      <PageHeader title="Ative seus pagamentos" description="Para receber pelo WiizePay, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos." />
+      <PageHeader title="Ative seus pagamentos" description="Para receber pelo WiizePay, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos. Avisaremos tudo por aqui e no seu e-mail de acesso." />
       {isError ? <ErrorState onRetry={() => refetch()} /> : !isFetchedAfterMount || !data ? <ListSkeleton rows={4} /> : <Content data={data} />}
     </div>
   );
