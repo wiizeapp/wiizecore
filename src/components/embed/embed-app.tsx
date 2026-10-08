@@ -120,7 +120,7 @@ function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
   const [msg, setMsg] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [type, setType] = useState<"one_time" | "installment" | "recurring">("one_time");
-  const pick = (id: string) => { const s = opts.services.find((x) => x.id === id); notify("wiizepay:service.selected", { service_id: id, name: s?.name }); setDone(true); };
+  const pick = (id: string) => { const s = opts.services.find((x) => x.id === id); notify("wiizepay:service.selected", { service_id: id, name: s?.name, amount_cents: s ? Math.round(Number(s.amount) * 100) : undefined, type: s?.type }); setDone(true); };
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault(); setMsg(null);
     const f = new FormData(e.currentTarget);
@@ -128,7 +128,7 @@ function ServiceStep({ session, opts }: { session: string; opts: Opts }) {
     setBusy(true);
     try {
       const r = await create({ data: { session, name: String(f.get("name") ?? ""), amount: Number(String(f.get("amount") ?? "").replace(",", ".")), type, installments: type === "installment" ? Number(f.get("installments") || 2) : null, methods } });
-      notify("wiizepay:service.selected", { service_id: r.id, name: r.name, created: true });
+      notify("wiizepay:service.selected", { service_id: r.id, name: r.name, amount_cents: Math.round(r.amount * 100), type, created: true });
       setDone(true);
     } catch (err) { setMsg(err instanceof Error ? err.message : "Não foi possível criar o serviço."); } finally { setBusy(false); }
   }
