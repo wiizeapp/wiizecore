@@ -144,6 +144,12 @@ export const submitActivation = createServerFn({ method: "POST" })
     const required = REQUIRED_DOCS[row.person_type as "individual" | "company"] ?? REQUIRED_DOCS.individual;
     if (required.some((kind) => !have.has(kind))) throw new Error("Envie todos os documentos obrigatórios.");
     if (!row.consents?.truth || !row.consents?.terms || !row.consents?.privacy) throw new Error("Aceite todas as confirmações antes de enviar.");
+    // Guarda a prova do aceite (quem, quando, de onde e qual versão dos termos).
+    const { getRequestHeader } = await import("@tanstack/react-start/server");
+    const acceptedAt = new Date().toISOString();
+    const ip = (getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0] ?? "").trim().slice(0, 64) || null;
+    const proof = { truth: true, terms: true, privacy: true, acceptedAt, acceptedBy: context.userId, ip, userAgent: (getRequestHeader("user-agent") ?? "").slice(0, 300), termsVersion: "2026-10" };
+    await admin.from("payment_activations").update({ consents: proof }).eq("tenant_id", m.tenant_id);
     const { error } = await admin.rpc("submit_activation", { _tenant_id: m.tenant_id, _user_id: context.userId });
     if (error) {
       const map: Record<string, string> = { missing_documents: "Envie todos os documentos obrigatórios.", missing_consents: "Aceite todas as confirmações antes de enviar.", not_submittable: "Este cadastro já foi enviado." };
@@ -151,15 +157,16 @@ export const submitActivation = createServerFn({ method: "POST" })
       throw new Error(key ? map[key] : "Não foi possível enviar o cadastro.");
     }
     const { logAudit } = await import("./audit.server");
-    await logAudit(admin, { tenantId: m.tenant_id, userId: context.userId, action: "activation.submitted", resource: "payment_activation", resourceId: m.tenant_id });
+    await logAudit(admin, { tenantId: m.tenant_id, userId: context.userId, action: "activation.submitted", resource: "payment_activation", resourceId: m.tenant_id, metadata: { termsVersion: proof.termsVersion, acceptedAt } });
+    const { data: sub } = await admin.from("payment_activations").select("submitted_at").eq("tenant_id", m.tenant_id).single();
     const { notifyTenant } = await import("./notify.server");
+    // Um único aviso por envio: a chave usa o horário exato gravado pelo envio.
     await notifyTenant(admin, {
-      tenantId: m.tenant_id, kind: "activation.submitted", link: "/ativacao", dedupeKey: `activation.submitted:${m.tenant_id}:${new Date().toISOString().slice(0, 16)}`,
+      tenantId: m.tenant_id, kind: "activation.submitted", link: "/ativacao", dedupeKey: `activation.submitted:${m.tenant_id}:${sub?.submitted_at ?? acceptedAt}`,
       title: "Cadastro enviado para análise", body: "Seus dados foram enviados ao Asaas. A análise costuma levar até 3 dias úteis e avisaremos aqui e por e-mail.",
       email: { subject: "WiizePay — Cadastro enviado para análise" },
     });
     const { sendActivationToProvider } = await import("./asaas-onboarding.server");
-    const { getRequestHeader } = await import("@tanstack/react-start/server");
     await sendActivationToProvider(admin, m.tenant_id, context.userId, getRequestHeader("origin") ?? null);
     return { ok: true };
   });

@@ -155,6 +155,13 @@
       "when": 1791417723786,
       "tag": "0021_wiize_embed_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1791420294714,
+      "tag": "0022_activation_single_submitted_notice",
+      "breakpoints": true
     }
   ]
 }
