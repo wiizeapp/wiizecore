@@ -167,7 +167,6 @@ export const submitActivation = createServerFn({ method: "POST" })
       email: { subject: "WiizePay — Cadastro enviado para análise" },
     });
     const { sendActivationToProvider } = await import("./asaas-onboarding.server");
-    const { getRequestHeader } = await import("@tanstack/react-start/server");
     await sendActivationToProvider(admin, m.tenant_id, context.userId, getRequestHeader("origin") ?? null);
     return { ok: true };
   });
