@@ -2159,6 +2159,124 @@ export type Database = {
           },
         ]
       }
+      embed_sessions: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          expires_at: string
+          id: string
+          kind: string
+          revoked_at: string | null
+          session_hash: string
+          tenant_id: string
+          ticket_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at: string
+          id?: string
+          kind: string
+          revoked_at?: string | null
+          session_hash: string
+          tenant_id: string
+          ticket_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          kind?: string
+          revoked_at?: string | null
+          session_hash?: string
+          tenant_id?: string
+          ticket_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embed_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "embed_sessions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "embed_sessions_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "embed_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      embed_tickets: {
+        Row: {
+          client_id: string
+          created_at: string
+          customer_id: string | null
+          expires_at: string
+          id: string
+          kind: string
+          tenant_id: string
+          theme: string
+          ticket_hash: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          customer_id?: string | null
+          expires_at: string
+          id?: string
+          kind: string
+          tenant_id: string
+          theme?: string
+          ticket_hash: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          customer_id?: string | null
+          expires_at?: string
+          id?: string
+          kind?: string
+          tenant_id?: string
+          theme?: string
+          ticket_hash?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embed_tickets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "embed_tickets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_change_log: {
         Row: {
           changed_by: string | null

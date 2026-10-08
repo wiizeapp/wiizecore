@@ -4795,5 +4795,19 @@
   "E-mail ou documento não conferem. Use o e-mail e o CPF/CNPJ completo cadastrados.": "El correo o documento no coinciden. Use el correo y el CPF/CNPJ completo registrados.",
   "Seu acesso à empresa foi desativado. Fale com o proprietário da conta.": "Su acceso a la empresa fue desactivado. Hable con el propietario de la cuenta.",
   "Você já faz parte de outra empresa ativa. Peça para ser removido dela antes de aceitar este convite.": "Ya forma parte de otra empresa activa. Pida ser eliminado de ella antes de aceptar esta invitación.",
-  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "Tipo de archivo no permitido. Envíe PDF, imagen, hoja de cálculo o documento de texto."
+  "Tipo de arquivo não permitido. Envie PDF, imagem, planilha ou documento de texto.": "Tipo de archivo no permitido. Envíe PDF, imagen, hoja de cálculo o documento de texto.",
+  "Carregando...": "Cargando...",
+  "Acesso expirado. Abra a janela novamente.": "Acceso expirado. Abra la ventana nuevamente.",
+  "Escolher serviço existente": "Elegir servicio existente",
+  "Criar novo serviço": "Crear nuevo servicio",
+  "À vista": "Al contado",
+  "Recorrente (mensal)": "Recurrente (mensual)",
+  "Criar serviço": "Crear servicio",
+  "Serviço escolhido. Você já pode continuar no Wiize.": "Servicio elegido. Ya puede continuar en Wiize.",
+  "Escolher contrato existente": "Elegir contrato existente",
+  "Criar novo contrato": "Crear nuevo contrato",
+  "Fim (opcional)": "Fin (opcional)",
+  "Contrato escolhido. A assinatura acontece no link de pagamento, antes do pagamento.": "Contrato elegido. La firma ocurre en el enlace de pago, antes del pago.",
+  "Cobrança criada. O link de pagamento já foi enviado para o Wiize.": "Cobro creado. El enlace de pago ya fue enviado a Wiize.",
+  "Não foi possível criar o serviço.": "No fue posible crear el servicio."
 }
