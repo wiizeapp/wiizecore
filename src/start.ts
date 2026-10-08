@@ -3,7 +3,6 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachBearer } from "@/lib/auth-bearer";
 import { applySecurityHeaders } from "@/lib/security-headers";
-import { DEPLOY_CONFIG } from "@/lib/deploy-config";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -39,7 +38,6 @@ const securityHeadersMiddleware = createMiddleware().server(async ({ next, reque
         host: request.headers.get("host") ?? url.host,
         supabaseUrl: process.env["SUPABASE_URL"],
         dev: process.env["NODE_ENV"] !== "production",
-        embedOrigins: DEPLOY_CONFIG.wiizeEmbedOrigins,
       });
     } catch {
       // cabeçalhos imutáveis: ignora
