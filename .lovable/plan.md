@@ -1,31 +1,33 @@
-# E-mail de cadastro criado pela WiizePay
+# E-mail de cadastro criado pela WiizePay + caixa da WiizePay
 
 ## A solução
 - **O campo "E-mail" sai da ativação**, no computador e no celular.
-- **A WiizePay cria um e-mail exclusivo de cadastro para cada empresa**, por exemplo `conta-7f3a91c2@contas.wiize.com.br`. Ele é usado só no cadastro do Asaas, é sempre o mesmo para aquela empresa e nunca conflita com uma conta que já exista.
-- **O cliente não vê esse e-mail.** O CPF/CNPJ continua sendo o verdadeiro dele.
-- **Avisos:** tudo chega pela WiizePay, no sininho, no e-mail de login da conta e na tela "Ative seus pagamentos". Isso inclui envio, análise, pedido de correção, documento recusado e aprovação.
-- **Pendências do Asaas**, como selfie ou prova de vida, aparecem em "Andamento da análise" com o botão "Concluir etapa segura". O cliente nunca depende de um e-mail do Asaas.
+- **A WiizePay cria um e-mail exclusivo para cada empresa**, por exemplo `conta-7f3a91c2@contas.wiize.com.br`. Ele é usado só no cadastro do Asaas e nunca conflita com uma conta que já exista. O CPF/CNPJ continua sendo o verdadeiro.
+- **O cliente não vê esse e-mail.** Tudo o que o Asaas mandar para ele vai para **uma caixa só sua**, por exemplo `cadastros.wiizepay@gmail.com`. Inclui o e-mail de ativação.
+- **Os documentos continuam indo pela WiizePay.** O cliente não precisa entrar no Asaas nem criar senha.
+- **Avisos:** tudo chega pela WiizePay, no sininho, no e-mail de login e na tela "Ative seus pagamentos". Isso cobre envio, análise, pedido de correção, documento recusado e aprovação. Enquanto houver pendência, sai no máximo um lembrete por dia.
+- Pendências do Asaas, como selfie ou prova de vida, aparecem em "Andamento da análise", com o botão "Concluir etapa segura".
 - O texto "em parceria com o Asaas" continua como está hoje.
 
-## Avisos novos
-- **Documento recusado ou etapa pendente:** quando a atualização da situação encontrar algo novo, sai um aviso no sininho e por e-mail, com o que corrigir.
-- **Lembrete diário:** enquanto houver pendência há mais de 24 horas, o cliente recebe no máximo um lembrete por dia.
+## O que você precisa fazer (uma vez, uns 10 minutos, de graça)
+1. No painel onde está o domínio `wiize.com.br`, ative o **redirecionamento de e-mail** (por exemplo, o "Email Routing" da Cloudflare).
+2. Crie a regra **"pega-tudo"**: tudo que chegar em `*@contas.wiize.com.br` vai para a sua caixa de cadastros.
+3. Me diga qual caixa você escolheu, que eu deixo anotada na configuração.
 
-## Atenção (precisa confirmar com o Asaas)
-Na subconta **comum**, o Asaas manda um e-mail de ativação para o endereço do cadastro. Nesse e-mail, o titular cria a senha e envia os documentos. Com o e-mail criado pela WiizePay, ninguém recebe essa mensagem. Por isso, este plano depende de a sua conta usar o modelo **BaaS**, em que os documentos vão pela própria WiizePay, como o sistema já faz hoje.
+Depois de pronto, eu te passo o passo a passo detalhado do painel que você usa.
 
-Pergunte ao seu gerente do Asaas se as subcontas da sua conta são BaaS. Se não forem, o cadastro pode não ser aprovado.
+Se o Asaas pedir alguma ação pelo e-mail de ativação, ela chega nessa caixa e você resolve pelo cliente.
 
 ## Detalhes técnicos
-- `src/lib/deploy-config.ts`: `providerSignupEmailDomain`, com padrão `contas.wiize.com.br`.
+- `src/lib/deploy-config.ts`: `providerSignupEmailDomain` (padrão `contas.wiize.com.br`).
 - `src/lib/asaas-onboarding.server.ts`:
-  - `ensureSubaccount` passa a enviar `email: conta-<HMAC curto do tenantId>@<domínio>` e guarda o endereço nos dados da conexão, para auditoria.
-  - `syncProviderOnboarding` avisa por `notifyTenant` quando aparecer uma pendência ou recusa nova, com chave de deduplicação por item e status.
-- `src/routes/api/public/cron/notifications.ts`: lembrete diário de pendência da ativação, deduplicado por dia.
-- `src/lib/activation.functions.ts`, `src/lib/activation-validation.ts` e `src/lib/activation-handoff.functions.ts`: o e-mail deixa de ser obrigatório e validado.
-- `src/routes/_authenticated/ativacao.tsx` e `src/routes/ativacao-celular.$token.tsx`:
-  - remover o campo de e-mail;
-  - incluir o texto "Avisaremos tudo por aqui e no seu e-mail de acesso".
+  - `ensureSubaccount` envia `email: conta-<HMAC curto do tenantId>@<domínio>` e guarda o endereço nos dados da conexão, para auditoria.
+  - `syncProviderOnboarding` avisa o cliente por `notifyTenant` quando surge uma pendência ou recusa nova, com chave de deduplicação por item e status.
+- `src/routes/api/public/cron/notifications.ts`: lembrete diário da pendência de ativação, com deduplicação por dia.
+- `src/lib/activation.functions.ts`, `src/lib/activation-validation.ts` e `src/lib/activation-handoff.functions.ts`: o e-mail deixa de ser obrigatório e de ser validado.
+- `src/routes/_authenticated/ativacao.tsx` e `src/routes/ativacao-celular.$token.tsx`: remover o campo e mostrar o texto "Avisaremos tudo por aqui e no seu e-mail de acesso".
 - Traduções EN/ES dos textos novos.
 - Sem mudança no banco de dados.
+
+## Observação
+O resultado só se confirma com um cadastro real em produção, depois que o redirecionamento estiver ativo.
