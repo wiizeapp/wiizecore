@@ -2277,6 +2277,113 @@ export type Database = {
           },
         ]
       }
+      ext_api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          integration_id: string
+          last_used_at: string | null
+          public_key: string
+          revoked_at: string | null
+          secret_hash: string
+          secret_last4: string
+          secret_prefix: string
+          status: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          integration_id: string
+          last_used_at?: string | null
+          public_key: string
+          revoked_at?: string | null
+          secret_hash: string
+          secret_last4: string
+          secret_prefix: string
+          status?: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          integration_id?: string
+          last_used_at?: string | null
+          public_key?: string
+          revoked_at?: string | null
+          secret_hash?: string
+          secret_last4?: string
+          secret_prefix?: string
+          status?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_api_keys_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_api_keys_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ext_integrations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          environment: string
+          id: string
+          last_used_at: string | null
+          name: string
+          scopes: string[]
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          environment?: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          scopes?: string[]
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          environment?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          scopes?: string[]
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_integrations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_change_log: {
         Row: {
           changed_by: string | null

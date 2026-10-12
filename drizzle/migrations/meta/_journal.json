@@ -183,6 +183,13 @@
       "when": 1791465690656,
       "tag": "0025_wiize_sale_events",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791845160199,
+      "tag": "0026_ext_integrations",
+      "breakpoints": true
     }
   ]
 }
