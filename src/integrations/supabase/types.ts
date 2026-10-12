@@ -2337,6 +2337,138 @@ export type Database = {
           },
         ]
       }
+      ext_checkout_sessions: {
+        Row: {
+          cancel_url: string | null
+          charge_group_id: string
+          created_at: string
+          customer_id: string
+          expires_at: string | null
+          external_customer_id: string | null
+          external_subscription_id: string | null
+          id: string
+          idempotency_key: string
+          integration_id: string
+          payment_link_id: string | null
+          request_hash: string
+          service_id: string
+          success_url: string | null
+          tenant_id: string
+        }
+        Insert: {
+          cancel_url?: string | null
+          charge_group_id: string
+          created_at?: string
+          customer_id: string
+          expires_at?: string | null
+          external_customer_id?: string | null
+          external_subscription_id?: string | null
+          id?: string
+          idempotency_key: string
+          integration_id: string
+          payment_link_id?: string | null
+          request_hash: string
+          service_id: string
+          success_url?: string | null
+          tenant_id: string
+        }
+        Update: {
+          cancel_url?: string | null
+          charge_group_id?: string
+          created_at?: string
+          customer_id?: string
+          expires_at?: string | null
+          external_customer_id?: string | null
+          external_subscription_id?: string | null
+          id?: string
+          idempotency_key?: string
+          integration_id?: string
+          payment_link_id?: string | null
+          request_hash?: string
+          service_id?: string
+          success_url?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_checkout_sessions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_checkout_sessions_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_checkout_sessions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_checkout_sessions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ext_customer_links: {
+        Row: {
+          created_at: string
+          customer_id: string
+          external_customer_id: string
+          id: string
+          integration_id: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          external_customer_id: string
+          id?: string
+          integration_id: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          external_customer_id?: string
+          id?: string
+          integration_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_customer_links_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_customer_links_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_customer_links_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ext_integrations: {
         Row: {
           created_at: string

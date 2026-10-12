@@ -190,6 +190,13 @@
       "when": 1791845160199,
       "tag": "0026_ext_integrations",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1791845398303,
+      "tag": "0027_ext_checkout_sessions",
+      "breakpoints": true
     }
   ]
 }
