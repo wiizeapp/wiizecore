@@ -109,7 +109,7 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
           const { data: again } = await db.from("ext_checkout_sessions").select("*").eq("integration_id", auth.integrationId).eq("idempotency_key", idem).maybeSingle();
           return again ? respond(again, 200) : json({ error: "internal_error" }, 500);
         }
-        await (await import("@/lib/ext-webhooks.server")).enqueueExtSessionCreated(db, tenantId, charge.chargeGroupId);
+        { const wh = await import("@/lib/ext-webhooks.server"); await wh.enqueueExtSessionCreated(db, tenantId, charge.chargeGroupId); await wh.enqueueExtChargeEvent(db, tenantId, charge.chargeGroupId, "created"); }
         const { logAudit } = await import("@/lib/audit.server");
         await logAudit(db, { tenantId, userId: it.created_by, action: "ext_api.checkout_session.created", resource: "ext_checkout_sessions", metadata: { integration_id: auth.integrationId, session_id: session.id, charge_group_id: charge.chargeGroupId } });
         return respond(session, 201);
