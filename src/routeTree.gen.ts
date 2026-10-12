@@ -83,6 +83,7 @@ import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/publi
 import { Route as ApiPublicWiizeCallbackRouteImport } from './routes/api/public/wiize/callback'
 import { Route as ApiPublicWiizeDeliverRouteImport } from './routes/api/public/wiize/deliver'
 import { Route as ApiPublicWiizeWebhookRouteImport } from './routes/api/public/wiize/webhook'
+import { Route as ApiPublicV1ExtCheckoutSessionsRouteImport } from './routes/api/public/v1/ext/checkout-sessions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -471,6 +472,12 @@ const ApiPublicWiizeWebhookRoute = ApiPublicWiizeWebhookRouteImport.update({
   path: '/api/public/wiize/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1ExtCheckoutSessionsRoute =
+  ApiPublicV1ExtCheckoutSessionsRouteImport.update({
+    id: '/api/public/v1/ext/checkout-sessions',
+    path: '/api/public/v1/ext/checkout-sessions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -546,6 +553,7 @@ export interface FileRoutesByFullPath {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -621,6 +629,7 @@ export interface FileRoutesByTo {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -698,6 +707,7 @@ export interface FileRoutesById {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -775,6 +785,7 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/checkout-sessions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -850,6 +861,7 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/checkout-sessions'
   id:
     | '__root__'
     | '/'
@@ -926,6 +938,7 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/checkout-sessions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -972,6 +985,7 @@ export interface RootRouteChildren {
   ApiPublicWiizeCallbackRoute: typeof ApiPublicWiizeCallbackRoute
   ApiPublicWiizeDeliverRoute: typeof ApiPublicWiizeDeliverRoute
   ApiPublicWiizeWebhookRoute: typeof ApiPublicWiizeWebhookRoute
+  ApiPublicV1ExtCheckoutSessionsRoute: typeof ApiPublicV1ExtCheckoutSessionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1494,6 +1508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWiizeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/ext/checkout-sessions': {
+      id: '/api/public/v1/ext/checkout-sessions'
+      path: '/api/public/v1/ext/checkout-sessions'
+      fullPath: '/api/public/v1/ext/checkout-sessions'
+      preLoaderRoute: typeof ApiPublicV1ExtCheckoutSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1614,6 +1635,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWiizeCallbackRoute: ApiPublicWiizeCallbackRoute,
   ApiPublicWiizeDeliverRoute: ApiPublicWiizeDeliverRoute,
   ApiPublicWiizeWebhookRoute: ApiPublicWiizeWebhookRoute,
+  ApiPublicV1ExtCheckoutSessionsRoute: ApiPublicV1ExtCheckoutSessionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
