@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { PageHeader } from "@/components/app-shell";
 import { IntegrationsCard } from "@/components/integrations-card";
 import { DriveIntegrationCard } from "@/components/drive-integration-card";
@@ -24,9 +25,17 @@ const SOON = [
 ];
 
 function Integracoes() {
+  const { t } = useTranslation("ui");
   return (
     <div className="space-y-6">
       <PageHeader title="Integrações" description="Conecte a WiizePay aos sistemas que você já usa." />
+      <Link to="/integracao-externa" className="surface-panel flex items-center justify-between gap-3 p-5 transition-colors hover:border-primary/40 sm:p-6">
+        <div>
+          <h2 className="font-display text-base font-semibold tracking-tight">{t("Integração Externa")}</h2>
+          <p className="mt-1 text-xs text-muted-foreground">{t("Conecte seu próprio software ou SaaS à WiizePay para criar cobranças e receber avisos de pagamento.")}</p>
+        </div>
+        <span className="text-sm font-semibold text-primary">{t("Abrir")} →</span>
+      </Link>
       <IntegrationsCard />
       <DriveIntegrationCard />
       <section className="surface-panel p-5 sm:p-6">
