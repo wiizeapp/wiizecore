@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL, formatDateTime } from "@/lib/format";
 import { getExtOverview, listExtLogs } from "@/lib/ext-insights.functions";
-import { EXT_EVENTS } from "@/lib/ext-webhooks";
-import { buildExtAiPrompt, EXT_API_BASE, EXT_DOCS_SNIPPETS } from "@/lib/ext-docs";
+import { buildExtAiPrompt, EXT_API_BASE, EXT_DOCS_SNIPPETS, EXT_EVENT_NAMES as EXT_EVENTS } from "@/lib/ext-docs";
 
 export function ExtOverview() {
   const { t } = useTranslation("ui");
