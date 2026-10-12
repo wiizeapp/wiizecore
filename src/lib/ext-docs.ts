@@ -1,4 +1,5 @@
-import { SITE_URL } from "./deploy-config";
+import { DEPLOY_CONFIG } from "./deploy-config";
+const SITE_URL = DEPLOY_CONFIG.publicSiteUrl;
 
 /** Lista para telas (sem dependências de servidor). Deve bater com EXT_EVENTS — garantido por teste. */
 export const EXT_EVENT_NAMES = [

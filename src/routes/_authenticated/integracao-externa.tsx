@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateTime } from "@/lib/format";
 import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { ExtWebhooksPanel } from "@/components/ext-webhooks-panel";
+import { ExtAiGuide, ExtDocs, ExtLogs, ExtOverview } from "@/components/ext-insights";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
@@ -81,22 +82,30 @@ function Page() {
         </section>
       )}
 
-      <Tabs defaultValue="credentials">
+      <Tabs defaultValue="overview">
         <TabsList className="flex-wrap">
-          <TabsTrigger value="credentials">{t("Credenciais")}</TabsTrigger>
           <TabsTrigger value="overview">{t("Visão geral")}</TabsTrigger>
+          <TabsTrigger value="credentials">{t("Credenciais")}</TabsTrigger>
           <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+          <TabsTrigger value="logs">{t("Registros")}</TabsTrigger>
+          <TabsTrigger value="docs">{t("Documentação")}</TabsTrigger>
+          <TabsTrigger value="ai">{t("Guia com IA")}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="surface-panel space-y-3 p-5 text-sm">
+        <TabsContent value="overview" className="space-y-4">
+          <ExtOverview />
+          <div className="surface-panel space-y-3 p-5 text-sm">
           <p>{t("Com a Integração Externa, o seu sistema pede à WiizePay para criar clientes e cobranças, e a WiizePay avisa o seu sistema quando o pagamento acontece.")}</p>
           <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
             <li>{t("Chave pública: pode aparecer no site do seu sistema.")}</li>
             <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
             <li>{t("Chaves de teste só funcionam no ambiente de testes; chaves de produção, só com dinheiro real.")}</li>
           </ul>
-          <p className="text-xs text-muted-foreground">{t("Próximas etapas: painel de números, registros, documentação e guia com IA.")}</p>
+          </div>
         </TabsContent>
+        <TabsContent value="logs"><ExtLogs /></TabsContent>
+        <TabsContent value="docs"><ExtDocs /></TabsContent>
+        <TabsContent value="ai"><ExtAiGuide /></TabsContent>
 
         <TabsContent value="webhooks" className="space-y-4">
           <p className="text-xs text-muted-foreground">{t("A WiizePay avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
