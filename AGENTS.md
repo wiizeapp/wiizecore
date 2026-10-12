@@ -39,3 +39,4 @@
 - New-account launch promo (0% percentage on single cash Pix/boleto, fixed fee kept) is decided only in `calculatePaymentFee` via `launch-promotion.server.ts` from DB-locked `tenants.created_at`.
 - One-time charges deduct the Asaas cost (subaccount fees API incl. still-valid promo price with safety margin, `src/lib/provider-fee-quote.ts`) from the WiizePay split, stored in `payments.provider_fee_covered_amount`; only the uncovered rest is reimbursed. Why: no round-trip transfer.
 - Wiize `/embed/*`: one-time 2-min hash ticket → 30-min in-memory session (`embed-session.server.ts`); framing only for `wiizeEmbedOrigins`. Why: no 3rd-party cookies/token logs.
+- External SaaS API (`/api/public/v1/ext/*`) authenticates `sk_` keys via `src/lib/ext-auth.server.ts` (hash only, scope + env check) and creates charges only through `createChargeCore`; idempotency per integration in `ext_checkout_sessions`. Why: one charge path, no cross-tenant access.
