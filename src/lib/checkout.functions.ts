@@ -154,8 +154,11 @@ export const getCheckout = createServerFn({ method: "GET" })
       return request;
     };
 
+    // Endereços de volta ao sistema integrado (só navegação; nunca confirmam pagamento).
+    const { data: extSession } = await admin.from("ext_checkout_sessions").select("success_url, cancel_url").eq("charge_group_id", groupId).eq("tenant_id", link.tenant_id).maybeSingle();
     return {
       state: "ok" as const,
+      returnUrls: { success: extSession?.success_url ?? null, cancel: extSession?.cancel_url ?? null },
       linkExpired: resolved.linkExpired,
       appearance: await (await import("./checkout-appearance.server")).resolveAppearance(admin, appearanceRow?.settings),
       providerName: t?.name || "Prestador",
