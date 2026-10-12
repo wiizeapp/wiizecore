@@ -4853,5 +4853,19 @@
   "Último uso": "Último uso",
   "Nunca": "Nunca",
   "Gerar nova chave": "Generar nueva clave",
-  "Revogar": "Revocar"
+  "Revogar": "Revocar",
+  "Voltar para o site": "Volver al sitio",
+  "Voltar sem pagar": "Volver sin pagar",
+  "Segredo de assinatura (aparece só esta vez)": "Secreto de firma (se muestra solo una vez)",
+  "Adicionar endereço": "Agregar endpoint",
+  "Nenhum endereço de aviso cadastrado.": "Ningún endpoint de aviso registrado.",
+  "Enviar teste": "Enviar prueba",
+  "Gerar novo segredo": "Generar nuevo secreto",
+  "Evento": "Evento",
+  "Tentativas": "Intentos",
+  "Reenviar": "Reenviar",
+  "Excluir este endereço?": "¿Eliminar este endpoint?",
+  "A WiizePay avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.": "WiizePay avisa a su sistema cuando algo ocurre con un cobro creado por la API. Cada aviso viene firmado con el encabezado WiizePay-Signature.",
+  "Crie uma integração primeiro.": "Cree una integración primero.",
+  "Próximas etapas: painel de números, registros, documentação e guia com IA.": "Próximas etapas: métricas, registros, documentación y guía con IA."
 }

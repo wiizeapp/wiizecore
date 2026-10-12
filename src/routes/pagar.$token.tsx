@@ -153,6 +153,11 @@ function Checkout() {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">{ui("Pagamento para")}</p>
           <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight sm:text-3xl">{data.providerName}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{data.service?.name}{data.service?.type === "recurring" && data.service.frequency ? ` · ${frequencyLabels[data.service.frequency]}` : ""}</p>
+          {(allPaid || processing) && data.returnUrls?.success ? (
+            <a href={data.returnUrls.success} rel="noopener" className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">{ui("Voltar para o site")}</a>
+          ) : current && data.returnUrls?.cancel ? (
+            <a href={data.returnUrls.cancel} rel="noopener" className="mt-3 inline-block text-xs text-muted-foreground underline">{ui("Voltar sem pagar")}</a>
+          ) : null}
 
           {shown ? (
             <div className="mt-8 border-t border-border pt-7">

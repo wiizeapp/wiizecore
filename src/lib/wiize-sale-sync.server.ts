@@ -102,6 +102,8 @@ export async function buildSalePayload(db: Db, tenantId: string, chargeGroupId: 
 
 /** Enfileira o aviso de venda para o Wiize. Nunca lança erro para não afetar a operação financeira. */
 export async function enqueueWiizeSaleEvent(db: Db, tenantId: string, chargeGroupId: string, trigger: SaleTrigger) {
+  // Avisos da Integração Externa saem dos mesmos pontos (só para cobranças criadas pela API).
+  await (await import("./ext-webhooks.server")).enqueueExtChargeEvent(db as never, tenantId, chargeGroupId, trigger);
   try {
     if (!(await wiizeConnected(db, tenantId))) return;
     const data = await buildSalePayload(db, tenantId, chargeGroupId);

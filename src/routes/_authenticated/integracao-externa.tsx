@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateTime } from "@/lib/format";
 import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
+import { ExtWebhooksPanel } from "@/components/ext-webhooks-panel";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
@@ -84,6 +85,7 @@ function Page() {
         <TabsList className="flex-wrap">
           <TabsTrigger value="credentials">{t("Credenciais")}</TabsTrigger>
           <TabsTrigger value="overview">{t("Visão geral")}</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="surface-panel space-y-3 p-5 text-sm">
@@ -93,7 +95,17 @@ function Page() {
             <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
             <li>{t("Chaves de teste só funcionam no ambiente de testes; chaves de produção, só com dinheiro real.")}</li>
           </ul>
-          <p className="text-xs text-muted-foreground">{t("Próximas etapas: endereços da API, checkout, avisos (webhooks), registros e guia com IA.")}</p>
+          <p className="text-xs text-muted-foreground">{t("Próximas etapas: painel de números, registros, documentação e guia com IA.")}</p>
+        </TabsContent>
+
+        <TabsContent value="webhooks" className="space-y-4">
+          <p className="text-xs text-muted-foreground">{t("A WiizePay avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
+          {items.filter((i) => i.status !== "revoked").length === 0 ? <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Crie uma integração primeiro.")}</p> : items.filter((i) => i.status !== "revoked").map((i) => (
+            <section key={i.id} className="surface-panel space-y-3 p-5">
+              <p className="font-semibold">{i.name}</p>
+              <ExtWebhooksPanel integrationId={i.id} canManage={Boolean(q.data?.canManage)} />
+            </section>
+          ))}
         </TabsContent>
 
         <TabsContent value="credentials" className="space-y-4">
