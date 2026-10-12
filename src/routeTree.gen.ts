@@ -45,6 +45,7 @@ import { Route as AuthenticatedEquipeRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedExtratoRouteImport } from './routes/_authenticated/extrato'
 import { Route as AuthenticatedFinancasRouteImport } from './routes/_authenticated/financas'
 import { Route as AuthenticatedFinanceiroRouteImport } from './routes/_authenticated/financeiro'
+import { Route as AuthenticatedIntegracaoExternaRouteImport } from './routes/_authenticated/integracao-externa'
 import { Route as AuthenticatedIntegracoesRouteImport } from './routes/_authenticated/integracoes'
 import { Route as AuthenticatedLembreteDeCobrancaRouteImport } from './routes/_authenticated/lembrete-de-cobranca'
 import { Route as AuthenticatedLimitesRouteImport } from './routes/_authenticated/limites'
@@ -267,6 +268,12 @@ const AuthenticatedFinanceiroRoute = AuthenticatedFinanceiroRouteImport.update({
   path: '/financeiro',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedIntegracaoExternaRoute =
+  AuthenticatedIntegracaoExternaRouteImport.update({
+    id: '/integracao-externa',
+    path: '/integracao-externa',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedIntegracoesRoute =
   AuthenticatedIntegracoesRouteImport.update({
     id: '/integracoes',
@@ -501,6 +508,7 @@ export interface FileRoutesByFullPath {
   '/extrato': typeof AuthenticatedExtratoRoute
   '/financas': typeof AuthenticatedFinancasRoute
   '/financeiro': typeof AuthenticatedFinanceiroRoute
+  '/integracao-externa': typeof AuthenticatedIntegracaoExternaRoute
   '/integracoes': typeof AuthenticatedIntegracoesRoute
   '/lembrete-de-cobranca': typeof AuthenticatedLembreteDeCobrancaRoute
   '/limites': typeof AuthenticatedLimitesRoute
@@ -575,6 +583,7 @@ export interface FileRoutesByTo {
   '/extrato': typeof AuthenticatedExtratoRoute
   '/financas': typeof AuthenticatedFinancasRoute
   '/financeiro': typeof AuthenticatedFinanceiroRoute
+  '/integracao-externa': typeof AuthenticatedIntegracaoExternaRoute
   '/integracoes': typeof AuthenticatedIntegracoesRoute
   '/lembrete-de-cobranca': typeof AuthenticatedLembreteDeCobrancaRoute
   '/limites': typeof AuthenticatedLimitesRoute
@@ -651,6 +660,7 @@ export interface FileRoutesById {
   '/_authenticated/extrato': typeof AuthenticatedExtratoRoute
   '/_authenticated/financas': typeof AuthenticatedFinancasRoute
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRoute
+  '/_authenticated/integracao-externa': typeof AuthenticatedIntegracaoExternaRoute
   '/_authenticated/integracoes': typeof AuthenticatedIntegracoesRoute
   '/_authenticated/lembrete-de-cobranca': typeof AuthenticatedLembreteDeCobrancaRoute
   '/_authenticated/limites': typeof AuthenticatedLimitesRoute
@@ -727,6 +737,7 @@ export interface FileRouteTypes {
     | '/extrato'
     | '/financas'
     | '/financeiro'
+    | '/integracao-externa'
     | '/integracoes'
     | '/lembrete-de-cobranca'
     | '/limites'
@@ -801,6 +812,7 @@ export interface FileRouteTypes {
     | '/extrato'
     | '/financas'
     | '/financeiro'
+    | '/integracao-externa'
     | '/integracoes'
     | '/lembrete-de-cobranca'
     | '/limites'
@@ -876,6 +888,7 @@ export interface FileRouteTypes {
     | '/_authenticated/extrato'
     | '/_authenticated/financas'
     | '/_authenticated/financeiro'
+    | '/_authenticated/integracao-externa'
     | '/_authenticated/integracoes'
     | '/_authenticated/lembrete-de-cobranca'
     | '/_authenticated/limites'
@@ -1215,6 +1228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinanceiroRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/integracao-externa': {
+      id: '/_authenticated/integracao-externa'
+      path: '/integracao-externa'
+      fullPath: '/integracao-externa'
+      preLoaderRoute: typeof AuthenticatedIntegracaoExternaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/integracoes': {
       id: '/_authenticated/integracoes'
       path: '/integracoes'
@@ -1492,6 +1512,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExtratoRoute: typeof AuthenticatedExtratoRoute
   AuthenticatedFinancasRoute: typeof AuthenticatedFinancasRoute
   AuthenticatedFinanceiroRoute: typeof AuthenticatedFinanceiroRoute
+  AuthenticatedIntegracaoExternaRoute: typeof AuthenticatedIntegracaoExternaRoute
   AuthenticatedIntegracoesRoute: typeof AuthenticatedIntegracoesRoute
   AuthenticatedLembreteDeCobrancaRoute: typeof AuthenticatedLembreteDeCobrancaRoute
   AuthenticatedLimitesRoute: typeof AuthenticatedLimitesRoute
@@ -1526,6 +1547,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExtratoRoute: AuthenticatedExtratoRoute,
   AuthenticatedFinancasRoute: AuthenticatedFinancasRoute,
   AuthenticatedFinanceiroRoute: AuthenticatedFinanceiroRoute,
+  AuthenticatedIntegracaoExternaRoute: AuthenticatedIntegracaoExternaRoute,
   AuthenticatedIntegracoesRoute: AuthenticatedIntegracoesRoute,
   AuthenticatedLembreteDeCobrancaRoute: AuthenticatedLembreteDeCobrancaRoute,
   AuthenticatedLimitesRoute: AuthenticatedLimitesRoute,
