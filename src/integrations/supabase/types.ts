@@ -2516,6 +2516,129 @@ export type Database = {
           },
         ]
       }
+      ext_webhook_deliveries: {
+        Row: {
+          attempts: number
+          body: Json
+          charge_group_id: string | null
+          created_at: string
+          delivered_at: string | null
+          endpoint_id: string
+          event_id: string
+          id: string
+          last_error: string | null
+          last_status: number | null
+          next_attempt_at: string
+          status: string
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          attempts?: number
+          body: Json
+          charge_group_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          endpoint_id: string
+          event_id: string
+          id?: string
+          last_error?: string | null
+          last_status?: number | null
+          next_attempt_at?: string
+          status?: string
+          tenant_id: string
+          type: string
+        }
+        Update: {
+          attempts?: number
+          body?: Json
+          charge_group_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          endpoint_id?: string
+          event_id?: string
+          id?: string
+          last_error?: string | null
+          last_status?: number | null
+          next_attempt_at?: string
+          status?: string
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_webhook_deliveries_endpoint_id_fkey"
+            columns: ["endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "ext_webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_webhook_deliveries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ext_webhook_endpoints: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          events: string[]
+          id: string
+          integration_id: string
+          secret_enc: string
+          status: string
+          tenant_id: string
+          timeout_ms: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          events?: string[]
+          id?: string
+          integration_id: string
+          secret_enc: string
+          status?: string
+          tenant_id: string
+          timeout_ms?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          events?: string[]
+          id?: string
+          integration_id?: string
+          secret_enc?: string
+          status?: string
+          tenant_id?: string
+          timeout_ms?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_webhook_endpoints_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_webhook_endpoints_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_change_log: {
         Row: {
           changed_by: string | null
