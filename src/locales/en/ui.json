@@ -4824,5 +4824,19 @@
   "Último uso": "Last used",
   "Nunca": "Never",
   "Gerar nova chave": "Generate new key",
-  "Revogar": "Revoke"
+  "Revogar": "Revoke",
+  "Voltar para o site": "Back to the site",
+  "Voltar sem pagar": "Go back without paying",
+  "Segredo de assinatura (aparece só esta vez)": "Signing secret (shown only once)",
+  "Adicionar endereço": "Add endpoint",
+  "Nenhum endereço de aviso cadastrado.": "No notice endpoint registered.",
+  "Enviar teste": "Send test",
+  "Gerar novo segredo": "Generate new secret",
+  "Evento": "Event",
+  "Tentativas": "Attempts",
+  "Reenviar": "Resend",
+  "Excluir este endereço?": "Delete this endpoint?",
+  "A WiizePay avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.": "WiizePay notifies your system when something happens to a charge created via the API. Each notice is signed with the WiizePay-Signature header.",
+  "Crie uma integração primeiro.": "Create an integration first.",
+  "Próximas etapas: painel de números, registros, documentação e guia com IA.": "Next steps: metrics, logs, documentation and AI guide."
 }
