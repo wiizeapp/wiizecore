@@ -124,7 +124,7 @@ function Landing() {
               <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
               <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
               <div className="mx-auto max-w-3xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-foreground/25 bg-foreground/10 px-4 py-1.5 text-xs font-semibold uppercase text-foreground"><span className="size-1.5 rounded-full bg-foreground" />{ui("Comece com a WiizePay")}</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 bg-primary px-4 py-1.5 text-xs font-semibold uppercase text-primary-foreground shadow-card"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui("Comece com a WiizePay")}</span>
                 <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
                 <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
                 <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
