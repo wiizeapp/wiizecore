@@ -1,4 +1,9 @@
 {
+  "Evolução do MRR": "Evolución del MRR",
+  "MRR líquido emitido": "MRR neto emitido",
+  "MRR líquido emitido · últimos 12 meses": "MRR neto emitido · últimos 12 meses",
+  "Ainda não há parcelas ou recorrências emitidas para mostrar a evolução do MRR.": "Todavía no hay cuotas ni cobros recurrentes emitidos para mostrar la evolución del MRR.",
+  "Líquido das parcelas e recorrências já emitidas, agrupado pelo mês de vencimento, com taxas registradas e reembolsos descontados. Inclui cobranças pagas, em aberto e vencidas; exclui avulsas, canceladas e falhas. É a evolução da base emitida, não MRR contratual normalizado nem receita recebida. Não reconstrói alterações antigas nem projeta ciclos futuros. O mês atual está em andamento e este gráfico não depende do filtro de período.": "Neto de cuotas y cobros recurrentes emitidos, agrupado por mes de vencimiento, descontando tarifas registradas y reembolsos. Incluye cobros pagados, pendientes y vencidos; excluye únicos, cancelados y fallidos. Muestra la base emitida, no MRR contractual normalizado ni ingresos recibidos. No reconstruye cambios antiguos ni proyecta ciclos futuros. El mes actual está en curso y el gráfico no depende del filtro de período.",
   "Sem métricas para analisar no período": "Sin métricas para analizar en este período",
   "Como funciona: {{indicador}}": "Cómo funciona: {{indicador}}",
   "Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.": "Fondos ya disponibles en tu cartera para solicitar un retiro. Los fondos pendientes todavía esperan liquidación. Este saldo no cambia con el filtro de período.",

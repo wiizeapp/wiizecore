@@ -1,4 +1,9 @@
 {
+  "Evolução do MRR": "MRR evolution",
+  "MRR líquido emitido": "Issued net MRR",
+  "MRR líquido emitido · últimos 12 meses": "Issued net MRR · last 12 months",
+  "Ainda não há parcelas ou recorrências emitidas para mostrar a evolução do MRR.": "No issued installments or recurring charges yet to display MRR evolution.",
+  "Líquido das parcelas e recorrências já emitidas, agrupado pelo mês de vencimento, com taxas registradas e reembolsos descontados. Inclui cobranças pagas, em aberto e vencidas; exclui avulsas, canceladas e falhas. É a evolução da base emitida, não MRR contratual normalizado nem receita recebida. Não reconstrói alterações antigas nem projeta ciclos futuros. O mês atual está em andamento e este gráfico não depende do filtro de período.": "Net issued installments and recurring charges grouped by due month, less recorded fees and refunds. Includes paid, open and overdue charges; excludes one-off, cancelled and failed charges. This tracks the issued base, not normalized contractual MRR or received revenue. Past changes are not reconstructed and future cycles are not projected. The current month is in progress and this chart is unaffected by the period filter.",
   "Sem métricas para analisar no período": "No metrics to analyze in this period",
   "Como funciona: {{indicador}}": "How it works: {{indicador}}",
   "Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.": "Funds already available in your wallet for withdrawal. Pending funds still await settlement. This balance is unaffected by the period filter.",
