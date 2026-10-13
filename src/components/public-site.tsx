@@ -75,7 +75,6 @@ export function PublicHeader() {
         </nav>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/" aria-label={t("home")} className="shrink-0"><Brand /></Link>
-        <div className="flex items-center gap-2 sm:gap-3 lg:justify-self-end">
           <LanguageSwitcher />
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
           <Sheet>
