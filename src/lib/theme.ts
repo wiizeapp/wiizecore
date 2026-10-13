@@ -9,7 +9,7 @@ const valid = (v: unknown): v is ThemeChoice => v === "light" || v === "dark" ||
 
 export function readTheme(): ThemeChoice {
   const v = window.localStorage.getItem(KEY);
-  return valid(v) ? v : "light";
+  return valid(v) ? v : "dark";
 }
 
 function paint(theme: ThemeChoice) {
