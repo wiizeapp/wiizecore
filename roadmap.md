@@ -1,7 +1,8 @@
 # Roadmap
 
-- [ ] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
-- [ ] Validar cálculos e apresentação em computador e celular; informar arquivos alterados.
+- [x] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
+- [x] Validar cálculos (19 testes), traduções e imagens; informar arquivos alterados.
+- [ ] Conferir visualmente o painel autenticado em computador e celular — bloqueado: nenhuma sessão disponível; usuário precisa entrar na prévia.
 
 - [x] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
 
