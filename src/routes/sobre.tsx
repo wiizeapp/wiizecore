@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, Network, ShieldCheck, Zap, TrendingUp, Wallet, Users, LockKeyhole, Eye, CheckCircle2 } from "lucide-react";
 import { PublicPage } from "@/components/public-site";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+
+import { AboutJourney, AboutMetrics } from "@/components/about-visuals";
 
 const SUPPORT_URL = "https://www.wiize.com.br/contato";
 const URL = "https://wiizepayteste.lovable.app/sobre";
@@ -23,15 +25,6 @@ export const Route = createFileRoute("/sobre")({
   component: SobrePage,
 });
 
-const journey = ["Venda", "Contrato", "Cobrança", "Pagamento", "Acompanhamento financeiro"];
-
-const metrics = [
-  { value: "R$ 171,3 bi", label: "movimentados" },
-  { value: "+3,8 mi", label: "contas criadas" },
-  { value: "+549,3 mi", label: "cobranças pagas" },
-  { value: "2021", label: "autorizada como instituição de pagamento pelo Banco Central" },
-] as const;
-
 const commitments = [
   ["Transparência nas informações", "Taxas, prazos e condições ficam acessíveis antes de cobrar."],
   ["Tratamento responsável dos dados", "A WiizePay não armazena CVV, senha ou número completo do cartão."],
@@ -46,29 +39,31 @@ const principles = [
   ["Evolução", "Desenvolvemos tecnologia com atenção às necessidades reais dos negócios e à melhoria contínua da experiência."],
 ] as const;
 
+const principleIcons = [Network, Zap, ShieldCheck, TrendingUp];
+const commitmentIcons = [Eye, LockKeyhole, CheckCircle2, TrendingUp];
+
 function SobrePage() {
   const { t: ui } = useTranslation("ui");
   return (
     <PublicPage>
-      <main>
+      <main className="about-page">
         {/* Hero */}
-        <section className="resource-hero relative overflow-hidden border-b border-border">
-          <div className="section-shell grid gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:py-24">
-            <div>
+        <section className="about-hero relative overflow-hidden border-b border-border">
+          <div className="section-shell py-16 text-center lg:py-20">
+            <div className="about-hero-content mx-auto max-w-5xl">
               <p className="section-kicker">{ui("Sobre a WiizePay")}</p>
-              <h1 className="mt-5 max-w-3xl text-[clamp(2rem,5.5vw,4rem)] font-semibold leading-[1.06]">
+              <h1 className="about-hero-title mt-6 font-semibold">
                 <span className="block">{ui("Simplificar processos.")}</span>
                 <span className="block">{ui("Conectar negócios.")}</span>
-                <span className="hero-shine block">{ui("Transformar a operação.")}</span>
+                <span className="hero-shine about-highlight block">{ui("Transformar a operação.")}</span>
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{ui("A WiizePay nasceu da visão de tornar a gestão de cobranças e recebimentos mais simples, conectando pagamentos à realidade dos negócios.")}</p>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">{ui("Fazemos parte de uma visão maior: desenvolver tecnologia que reduza a complexidade operacional e ajude empresas a trabalhar com mais integração, organização e eficiência.")}</p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">{ui("A WiizePay nasceu da visão de tornar a gestão de cobranças e recebimentos mais simples, conectando pagamentos à realidade dos negócios.")}</p>
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">{ui("Fazemos parte de uma visão maior: desenvolver tecnologia que reduza a complexidade operacional e ajude empresas a trabalhar com mais integração, organização e eficiência.")}</p>
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg"><a href="#visao">{ui("Conheça nossa visão")} <ArrowRight /></a></Button>
                 <Button asChild size="lg" variant="outline"><Link to="/">{ui("Explore a WiizePay")}</Link></Button>
               </div>
             </div>
-            <HeroFlow />
           </div>
         </section>
 
@@ -96,11 +91,13 @@ function SobrePage() {
             </div>
             <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-[1.4fr_1fr]">
               <article className="bg-background p-8 sm:p-10">
+                <Wallet className="mb-6 size-8 text-primary" strokeWidth={1.5} aria-hidden="true" />
                 <p className="text-xs font-bold uppercase tracking-wider text-primary">WiizePay</p>
                 <h3 className="mt-4 text-2xl font-semibold sm:text-3xl">{ui("Pagamentos, cobranças e recebimentos.")}</h3>
                 <p className="mt-4 max-w-lg leading-7 text-muted-foreground">{ui("A WiizePay concentra sua proposta em pagamentos, cobranças e recebimentos para empresas de serviços.")}</p>
               </article>
               <article className="bg-background p-8 sm:p-10">
+                <Users className="mb-6 size-8 text-primary" strokeWidth={1.5} aria-hidden="true" />
                 <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Wiize</p>
                 <h3 className="mt-4 text-xl font-semibold">{ui("Processos comerciais e relacionamento.")}</h3>
                 <p className="mt-4 leading-7 text-muted-foreground">{ui("A Wiize complementa essa visão com sua atuação em tecnologia para processos comerciais e relacionamento com clientes.")}</p>
@@ -117,15 +114,7 @@ function SobrePage() {
             <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{ui("Do primeiro contato ao recebimento: tudo faz parte da mesma jornada.")}</h2>
             <p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Nossa proposta é reduzir a fragmentação entre essas etapas e facilitar a administração de negócios que trabalham com contratos, serviços e pagamentos recorrentes.")}</p>
           </div>
-          <ol className="relative mt-14 grid gap-6 md:grid-cols-5 md:gap-0">
-            <span className="absolute left-5 top-0 h-full w-px bg-border md:left-0 md:top-5 md:h-px md:w-full" aria-hidden="true" />
-            {journey.map((step, i) => (
-              <li key={step} className="relative flex items-center gap-4 md:flex-col md:items-start md:gap-0 md:pr-6">
-                <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-primary/40 bg-background font-display text-sm font-semibold text-primary">{String(i + 1).padStart(2, "0")}</span>
-                <span className="text-base font-semibold md:mt-5">{ui(step)}</span>
-              </li>
-            ))}
-          </ol>
+          <AboutJourney />
           <p className="mt-10 text-center text-xs text-muted-foreground">{ui("Esta jornada representa nossa visão e proposta de valor, em evolução contínua.")}</p>
         </section>
 
@@ -139,15 +128,8 @@ function SobrePage() {
               </div>
               <p className="text-base leading-7 text-muted-foreground">{ui("A WiizePay combina seu produto com uma infraestrutura especializada de pagamentos, permitindo concentrar esforços na experiência do cliente, na integração dos processos e na evolução contínua da solução.")}</p>
             </div>
-            <dl className="mt-14 grid border-t border-border sm:grid-cols-2 lg:grid-cols-4">
-              {metrics.map((m) => (
-                <div key={m.label} className="border-b border-border py-8 sm:pr-8 lg:border-b-0 lg:border-r lg:px-8 lg:first:pl-0 lg:last:border-r-0">
-                  <dt className="order-2 mt-3 text-sm leading-6 text-muted-foreground">{ui(m.label)}</dt>
-                  <dd className="numeric-tabular font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">{m.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-8 max-w-3xl text-xs leading-6 text-muted-foreground">{ui("Indicadores divulgados pelo Asaas, infraestrutura de pagamentos parceira utilizada pela WiizePay. Não representam resultados próprios da WiizePay nem da Wiize.")}</p>
+            <AboutMetrics />
+            <p className="mt-8 max-w-3xl text-xs leading-6 text-muted-foreground">{ui("Indicadores divulgados por nossa infraestrutura de pagamentos parceira. Não representam resultados próprios da WiizePay nem da Wiize.")}</p>
           </div>
         </section>
 
@@ -160,12 +142,14 @@ function SobrePage() {
             <Button asChild variant="outline" className="mt-7"><Link to="/seguranca-e-confianca">{ui("Ver segurança")} <ArrowRight /></Link></Button>
           </div>
           <ul className="divide-y divide-border border-y border-border">
-            {commitments.map(([title, text]) => (
+            {commitments.map(([title, text], i) => {
+              const Icon = commitmentIcons[i] ?? ShieldCheck;
+              return (
               <li key={title} className="grid gap-2 py-6 sm:grid-cols-[0.8fr_1.2fr] sm:gap-8">
-                <h3 className="font-semibold">{ui(title)}</h3>
+                <h3 className="flex items-start gap-3 font-semibold"><Icon className="size-5 shrink-0 text-primary" aria-hidden="true" />{ui(title)}</h3>
                 <p className="text-sm leading-6 text-muted-foreground">{ui(text)}</p>
               </li>
-            ))}
+            ); })}
           </ul>
         </section>
 
@@ -175,15 +159,18 @@ function SobrePage() {
             <p className="section-kicker">{ui("Cultura e princípios")}</p>
             <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">{ui("O que orienta tudo o que construímos.")}</h2>
             <div className="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-2">
-              {principles.map(([title, text], i) => (
-                <div key={title} className={`flex gap-6 ${i % 2 === 1 ? "md:translate-y-10" : ""}`}>
-                  <span className="font-display text-5xl font-semibold leading-none text-primary/30">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <h3 className="text-2xl font-semibold">{ui(title)}</h3>
-                    <p className="mt-3 leading-7 text-muted-foreground">{ui(text)}</p>
+              {principles.map(([title, text], i) => {
+                const Icon = principleIcons[i] ?? Network;
+                return (
+                  <div key={title} className="about-principle flex gap-5 border-t border-border pt-7">
+                    <span className="about-principle-number font-display text-5xl font-semibold leading-none">{String(i + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h3 className="flex items-center gap-3 text-2xl font-semibold"><Icon className="size-6 shrink-0 text-primary" strokeWidth={1.5} aria-hidden="true" />{ui(title)}</h3>
+                      <p className="mt-3 leading-7 text-muted-foreground">{ui(text)}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -215,20 +202,3 @@ function SobrePage() {
   );
 }
 
-function HeroFlow() {
-  const { t: ui } = useTranslation("ui");
-  const nodes = ["Venda", "Contrato", "Cobrança", "Pagamento", "Financeiro"];
-  return (
-    <div className="relative mx-auto w-full max-w-sm" role="img" aria-label={ui("Fluxo conectado entre as etapas do negócio")}>
-      <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-primary/0 via-primary/60 to-primary/0" aria-hidden="true" />
-      <ul className="space-y-4">
-        {nodes.map((n, i) => (
-          <li key={n} className="relative flex items-center gap-4" style={{ marginLeft: `${(i % 2) * 1.5}rem` }}>
-            <span className={`relative z-10 grid size-12 place-items-center rounded-full border ${i === 3 ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-primary"} font-display text-xs font-semibold`}>{String(i + 1).padStart(2, "0")}</span>
-            <span className="rounded-md border border-border bg-card/80 px-4 py-2.5 text-sm font-medium">{ui(n)}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
