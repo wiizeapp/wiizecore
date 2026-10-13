@@ -68,13 +68,13 @@ export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
     <header className="sticky top-0 z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
-      <div className="flex h-[4.5rem] w-full items-center justify-end gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:justify-between lg:px-6">
-        <nav className="hidden items-center gap-1 lg:flex" aria-label={t("mainNav")}>
+      <div className="grid h-[4.5rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-6">
+        <Link to="/" aria-label={t("home")} className="shrink-0 justify-self-start"><Brand /></Link>
+        <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
         </nav>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Link to="/" aria-label={t("home")} className="shrink-0"><Brand /></Link>
+        <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
           <Sheet>

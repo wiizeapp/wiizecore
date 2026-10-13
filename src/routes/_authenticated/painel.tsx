@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Switch } from "@/components/ui/switch";
+import { canUseDashboardMockup, dashboardMockupData } from "@/components/dashboard/mockup-data";
 import { MoneyValue } from "@/components/dashboard/money-value";
 import { firstChargeCustomers, monthlyMrr, projectedMrr } from "@/lib/dashboard-mrr";
 import { useWorkspace } from "@/hooks/useWorkspace";
@@ -71,6 +73,11 @@ function Dashboard() {
   const { data: workspace } = useWorkspace();
   const tenantId = workspace?.tenantId;
   const { user } = useAuth();
+  const [mockupRequested, setMockupRequested] = useState(false);
+  const eligibleForMockup = canUseDashboardMockup(user?.email);
+  const mockup = eligibleForMockup && mockupRequested;
+  const mockData = useMemo(() => dashboardMockupData(range, (key) => ui(key)), [range, ui]);
+  const queryTenantId = mockup ? undefined : tenantId;
   const journeyStorageKey = user?.id ? `wiizepay:journey:closed:${user.id}` : null;
   const [hidden, setHidden] = useState(false);
   const [journeyOpen, setJourneyOpen] = useState(true);
@@ -80,19 +87,19 @@ function Dashboard() {
     try { setJourneyOpen(localStorage.getItem(journeyStorageKey) !== "true"); } catch { setJourneyOpen(true); }
   }, [journeyStorageKey]);
   const toggleJourney = () => {
-    if (journeyOpen && journeyStorageKey) {
+    if (!mockup && journeyOpen && journeyStorageKey) {
       try { localStorage.setItem(journeyStorageKey, "true"); } catch { /* Storage may be unavailable. */ }
     }
     setJourneyOpen((open) => !open);
   };
   const [revenueChart, setRevenueChart] = useState<"columns" | "line">("columns");
 
-  const wallet = useTenantQuery("wallet", tenantId, async (t) => {
+  const walletQuery = useTenantQuery("wallet", queryTenantId, async (t) => {
     const { data, error } = await supabase.from("wallets").select("available_balance, pending_balance").eq("tenant_id", t).maybeSingle();
     if (error) throw error;
     return data;
   });
-  const payments = useTenantQuery("payments", tenantId, async (t) => {
+  const paymentsQuery = useTenantQuery("payments", queryTenantId, async (t) => {
     const { data, error } = await supabase
       .from("payments")
       .select("id, description, gross_amount, net_amount, platform_fee_amount, refunded_amount, status, method, created_at, paid_at, due_on, customer_id, service_id, subscription_id, installment_count")
@@ -102,22 +109,22 @@ function Dashboard() {
     if (error) throw error;
     return data ?? [];
   });
-  const refunds = useTenantQuery(`refunds:${range.start.toISOString()}:${range.end.toISOString()}`, tenantId, async (t) => {
+  const refundsQuery = useTenantQuery(`refunds:${range.start.toISOString()}:${range.end.toISOString()}`, queryTenantId, async (t) => {
     const { data, error } = await supabase.from("refunds").select("id, refund_amount, completed_at").eq("tenant_id", t).eq("status", "completed").gte("completed_at", range.start.toISOString()).lt("completed_at", range.end.toISOString());
     if (error) throw error;
     return data ?? [];
   });
-  const customers = useTenantQuery("customers", tenantId, async (t) => {
+  const customersQuery = useTenantQuery("customers", queryTenantId, async (t) => {
     const { data, error } = await supabase.from("customers").select("id, name, created_at").eq("tenant_id", t).limit(5000);
     if (error) throw error;
     return data ?? [];
   });
-  const services = useTenantQuery("services", tenantId, async (t) => {
+  const servicesQuery = useTenantQuery("services", queryTenantId, async (t) => {
     const { data, error } = await supabase.from("services").select("id, name").eq("tenant_id", t);
     if (error) throw error;
     return data ?? [];
   });
-  const extras = useTenantQuery("extras", tenantId, async (t) => {
+  const extrasQuery = useTenantQuery("extras", queryTenantId, async (t) => {
     const [c, s, a, released, withdrawals, fset, inv] = await Promise.all([
       supabase.from("contracts").select("id", { count: "exact", head: true }).eq("tenant_id", t),
       supabase.from("subscriptions").select("id", { count: "exact", head: true }).eq("tenant_id", t),
@@ -139,6 +146,14 @@ function Dashboard() {
       invoicesPending: (inv.data ?? []).filter((r) => ["PENDING", "SCHEDULED", "SYNCHRONIZED"].includes(r.status)).length,
       invoicesError: (inv.data ?? []).filter((r) => r.status === "ERROR").length };
   });
+
+  // Visual fixtures never enter the query cache or the financial operation paths.
+  const wallet = { ...walletQuery, data: mockup ? mockData.wallet : walletQuery.data, isPending: !mockup && walletQuery.isPending, isError: !mockup && walletQuery.isError };
+  const payments = { ...paymentsQuery, data: mockup ? mockData.payments : paymentsQuery.data, isPending: !mockup && paymentsQuery.isPending, isError: !mockup && paymentsQuery.isError };
+  const customers = { ...customersQuery, data: mockup ? mockData.customers : customersQuery.data, isPending: !mockup && customersQuery.isPending, isError: !mockup && customersQuery.isError };
+  const services = { ...servicesQuery, data: mockup ? mockData.services : servicesQuery.data, isPending: !mockup && servicesQuery.isPending };
+  const refunds = { ...refundsQuery, data: mockup ? mockData.refunds : refundsQuery.data, isPending: !mockup && refundsQuery.isPending, isError: !mockup && refundsQuery.isError };
+  const extras = { ...extrasQuery, data: mockup ? mockData.extras : extrasQuery.data, isPending: !mockup && extrasQuery.isPending };
 
   const loading = payments.isPending || customers.isPending;
   const failed = payments.isError || customers.isError || wallet.isError;
@@ -170,7 +185,7 @@ function Dashboard() {
       return { label: b.label, sold: c.sold / 100, received: c.received / 100 };
     });
 
-    const group = <K extends string>(list: typeof rows, key: (r: (typeof rows)[number]) => K | null) => {
+    const group = <K extends string>(list: Array<(typeof rows)[number]>, key: (r: (typeof rows)[number]) => K | null) => {
       const m = new Map<K, { total: number; count: number }>();
       for (const r of list) {
         const k = key(r);
@@ -217,12 +232,13 @@ function Dashboard() {
   }, [payments.data, customers.data, services.data, range, i18n.resolvedLanguage]);
 
   const setPeriod = (p: Search) => navigate({ search: p, replace: true });
-  const refresh = () => { for (const q of [wallet, payments, customers, services, extras, refunds]) void q.refetch(); };
+  const refresh = () => { if (mockup) return; for (const q of [wallet, payments, customers, services, extras, refunds]) void q.refetch(); };
   const updatedAt = Math.max(wallet.dataUpdatedAt, payments.dataUpdatedAt);
   const mins = updatedAt ? Math.floor((Date.now() - updatedAt) / 60000) : null;
   const mask = (v: string) => (hidden ? "R$ ••••••" : v);
 
   const exportCsv = () => {
+    if (mockup) return;
     const head = "id;descricao;valor;status;metodo;criado_em;pago_em";
     const lines = s.periodRows.map((r) =>
       [r.id, r.description ?? "", Number(r.gross_amount).toFixed(2).replace(".", ","), r.status, r.method ?? "", r.created_at, r.paid_at ?? ""].map(csvCell).join(";"),
@@ -272,21 +288,23 @@ function Dashboard() {
 
   const alerts: { text: string; to: AppPath }[] = [];
   if (extras.data && !activated) alerts.push({ text: ui("Ative sua conta para começar a receber pagamentos."), to: "/ativacao" });
-  else if (extras.data && activated && workspace && !workspace.hasFinancialPassword)
+  else if (!mockup && extras.data && activated && workspace && !workspace.hasFinancialPassword)
     alerts.push({ text: ui("Crie sua senha financeira para proteger saques e operações sensíveis."), to: "/seguranca" });
   if (s.overdue.length) alerts.push({ text: ui(s.overdue.length === 1 ? "{{count}} cobrança vencida aguardando pagamento." : "{{count}} cobranças vencidas aguardando pagamento.", { count: s.overdue.length }), to: "/cobrancas" });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-mockup={mockup || undefined} onClickCapture={(event) => { if (mockup && event.target instanceof Element && event.target.closest("a")) { event.preventDefault(); event.stopPropagation(); } }}> 
       {/* 1. Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{ui("Dashboard")}</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-             {workspace?.tenantName ?? ui("Sua empresa")} · {mins === null ? ui("Carregando…") : mins < 1 ? ui("Atualizado agora") : ui("Atualizado há {{minutes}} min", { minutes: mins })}
+             {mockup ? "Horizonte Studio" : workspace?.tenantName ?? ui("Sua empresa")} · {mockup ? ui("Dados demonstrativos") : mins === null ? ui("Carregando…") : mins < 1 ? ui("Atualizado agora") : ui("Atualizado há {{minutes}} min", { minutes: mins })}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2">
+          {eligibleForMockup && <label className="flex items-center justify-end gap-2 text-xs text-muted-foreground"><span>{ui("Mockup")}</span><Switch aria-label={ui("Mockup")} checked={mockup} onCheckedChange={setMockupRequested} /></label>}
+          <div className="flex items-center gap-2">
           <div ref={periodGroupRef} className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {PERIOD_OPTIONS.map((o) => (
               <button key={o.key} type="button" data-active={periodo === o.key} onClick={() => setPeriod({ periodo: o.key })}
@@ -296,15 +314,16 @@ function Dashboard() {
             ))}
             <CustomRange active={periodo === "custom"} onApply={(de, ate) => setPeriod({ periodo: "custom", de, ate })} onClear={() => setPeriod({ periodo: "hoje" })} />
           </div>
-          <Button variant="outline" size="icon" className="shrink-0" onClick={refresh} aria-label={ui("Atualizar")}>
+          <Button variant="outline" size="icon" className="shrink-0" onClick={refresh} disabled={mockup} aria-label={ui("Atualizar")}>
             <RefreshCw className={`h-4 w-4 ${payments.isFetching ? "animate-spin" : ""}`} />
           </Button>
-          <Button variant="outline" size="sm" className="shrink-0" onClick={exportCsv} disabled={!s.periodRows.length} aria-label={ui("Exportar")}>
+          <Button variant="outline" size="sm" className="shrink-0" onClick={exportCsv} disabled={mockup || !s.periodRows.length} aria-label={ui("Exportar")}>
             <Download className="h-4 w-4 sm:mr-1.5" />  <span className="hidden sm:inline">{ui("Exportar")}</span>
           </Button>
         </div>
       </div>
 
+      </div>
       {failed && (
         <div className="flex items-center justify-between gap-3 rounded-xl border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm">
            <span>{ui("Não foi possível carregar alguns dados.")}</span>
@@ -519,7 +538,7 @@ function Dashboard() {
            ) : <Empty text={ui("Nenhuma movimentação ainda.")} to="/cobrancas" cta={ui("Criar primeira cobrança")} />}
         </Panel>
       </div>
-       <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><FilePlus2 className="h-3 w-3" /> {ui("Todos os valores vêm das cobranças e movimentações reais da sua conta.")}</p>
+       <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground"><FilePlus2 className="h-3 w-3" /> {ui(mockup ? "Dados fictícios para demonstração. Nenhum saldo ou cobrança real foi alterado." : "Todos os valores vêm das cobranças e movimentações reais da sua conta.")}</p>
       {/* Notas fiscais — indicador compacto */}
       {extras.data ? (
         <Link to="/notas-fiscais" className="surface-panel flex items-center justify-between gap-3 px-5 py-3 text-sm transition-colors hover:border-primary/40">

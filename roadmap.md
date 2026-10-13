@@ -1,7 +1,8 @@
 # Roadmap
 
-- [ ] Reorganizar navbar: logo à esquerda, links no centro, idioma e acesso à direita.
-- [ ] Preparar modo visual de mockup no painel solicitado sem alterar dados reais; validar apresentação e isolamento.
+- [x] Reorganizar navbar: logo à esquerda, links no centro, idioma e acesso à direita; conferido sem transbordamento a 393, 1024 e 1810px.
+- [x] Preparar modo visual de mockup no painel solicitado sem alterar dados reais; testes de exemplos e isolamento aprovados.
+- [ ] Conferir o modo mockup na tela da conta solicitada: acesso disponível ainda exige concluir ou pular a pesquisa inicial pelo próprio usuário.
 
 - [x] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; 10 testes aprovados e compilação OK.
 - [x] Manter os filtros de período em uma linha só no celular e separar todos os cards complementares no responsivo; conferido a 393px, 768px e 1280px.
