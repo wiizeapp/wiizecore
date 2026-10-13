@@ -114,8 +114,15 @@ export async function pushDocuments(admin: Admin, tenantId: string) {
       const { data: blob } = await admin.storage.from("kyc-documents").download(doc.storage_path);
       if (!blob) continue;
       const bytes = new Uint8Array(await blob.arrayBuffer());
-      await conn.provider.uploadMyDocument(group.id, group.type, { bytes, mime: doc.mime_type, name: doc.storage_path.split("/").pop() ?? "documento" });
-      uploaded[key] = doc.id;
+      try {
+        await conn.provider.uploadMyDocument(group.id, group.type, { bytes, mime: doc.mime_type, name: doc.storage_path.split("/").pop() ?? "documento" });
+        uploaded[key] = doc.id;
+      } catch (e) {
+        // Um documento recusado pela API (ex.: selfie) não pode travar os demais nem a atualização de status.
+        // Marcamos o arquivo atual para não insistir; um novo arquivo enviado pelo usuário tenta de novo.
+        uploaded[key] = doc.id;
+        console.error("ativação Asaas: documento não aceito via API", group.type, e instanceof Error ? e.message : "falhou");
+      }
     }
   }
   await admin.from("payment_activations").update({ provider_onboarding: { ...state, uploaded } }).eq("tenant_id", tenantId);
