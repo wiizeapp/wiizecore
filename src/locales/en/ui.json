@@ -4871,5 +4871,14 @@
   "Use chaves de teste até tudo funcionar, depois troque pelas de produção.": "Use test keys until everything works, then switch to production keys.",
   "dias": "days",
   "Última cobrança pela API": "Last API charge",
-  "Últimos": "Last"
+  "Últimos": "Last",
+  "Confira os dados antes de salvar": "Check the details before saving",
+  "Confirmo que conferi os dados e que a conta é da minha empresa. A WiizePay não se responsabiliza por transferências feitas para dados informados errado.": "I confirm I checked the details and the account belongs to my company. WiizePay is not responsible for transfers made to incorrectly entered details.",
+  "O saque vai para esta chave Pix. Ela precisa estar no mesmo CPF/CNPJ da empresa. Na hora do saque, o Asaas confere a chave e recusa se houver erro.": "The withdrawal goes to this Pix key. It must be under the company's CPF/CNPJ. At withdrawal time, Asaas checks the key and refuses it if there is an error.",
+  "Corrigir dados": "Fix details",
+  "Revisar dados": "Review details",
+  "Confirmar e salvar": "Confirm and save",
+  "Conta bancária salva.": "Bank account saved.",
+  "Confirme que conferiu os dados da conta.": "Confirm you checked the account details.",
+  "Banco / Agência / Conta": "Bank / Branch / Account"
 }
