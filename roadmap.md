@@ -52,4 +52,4 @@
 - [x] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
 - [x] Alinhar as caixas de taxa 0% às demais e dividir o aviso da promoção: um em cada card (Pix e Boleto), em largura interna total e alinhados na base.
 
-- [ ] Refinar /sobre: abertura centralizada, jornada ilustrada animada, indicadores e princípios destacados; verificar telas e movimento reduzido.
+- [x] Refinar /sobre: abertura centralizada, jornada ilustrada animada, indicadores e princípios destacados; verificar telas e movimento reduzido.
