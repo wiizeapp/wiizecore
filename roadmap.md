@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Ajustar botão e minicard da CTA, colocá-la no início do rodapé sem separador, mostrar logo completa e suavizar brilho verde dos títulos; validar.
+- [x] Ajustar botão e minicard da CTA, colocá-la no início do rodapé sem separador, mostrar logo completa e suavizar brilho verde dos títulos; conferido a 1260px e 393px, botão abre cadastro, sem erros.
 
 - [x] Suavizar abertura e fundos das demonstrações e cartões de funcionalidades, preservando o verde dos botões; conferido a 1260px e 393px, sem imagens quebradas, transbordamento ou erros.
 
