@@ -1,4 +1,10 @@
 {
+  "MRR líquido previsto": "Projected net MRR",
+  "Parcelas e recorrências emitidas, com taxas registradas descontadas. Não é saldo liberado.": "Issued installments and recurring charges, less recorded fees. Not an available balance.",
+  "Indicadores do período": "Period indicators",
+  "Cobranças ativas": "Active charges",
+  "Em aberto no período": "Open in the period",
+  "Resumo financeiro": "Financial summary",
   "Benefício para novas contas": "New account benefit",
   "de taxa percentual por 3 meses": "percentage fee for 3 months",
   "Pix e boleto à vista: só a tarifa fixa.": "One-time Pix and boleto: only the fixed fee.",
