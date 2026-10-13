@@ -55,7 +55,7 @@ function ResourcesMenu() {
       <Button variant="ghost" size="sm" className="gap-1.5 text-sm font-medium" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{t("resources")} <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} /></Button>
       {/* Ponte invisível entre o botão e o painel para o mouse não "cair" no vão. */}
       {open ? <div className="absolute left-0 top-full h-12 w-full" aria-hidden="true" /> : null}
-      <div className={`fixed left-1/2 top-[4.5rem] w-[min(76rem,calc(100vw-4rem))] -translate-x-1/2 pt-3 transition-opacity duration-200 lg:top-[5.25rem] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
+      <div className={`fixed left-1/2 top-[84px] w-[min(72rem,calc(100vw-1.5rem))] -translate-x-1/2 pt-3 transition-opacity duration-200 sm:top-[88px] lg:top-[100px] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
         <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-popover p-5 text-popover-foreground shadow-float">
           {resourceLinks.map((item) => <Link key={item.to} to={item.to} preload="intent" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1} className="group/item flex min-w-0 gap-3 rounded-md p-3 transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"><span className="grid size-9 shrink-0 place-items-center rounded-md bg-surface text-primary transition-colors group-hover/item:bg-primary group-hover/item:text-primary-foreground"><item.icon className="size-4" /></span><span className="min-w-0"><span className="block text-sm font-semibold text-foreground">{res(item.key)[0]}</span><span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{res(item.key)[1]}</span></span></Link>)}
         </div>
@@ -67,14 +67,16 @@ function ResourcesMenu() {
 export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-      <div className="relative mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-5 px-5 lg:h-[5.25rem] lg:px-8">
-        <Link to="/" aria-label={t("home")} className="scale-105"><Brand /></Link>
-        <nav className="hidden items-center gap-1 md:flex" aria-label={t("mainNav")}>
-          <ResourcesMenu />
-          {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
-        </nav>
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-4">
+      <div className="mx-auto grid h-[4.5rem] w-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:px-6">
+        <div className="min-w-0 justify-self-start">
+          <nav className="hidden items-center gap-1 md:flex" aria-label={t("mainNav")}>
+            <ResourcesMenu />
+            {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
+          </nav>
+        </div>
+        <Link to="/" aria-label={t("home")} className="scale-105 justify-self-center"><Brand /></Link>
+        <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
           <Sheet>
