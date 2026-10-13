@@ -99,10 +99,10 @@ export function PublicFooter() {
   const { t } = useTranslation("footer");
   const { t: tn } = useTranslation("navigation");
   return (
-    <footer className="public-brand-surface border-t border-border">
+    <footer className="border-t border-border bg-background">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
-          <Brand compact className="rounded-lg bg-foreground p-1" />
+          <Brand compact className="rounded-lg bg-card p-1" />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
           <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
         </div>

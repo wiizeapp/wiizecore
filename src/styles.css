@@ -159,8 +159,11 @@
   --public-hero-gradient: linear-gradient(180deg, color-mix(in oklab, var(--primary) 2%, var(--background)) 0%, color-mix(in oklab, var(--primary) 9%, var(--background)) 35%, color-mix(in oklab, var(--primary) 30%, var(--background)) 100%);
   --public-hero-grid: color-mix(in oklab, var(--primary) 9%, transparent);
   --public-steps-background: color-mix(in oklab, var(--primary) 10%, var(--background));
-  --public-flow-gradient: linear-gradient(165deg, var(--card) 0%, color-mix(in oklab, var(--primary) 6%, var(--card)) 20%, color-mix(in oklab, var(--primary) 42%, var(--card)) 65%, color-mix(in oklab, var(--primary) 32%, var(--card)) 100%);
-  --public-comparison-gradient: linear-gradient(90deg, color-mix(in oklab, var(--primary) 3%, var(--card)), color-mix(in oklab, var(--primary) 32%, var(--card)));
+  --public-flow-gradient: linear-gradient(165deg, color-mix(in oklab, var(--primary) 20%, var(--card)) 0%, color-mix(in oklab, var(--primary) 38%, var(--card)) 65%, color-mix(in oklab, var(--primary) 28%, var(--card)) 100%);
+  --public-flow-step: color-mix(in oklab, var(--primary) 12%, var(--card));
+  --public-comparison-gradient: linear-gradient(150deg, color-mix(in oklab, var(--primary) 10%, var(--card)) 0%, color-mix(in oklab, var(--primary) 24%, var(--card)) 55%, color-mix(in oklab, var(--primary) 32%, var(--card)) 100%);
+  --public-comparison-grid: color-mix(in oklab, var(--primary) 6%, transparent);
+  --public-comparison-border: color-mix(in oklab, var(--primary) 24%, var(--border));
   --public-shadow-card: 0 4px 18px -10px oklch(0.25 0.025 160 / 14%);
   --public-shadow-float: 0 10px 28px -16px oklch(0.25 0.025 160 / 18%);
   --shadow-card: var(--public-shadow-card);
@@ -1089,34 +1092,26 @@
   color: var(--foreground);
 }
 
-.public-site footer.public-brand-surface {
-  border-top: 0;
-}
-
-.public-site .premium-cta.public-brand-surface {
-  border-bottom: 0;
-}
-
-.public-site footer.public-brand-surface > div > div > .bg-foreground {
-  background-color: var(--card);
-}
-
 @utility operation-flow-visual {
   background-image: var(--public-flow-gradient);
+}
+
+.operation-flow-visual .operation-flow-step > div {
+  background-color: var(--public-flow-step);
 }
 
 @utility how-it-works-band {
   background-color: var(--public-steps-background);
 }
 
-/* A CTA repete o degradê da abertura e termina na cor sólida do rodapé. */
+/* CTA e comparativo compartilham o fundo; o rodapé mantém a superfície neutra. */
 @utility premium-cta {
   min-height: 27rem;
   display: grid;
   place-items: center;
   background-color: var(--public-hero-end);
-  background-image: var(--public-hero-gradient);
-  border-bottom: 0;
+  background-image: var(--public-comparison-gradient);
+  margin-bottom: 2.5rem;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
 }
@@ -1127,7 +1122,10 @@
 
 @utility premium-cta-grid {
   inset: 0;
-  background-image: none;
+  background-image:
+    linear-gradient(to right, var(--public-comparison-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--public-comparison-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 @utility premium-cta-button {
@@ -1453,7 +1451,21 @@
 }
 
 @utility cmp-half-live {
-  background-image: var(--public-comparison-gradient);
+  background-image:
+    linear-gradient(to right, var(--public-comparison-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--public-comparison-grid) 1px, transparent 1px),
+    var(--public-comparison-gradient);
+  background-size: 32px 32px, 32px 32px, 100% 100%;
+}
+
+.public-comparison .comparison-header,
+.public-comparison .cmp-anim {
+  border-bottom: 1px solid var(--public-comparison-border);
+}
+.public-comparison .cmp-anim:last-child { border-bottom: 0; }
+.public-comparison .comparison-header > div:last-child,
+.public-comparison .cmp-anim > div:last-child {
+  border-left: 1px solid var(--public-comparison-border);
 }
 
 @keyframes cmp-in {
