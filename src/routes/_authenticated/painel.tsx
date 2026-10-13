@@ -10,7 +10,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import {
   AlertTriangle, ArrowRight, BarChart3, CalendarDays, Check, ChevronDown, ChevronUp, Download, Eye, EyeOff, FilePlus2, FileSignature,
   LineChart as LineChartIcon, Plus, RefreshCw, UserPlus, Wallet,
-  FileText, CircleDollarSign, CircleHelp, Clock3, ListChecks, type LucideIcon,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/hooks/useWorkspace";
@@ -21,10 +21,7 @@ import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/
 import { formatBRL, formatDate } from "@/lib/format";
 import { buckets, pctChange, PERIOD_OPTIONS, resolveRange, toCents, type PeriodKey } from "@/lib/dashboard-period";
 import { Change, Empty, Panel, RankList, Skeleton, type AppPath } from "@/components/dashboard/parts";
-import moneyAsset from "@/assets/dashboard-money-neon.asset.json";
-import calendarAsset from "@/assets/dashboard-calendar-neon.asset.json";
-import { countFirstChargeCustomers, forecastNext30Days, monthlyIssuedNetHistory, isOpen, isOverdue, summarize, type SummaryRow } from "@/lib/financial-summary";
-import { DashboardAmount } from "@/components/dashboard/amount";
+import { isOpen, isOverdue, summarize, type SummaryRow } from "@/lib/financial-summary";
 import { DataPagination, paginate } from "@/components/ds";
 
 type Search = { periodo?: PeriodKey | undefined; de?: string | undefined; ate?: string | undefined };
@@ -49,7 +46,6 @@ export const Route = createFileRoute("/_authenticated/painel")({
   component: Dashboard,
 });
 
-const mrrChartConfig = { net: { label: "MRR líquido emitido", color: "var(--primary)" } } satisfies ChartConfig;
 const chartConfig = { sold: { label: "Faturamento", color: "var(--primary)" } } satisfies ChartConfig;
 
 const METHOD_LABEL: Record<string, string> = { pix: "Pix", boleto: "Boleto", credit_card: "Cartão de crédito", debit_card: "Cartão de débito" };
@@ -62,7 +58,7 @@ const inRange = (iso: string | null, a: Date, b: Date) => {
 };
 
 function useTenantQuery<T>(key: string, tenantId: string | undefined, fn: (t: string) => Promise<T>) {
-  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => { if (!tenantId) throw new Error("Empresa indisponível"); return fn(tenantId); } });
+  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => fn(tenantId!) });
 }
 
 function Dashboard() {
@@ -76,7 +72,6 @@ function Dashboard() {
   const [hidden, setHidden] = useState(false);
   const [journeyOpen, setJourneyOpen] = useState(true);
   const [revenueChart, setRevenueChart] = useState<"columns" | "line">("columns");
-  const [mrrChart, setMrrChart] = useState<"columns" | "line">("columns");
 
   const wallet = useTenantQuery("wallet", tenantId, async (t) => {
     const { data, error } = await supabase.from("wallets").select("available_balance, pending_balance").eq("tenant_id", t).maybeSingle();
@@ -84,28 +79,19 @@ function Dashboard() {
     return data;
   });
   const payments = useTenantQuery("payments", tenantId, async (t) => {
-    const fetchPage = async (offset: number) => {
-      const { data, error } = await supabase.from("payments")
-        .select("id, description, gross_amount, net_amount, platform_fee_amount, refunded_amount, status, method, created_at, paid_at, due_on, customer_id, service_id, subscription_id, installment_count")
-        .eq("tenant_id", t).order("created_at", { ascending: false }).order("id").range(offset, offset + 999);
-      if (error) throw error;
-      return data ?? [];
-    };
-    const rows = await fetchPage(0);
-    let page = rows;
-    while (page.length === 1000) { page = await fetchPage(rows.length); rows.push(...page); }
-    return rows;
+    const { data, error } = await supabase
+      .from("payments")
+      .select("id, description, gross_amount, net_amount, platform_fee_amount, refunded_amount, status, method, created_at, paid_at, due_on, customer_id, service_id, subscription_id, installment_count")
+      .eq("tenant_id", t)
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    if (error) throw error;
+    return data ?? [];
   });
   const customers = useTenantQuery("customers", tenantId, async (t) => {
-    const fetchPage = async (offset: number) => {
-      const { data, error } = await supabase.from("customers").select("id, name, created_at").eq("tenant_id", t).order("id").range(offset, offset + 999);
-      if (error) throw error;
-      return data ?? [];
-    };
-    const rows = await fetchPage(0);
-    let page = rows;
-    while (page.length === 1000) { page = await fetchPage(rows.length); rows.push(...page); }
-    return rows;
+    const { data, error } = await supabase.from("customers").select("id, name, created_at").eq("tenant_id", t).limit(5000);
+    if (error) throw error;
+    return data ?? [];
   });
   const services = useTenantQuery("services", tenantId, async (t) => {
     const { data, error } = await supabase.from("services").select("id, name").eq("tenant_id", t);
@@ -135,7 +121,7 @@ function Dashboard() {
       invoicesError: (inv.data ?? []).filter((r) => r.status === "ERROR").length };
   });
 
-  const loading = payments.isPending || customers.isPending || payments.isError || customers.isError;
+  const loading = payments.isPending || customers.isPending;
   const failed = payments.isError || customers.isError || wallet.isError;
 
   const s = useMemo(() => {
@@ -188,11 +174,7 @@ function Dashboard() {
     const paidCounts = new Map<string, number>();
     for (const r of rows) if (r.status === "paid" && r.customer_id) paidCounts.set(r.customer_id, (paidCounts.get(r.customer_id) ?? 0) + 1);
     const recurring = [...paidCounts.values()].filter((n) => n > 1).length;
-    const newCustomers = countFirstChargeCustomers(rows, range.start, range.end);
-    const previousNewCustomers = countFirstChargeCustomers(rows, range.prevStart, range.prevEnd);
-    const forecast = forecastNext30Days(rows);
-    const mrrSeries = monthlyIssuedNetHistory(rows).map((point) => ({ ...point, label: new Date(`${point.month}-01T12:00:00Z`).toLocaleDateString(i18n.resolvedLanguage ?? "pt-BR", { month: "short", year: "2-digit", timeZone: "UTC" }) }));
-    const activeCount = curr.sales.filter((r) => isOpen(r.status) || isOverdue(r)).length;
+    const newCustomers = (customers.data ?? []).filter((c) => inRange(c.created_at, range.start, range.end)).length;
 
     const origin = { Avulso: 0, Recorrente: 0, Parcelado: 0 };
     for (const r of curr.paid) {
@@ -207,11 +189,11 @@ function Dashboard() {
     const overdue = open.filter((r) => isOverdue(r));
 
     return {
-      curr, prev, series, svcTop, ltv, recurring, newCustomers, previousNewCustomers, forecast, mrrSeries, activeCount, origin, methods, upcoming, overdue,
+      curr, prev, series, svcTop, ltv, recurring, newCustomers, origin, methods, upcoming, overdue,
       openCount: open.length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
       hasPaid: rows.some((r) => r.status === "paid"), hasCharge: rows.length > 0, periodRows: curr.sales,
     };
-  }, [payments.data, customers.data, services.data, range, i18n.resolvedLanguage]);
+  }, [payments.data, customers.data, services.data, range]);
 
   const setPeriod = (p: Search) => navigate({ search: p, replace: true });
   const refresh = () => { for (const q of [wallet, payments, customers, services, extras]) void q.refetch(); };
@@ -317,39 +299,25 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Saldo e previsão da empresa — independentes do filtro histórico. */}
-      <section aria-label={ui("Resumo financeiro")} className="grid gap-3 sm:grid-cols-2 sm:gap-6">
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 border-b border-border/60 pb-6 pt-3 sm:grid-cols-[minmax(0,1fr)_112px] sm:border-b-0 sm:border-r sm:py-3 sm:pr-6 xl:grid-cols-[minmax(0,1fr)_128px]">
-          <div className="grid min-w-0 grid-rows-[28px_40px_16px] gap-y-2">
-            <div className="flex h-7 min-w-0 items-center gap-2 text-sm text-muted-foreground">
-              {ui("Saldo disponível")}
-              <MetricHelp title={ui("Saldo disponível")} description={ui("Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.")} />
-              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")}>
-                {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-            </div>
-            {wallet.isPending || wallet.isError ? <Skeleton h="h-8 self-center" /> : <p className={`numeric-tabular self-center break-words font-display font-bold text-foreground ${valueTextSize(mask(cents(available)), true)}`}><DashboardAmount value={mask(cents(available))} /></p>}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-              <span className="text-muted-foreground">{wallet.isPending || wallet.isError ? ui("Carregando…") : ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
-              <Link to="/financeiro" className="font-semibold text-primary hover:underline">{ui("Sacar")} <ArrowRight className="inline h-3 w-3" /></Link>
-            </div>
+      {/* 2. Resumo financeiro compacto */}
+      <section className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
+        <div className="summary-strip-item min-w-0 p-5">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            
+            {ui("Saldo disponível")}
+             <button type="button" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")} className="rounded p-0.5 hover:text-foreground">
+              {hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+            </button>
           </div>
-          <img src={moneyAsset.url} alt="" className="h-20 w-20 shrink-0 object-contain sm:h-28 sm:w-28 xl:h-32 xl:w-32" />
-        </div>
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_112px] xl:grid-cols-[minmax(0,1fr)_128px]">
-          <div className="grid min-w-0 grid-rows-[28px_40px_16px] gap-y-2">
-            <div className="flex h-7 min-w-0 items-center gap-2 text-sm text-muted-foreground"><span className="min-w-0">{ui("MRR líquido previsto")}</span><MetricHelp title={ui("MRR líquido previsto")} description={ui("Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.")} /></div>
-            {loading ? <Skeleton h="h-8 self-center" /> : <p className={`numeric-tabular self-center break-words font-display font-bold text-foreground ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}><DashboardAmount value={mask(formatBRL(s.forecast.net))} /></p>}
+          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}>{mask(cents(available))}</p>}
+          <div className="mt-2 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
+             <Link to="/financeiro" className="text-xs font-semibold text-primary hover:underline">{ui("Sacar")}</Link>
           </div>
-          <img src={calendarAsset.url} alt="" className="h-20 w-20 shrink-0 scale-[0.78] object-contain sm:h-28 sm:w-28 xl:h-32 xl:w-32" />
         </div>
-      </section>
-      <section aria-label={ui("Indicadores do período")} className="surface-panel grid grid-cols-2 overflow-hidden lg:grid-cols-5">
-        <Stat className="col-span-2 border-r-0 lg:col-span-1 lg:border-r" icon={CircleDollarSign} label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
-        <Stat className="border-r" icon={Clock3} label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
-        <Stat icon={AlertTriangle} label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
-        <Stat className="border-r border-b-0" icon={ListChecks} label={ui("Cobranças ativas")} value={String(s.activeCount)} hint={ui("Em aberto no período")} loading={loading} />
-        <Stat icon={UserPlus} label={ui("Novos clientes")} value={String(s.newCustomers)} change={pctChange(s.newCustomers, s.previousNewCustomers)} loading={loading} />
+         <Stat label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
+         <Stat label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
+         <Stat label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
       </section>
 
       {/* Ações rápidas */}
@@ -372,7 +340,7 @@ function Dashboard() {
 
       {/* 4. Faturamento */}
        <Panel title={ui("Faturamento")} subtitle={ui("Valor total vendido · {{granularity}}", { granularity: ui(range.granularity === "hour" ? "por hora" : "por dia") })}
-         action={<div className="flex shrink-0 items-center gap-3"><ChartMode value={revenueChart} onChange={setRevenueChart} /><div className="text-right"><Change value={pctChange(s.curr.sold, s.prev.sold)} /><p className="text-[11px] text-muted-foreground">{ui("vs. período anterior")}</p></div></div>}>
+         action={<div className="flex shrink-0 items-center gap-3"><div className="flex rounded-lg border border-border p-0.5" aria-label={ui("Formato do gráfico")}><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${revenueChart === "columns" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setRevenueChart("columns")} aria-label={ui("Gráfico de colunas")}><BarChart3 /></Button><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${revenueChart === "line" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setRevenueChart("line")} aria-label={ui("Gráfico de linha")}><LineChartIcon /></Button></div><div className="text-right"><Change value={pctChange(s.curr.sold, s.prev.sold)} /><p className="text-[11px] text-muted-foreground">{ui("vs. período anterior")}</p></div></div>}>
         {loading ? <Skeleton h="h-[280px]" /> : s.series.some((x) => x.sold) ? (
           <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
             {revenueChart === "columns" ? <BarChart data={s.series} margin={{ left: 4, right: 8, top: 8 }}>
@@ -390,29 +358,6 @@ function Dashboard() {
             </LineChart>}
           </ChartContainer>
          ) : <Empty text={ui("Sem faturamento neste período.")} to="/cobrancas" cta={ui("Criar cobrança")} />}
-      </Panel>
-
-      <Panel title={ui("Evolução do MRR")} subtitle={ui("MRR líquido emitido · últimos 12 meses")}
-        action={<div className="flex shrink-0 items-center gap-3"><ChartMode value={mrrChart} onChange={setMrrChart} /><MetricHelp title={ui("Evolução do MRR")} description={ui("Líquido das parcelas e recorrências já emitidas, agrupado pelo mês de vencimento, com taxas registradas e reembolsos descontados. Inclui cobranças pagas, em aberto e vencidas; exclui avulsas, canceladas e falhas. É a evolução da base emitida, não MRR contratual normalizado nem receita recebida. Não reconstrói alterações antigas nem projeta ciclos futuros. O mês atual está em andamento e este gráfico não depende do filtro de período.")} /></div>}>
-        {loading ? <Skeleton h="h-[280px]" /> : s.mrrSeries.some((point) => point.count > 0) ? (
-          <>
-            <ChartContainer config={mrrChartConfig} className="aspect-auto h-[280px] w-full">
-              {mrrChart === "columns" ? <BarChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
-                <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
-                <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<MrrTooltip />} />
-                <Bar dataKey="net" fill="var(--primary)" radius={[5, 5, 0, 0]} maxBarSize={48} />
-              </BarChart> : <LineChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
-                <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
-                <ChartTooltip cursor={{ strokeDasharray: "4 4" }} content={<MrrTooltip />} />
-                <Line type="monotone" dataKey="net" stroke="var(--primary)" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
-              </LineChart>}
-            </ChartContainer>
-          </>
-        ) : <Empty text={ui("Ainda não há parcelas ou recorrências emitidas para mostrar a evolução do MRR.")} />}
       </Panel>
 
       {showJourney && (
@@ -445,7 +390,7 @@ function Dashboard() {
          <Panel title={ui("Ticket médio do período")} subtitle={ui("Valor médio de cada venda realizada")}>
           {loading ? <Skeleton h="h-40" /> : (
             <div className="flex min-h-40 flex-col justify-center">
-              <p className={`numeric-tabular max-w-full overflow-hidden font-display font-bold text-foreground ${valueTextSize(cents(s.curr.ticket))}`}><DashboardAmount value={cents(s.curr.ticket)} /></p>
+              <p className={`numeric-tabular max-w-full overflow-hidden font-display font-bold text-foreground ${valueTextSize(cents(s.curr.ticket))}`}>{cents(s.curr.ticket)}</p>
               <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
                 <Change value={pctChange(s.curr.ticket, s.prev.ticket)} />
                  <span>{ui("comparado ao período anterior")}</span>
@@ -493,7 +438,7 @@ function Dashboard() {
                      <p className="truncate font-medium">{(p.customer_id && s.custName.get(p.customer_id)) || p.description || ui("Cobrança")}</p>
                      <p className="text-xs text-muted-foreground">{ui("Vence {{date}}", { date: formatDate(p.due_on) })} · {ui(METHOD_LABEL[p.method ?? ""] ?? "A definir")}</p>
                   </div>
-                  <span className="numeric-tabular font-semibold"><DashboardAmount value={mask(cents(toCents(p.gross_amount)))} /></span>
+                  <span className="numeric-tabular font-semibold">{mask(cents(toCents(p.gross_amount)))}</span>
                 </li>
               ))}
             </ul>
@@ -512,7 +457,7 @@ function Dashboard() {
                       <p className="truncate font-medium">{t.description ?? t.kind}</p>
                        <p className="text-xs text-muted-foreground">{new Date(t.occurred_at).toLocaleString(i18n.resolvedLanguage, { dateStyle: "short", timeStyle: "short" })}</p>
                     </div>
-                    <span className={`numeric-tabular font-semibold ${v >= 0 ? "text-primary" : "text-foreground"}`}><DashboardAmount value={mask(`${v >= 0 ? "+" : "−"} ${cents(Math.abs(v))}`)} /></span>
+                    <span className={`numeric-tabular font-semibold ${v >= 0 ? "text-primary" : "text-foreground"}`}>{mask(`${v >= 0 ? "+" : "−"} ${cents(Math.abs(v))}`)}</span>
                   </li>
                 );
               })}
@@ -533,32 +478,14 @@ function Dashboard() {
   );
 }
 
-function ChartMode({ value, onChange }: { value: "columns" | "line"; onChange: (value: "columns" | "line") => void }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className="flex rounded-lg border border-border p-0.5" aria-label={ui("Formato do gráfico")}>
-    <Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${value === "columns" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => onChange("columns")} aria-pressed={value === "columns"} aria-label={ui("Gráfico de colunas")}><BarChart3 /></Button>
-    <Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${value === "line" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => onChange("line")} aria-pressed={value === "line"} aria-label={ui("Gráfico de linha")}><LineChartIcon /></Button>
-  </div>;
-}
-
-function MetricHelp({ title, description }: { title: string; description: string }) {
+function Stat({ label, value, hint, change, loading }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean }) {
   const { t: ui } = useTranslation("ui");
   return (
-    <Popover>
-      <PopoverTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground" aria-label={ui("Como funciona: {{indicador}}", { indicador: title })}><CircleHelp className="h-4 w-4" /></Button></PopoverTrigger>
-      <PopoverContent className="max-w-[calc(100vw-2rem)] text-sm" align="start"><p className="mb-2 font-semibold">{title}</p><p className="leading-relaxed text-muted-foreground">{description}</p></PopoverContent>
-    </Popover>
-  );
-}
-
-function Stat({ label, value, hint, change, loading, icon: Icon, className = "" }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean; icon?: LucideIcon; className?: string }) {
-  const { t: ui } = useTranslation("ui");
-  return (
-    <div className={`min-w-0 border-b border-border p-4 last:border-b-0 lg:border-b-0 lg:border-r lg:last:border-r-0 ${className}`}>
-      <p className="flex min-h-8 items-center gap-2 text-xs font-medium text-muted-foreground">{Icon && <Icon size={16} strokeWidth={1.75} className="h-4 w-4 shrink-0 text-primary" />}<span className="min-w-0">{label}</span></p>
-      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full break-words font-display font-bold ${valueTextSize(value)}`}><DashboardAmount value={value} /></p>}
-      <div className="mt-2 flex min-h-8 flex-wrap items-center gap-x-1.5 gap-y-1 text-xs leading-relaxed text-muted-foreground">
-        {!loading && (change !== undefined ? (change === 0 || change === null ? ui("Sem métricas para analisar no período") : <><Change value={change} /> <span>{ui("no período")}</span></>) : hint)}
+    <div className="summary-strip-item min-w-0 p-5">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}>{value}</p>}
+      <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+        {change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint}
       </div>
     </div>
   );
@@ -566,23 +493,17 @@ function Stat({ label, value, hint, change, loading, icon: Icon, className = "" 
 
 function valueTextSize(value: string, featured = false) {
   const length = value.length;
-  if (featured) {
-    if (length > 20) return "text-lg sm:text-xl";
-    if (length > 16) return "text-xl sm:text-2xl";
-    if (length > 13) return "text-2xl sm:text-[1.75rem]";
-    return "text-[1.75rem] sm:text-[2.125rem]";
-  }
-  if (length > 20) return "text-base sm:text-lg";
-  if (length > 16) return "text-lg sm:text-xl";
-  if (length > 13) return "text-xl sm:text-2xl";
-  return "text-2xl sm:text-[1.7rem]";
+  if (length > 20) return featured ? "text-xl sm:text-2xl" : "text-base sm:text-lg";
+  if (length > 16) return featured ? "text-2xl sm:text-3xl" : "text-lg sm:text-xl";
+  if (length > 13) return featured ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl";
+  return featured ? "text-4xl sm:text-5xl" : "text-2xl sm:text-[1.7rem]";
 }
 
 function Mini({ label, value, change }: { label: string; value: string; change?: number | null }) {
   return (
     <div className="summary-strip-item min-w-0 p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="numeric-tabular mt-1 font-display text-lg font-semibold"><DashboardAmount value={value} /></p>
+      <p className="numeric-tabular mt-1 font-display text-lg font-semibold">{value}</p>
       {change !== undefined && <Change value={change} />}
     </div>
   );
@@ -599,7 +520,7 @@ function Split({ parts, total }: { parts: { label: string; value: number }[]; to
         {parts.map((p, i) => (
           <li key={p.label} className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" style={{ opacity: opac[i] ?? 0.2 }} />{p.label}</span>
-            <span className="numeric-tabular text-muted-foreground"><DashboardAmount value={cents(p.value)} /> · {total ? Math.round((p.value / total) * 100) : 0}%</span>
+            <span className="numeric-tabular text-muted-foreground">{cents(p.value)} · {total ? Math.round((p.value / total) * 100) : 0}%</span>
           </li>
         ))}
       </ul>
@@ -617,17 +538,10 @@ function DashTooltip({ active, payload }: { active?: boolean; payload?: { payloa
       <p className="mb-1.5 font-semibold">{p.label}</p>
       <div className="flex justify-between gap-6">
          <span className="text-muted-foreground">{ui("Total vendido")}</span>
-        <span className="numeric-tabular font-medium"><DashboardAmount value={formatBRL(p.sold)} /></span>
+        <span className="numeric-tabular font-medium">{formatBRL(p.sold)}</span>
       </div>
     </div>
   );
-}
-
-function MrrTooltip({ active, payload }: { active?: boolean; payload?: { payload: { label: string; net: number } }[] }) {
-  const { t: ui } = useTranslation("ui");
-  const point = payload?.[0]?.payload;
-  if (!active || !point) return null;
-  return <div className="rounded-lg border border-border bg-popover px-3 py-2.5 text-xs shadow-xl"><p className="mb-1.5 font-semibold">{point.label}</p><div className="flex justify-between gap-6"><span className="text-muted-foreground">{ui("MRR líquido emitido")}</span><span className="text-base font-semibold"><DashboardAmount value={formatBRL(point.net)} /></span></div></div>;
 }
 
 function CustomRange({ active, onApply, onClear }: { active: boolean; onApply: (de: string, ate: string) => void; onClear: () => void }) {
@@ -663,7 +577,7 @@ function RefundMetric() {
   return (
     <Link to="/cobrancas" className="mt-5 flex items-center justify-between rounded-lg border border-border px-4 py-2.5 text-sm transition-colors hover:bg-muted">
        <span className="text-muted-foreground">{ui("Reembolsos nos últimos 30 dias")}</span>
-      <span className="numeric-tabular font-semibold"><DashboardAmount value={formatBRL(total)} /> · {done.length}</span>
+      <span className="numeric-tabular font-semibold">{formatBRL(total)} · {done.length}</span>
     </Link>
   );
 }

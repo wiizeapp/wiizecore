@@ -1,18 +1,5 @@
 # Roadmap
 
-- [x] Aumentar levemente valores superiores de saldo/MRR e remover a lista mensal abaixo do gráfico, sem alterar cálculos.
-
-- [x] Alinhar títulos/valores superiores, equalizar tamanho visual das imagens, ampliar centavos e uniformizar gráficos com seleção de colunas/linha.
-
-- [x] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
-- [x] Acrescentar histórico mensal do líquido de parcelas/recorrências emitidas; 14 testes passaram e compilação sem erros. Conferência visual permanece na pendência abaixo.
-
-- [x] Ajustar indicadores, imagens neon, fontes neutras e ajuda do saldo/MRR; 11 testes financeiros passaram e compilação sem erros.
-
-- [x] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
-- [x] Validar cálculos (19 testes), traduções e imagens; informar arquivos alterados.
-- [ ] Conferir visualmente o painel autenticado em computador e celular — bloqueado: a sessão disponível abre a pesquisa de boas-vindas, não o painel; usuário precisa concluir ou pular a pesquisa.
-
 - [x] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
 
 - [x] Corrigir contraste da marca WiizePay na prévia do checkout.

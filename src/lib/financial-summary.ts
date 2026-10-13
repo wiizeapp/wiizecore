@@ -42,56 +42,6 @@ export function daysLate(dueOn: string | null | undefined, today = todayBR()) {
 
 const cents = (v: unknown) => Math.round(Number(v ?? 0) * 100);
 
-export type DashboardRow = SummaryRow & { created_at: string; customer_id?: string | null; subscription_id?: string | null; installment_count?: number | null };
-
-/** Vencimentos reais: hoje inclusive, fim exclusivo; não inventa ciclos futuros. */
-export function forecastNext30Days(rows: DashboardRow[], today = todayBR()) {
-  const end = new Date(`${today}T12:00:00Z`);
-  end.setUTCDate(end.getUTCDate() + 30);
-  const endDay = end.toISOString().slice(0, 10);
-  let net = 0;
-  let count = 0;
-  for (const row of rows) {
-    if (!isOpen(row.status) || !row.due_on || row.due_on < today || row.due_on >= endDay) continue;
-    if (!row.subscription_id && (row.installment_count ?? 1) <= 1) continue;
-    const expected = row.net_amount != null ? cents(row.net_amount) : cents(row.gross_amount) - cents(row.platform_fee_amount);
-    net += Math.max(0, expected - cents(row.refunded_amount));
-    count++;
-  }
-  return { net: net / 100, count, start: today, end: endDay };
-}
-
-/** Issued installment/recurrence history by due month; not contractual MRR snapshots. */
-export function monthlyIssuedNetHistory(rows: DashboardRow[], through = todayBR(), months = 12) {
-  const [year, month] = through.slice(0, 7).split("-").map(Number);
-  if (!year || !month || month > 12) return [];
-  const series = Array.from({ length: months }, (_, i) => ({ month: new Date(Date.UTC(year, month - months + i, 1)).toISOString().slice(0, 7), netCents: 0, count: 0 }));
-  const byMonth = new Map(series.map((entry) => [entry.month, entry]));
-  for (const row of rows) {
-    if (!row.subscription_id && (row.installment_count ?? 1) <= 1) continue;
-    if (!isOpen(row.status) && row.status !== "overdue" && !PAID.includes(row.status)) continue;
-    if (!row.due_on || !/^\d{4}-\d{2}-\d{2}$/.test(row.due_on)) continue;
-    const entry = byMonth.get(row.due_on.slice(0, 7));
-    if (!entry) continue;
-    const net = row.net_amount != null ? cents(row.net_amount) : cents(row.gross_amount) - cents(row.platform_fee_amount);
-    entry.netCents += Math.max(0, net - cents(row.refunded_amount));
-    entry.count++;
-  }
-  return series.map(({ month, netCents, count }) => ({ month, net: netCents / 100, count }));
-}
-
-/** Primeira cobrança, inclusive histórico cancelado: não transforma antigo em novo. */
-export function countFirstChargeCustomers(rows: DashboardRow[], start: Date, end: Date) {
-  const first = new Map<string, number>();
-  for (const row of rows) {
-    if (!row.customer_id) continue;
-    const time = Date.parse(row.created_at);
-    if (!Number.isFinite(time)) continue;
-    first.set(row.customer_id, Math.min(first.get(row.customer_id) ?? time, time));
-  }
-  return [...first.values()].filter((time) => time >= start.getTime() && time < end.getTime()).length;
-}
-
 export function summarize(rows: SummaryRow[], today = todayBR()) {
   const t = { charged: 0, billed: 0, pending: 0, overdue: 0, paid: 0, fees: 0, net: 0, refunded: 0, count: 0, paidCount: 0, overdueCount: 0 };
   for (const r of rows) {
