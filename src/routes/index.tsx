@@ -120,11 +120,11 @@ function Landing() {
 
         <section className="section-shell grid gap-12 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:py-20"><div><p className="section-kicker">{ui("Perguntas frequentes")}</p><h2 className="mt-3 text-3xl font-semibold sm:text-4xl">{ui("Informação clara")} <span className="hero-shine">{ui("antes de começar.")}</span></h2></div><Accordion type="single" collapsible>{faqs.map(([question = "",answer = ""], index) => <AccordionItem key={question} value={`faq-${index}`}><AccordionTrigger className="text-base">{ui(question)}</AccordionTrigger><AccordionContent className="pr-8 leading-6 text-muted-foreground">{ui(answer)}</AccordionContent></AccordionItem>)}</Accordion></section>
 
-        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizePay")}>
+        <section className="premium-cta public-brand-surface relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizePay")}>
               <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
               <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
               <div className="mx-auto max-w-3xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a WiizePay")}</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-foreground/25 bg-foreground/10 px-4 py-1.5 text-xs font-semibold uppercase text-foreground"><span className="size-1.5 rounded-full bg-foreground" />{ui("Comece com a WiizePay")}</span>
                 <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
                 <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
                 <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
