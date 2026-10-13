@@ -168,20 +168,8 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           email: { subject: "Seu saque não foi concluído" },
         });
       };
-      // 1) Cobra a taxa de saque primeiro (transferência interna para a carteira WiizePay).
+      // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à WiizePay).
       const fee = Number(wd.fee_amount ?? 0);
-      const masterWallet = process.env["ASAAS_MASTER_WALLET_ID"];
-      if (fee > 0) {
-        try {
-          if (!masterWallet) throw new Error("Carteira principal não configurada.");
-          const ft = await conn.provider.createTransfer({ value: fee, walletId: masterWallet, description: `Taxa de saque WiizePay ${wd.id}` });
-          await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.fee_collected", resource: "withdrawal", resourceId: wd.id, metadata: { fee, transfer: ft.id } });
-        } catch (e) {
-          await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.fee_collected", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { fee, error: String((e as Error).message ?? e) } });
-          await failAndRefund("Falha ao cobrar a taxa de saque");
-          throw new Error("Não foi possível cobrar a taxa de saque. O saque foi recusado e o valor voltou para a empresa. Tente novamente mais tarde.");
-        }
-      }
       // 2) Taxa ok: envia o Pix.
       await admin.from("withdrawals").update({ status: "processing", provider_requested_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", wd.id);
       try {
@@ -197,8 +185,8 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
         reference = transfer.id;
         await admin.from("withdrawals").update({ provider_transfer_id: transfer.id, provider_status: transfer.status ?? "requested", transfer_reference: transfer.id }).eq("id", wd.id);
       } catch (e) {
-        await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_already_collected: fee } });
-        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. A taxa já foi cobrada; tente aprovar novamente.`);
+        await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_kept_in_subaccount: fee } });
+        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. Tente aprovar novamente.`);
       }
     }
     const { error } =
