@@ -26,7 +26,7 @@ function companyType(v?: string | null): string {
 }
 
 export type OnboardingItem = { key: string; label: string; status: string; reason?: string | null; onboardingUrl?: string | null; kind: "part" | "document" };
-export type ProviderOnboarding = { items: OnboardingItem[]; rejectReasons?: string | null; uploaded?: Record<string, string>; lastError?: string | null };
+export type ProviderOnboarding = { items: OnboardingItem[]; rejectReasons?: string | null; uploaded?: Record<string, string>; failed?: Record<string, string>; lastError?: string | null };
 
 function digits(v?: string | null) { return (v ?? "").replace(/\D/g, ""); }
 function money(v?: string | null) {
@@ -101,6 +101,7 @@ export async function pushDocuments(admin: Admin, tenantId: string) {
   const { data: act } = await admin.from("payment_activations").select("person_type, provider_onboarding").eq("tenant_id", tenantId).single();
   const state = (act?.provider_onboarding ?? {}) as ProviderOnboarding;
   const uploaded = { ...(state.uploaded ?? {}) };
+  const failed: Record<string, string> = { ...(state.failed ?? {}) };
   const res = await conn.provider.listMyDocuments();
   const { data: docs } = await admin.from("activation_documents").select("id, kind, storage_path, mime_type, created_at").eq("tenant_id", tenantId);
   for (const group of res.data ?? []) {
@@ -117,15 +118,16 @@ export async function pushDocuments(admin: Admin, tenantId: string) {
       try {
         await conn.provider.uploadMyDocument(group.id, group.type, { bytes, mime: doc.mime_type, name: doc.storage_path.split("/").pop() ?? "documento" });
         uploaded[key] = doc.id;
+        delete failed[kind];
       } catch (e) {
-        // Um documento recusado pela API (ex.: selfie) não pode travar os demais nem a atualização de status.
-        // Marcamos o arquivo atual para não insistir; um novo arquivo enviado pelo usuário tenta de novo.
+        // Um documento recusado (ex.: selfie) não trava os demais; o usuário é avisado e pode reenviar.
         uploaded[key] = doc.id;
+        failed[kind] = "A instituição de pagamento não aceitou este arquivo. Envie um novo seguindo as dicas.";
         console.error("ativação Asaas: documento não aceito via API", group.type, e instanceof Error ? e.message : "falhou");
       }
     }
   }
-  await admin.from("payment_activations").update({ provider_onboarding: { ...state, uploaded } }).eq("tenant_id", tenantId);
+  await admin.from("payment_activations").update({ provider_onboarding: { ...state, uploaded, failed } }).eq("tenant_id", tenantId);
 }
 
 const NOTIFY: Record<string, { title: string; body: string }> = {

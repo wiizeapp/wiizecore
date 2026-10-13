@@ -52,7 +52,7 @@ export const getActivation = createServerFn({ method: "GET" })
       form: (await import("./activation-form-crypto.server")).openForm(row), consents: row.consents as Record<string, boolean>,
       reviewMessage: row.review_message as string | null, submittedAt: row.submitted_at as string | null,
       documents: docs ?? [], events: events ?? [],
-      provider: (row.provider_onboarding ?? {}) as { items?: { key: string; label: string; status: string; reason?: string | null; onboardingUrl?: string | null; kind: string }[]; rejectReasons?: string | null; lastError?: string | null },
+      provider: (row.provider_onboarding ?? {}) as { items?: { key: string; label: string; status: string; reason?: string | null; onboardingUrl?: string | null; kind: string }[]; rejectReasons?: string | null; failed?: Record<string, string>; lastError?: string | null },
       providerSyncedAt: row.provider_synced_at as string | null,
     };
   });
