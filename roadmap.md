@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Definir tema branco padrão, revisar logos do carrossel e fundos das funcionalidades, preservar sombra da jornada e remover sombras dos depoimentos.
+
 - [x] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; 10 testes aprovados e compilação OK.
 - [x] Manter os filtros de período em uma linha só no celular e separar todos os cards complementares no responsivo; conferido a 393px, 768px e 1280px.
 - [ ] Conferir visualmente o painel conectado: sessão disponível está bloqueada pela pesquisa inicial pendente; não alterar respostas do usuário para testar.
