@@ -2,6 +2,7 @@
 
 - [x] Reorganizar navbar: logo à esquerda, links no centro, idioma e acesso à direita; conferido sem transbordamento a 393, 1024 e 1810px.
 - [x] Alinhar a marca na mesma linha dos demais elementos, ampliar o logotipo e fixar a barra no topo da página sem acompanhar a rolagem; conferido a 390, 1280 e 1810px.
+- [x] Deixar a abertura com um único botão "Crie sua conta grátis agora" com seta e o aviso discreto "Sem mensalidade. Aprovação rápida" abaixo; conferido na prévia.
 - [x] Preparar modo visual de mockup no painel solicitado sem alterar dados reais; testes de exemplos e isolamento aprovados.
 - [ ] Conferir o modo mockup na tela da conta solicitada: acesso disponível ainda exige concluir ou pular a pesquisa inicial pelo próprio usuário.
 
