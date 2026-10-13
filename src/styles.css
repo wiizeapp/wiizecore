@@ -159,7 +159,7 @@
   --public-hero-start: color-mix(in oklab, var(--primary) 8%, var(--card));
   --public-hero-end: color-mix(in oklab, oklch(0.5 0.14 158) 62%, var(--primary)); --public-hero-soft-end: color-mix(in oklab, var(--primary) 44%, var(--background));
   --public-hero-gradient: linear-gradient(180deg, var(--public-hero-start) 0%, color-mix(in oklab, var(--primary) 8%, var(--background)) 14%, color-mix(in oklab, var(--primary) 12%, var(--background)) 30%, color-mix(in oklab, var(--primary) 16%, var(--background)) 46%, color-mix(in oklab, var(--primary) 21%, var(--background)) 61%, color-mix(in oklab, var(--primary) 27%, var(--background)) 74%, color-mix(in oklab, var(--primary) 33%, var(--background)) 86%, color-mix(in oklab, var(--primary) 39%, var(--background)) 94%, var(--public-hero-soft-end) 100%);
-  --public-hero-grid: color-mix(in oklab, var(--primary) 9%, transparent);
+  --public-hero-grid: color-mix(in oklab, var(--primary) 4.5%, transparent);
   --public-steps-background: color-mix(in oklab, var(--primary) 10%, var(--background));
   --public-flow-gradient: linear-gradient(165deg, color-mix(in oklab, var(--primary) 20%, var(--card)) 0%, color-mix(in oklab, var(--primary) 38%, var(--card)) 65%, color-mix(in oklab, var(--primary) 28%, var(--card)) 100%);
   --public-flow-step: color-mix(in oklab, var(--primary) 12%, var(--card));
@@ -863,13 +863,13 @@
   transform-origin: left center;
 }
 
-/* Mesmo padrão do Hero principal (degradê + grade suave) em todas as páginas públicas. */
+/* Páginas institucionais: mesmo fundo suave do card "Cada etapa alimenta a próxima" + grade leve. */
 @utility resource-hero {
   background-color: var(--background);
   background-image:
     linear-gradient(to right, var(--public-hero-grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--public-hero-grid) 1px, transparent 1px),
-    var(--public-hero-gradient);
+    var(--public-flow-gradient);
   background-size: 48px 48px, 48px 48px, cover;
   background-position: center;
 }
@@ -1217,7 +1217,9 @@
 
 @utility payment-dashboard {
   animation: payment-rise 650ms ease-out both;
-  box-shadow: var(--shadow-float);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 5%, transparent), 0 24px 60px -24px color-mix(in oklab, var(--primary) 28%, transparent);
+  -webkit-font-smoothing: antialiased;
 }
 
 @utility payment-dashboard-fade {
