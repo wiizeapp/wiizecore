@@ -1093,6 +1093,14 @@
   border-top: 0;
 }
 
+.public-site .premium-cta.public-brand-surface {
+  border-bottom: 0;
+}
+
+.public-site footer.public-brand-surface > div > div > .bg-foreground {
+  background-color: var(--card);
+}
+
 @utility operation-flow-visual {
   background-image: var(--public-flow-gradient);
 }
