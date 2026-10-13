@@ -1,4 +1,12 @@
 {
+  "Mockup": "Mockup",
+  "Dados demonstrativos": "Datos de demostración",
+  "Dados fictícios para demonstração. Nenhum saldo ou cobrança real foi alterado.": "Datos ficticios de demostración. No se ha modificado ningún saldo ni cobro real.",
+  "Consultoria estratégica": "Consultoría estratégica",
+  "Gestão de marketing": "Gestión de marketing",
+  "Desenvolvimento web": "Desarrollo web",
+  "Design de marca": "Diseño de marca",
+  "Suporte mensal": "Soporte mensual",
   "Como funciona o MRR": "Cómo funciona el MRR",
   "O MRR deste painel é a previsão líquida das parcelas e cobranças recorrentes em aberto com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui cobranças avulsas nem valores já pagos, e não é saldo disponível.": "El MRR de este panel es la previsión neta de cuotas y cobros recurrentes pendientes con vencimiento en los próximos 30 días, descontando las tasas registradas. No incluye cobros únicos ni importes ya pagados, y no es saldo disponible.",
   "Indicadores complementares": "Indicadores adicionales",
