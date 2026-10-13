@@ -9,11 +9,11 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Marca visível sempre “WiizePay”; dados públicos/jurídicos vêm de `src/lib/brand-config.ts`.
+- Brand/legal data: `src/lib/brand-config.ts`. Why: one source.
 - Operações financeiras são autorizadas no servidor, isoladas por empresa, auditadas e idempotentes; valores monetários usam Decimal/NUMERIC.
 - Asaas usa subcontas/split; liquidação só após confirmação do provedor; antecipação segue `docs/antecipacao.md`.
-- Versioned fees use `fee-math.ts`; dashboard totals, forecasts and first-charge counts use `financial-summary.ts` with complete tenant RLS pagination. Why: avoid truncated totals.
-- Internal UI uses `src/components/ds` and `src/components/states`; never show fake loading values.
+- Fees: `fee-math.ts`; dashboard: `financial-summary.ts` with full tenant RLS pagination. Monthly history uses issued installment/recurrence due dates and recorded fees, not contractual snapshots. Why: no truncated or invented totals.
+- Internal UI: `src/components/ds`, `src/components/states`; no fake loading values.
 - PT-BR (default/fallback, BRL)/EN/ES in `src/locales`; every new visible PT string gets a PT-keyed entry in `{en,es}/ui.json` in the same change.
 - Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, isolado por empresa; `ui_theme` só visual, fora de state/PKCE/redirect/escopos.
 - Lembretes de cobrança: taxa por parcela/ciclo via RPC `dunning_charge_fee` (idempotente, sem saldo negativo); regras puras em `src/lib/dunning-rules.ts`; avisos aplicados nas notificações existentes do cliente no Asaas. Why: preço por cobrança, canais limitados no servidor.
@@ -23,7 +23,7 @@
 - Internal light-theme styling is scoped through `.internal-app`; public pages keep their own look. Why: shared tokens must not flatten the sales site.
 - MFA recovery uses one non-regenerable, single-use backup code; password recovery preserves MFA, while disabling MFA requires a fresh TOTP or that backup code. Why: an authenticated session alone must never disable the second factor.
 - Card payments in the public checkout go through `payCheckoutWithCard` (Asaas payWithCreditCard); card data is never stored or logged, only last4 in audit, and status changes only via webhook.
-- Asaas decides activation approval; WiizePay creates the subaccount, sends documents and mirrors provider status; admins never approve it.
+- Asaas approves activation; WiizePay creates subaccounts, sends documents and mirrors status; admins never approve.
 - Checkout journey steps are logged in `checkout_events` and shown in Cliente 360; data + terms confirmation required once per charge.
 - Customer portal (`/portal/$key`): email + full CPF/CNPJ, rate-limited, 30-min hashed sessions, every fn filtered by session customer; docs in tenant Drive.
 - Coupons belong to one tenant; discount is computed and reserved only in the `reserve_coupon` RPC (service_role) and consumed/released by the payments status trigger.
