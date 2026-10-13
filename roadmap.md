@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências.
+- [x] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências; menus e layout conferidos a 1260px e 393px.
 
 - [x] Definir tema branco padrão, revisar logos do carrossel e fundos das funcionalidades, preservar sombra da jornada e remover sombras dos depoimentos; abertura, tema salvo e imagens conferidos.
 

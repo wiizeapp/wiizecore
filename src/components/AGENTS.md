@@ -1,2 +1,3 @@
 - Checkout colors map through `checkoutAppearanceVars` only: background = whole page (summary/footer via `checkout-panel`), header = top bar (`checkout-header`, text contrast auto-fixed), surface = cards. Why: real checkout and preview must react identically to each color.
 - Public motion keeps hero, CTA and footer static; feature cards alternate sideways and other cards rise subtly.
+- Scope public shadow overrides under `.public-site` and share the hero/CTA gradient token. Why: refine public appearance without changing internal surfaces.

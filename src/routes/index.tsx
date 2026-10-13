@@ -82,7 +82,7 @@ function Landing() {
           <div className="mx-auto max-w-2xl text-center"><p className="section-kicker">{ui("Funcionalidades")}</p><h2 className="mt-2 text-3xl font-semibold sm:text-5xl">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
           <div className="mt-14 space-y-14 lg:space-y-20">
             {featureGroups.map((group, index) => (
-              <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
+              <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg border border-border bg-card shadow-card lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
                 <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-start lg:px-9 lg:pb-5 lg:pt-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
                   <span className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground"><group.icon className="size-6" /></span>
                   <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
@@ -103,7 +103,7 @@ function Landing() {
                         <div className="feature-visual-glow absolute inset-0" aria-hidden="true" />
                         <div className="absolute inset-x-0 top-0 -bottom-8 z-10 flex justify-center px-3 pt-5 sm:px-5 lg:px-7">
                           <div className="feature-demo-stage h-full w-full max-w-2xl" data-visible="true">
-                            <div className="h-full w-full [&>*]:h-full [&>*]:shadow-float"><group.visual /></div>
+                            <div className="h-full w-full [&>*]:h-full [&>*]:shadow-card"><group.visual /></div>
                           </div>
                         </div>
                         <div className="feature-visual-bottom-fade absolute inset-x-0 bottom-0 z-20 h-20 sm:h-24" aria-hidden="true" />
