@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
-- [ ] Acrescentar evolução mensal do MRR da empresa com dados reais e validar cálculos e apresentação.
+- [x] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
+- [x] Acrescentar histórico mensal do líquido de parcelas/recorrências emitidas; 14 testes passaram e compilação sem erros. Conferência visual permanece na pendência abaixo.
 
 - [x] Ajustar indicadores, imagens neon, fontes neutras e ajuda do saldo/MRR; 11 testes financeiros passaram e compilação sem erros.
 
