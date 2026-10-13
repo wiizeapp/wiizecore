@@ -10,8 +10,10 @@ export async function storeActivationDocument(admin: any, tenantId: string, user
   const valid = (ext === "jpg" && sig.startsWith("ffd8ff")) || (ext === "png" && sig.startsWith("89504e47")) ||
     (ext === "pdf" && sig.startsWith("25504446")) || (ext === "webp" && sig.startsWith("52494646") && sig.slice(16, 24) === "57454250");
   if (!valid) throw new Error("O conteúdo do arquivo não corresponde ao formato informado.");
-  const { data: activation } = await admin.from("payment_activations").select("status").eq("tenant_id", tenantId).single();
-  if (!activation || !["not_started", "draft", "in_progress", "action_required"].includes(activation.status)) throw new Error("O cadastro não pode ser alterado neste momento.");
+  const { data: activation } = await admin.from("payment_activations").select("status, provider_onboarding").eq("tenant_id", tenantId).single();
+  // Durante a análise, só documentos recusados no envio podem ser trocados.
+  const retry = !!(activation?.provider_onboarding as { failed?: Record<string, string> } | null)?.failed?.[data.kind];
+  if (!activation || !(["not_started", "draft", "in_progress", "action_required"].includes(activation.status) || (retry && ["submitted", "under_review"].includes(activation.status)))) throw new Error("O cadastro não pode ser alterado neste momento.");
   const path = `${tenantId}/${crypto.randomUUID()}.${ext}`;
   const { error } = await admin.storage.from("kyc-documents").upload(path, bytes, { contentType: data.mimeType, upsert: false });
   if (error) throw new Error("Não foi possível enviar o arquivo.");
