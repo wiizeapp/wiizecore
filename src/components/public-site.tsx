@@ -67,9 +67,9 @@ function ResourcesMenu() {
 export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
-    <header className="sticky top-0 z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
+    <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
       <div className="grid h-[4.5rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-6">
-        <Link to="/" aria-label={t("home")} className="shrink-0 justify-self-start"><Brand /></Link>
+        <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" /></Link>
         <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
