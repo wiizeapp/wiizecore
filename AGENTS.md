@@ -38,3 +38,5 @@
 - New-account launch promo (0% percentage on single cash Pix/boleto, fixed fee kept) is decided only in `calculatePaymentFee` via `launch-promotion.server.ts` from DB-locked `tenants.created_at`.
 - One-time charges deduct the Asaas cost (subaccount fees API incl. still-valid promo price with safety margin, `src/lib/provider-fee-quote.ts`) from the WiizePay split, stored in `payments.provider_fee_covered_amount`; only the uncovered rest is reimbursed. Why: no round-trip transfer.
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
+
+- Dashboard MRR projections and monthly issued-net series use pure helpers in `src/lib/dashboard-mrr.ts`; money typography uses `dashboard/money-value.tsx` without replacing locale/privacy formatting. Why: keep projections distinct from received revenue and prevent duplicated calculations.

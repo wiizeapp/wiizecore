@@ -1,4 +1,13 @@
 {
+  "Indicadores complementares": "Indicadores adicionales",
+  "MRR": "MRR",
+  "Cobranças ativas": "Cobros activos",
+  "Novos clientes no período": "Nuevos clientes en el período",
+  "Reembolsos no período": "Reembolsos en el período",
+  "Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias": "Previsión neta de cuotas y cobros recurrentes emitidos para los próximos 30 días",
+  "Evolução MRR": "Evolución MRR",
+  "Parcelas e recorrências · líquido por mês de vencimento": "Cuotas y cobros recurrentes · neto por mes de vencimiento",
+  "Sem parcelas ou recorrências neste período.": "No hay cuotas ni cobros recurrentes en este período.",
   "Benefício para novas contas": "Beneficio para cuentas nuevas",
   "de taxa percentual por 3 meses": "de tasa porcentual por 3 meses",
   "Pix e boleto à vista: só a tarifa fixa.": "Pix y boleto al contado: solo la tarifa fija.",

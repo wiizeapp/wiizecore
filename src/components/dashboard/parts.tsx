@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowUpRight, Inbox } from "lucide-react";
 
-export function Panel({ title, subtitle, action, children, className = "" }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Panel({ title, subtitle, action, children, className = "" }: { title: ReactNode; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <section className={`surface-panel p-5 sm:p-6 ${className}`}>
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
