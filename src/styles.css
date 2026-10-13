@@ -173,6 +173,16 @@
   box-shadow: var(--public-shadow-float);
 }
 
+.public-site .premium-cta-button {
+  background-color: var(--public-on-brand);
+  color: var(--public-brand-solid);
+  box-shadow: none;
+}
+
+.public-site .premium-cta-button:hover {
+  background-color: color-mix(in oklab, var(--public-on-brand) 90%, var(--public-brand-solid));
+}
+
 .public-site > main > section:first-child {
   padding-top: 5rem;
 }
