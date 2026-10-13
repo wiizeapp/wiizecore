@@ -34,11 +34,12 @@ const items = [
 
 function EcosystemMark({ item, compact = false }: { item: (typeof items)[number]; compact?: boolean }) {
   const isWhatsApp = item.label === "WhatsApp";
+  const monochromeOnLight = isWhatsApp || item.label === "Vercel";
   const logoClass = compact ? "h-4 max-w-12 object-contain" : `${isWhatsApp ? "h-8 sm:h-9" : "h-7"} max-w-28 object-contain`;
   return (
     <span className="inline-flex items-center gap-1.5">
-      {item.withBrandMark ? <img src={brandLogo.url} alt="" className={compact ? "size-4 rounded-sm" : "size-7 rounded-md"} /> : null}
-      <img src={item.logo} alt="" className={`${logoClass} dark:hidden`} />
+      {item.withBrandMark ? <img src={brandLogo.url} alt="" className={`${compact ? "size-4 rounded-sm" : "size-7 rounded-md"} hidden dark:block`} /> : null}
+      <img src={item.logo} alt="" className={`${logoClass} ${monochromeOnLight ? "brightness-0" : ""} dark:hidden`} />
       <img src={item.darkLogo ?? item.logo} alt="" className={`${logoClass} hidden dark:block`} />
     </span>
   );

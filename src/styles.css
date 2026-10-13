@@ -141,11 +141,14 @@
   --gradient-glow: radial-gradient(60% 60% at 50% 0%, oklch(0.60 0.17 158 / 14%) 0%, transparent 70%);
   --hero-glow: oklch(0.60 0.17 158 / 30%);
   --hero-line: oklch(0.60 0.17 158 / 3.5%);
-  --feature-gradient-1: linear-gradient(145deg, oklch(0.25 0.07 178), oklch(0.39 0.11 163) 52%, oklch(0.46 0.09 145));
-  --feature-gradient-2: linear-gradient(145deg, oklch(0.24 0.08 260), oklch(0.31 0.09 210) 48%, oklch(0.43 0.1 166));
-  --feature-gradient-3: linear-gradient(145deg, oklch(0.23 0.065 170), oklch(0.36 0.1 145) 50%, oklch(0.46 0.08 105));
-  --feature-grid-line: oklch(0.94 0.03 160 / 9%);
-  --feature-light: oklch(0.82 0.12 155 / 20%);
+  --feature-gradient-1: linear-gradient(145deg, oklch(0.995 0.002 160), oklch(0.97 0.018 163) 52%, oklch(0.95 0.028 145));
+  --feature-gradient-2: linear-gradient(145deg, oklch(0.995 0.002 250), oklch(0.975 0.013 210) 48%, oklch(0.955 0.023 166));
+  --feature-gradient-3: linear-gradient(145deg, oklch(0.995 0.002 170), oklch(0.975 0.014 145) 50%, oklch(0.955 0.02 105));
+  --feature-grid-line: oklch(0.45 0.045 160 / 7%);
+  --feature-light: oklch(1 0 0 / 70%);
+  --feature-shade: oklch(0.60 0.07 165 / 5%);
+  --feature-glow-strength: 8%;
+  --feature-bottom-fade: linear-gradient(to top, oklch(0.98 0.008 160 / 95%) 0%, oklch(0.98 0.008 160 / 55%) 42%, transparent 100%);
 }
 
 .dark {
@@ -180,6 +183,14 @@
   --gradient-surface: linear-gradient(160deg, oklch(0.23 0.02 165) 0%, oklch(0.19 0.016 165) 100%);
   --hero-glow: oklch(0.60 0.17 158 / 38%);
   --hero-line: oklch(0.60 0.17 158 / 5%);
+  --feature-gradient-1: linear-gradient(145deg, oklch(0.25 0.07 178), oklch(0.39 0.11 163) 52%, oklch(0.46 0.09 145));
+  --feature-gradient-2: linear-gradient(145deg, oklch(0.24 0.08 260), oklch(0.31 0.09 210) 48%, oklch(0.43 0.1 166));
+  --feature-gradient-3: linear-gradient(145deg, oklch(0.23 0.065 170), oklch(0.36 0.1 145) 50%, oklch(0.46 0.08 105));
+  --feature-grid-line: oklch(0.94 0.03 160 / 9%);
+  --feature-light: oklch(0.82 0.12 155 / 20%);
+  --feature-shade: oklch(0.12 0.025 165 / 28%);
+  --feature-glow-strength: 24%;
+  --feature-bottom-fade: linear-gradient(to top, oklch(0.08 0.01 165 / 62%) 0%, oklch(0.08 0.01 165 / 34%) 42%, transparent 100%);
 }
 
 @layer base {
@@ -1024,12 +1035,12 @@
 @utility feature-visual-glow {
   background-image:
     radial-gradient(75% 60% at 84% 10%, var(--feature-light), transparent 72%),
-    radial-gradient(55% 50% at 8% 82%, color-mix(in oklab, var(--primary) 24%, transparent), transparent 74%),
-    linear-gradient(to top, oklch(0.12 0.025 165 / 28%), transparent 42%);
+    radial-gradient(55% 50% at 8% 82%, color-mix(in oklab, var(--primary) var(--feature-glow-strength), transparent), transparent 74%),
+    linear-gradient(to top, var(--feature-shade), transparent 42%);
 }
 
 @utility feature-visual-bottom-fade {
-  background: linear-gradient(to top, oklch(0.08 0.01 165 / 62%) 0%, oklch(0.08 0.01 165 / 34%) 42%, transparent 100%);
+  background: var(--feature-bottom-fade);
   backdrop-filter: blur(3px);
   mask-image: linear-gradient(to top, black 0%, black 28%, transparent 100%);
 }
