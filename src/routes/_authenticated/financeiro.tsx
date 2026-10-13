@@ -439,11 +439,15 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
   const [form, setForm] = useState(empty);
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [review, setReview] = useState(false);
+  const [agree, setAgree] = useState(false);
   useEffect(() => {
     if (open) {
       setForm(empty);
       setPassword("");
       setCode("");
+      setReview(false);
+      setAgree(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -451,10 +455,10 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
   const mut = useMutation({
     mutationFn: async () => {
       await ensureTwoFactor(code);
-      return add({ data: { ...form, holderDocument: form.holderDocument.replace(/\D/g, ""), financialPassword: password } });
+      return add({ data: { ...form, holderDocument: form.holderDocument.replace(/\D/g, ""), financialPassword: password, confirmedOwnership: agree } });
     },
     onSuccess: () => {
-      toast.success("Conta bancária salva e conferida.");
+      toast.success("Conta bancária salva.");
       onOpenChange(false);
       void qc.invalidateQueries({ queryKey: ["banks"] });
     },
@@ -473,9 +477,27 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
           className="grid gap-3 sm:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
-            mut.mutate();
+            if (!review) return setReview(true);
+            if (agree) mut.mutate();
           }}
         >
+          {review ? (
+            <div className="space-y-3 rounded-lg border border-border bg-muted/40 p-4 text-sm sm:col-span-2">
+              <p className="font-semibold">Confira os dados antes de salvar</p>
+              <dl className="grid grid-cols-2 gap-x-3 gap-y-1">
+                <dt className="text-muted-foreground">Titular</dt><dd>{form.holderName}</dd>
+                <dt className="text-muted-foreground">CPF/CNPJ</dt><dd>{form.holderDocument}</dd>
+                <dt className="text-muted-foreground">Banco / Agência / Conta</dt><dd>{form.bankCode} / {form.agency} / {form.accountNumber}</dd>
+                <dt className="text-muted-foreground">Chave Pix</dt><dd className="break-all">{form.pixKey}</dd>
+              </dl>
+              <p className="text-muted-foreground">O saque vai para esta chave Pix. Ela precisa estar no mesmo CPF/CNPJ da empresa. Na hora do saque, o Asaas confere a chave e recusa se houver erro.</p>
+              <label className="flex items-start gap-2">
+                <input type="checkbox" className="mt-1" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+                <span>Confirmo que conferi os dados e que a conta é da minha empresa. A WiizePay não se responsabiliza por transferências feitas para dados informados errado.</span>
+              </label>
+              <Button type="button" variant="outline" size="sm" onClick={() => { setReview(false); setAgree(false); }}>Corrigir dados</Button>
+            </div>
+          ) : null}
           <Field label="Titular" className="sm:col-span-2">
             <Input value={form.holderName} onChange={set("holderName")} required />
           </Field>
@@ -514,8 +536,8 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
               <Input inputMode="numeric" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} required />
             </Field>
           ) : null}
-          <Button type="submit" className="sm:col-span-2" disabled={mut.isPending || !mfa?.factorId}>
-            {mfa && !mfa.factorId ? "Ative a verificação em duas etapas primeiro" : mut.isPending ? "Salvando…" : "Salvar conta"}
+          <Button type="submit" className="sm:col-span-2" disabled={mut.isPending || !mfa?.factorId || (review && !agree)}>
+            {mfa && !mfa.factorId ? "Ative a verificação em duas etapas primeiro" : mut.isPending ? "Salvando…" : review ? "Confirmar e salvar" : "Revisar dados"}
           </Button>
         </form>
       </DialogContent>

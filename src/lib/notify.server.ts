@@ -39,10 +39,28 @@ export async function notifyTenant(admin: Admin, input: {
 }
 
 /** Aviso para a equipe interna da WiizePay (painel administrativo). */
-export async function notifyPlatform(admin: Admin, input: { tenantId: string | null; kind: string; title: string; body: string; link?: string }) {
+export async function notifyPlatform(admin: Admin, input: {
+  tenantId: string | null; kind: string; title: string; body: string; link?: string;
+  email?: { subject: string; dedupeKey: string; lines?: { label: string; value: string }[] };
+}) {
   try {
     await admin.from("platform_notifications").insert({ tenant_id: input.tenantId, kind: input.kind, title: input.title, body: input.body, link: input.link ?? null });
   } catch { /* não bloqueia */ }
+  if (!input.email) return;
+  try {
+    const { data: roles } = await admin.from("user_roles").select("user_id").eq("role", "platform_admin");
+    const ids = (roles ?? []).map((r) => r.user_id);
+    if (!ids.length) return;
+    const { data: profiles } = await admin.from("profiles").select("email").in("id", ids);
+    const to = [...new Set((profiles ?? []).map((p) => p.email).filter((e): e is string => !!e))];
+    if (!to.length) return;
+    await sendEmail(admin, {
+      tenantId: input.tenantId, kind: input.kind, dedupeKey: input.email.dedupeKey,
+      email: { to, subject: input.email.subject, title: input.title, intro: input.body, lines: input.email.lines ?? [], ...(input.link ? { cta: { label: "Abrir no painel", url: input.link } } : {}) },
+    });
+  } catch (e) {
+    console.error("notify.platform", input.kind, e instanceof Error ? e.message : "falhou");
+  }
 }
 
 /** E-mail direto para uma pessoa de fora (cliente pagador, contratante, testemunha). */

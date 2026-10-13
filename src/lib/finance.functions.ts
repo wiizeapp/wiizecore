@@ -57,6 +57,7 @@ const bankSchema = z.object({
   accountType: z.enum(["checking", "savings"]),
   pixKey: z.string().trim().min(3, "Informe a chave Pix. Saques são feitos somente via Pix.").max(140),
   financialPassword: z.string().min(1).max(200),
+  confirmedOwnership: z.literal(true, { errorMap: () => ({ message: "Confirme que conferiu os dados da conta." }) }),
 });
 
 export const addBankAccount = createServerFn({ method: "POST" })
@@ -110,6 +111,7 @@ export const addBankAccount = createServerFn({ method: "POST" })
       action: "bank_account.add",
       resource: "bank_account",
       resourceId: row.id,
+      metadata: { owner_confirmed_terms: true },
     });
     return { id: row.id, verified };
   });
@@ -218,7 +220,7 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
         title: "Saque solicitado", body: `Recebemos sua solicitação de saque de ${brl(data.amount)}. Ela está em análise.`,
         email: { subject: "Solicitação de saque recebida", lines: [{ label: "Valor", value: brl(data.amount) }], footnote: "Se você não fez esta solicitação, troque sua senha e a senha financeira imediatamente e fale com o suporte." },
       });
-      await notifyPlatform(supabaseAdmin, { tenantId: m.tenant_id, kind: "withdrawal.requested", title: "Novo saque para aprovar", body: `Saque de ${brl(data.amount)} aguardando análise.`, link: "/nimda" });
+      await notifyPlatform(supabaseAdmin, { tenantId: m.tenant_id, kind: "withdrawal.requested", title: "Novo saque para aprovar", body: `Saque de ${brl(data.amount)} aguardando análise.`, link: "/nimda", email: { subject: "Saque aguardando sua autorização", lines: [{ label: "Valor", value: brl(data.amount) }], dedupeKey: `withdrawal.admin:${id}` } });
     }
     return { id: id as string };
   });

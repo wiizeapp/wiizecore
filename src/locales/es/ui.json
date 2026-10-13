@@ -4900,5 +4900,14 @@
   "Use chaves de teste até tudo funcionar, depois troque pelas de produção.": "Usa claves de prueba hasta que todo funcione y luego cambia a las de producción.",
   "dias": "días",
   "Última cobrança pela API": "Último cobro por la API",
-  "Últimos": "Últimos"
+  "Últimos": "Últimos",
+  "Confira os dados antes de salvar": "Revisa los datos antes de guardar",
+  "Confirmo que conferi os dados e que a conta é da minha empresa. A WiizePay não se responsabiliza por transferências feitas para dados informados errado.": "Confirmo que revisé los datos y que la cuenta es de mi empresa. WiizePay no se responsabiliza por transferencias hechas a datos informados incorrectamente.",
+  "O saque vai para esta chave Pix. Ela precisa estar no mesmo CPF/CNPJ da empresa. Na hora do saque, o Asaas confere a chave e recusa se houver erro.": "El retiro va a esta clave Pix. Debe estar en el mismo CPF/CNPJ de la empresa. Al retirar, Asaas verifica la clave y la rechaza si hay error.",
+  "Corrigir dados": "Corregir datos",
+  "Revisar dados": "Revisar datos",
+  "Confirmar e salvar": "Confirmar y guardar",
+  "Conta bancária salva.": "Cuenta bancaria guardada.",
+  "Confirme que conferiu os dados da conta.": "Confirma que revisaste los datos de la cuenta.",
+  "Banco / Agência / Conta": "Banco / Agencia / Cuenta"
 }
