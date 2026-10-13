@@ -26,7 +26,6 @@ const publicLinks = [
   { to: "/taxas", key: "fees", label: "Taxas" },
   { to: "/prazos", key: "terms", label: "Prazos" },
   { to: "/seguranca-e-confianca", key: "security", label: "Segurança" },
-  { to: "/sobre", key: "about", label: "Sobre nós" },
 ] as const;
 
 /** Menu Recursos: abre ao passar o mouse, fica aberto ao entrar no painel e só fecha após um pequeno atraso. */
@@ -111,7 +110,7 @@ export function PublicFooter() {
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/sobre" className="hover:text-foreground">{tn("about")}</Link><a href={SUPPORT_URL} target="_blank" rel="noreferrer" className="hover:text-foreground">{t("supportShort")}</a>
+            <Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><a href={SUPPORT_URL} target="_blank" rel="noreferrer" className="hover:text-foreground">{t("supportShort")}</a>
           </div>
         </div>
         <div>

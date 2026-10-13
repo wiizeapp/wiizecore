@@ -28,7 +28,6 @@ import { Route as PortalDoClienteRouteImport } from './routes/portal-do-cliente'
 import { Route as PrazosRouteImport } from './routes/prazos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SegurancaEConfiancaRouteImport } from './routes/seguranca-e-confianca'
-import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as TaxasRouteImport } from './routes/taxas'
 import { Route as TermosDeUsoRouteImport } from './routes/termos-de-uso'
@@ -180,11 +179,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SegurancaEConfiancaRoute = SegurancaEConfiancaRouteImport.update({
   id: '/seguranca-e-confianca',
   path: '/seguranca-e-confianca',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuporteRoute = SuporteRouteImport.update({
@@ -510,7 +504,6 @@ export interface FileRoutesByFullPath {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
-  '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
@@ -588,7 +581,6 @@ export interface FileRoutesByTo {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
-  '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
@@ -668,7 +660,6 @@ export interface FileRoutesById {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
-  '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
   '/termos-de-uso': typeof TermosDeUsoRoute
@@ -748,7 +739,6 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
-    | '/sobre'
     | '/suporte'
     | '/taxas'
     | '/termos-de-uso'
@@ -826,7 +816,6 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
-    | '/sobre'
     | '/suporte'
     | '/taxas'
     | '/termos-de-uso'
@@ -905,7 +894,6 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
-    | '/sobre'
     | '/suporte'
     | '/taxas'
     | '/termos-de-uso'
@@ -985,7 +973,6 @@ export interface RootRouteChildren {
   PrazosRoute: typeof PrazosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SegurancaEConfiancaRoute: typeof SegurancaEConfiancaRoute
-  SobreRoute: typeof SobreRoute
   SuporteRoute: typeof SuporteRoute
   TaxasRoute: typeof TaxasRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
@@ -1147,13 +1134,6 @@ declare module '@tanstack/react-router' {
       path: '/seguranca-e-confianca'
       fullPath: '/seguranca-e-confianca'
       preLoaderRoute: typeof SegurancaEConfiancaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/suporte': {
@@ -1651,7 +1631,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrazosRoute: PrazosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SegurancaEConfiancaRoute: SegurancaEConfiancaRoute,
-  SobreRoute: SobreRoute,
   SuporteRoute: SuporteRoute,
   TaxasRoute: TaxasRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
