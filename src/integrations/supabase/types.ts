@@ -1855,6 +1855,7 @@ export type Database = {
           plan_id: string | null
           price: number
           status: string
+          steps_count: number
           tenant_id: string
           updated_at: string
         }
@@ -1868,6 +1869,7 @@ export type Database = {
           plan_id?: string | null
           price: number
           status: string
+          steps_count?: number
           tenant_id: string
           updated_at?: string
         }
@@ -1881,6 +1883,7 @@ export type Database = {
           plan_id?: string | null
           price?: number
           status?: string
+          steps_count?: number
           tenant_id?: string
           updated_at?: string
         }
@@ -6730,6 +6733,10 @@ export type Database = {
         Returns: number
       }
       dunning_charge_fee: { Args: { _payment_id: string }; Returns: string }
+      dunning_step_channels: {
+        Args: { _allowed: string[]; _key: string; _steps: Json }
+        Returns: string[]
+      }
       fin_cancel_card_purchase: {
         Args: { _purchase: string; _tenant: string }
         Returns: undefined

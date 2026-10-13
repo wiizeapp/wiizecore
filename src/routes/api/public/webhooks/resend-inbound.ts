@@ -37,9 +37,12 @@ export const Route = createFileRoute("/api/public/webhooks/resend-inbound")({
         const sig = request.headers.get("svix-signature") ?? "";
         if (!id || !ts || !sig || !verify(secret, id, ts, sig, body)) return new Response("Invalid signature", { status: 401 });
 
-        const parsed = Payload.safeParse(JSON.parse(body));
-        if (!parsed.success) return new Response("Bad payload", { status: 400 });
-        if (parsed.data.type !== "email.received") return new Response("ignored");
+        let json: unknown;
+        try { json = JSON.parse(body); } catch { return new Response("ignored"); }
+        // Só nos interessa e-mail recebido; os demais avisos (enviado, entregue…) são confirmados sem processar.
+        if ((json as { type?: string })?.type !== "email.received") return new Response("ignored");
+        const parsed = Payload.safeParse(json);
+        if (!parsed.success) return new Response("ignored");
         const d = parsed.data.data;
 
         // O aviso não traz o conteúdo: buscamos a mensagem completa na API do Resend.
