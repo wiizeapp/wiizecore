@@ -180,13 +180,13 @@
 }
 
 .public-site .premium-cta-button {
-  background-color: var(--public-on-brand);
-  color: var(--public-brand-solid);
+  background-color: var(--primary);
+  color: var(--public-on-brand);
   box-shadow: none;
 }
 
 .public-site .premium-cta-button:hover {
-  background-color: color-mix(in oklab, var(--public-on-brand) 90%, var(--public-brand-solid));
+  background-color: color-mix(in oklab, var(--primary) 86%, oklch(0.25 0.05 160));
 }
 
 .public-site > main > section:first-child {
