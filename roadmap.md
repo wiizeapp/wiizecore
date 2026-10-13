@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
+- [ ] Acrescentar evolução mensal do MRR da empresa com dados reais e validar cálculos e apresentação.
+
 - [x] Ajustar indicadores, imagens neon, fontes neutras e ajuda do saldo/MRR; 11 testes financeiros passaram e compilação sem erros.
 
 - [x] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
