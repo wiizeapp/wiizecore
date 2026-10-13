@@ -1,4 +1,13 @@
 {
+  "Indicadores complementares": "Additional indicators",
+  "MRR": "MRR",
+  "Cobranças ativas": "Active charges",
+  "Novos clientes no período": "New customers in period",
+  "Reembolsos no período": "Refunds in period",
+  "Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias": "Net forecast of issued installments and recurring charges for the next 30 days",
+  "Evolução MRR": "MRR evolution",
+  "Parcelas e recorrências · líquido por mês de vencimento": "Installments and recurring charges · net by due month",
+  "Sem parcelas ou recorrências neste período.": "No installments or recurring charges in this period.",
   "Benefício para novas contas": "New account benefit",
   "de taxa percentual por 3 meses": "percentage fee for 3 months",
   "Pix e boleto à vista: só a tarifa fixa.": "One-time Pix and boleto: only the fixed fee.",

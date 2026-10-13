@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { csvCell } from "@/lib/csv-safe";
-import { listRefunds } from "@/lib/refunds.functions";
-import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import type { DateRange } from "react-day-picker";
@@ -10,9 +8,12 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import {
   AlertTriangle, ArrowRight, BarChart3, CalendarDays, Check, ChevronDown, ChevronUp, Download, Eye, EyeOff, FilePlus2, FileSignature,
   LineChart as LineChartIcon, Plus, RefreshCw, UserPlus, Wallet,
-  FileText,
+  FileText, Route as JourneyIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { MoneyValue } from "@/components/dashboard/money-value";
+import { firstChargeCustomers, monthlyMrr, projectedMrr } from "@/lib/dashboard-mrr";
 import { useWorkspace } from "@/hooks/useWorkspace";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -58,7 +59,7 @@ const inRange = (iso: string | null, a: Date, b: Date) => {
 };
 
 function useTenantQuery<T>(key: string, tenantId: string | undefined, fn: (t: string) => Promise<T>) {
-  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => fn(tenantId!) });
+  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => { if (!tenantId) throw new Error("Empresa indisponível"); return fn(tenantId); } });
 }
 
 function Dashboard() {
@@ -69,8 +70,21 @@ function Dashboard() {
   const range = useMemo(() => resolveRange(periodo, search.de, search.ate), [periodo, search.de, search.ate]);
   const { data: workspace } = useWorkspace();
   const tenantId = workspace?.tenantId;
+  const { user } = useAuth();
+  const journeyStorageKey = user?.id ? `wiizepay:journey:closed:${user.id}` : null;
   const [hidden, setHidden] = useState(false);
   const [journeyOpen, setJourneyOpen] = useState(true);
+  const [mrrChart, setMrrChart] = useState<"columns" | "line">("columns");
+  useEffect(() => {
+    if (!journeyStorageKey) return;
+    try { setJourneyOpen(localStorage.getItem(journeyStorageKey) !== "true"); } catch { setJourneyOpen(true); }
+  }, [journeyStorageKey]);
+  const toggleJourney = () => {
+    if (journeyOpen && journeyStorageKey) {
+      try { localStorage.setItem(journeyStorageKey, "true"); } catch { /* Storage may be unavailable. */ }
+    }
+    setJourneyOpen((open) => !open);
+  };
   const [revenueChart, setRevenueChart] = useState<"columns" | "line">("columns");
 
   const wallet = useTenantQuery("wallet", tenantId, async (t) => {
@@ -85,6 +99,11 @@ function Dashboard() {
       .eq("tenant_id", t)
       .order("created_at", { ascending: false })
       .limit(5000);
+    if (error) throw error;
+    return data ?? [];
+  });
+  const refunds = useTenantQuery(`refunds:${range.start.toISOString()}:${range.end.toISOString()}`, tenantId, async (t) => {
+    const { data, error } = await supabase.from("refunds").select("id, refund_amount, completed_at").eq("tenant_id", t).eq("status", "completed").gte("completed_at", range.start.toISOString()).lt("completed_at", range.end.toISOString());
     if (error) throw error;
     return data ?? [];
   });
@@ -174,7 +193,9 @@ function Dashboard() {
     const paidCounts = new Map<string, number>();
     for (const r of rows) if (r.status === "paid" && r.customer_id) paidCounts.set(r.customer_id, (paidCounts.get(r.customer_id) ?? 0) + 1);
     const recurring = [...paidCounts.values()].filter((n) => n > 1).length;
-    const newCustomers = (customers.data ?? []).filter((c) => inRange(c.created_at, range.start, range.end)).length;
+    const newCustomers = firstChargeCustomers(rows, range.start, range.end);
+    const mrr = projectedMrr(rows);
+    const mrrSeries = monthlyMrr(rows, fmtDay(new Date(range.end.getTime() - 1)).slice(0, 7), i18n.resolvedLanguage);
 
     const origin = { Avulso: 0, Recorrente: 0, Parcelado: 0 };
     for (const r of curr.paid) {
@@ -189,14 +210,14 @@ function Dashboard() {
     const overdue = open.filter((r) => isOverdue(r));
 
     return {
-      curr, prev, series, svcTop, ltv, recurring, newCustomers, origin, methods, upcoming, overdue,
-      openCount: open.length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
+      curr, prev, series, mrr, mrrSeries, svcTop, ltv, recurring, newCustomers, origin, methods, upcoming, overdue,
+      openCount: curr.sales.filter((row) => isOpen(row.status) || isOverdue(row)).length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
       hasPaid: rows.some((r) => r.status === "paid"), hasCharge: rows.length > 0, periodRows: curr.sales,
     };
-  }, [payments.data, customers.data, services.data, range]);
+  }, [payments.data, customers.data, services.data, range, i18n.resolvedLanguage]);
 
   const setPeriod = (p: Search) => navigate({ search: p, replace: true });
-  const refresh = () => { for (const q of [wallet, payments, customers, services, extras]) void q.refetch(); };
+  const refresh = () => { for (const q of [wallet, payments, customers, services, extras, refunds]) void q.refetch(); };
   const updatedAt = Math.max(wallet.dataUpdatedAt, payments.dataUpdatedAt);
   const mins = updatedAt ? Math.floor((Date.now() - updatedAt) / 60000) : null;
   const mask = (v: string) => (hidden ? "R$ ••••••" : v);
@@ -232,7 +253,7 @@ function Dashboard() {
   ];
   const doneCount = journey.filter((j) => j.done).length;
   const next = journey.find((j) => !j.done);
-  const showJourney = !extras.isPending && !services.isPending && next;
+  const showJourney = !extras.isPending && !services.isPending;
 
   const [svcTab, setSvcTab] = useState<"faturados" | "vendidos" | "ticket">("faturados");
   const [upcomingPage, setUpcomingPage] = useState(0);
@@ -309,7 +330,7 @@ function Dashboard() {
               {hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
           </div>
-          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}>{mask(cents(available))}</p>}
+          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}><MoneyValue value={mask(cents(available))} /></p>}
           <div className="mt-2 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
              <Link to="/financeiro" className="text-xs font-semibold text-primary hover:underline">{ui("Sacar")}</Link>
@@ -318,6 +339,13 @@ function Dashboard() {
          <Stat label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
          <Stat label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
          <Stat label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
+      </section>
+
+      <section aria-label={ui("Indicadores complementares")} className="grid overflow-hidden rounded-lg border border-border bg-card/60 grid-cols-2 xl:grid-cols-4">
+        <CompactStat label={ui("MRR")} value={payments.isError ? "—" : mask(cents(s.mrr))} loading={payments.isPending} title={ui("Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias")} />
+        <CompactStat label={ui("Cobranças ativas")} value={payments.isError ? "—" : hidden ? "••••" : String(s.openCount)} loading={payments.isPending} />
+        <CompactStat label={ui("Novos clientes no período")} value={payments.isError ? "—" : hidden ? "••••" : String(s.newCustomers)} loading={loading} />
+        <CompactStat label={ui("Reembolsos no período")} value={refunds.isError ? "—" : mask(cents((refunds.data ?? []).reduce((total, row) => total + toCents(row.refund_amount), 0)))} loading={refunds.isPending} />
       </section>
 
       {/* Ações rápidas */}
@@ -337,6 +365,14 @@ function Dashboard() {
           </Link>
         ))}
       </div>
+
+      {showJourney && (
+         <Panel title={<span className="flex items-center gap-2"><JourneyIcon className="h-4 w-4 text-primary" />{ui("Sua jornada no WiizePay")}</span>} subtitle={ui("Complete as etapas para aproveitar todo o potencial da WiizePay.")}
+           action={<div className="flex shrink-0 items-center gap-2"><span className="numeric-tabular text-xs font-semibold text-primary">{ui("{{done}} de {{total}} etapas", { done: doneCount, total: journey.length })}</span><Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={toggleJourney} aria-expanded={journeyOpen} aria-controls="dashboard-journey" aria-label={ui(journeyOpen ? "Fechar jornada" : "Abrir jornada")}>{journeyOpen ? <ChevronUp /> : <ChevronDown />}</Button></div>}>
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${(doneCount / journey.length) * 100}%` }} /></div>
+          {journeyOpen && <ol id="dashboard-journey" className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">{journey.map((j) => { const isNext = j === next; return <li key={j.label}><Link to={j.to} className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors ${isNext ? "bg-primary/10 font-semibold" : "hover:bg-muted"} ${j.done ? "text-muted-foreground" : ""}`}><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${j.done ? "border-primary bg-primary text-primary-foreground" : isNext ? "border-primary" : "border-border"}`}>{j.done && <Check className="h-3 w-3" />}</span><span className={j.done ? "line-through decoration-muted-foreground/40" : ""}>{j.label}</span>{isNext && <ArrowRight className="ml-auto h-3.5 w-3.5 text-primary" />}</Link></li>; })}</ol>}
+        </Panel>
+      )}
 
       {/* 4. Faturamento */}
        <Panel title={ui("Faturamento")} subtitle={ui("Valor total vendido · {{granularity}}", { granularity: ui(range.granularity === "hour" ? "por hora" : "por dia") })}
@@ -360,13 +396,27 @@ function Dashboard() {
          ) : <Empty text={ui("Sem faturamento neste período.")} to="/cobrancas" cta={ui("Criar cobrança")} />}
       </Panel>
 
-      {showJourney && (
-         <Panel title={ui("Sua jornada no WiizePay")} subtitle={ui("Complete as etapas para aproveitar todo o potencial da WiizePay.")}
-           action={<div className="flex shrink-0 items-center gap-2"><span className="numeric-tabular text-xs font-semibold text-primary">{ui("{{done}} de {{total}} etapas", { done: doneCount, total: journey.length })}</span><Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => setJourneyOpen((open) => !open)} aria-expanded={journeyOpen} aria-label={ui(journeyOpen ? "Fechar jornada" : "Abrir jornada")}>{journeyOpen ? <ChevronUp /> : <ChevronDown />}</Button></div>}>
-          <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${(doneCount / journey.length) * 100}%` }} /></div>
-          {journeyOpen && <ol className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">{journey.map((j) => { const isNext = j === next; return <li key={j.label}><Link to={j.to} className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors ${isNext ? "bg-primary/10 font-semibold" : "hover:bg-muted"} ${j.done ? "text-muted-foreground" : ""}`}><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${j.done ? "border-primary bg-primary text-primary-foreground" : isNext ? "border-primary" : "border-border"}`}>{j.done && <Check className="h-3 w-3" />}</span><span className={j.done ? "line-through decoration-muted-foreground/40" : ""}>{j.label}</span>{isNext && <ArrowRight className="ml-auto h-3.5 w-3.5 text-primary" />}</Link></li>; })}</ol>}
-        </Panel>
-      )}
+      {/* Evolução mensal do MRR */}
+       <Panel title={ui("Evolução MRR")} subtitle={ui("Parcelas e recorrências · líquido por mês de vencimento")}
+         action={<div className="flex shrink-0 items-center gap-3"><div className="flex rounded-lg border border-border p-0.5" aria-label={ui("Formato do gráfico")}><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${mrrChart === "columns" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setMrrChart("columns")} aria-label={ui("Gráfico de colunas")}><BarChart3 /></Button><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${mrrChart === "line" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setMrrChart("line")} aria-label={ui("Gráfico de linha")}><LineChartIcon /></Button></div></div>}>
+        {loading ? <Skeleton h="h-[280px]" /> : s.mrrSeries.some((x) => x.sold) ? (
+          <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
+            {mrrChart === "columns" ? <BarChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={16} />
+               <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
+              <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<DashTooltip metric="MRR" />} />
+              <Bar dataKey="sold" fill="var(--primary)" radius={[5, 5, 0, 0]} maxBarSize={48} />
+            </BarChart> : <LineChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={16} />
+               <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
+              <ChartTooltip cursor={{ strokeDasharray: "4 4" }} content={<DashTooltip metric="MRR" />} />
+              <Line type="monotone" dataKey="sold" stroke="var(--primary)" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+            </LineChart>}
+          </ChartContainer>
+         ) : <Empty text={ui("Sem parcelas ou recorrências neste período.")} to="/cobrancas" cta={ui("Criar cobrança")} />}
+      </Panel>
 
       {/* 5-7 */}
       <div className="grid gap-6 lg:grid-cols-3">
@@ -390,7 +440,7 @@ function Dashboard() {
          <Panel title={ui("Ticket médio do período")} subtitle={ui("Valor médio de cada venda realizada")}>
           {loading ? <Skeleton h="h-40" /> : (
             <div className="flex min-h-40 flex-col justify-center">
-              <p className={`numeric-tabular max-w-full overflow-hidden font-display font-bold text-foreground ${valueTextSize(cents(s.curr.ticket))}`}>{cents(s.curr.ticket)}</p>
+              <p className={`numeric-tabular max-w-full overflow-hidden font-display font-bold text-foreground ${valueTextSize(cents(s.curr.ticket))}`}><MoneyValue value={mask(cents(s.curr.ticket))} /></p>
               <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
                 <Change value={pctChange(s.curr.ticket, s.prev.ticket)} />
                  <span>{ui("comparado ao período anterior")}</span>
@@ -413,7 +463,6 @@ function Dashboard() {
            <Mini label={ui("Receita por cliente")} value={cents(s.curr.buyers ? s.curr.received / s.curr.buyers : 0)} />
            <Mini label={ui("Clientes recorrentes")} value={String(s.recurring)} />
         </div>
-        <RefundMetric />
         <div className="mt-6 grid gap-6 border-t border-border pt-5 md:grid-cols-2">
           <div>
              <p className="mb-3 text-sm font-semibold">{ui("De onde vem sua receita?")}</p>
@@ -483,7 +532,7 @@ function Stat({ label, value, hint, change, loading }: { label: string; value: s
   return (
     <div className="summary-strip-item min-w-0 p-5">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}>{value}</p>}
+      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}><MoneyValue value={value} /></p>}
       <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
         {change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint}
       </div>
@@ -503,7 +552,7 @@ function Mini({ label, value, change }: { label: string; value: string; change?:
   return (
     <div className="summary-strip-item min-w-0 p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="numeric-tabular mt-1 font-display text-lg font-semibold">{value}</p>
+      <p className="numeric-tabular mt-1 font-display text-lg font-semibold"><MoneyValue value={value} /></p>
       {change !== undefined && <Change value={change} />}
     </div>
   );
@@ -528,7 +577,7 @@ function Split({ parts, total }: { parts: { label: string; value: number }[]; to
   );
 }
 
-function DashTooltip({ active, payload }: { active?: boolean; payload?: { payload: { label: string; sold: number } }[] }) {
+function DashTooltip({ active, payload, metric = "Total vendido" }: { active?: boolean; payload?: { payload: { label: string; sold: number } }[]; metric?: string }) {
   const { t: ui } = useTranslation("ui");
   if (!active || !payload?.length) return null;
   const p = payload[0]?.payload;
@@ -537,7 +586,7 @@ function DashTooltip({ active, payload }: { active?: boolean; payload?: { payloa
     <div className="rounded-xl border border-border bg-popover px-3 py-2.5 text-xs shadow-xl">
       <p className="mb-1.5 font-semibold">{p.label}</p>
       <div className="flex justify-between gap-6">
-         <span className="text-muted-foreground">{ui("Total vendido")}</span>
+         <span className="text-muted-foreground">{ui(metric)}</span>
         <span className="numeric-tabular font-medium">{formatBRL(p.sold)}</span>
       </div>
     </div>
@@ -566,18 +615,9 @@ function CustomRange({ active, onApply, onClear }: { active: boolean; onApply: (
   );
 }
 
-function RefundMetric() {
-  const { t: ui } = useTranslation("ui");
-  const fn = useServerFn(listRefunds);
-  const { data } = useQuery({ queryKey: ["refunds"], queryFn: () => fn() });
-  const since = Date.now() - 30 * 86400e3;
-  const done = ((data ?? []) as { status: string; refund_amount: number | string; created_at: string }[]).filter((r) => r.status === "completed" && new Date(r.created_at).getTime() >= since);
-  if (!done.length) return null;
-  const total = done.reduce((a, r) => a + Number(r.refund_amount), 0);
-  return (
-    <Link to="/cobrancas" className="mt-5 flex items-center justify-between rounded-lg border border-border px-4 py-2.5 text-sm transition-colors hover:bg-muted">
-       <span className="text-muted-foreground">{ui("Reembolsos nos últimos 30 dias")}</span>
-      <span className="numeric-tabular font-semibold">{formatBRL(total)} · {done.length}</span>
-    </Link>
-  );
+function CompactStat({ label, value, loading, title }: { label: string; value: string; loading?: boolean; title?: string }) {
+  return <div className="summary-strip-item min-w-0 px-4 py-3" title={title}>
+    <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+    {loading ? <Skeleton h="mt-1 h-6" /> : <p className="numeric-tabular mt-1 overflow-hidden font-display text-lg font-semibold"><MoneyValue value={value} /></p>}
+  </div>;
 }

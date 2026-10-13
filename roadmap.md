@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; validar e listar arquivos.
+- [x] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; 10 testes aprovados e compilação OK.
+- [ ] Conferir visualmente o painel conectado: sessão disponível está bloqueada pela pesquisa inicial pendente; não alterar respostas do usuário para testar.
 
 - [x] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
 
