@@ -68,9 +68,9 @@ export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
     <header className="sticky top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-4">
-      <div className="mx-auto grid h-[4.5rem] w-full max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:px-6">
+      <div className="mx-auto grid h-[4.5rem] w-full max-w-6xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:px-6">
         <div className="min-w-0 justify-self-start">
-          <nav className="hidden items-center gap-1 md:flex" aria-label={t("mainNav")}>
+          <nav className="hidden items-center gap-1 lg:flex" aria-label={t("mainNav")}>
             <ResourcesMenu />
             {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
           </nav>
@@ -80,7 +80,7 @@ export function PublicHeader() {
           <LanguageSwitcher />
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
           <Sheet>
-            <SheetTrigger asChild><Button variant="ghost" size="icon" className="md:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
+            <SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
             <SheetContent className="dark w-[min(22rem,88vw)] border-border bg-background text-foreground">
               <SheetHeader className="text-left"><SheetTitle>{t("menuTitle")}</SheetTitle></SheetHeader>
               <nav className="mt-8 grid gap-2" aria-label={t("mobileNav")}>
