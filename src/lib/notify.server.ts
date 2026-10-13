@@ -56,7 +56,7 @@ export async function notifyPlatform(admin: Admin, input: {
     if (!to.length) return;
     await sendEmail(admin, {
       tenantId: input.tenantId, kind: input.kind, dedupeKey: input.email.dedupeKey,
-      email: { to, subject: input.email.subject, title: input.title, intro: input.body, lines: input.email.lines, ...(input.link ? { cta: { label: "Abrir no painel", url: input.link } } : {}) },
+      email: { to, subject: input.email.subject, title: input.title, intro: input.body, lines: input.email.lines ?? [], ...(input.link ? { cta: { label: "Abrir no painel", url: input.link } } : {}) },
     });
   } catch (e) {
     console.error("notify.platform", input.kind, e instanceof Error ? e.message : "falhou");
