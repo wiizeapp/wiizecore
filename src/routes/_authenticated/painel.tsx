@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { csvCell } from "@/lib/csv-safe";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import type { DateRange } from "react-day-picker";
@@ -257,6 +257,11 @@ function Dashboard() {
 
   const [svcTab, setSvcTab] = useState<"faturados" | "vendidos" | "ticket">("faturados");
   const [upcomingPage, setUpcomingPage] = useState(0);
+  const periodGroupRef = useRef<HTMLDivElement>(null);
+  // Mantém o período selecionado visível quando a barra de filtros vira uma linha só no celular.
+  useEffect(() => {
+    periodGroupRef.current?.querySelector<HTMLElement>('[data-active="true"]')?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [periodo]);
   const svcRaw = s.svcTop[svcTab];
   const svcItems = svcRaw.slice(0, 5).map(([id, g]) => ({
     label: s.svcName.get(id) ?? ui("Serviço"),
@@ -281,21 +286,21 @@ function Dashboard() {
              {workspace?.tenantName ?? ui("Sua empresa")} · {mins === null ? ui("Carregando…") : mins < 1 ? ui("Atualizado agora") : ui("Atualizado há {{minutes}} min", { minutes: mins })}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border bg-card p-1">
+        <div className="flex items-center gap-2">
+          <div ref={periodGroupRef} className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-xl border border-border bg-card p-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {PERIOD_OPTIONS.map((o) => (
-              <button key={o.key} type="button" onClick={() => setPeriod({ periodo: o.key })}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${periodo === o.key ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+              <button key={o.key} type="button" data-active={periodo === o.key} onClick={() => setPeriod({ periodo: o.key })}
+                className={`shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs ${periodo === o.key ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
                  {ui(o.label)}
               </button>
             ))}
             <CustomRange active={periodo === "custom"} onApply={(de, ate) => setPeriod({ periodo: "custom", de, ate })} onClear={() => setPeriod({ periodo: "hoje" })} />
           </div>
-           <Button variant="outline" size="icon" onClick={refresh} aria-label={ui("Atualizar")}>
+          <Button variant="outline" size="icon" className="shrink-0" onClick={refresh} aria-label={ui("Atualizar")}>
             <RefreshCw className={`h-4 w-4 ${payments.isFetching ? "animate-spin" : ""}`} />
           </Button>
-          <Button variant="outline" size="sm" onClick={exportCsv} disabled={!s.periodRows.length}>
-            <Download className="mr-1.5 h-4 w-4" />  {ui("Exportar")}
+          <Button variant="outline" size="sm" className="shrink-0" onClick={exportCsv} disabled={!s.periodRows.length} aria-label={ui("Exportar")}>
+            <Download className="h-4 w-4 sm:mr-1.5" />  <span className="hidden sm:inline">{ui("Exportar")}</span>
           </Button>
         </div>
       </div>
@@ -321,7 +326,7 @@ function Dashboard() {
       )}
 
       {/* 2. Resumo financeiro compacto */}
-      <section className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
+      <section className="summary-strip--main surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
         <div className="summary-strip-item min-w-0 p-5">
           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Wallet className="h-3.5 w-3.5 shrink-0" />
@@ -600,7 +605,7 @@ function CustomRange({ active, onApply, onClear }: { active: boolean; onApply: (
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+        <button type="button" className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition-colors sm:px-3 sm:text-xs ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
           <CalendarDays className="h-3.5 w-3.5" />  {ui("Personalizado")}
         </button>
       </PopoverTrigger>
@@ -617,7 +622,7 @@ function CustomRange({ active, onApply, onClear }: { active: boolean; onApply: (
 
 function CompactStat({ label, value, loading, help, icon: Icon }: { label: string; value: string; loading?: boolean; help?: string; icon: LucideIcon }) {
   const { t: ui } = useTranslation("ui");
-  return <div className="summary-strip-item min-w-0 px-3 py-3 sm:px-4">
+  return <div className="compact-strip-item min-w-0 px-3 py-3 sm:px-4">
     <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
       <Icon className="h-3.5 w-3.5 shrink-0" />
       <span className="min-w-0">{label}</span>
