@@ -4909,5 +4909,8 @@
   "Confirmar e salvar": "Confirmar y guardar",
   "Conta bancária salva.": "Cuenta bancaria guardada.",
   "Confirme que conferiu os dados da conta.": "Confirma que revisaste los datos de la cuenta.",
-  "Banco / Agência / Conta": "Banco / Agencia / Cuenta"
+  "Banco / Agência / Conta": "Banco / Agencia / Cuenta",
+  "O preço vale para cada aviso ligado (criação, antes do vencimento, no dia, atraso e pagamento recebido).": "El precio vale para cada aviso activado (creación, antes del vencimiento, el día, atraso y pago recibido).",
+  "por aviso ligado, descontado do saldo quando a cobrança é criada. Cada parcela e cada novo ciclo recorrente são cobrados separadamente.": "por aviso activado, descontado del saldo al crear el cobro. Cada cuota y cada nuevo ciclo recurrente se cobran por separado.",
+  "/ aviso": "/ aviso"
 }

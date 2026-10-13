@@ -4880,5 +4880,8 @@
   "Confirmar e salvar": "Confirm and save",
   "Conta bancária salva.": "Bank account saved.",
   "Confirme que conferiu os dados da conta.": "Confirm you checked the account details.",
-  "Banco / Agência / Conta": "Bank / Branch / Account"
+  "Banco / Agência / Conta": "Bank / Branch / Account",
+  "O preço vale para cada aviso ligado (criação, antes do vencimento, no dia, atraso e pagamento recebido).": "The price applies to each enabled reminder (creation, before due date, on the due date, overdue and payment received).",
+  "por aviso ligado, descontado do saldo quando a cobrança é criada. Cada parcela e cada novo ciclo recorrente são cobrados separadamente.": "per enabled reminder, deducted from the balance when the charge is created. Each installment and each new recurring cycle are charged separately.",
+  "/ aviso": "/ reminder"
 }
