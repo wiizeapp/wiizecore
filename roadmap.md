@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Aumentar levemente valores superiores de saldo/MRR e remover a lista mensal abaixo do gráfico, sem alterar cálculos.
+
 - [x] Alinhar títulos/valores superiores, equalizar tamanho visual das imagens, ampliar centavos e uniformizar gráficos com seleção de colunas/linha.
 
 - [x] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
