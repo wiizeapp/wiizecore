@@ -1406,3 +1406,74 @@
   .premium-cta-grid { background-size: 40px 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .reveal-on .reveal-item { opacity: 1; transform: none; transition: none; } }
+
+/* Institutional presentation: scoped to Sobre, never financial screens. */
+.about-page {
+  --about-highlight: color-mix(in oklab, var(--primary) 78%, var(--foreground));
+  --about-icon-surface: color-mix(in oklab, var(--primary) 10%, var(--card));
+  --about-card-shadow: 0 18px 35px -28px color-mix(in oklab, var(--foreground) 25%, transparent);
+  --about-path-shadow: 0 0 12px color-mix(in oklab, var(--primary) 55%, transparent);
+}
+.about-hero { background: var(--background); }
+.about-hero-content { animation: about-enter .8s cubic-bezier(.22,1,.36,1) both; }
+.about-hero-title { font-size: 3.75rem; line-height: 1.12; letter-spacing: 0; }
+.about-highlight { white-space: nowrap; margin-top: .12em; }
+.about-metric-value { color: var(--about-highlight); font-size: 2.75rem; line-height: 1.12; white-space: nowrap; letter-spacing: 0; }
+.about-principle-number { color: var(--about-highlight); min-width: 3.5rem; }
+.about-journey { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; list-style: none; padding: 0; }
+.about-journey-track { position: absolute; top: 20px; left: 10%; width: 80%; height: 1px; background: var(--border); }
+.about-journey-track span { position: absolute; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--primary); box-shadow: var(--about-path-shadow); animation: about-flow-x 8s ease-in-out infinite; }
+.about-journey-step { position: relative; min-width: 0; }
+.about-step-number { position: relative; display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto 1.5rem; border: 1px solid var(--primary); border-radius: 50%; background: var(--background); color: var(--about-highlight); font-weight: 600; font-family: var(--font-display); font-size: .8rem; }
+.about-journey-card { height: 235px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); padding: 1rem; box-shadow: var(--about-card-shadow); transition: border-color .3s, transform .3s; }
+.about-journey-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+.about-stage { position: relative; display: grid; place-items: center; height: 145px; margin-bottom: 1rem; }
+.about-mini-window { width: 112px; height: 112px; border: 1px solid var(--border); border-radius: 6px; background: var(--background); transform: rotate(-5deg); box-shadow: var(--about-card-shadow); }
+.about-mini-header { display: flex; gap: 4px; padding: 9px; border-bottom: 1px solid var(--border); }
+.about-mini-header span { width: 4px; height: 4px; border-radius: 50%; background: var(--muted-foreground); opacity: .5; }
+.about-stage-icon { width: 30px; height: 30px; color: var(--about-highlight); margin: 10px auto 7px; }
+.about-stage-check { position: absolute; right: calc(50% - 66px); bottom: 12px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 6px; background: var(--primary); color: var(--primary-foreground); border: 3px solid var(--card); }
+.about-mini-lines { display: grid; gap: 4px; padding: 0 14px; }
+.about-mini-lines i { height: 3px; border-radius: 2px; background: var(--border); }
+.about-mini-lines i:last-child { width: 55%; background: var(--primary); }
+.about-stage-contract .about-mini-window { transform: rotate(4deg); }
+.about-stage-charge .about-mini-window { transform: none; border-top: 3px solid var(--primary); }
+.about-stage-payment .about-mini-window { height: 82px; width: 125px; transform: rotate(-8deg); background: var(--about-icon-surface); }
+.about-stage-payment .about-mini-header { display: none; }
+.about-stage-payment .about-stage-icon { margin-top: 12px; }
+.about-stage-finance .about-mini-window { transform: rotate(3deg); }
+.about-stage-finance .about-stage-icon { width: 22px; height: 22px; margin: 7px 12px 0; }
+.about-mini-bars { display: flex; align-items: end; gap: 5px; height: 40px; padding: 0 13px; }
+.about-mini-bars i { flex: 1; background: var(--primary); border-radius: 2px 2px 0 0; height: 30%; }
+.about-mini-bars i:nth-child(2) { height: 48%; opacity: .6; }
+.about-mini-bars i:nth-child(3) { height: 65%; }
+.about-mini-bars i:nth-child(4) { height: 55%; opacity: .6; }
+.about-mini-bars i:nth-child(5) { height: 90%; }
+@keyframes about-enter { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes about-flow-x { 0%, 5% { left: 0; opacity: 0; } 8% { opacity: 1; } 25% { left: 25%; } 45% { left: 50%; } 65% { left: 75%; } 85%, 95% { left: 100%; opacity: 1; } 100% { left: 100%; opacity: 0; } }
+@keyframes about-flow-y { 0%, 5% { top: 0; opacity: 0; } 8% { opacity: 1; } 25% { top: 25%; } 45% { top: 50%; } 65% { top: 75%; } 85%, 95% { top: 100%; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+@media (max-width: 1023px) { .about-hero-title { font-size: 3rem; } .about-journey { gap: .6rem; } .about-journey-card { padding: .7rem; } }
+@media (max-width: 767px) {
+  .about-hero-title { font-size: 2.25rem; }
+  .about-journey { grid-template-columns: 1fr; gap: 1rem; }
+  .about-journey-track { top: 50px; bottom: 50px; left: 20px; width: 1px; height: auto; }
+  .about-journey-track span { left: -4px; top: 0; animation-name: about-flow-y; }
+  .about-journey-step { display: flex; align-items: center; gap: 1rem; }
+  .about-step-number { margin: 0; flex-shrink: 0; }
+  .about-journey-card { display: flex; align-items: center; gap: 1rem; flex: 1; height: 112px; min-width: 0; }
+  .about-stage { flex-shrink: 0; width: 90px; height: 90px; margin: 0; }
+  .about-mini-window { transform: scale(.65) rotate(-5deg); flex-shrink: 0; }
+  .about-stage-contract .about-mini-window { transform: scale(.65) rotate(4deg); }
+  .about-stage-charge .about-mini-window { transform: scale(.65); }
+  .about-stage-payment .about-mini-window { transform: scale(.65) rotate(-8deg); }
+  .about-stage-finance .about-mini-window { transform: scale(.65) rotate(3deg); }
+  .about-stage-check { right: 0; bottom: 5px; width: 25px; height: 25px; }
+}
+@media (max-width: 479px) { .about-hero-title { font-size: 1.75rem; } .about-principle-number { font-size: 2.5rem; min-width: 2.8rem; } .about-journey-card { gap: .5rem; } }
+@media (max-width: 359px) { .about-hero-title { font-size: 1.5rem; } .about-stage { width: 70px; } }
+@media (prefers-reduced-motion: reduce) {
+  .about-hero-content, .about-page .hero-shine, .about-journey-track span { animation: none; }
+  .about-journey-track span { display: none; }
+  .about-journey-card { transition: none; }
+  .about-journey-card:hover { transform: none; }
+}
