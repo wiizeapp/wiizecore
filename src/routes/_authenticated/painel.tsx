@@ -185,7 +185,7 @@ function Dashboard() {
       return { label: b.label, sold: c.sold / 100, received: c.received / 100 };
     });
 
-    const group = <K extends string>(list: typeof rows, key: (r: (typeof rows)[number]) => K | null) => {
+    const group = <K extends string>(list: Array<(typeof rows)[number]>, key: (r: (typeof rows)[number]) => K | null) => {
       const m = new Map<K, { total: number; count: number }>();
       for (const r of list) {
         const k = key(r);
