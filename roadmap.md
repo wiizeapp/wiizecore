@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Suavizar abertura e fundos das demonstrações e cartões de funcionalidades, preservando o verde dos botões; validar página pública.
+- [x] Suavizar abertura e fundos das demonstrações e cartões de funcionalidades, preservando o verde dos botões; conferido a 1260px e 393px, sem imagens quebradas, transbordamento ou erros.
 
 - [x] Uniformizar ícones e fundo verde da jornada, recuperar comparativo com grade suave e divisórias completas, separar CTA e restaurar rodapé neutro; conferido a 1260px e 393px, sem transbordamento ou erros.
 
