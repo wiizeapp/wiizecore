@@ -95,14 +95,15 @@ export function PublicHeader() {
   );
 }
 
-export function PublicFooter() {
+export function PublicFooter({ start }: { start?: React.ReactNode }) {
   const { t } = useTranslation("footer");
   const { t: tn } = useTranslation("navigation");
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className={`bg-background ${start ? "" : "border-t border-border"}`}>
+      {start}
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
-          <Brand compact className="rounded-lg bg-card p-1" />
+          <Brand className="rounded-lg bg-card p-1" />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
           <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
         </div>
@@ -124,11 +125,11 @@ export function PublicFooter() {
   );
 }
 
-export function PublicPage({ children }: { children: React.ReactNode }) {
+export function PublicPage({ children, footerStart }: { children: React.ReactNode; footerStart?: React.ReactNode }) {
   useLanguageBootstrap();
   useRevealOnScroll();
   const { t } = useTranslation("footer");
-  return <div className="public-site min-h-screen bg-background text-foreground"><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
+  return <div className="public-site min-h-screen bg-background text-foreground"><PublicHeader />{children}<PublicFooter start={footerStart} /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
 /** Revela seções e cartões após o hero, sem animar o conteúdo interno. */
 function useRevealOnScroll() {
