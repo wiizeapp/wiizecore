@@ -185,8 +185,8 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
         reference = transfer.id;
         await admin.from("withdrawals").update({ provider_transfer_id: transfer.id, provider_status: transfer.status ?? "requested", transfer_reference: transfer.id }).eq("id", wd.id);
       } catch (e) {
-        await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_already_collected: fee } });
-        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. A taxa já foi cobrada; tente aprovar novamente.`);
+        await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_kept_in_subaccount: fee } });
+        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. Tente aprovar novamente.`);
       }
     }
     const { error } =
