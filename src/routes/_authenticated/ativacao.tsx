@@ -196,6 +196,17 @@ function ProviderPanel({ data }: { data: Awaited<ReturnType<typeof getActivation
         <div><h2 className="font-display text-base font-semibold">Andamento da análise</h2><p className="text-sm text-muted-foreground">Situação informada pela instituição de pagamento{data.providerSyncedAt ? ` · atualizado em ${new Date(data.providerSyncedAt).toLocaleString("pt-BR")}` : ""}.</p></div>
         <Button variant="outline" size="sm" disabled={m.isPending} onClick={() => m.mutate()}>{m.isPending ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}Atualizar situação</Button>
       </div>
+      {Object.keys(data.provider?.failed ?? {}).length ? (
+        <div className="space-y-3 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+          <p className="text-sm font-semibold text-destructive">Alguns documentos precisam ser reenviados</p>
+          <p className="text-sm text-muted-foreground">A instituição de pagamento não aceitou estes arquivos. Envie um novo para continuar a análise.</p>
+          <div className="grid gap-3 text-xs sm:grid-cols-2">
+            <div><p className="mb-1 font-medium">Dicas</p><ul className="space-y-0.5 text-muted-foreground"><li>• Documento original, inteiro e dentro da foto</li><li>• Lugar bem iluminado, sem reflexo ou sombra</li><li>• Todos os dados e a foto legíveis</li><li>• Na selfie: rosto à mostra e documento ao lado</li></ul></div>
+            <div><p className="mb-1 font-medium">Não é permitido</p><ul className="space-y-0.5 text-muted-foreground"><li>• Foto de tela, cópia ou documento de outra pessoa</li><li>• Imagem cortada, borrada ou editada</li><li>• Documento vencido ou rasurado</li><li>• Boné, óculos escuros ou filtros na selfie</li></ul></div>
+          </div>
+          <Documents company={data.personType === "company"} docs={[]} errors={data.provider?.failed ?? {}} only={Object.keys(data.provider?.failed ?? {})} />
+        </div>
+      ) : null}
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {parts.map((p) => { const st = ITEM_STATUS[p.status] ?? ITEM_STATUS["PENDING"]!; return (
           <div key={p.key} className="rounded-lg border border-border p-3"><p className="text-xs text-muted-foreground">{p.label}</p><span className={`mt-1.5 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${st.cls}`}>{st.label}</span></div>
@@ -400,15 +411,15 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
   );
 }
 
-function Documents({ company, docs, errors }: { company: boolean; docs: { kind: string; created_at: string }[]; errors: Record<string, string> }) {
+function Documents({ company, docs, errors, only }: { company: boolean; docs: { kind: string; created_at: string }[]; errors: Record<string, string>; only?: string[] }) {
   const qc = useQueryClient();
   const upload = useServerFn(uploadActivationDocument);
   const [busy, setBusy] = useState<string | null>(null);
   const kinds = useMemo(() => {
     const k: [string, boolean][] = [["id_front", true], ["id_back", true], ["selfie", true], ["address_proof", false]];
     if (company) k.push(["company_doc", true], ["legal_rep_doc", true]);
-    return k;
-  }, [company]);
+    return only ? k.filter(([kind]) => only.includes(kind)) : k;
+  }, [company, only]);
   const onFile = async (kind: string, file?: File) => {
     if (!file) return;
     setBusy(kind);
