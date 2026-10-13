@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; validar e listar arquivos.
+
 - [x] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
 
 - [x] Corrigir contraste da marca WiizePay na prévia do checkout.
