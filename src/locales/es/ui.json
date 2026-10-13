@@ -1,4 +1,8 @@
 {
+  "Sem métricas para analisar no período": "Sin métricas para analizar en este período",
+  "Como funciona: {{indicador}}": "Cómo funciona: {{indicador}}",
+  "Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.": "Fondos ya disponibles en tu cartera para solicitar un retiro. Los fondos pendientes todavía esperan liquidación. Este saldo no cambia con el filtro de período.",
+  "Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.": "Previsión neta de tu empresa: suma de cuotas y cobros recurrentes ya emitidos, pendientes y con vencimiento en los próximos 30 días, descontando las tarifas registradas. Excluye pagos completados, cancelados o reembolsados y ciclos futuros aún no emitidos. No es saldo disponible y no depende del filtro de período.",
   "MRR líquido previsto": "MRR neto previsto",
   "Parcelas e recorrências emitidas, com taxas registradas descontadas. Não é saldo liberado.": "Cuotas y cobros recurrentes emitidos, descontando las tarifas registradas. No es saldo disponible.",
   "Indicadores do período": "Indicadores del período",

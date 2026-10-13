@@ -10,7 +10,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import {
   AlertTriangle, ArrowRight, BarChart3, CalendarDays, Check, ChevronDown, ChevronUp, Download, Eye, EyeOff, FilePlus2, FileSignature,
   LineChart as LineChartIcon, Plus, RefreshCw, UserPlus, Wallet,
-  FileText, CircleDollarSign, Clock3, ListChecks, type LucideIcon,
+  FileText, CircleDollarSign, CircleHelp, Clock3, ListChecks, type LucideIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/hooks/useWorkspace";
@@ -21,8 +21,8 @@ import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/
 import { formatBRL, formatDate } from "@/lib/format";
 import { buckets, pctChange, PERIOD_OPTIONS, resolveRange, toCents, type PeriodKey } from "@/lib/dashboard-period";
 import { Change, Empty, Panel, RankList, Skeleton, type AppPath } from "@/components/dashboard/parts";
-import moneyAsset from "@/assets/dashboard-money.asset.json";
-import calendarAsset from "@/assets/dashboard-calendar.asset.json";
+import moneyAsset from "@/assets/dashboard-money-neon.asset.json";
+import calendarAsset from "@/assets/dashboard-calendar-neon.asset.json";
 import { countFirstChargeCustomers, forecastNext30Days, isOpen, isOverdue, summarize, type SummaryRow } from "@/lib/financial-summary";
 import { DataPagination, paginate } from "@/components/ds";
 
@@ -315,15 +315,16 @@ function Dashboard() {
 
       {/* Saldo e previsão da empresa — independentes do filtro histórico. */}
       <section aria-label={ui("Resumo financeiro")} className="grid gap-6 sm:grid-cols-2">
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_100px] sm:border-r sm:border-border sm:pr-6 xl:grid-cols-[minmax(0,1fr)_120px]">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_112px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_128px] sm:border-r sm:border-border sm:pr-6 xl:grid-cols-[minmax(0,1fr)_160px]">
           <div className="min-w-0">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               {ui("Saldo disponível")}
+              <MetricHelp title={ui("Saldo disponível")} description={ui("Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.")} />
               <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")}>
                 {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
-            {wallet.isPending || wallet.isError ? <Skeleton h="mt-2 h-10" /> : <p className={`numeric-tabular mt-2 break-words font-display font-bold text-primary ${valueTextSize(mask(cents(available)), true)}`}>{mask(cents(available))}</p>}
+            {wallet.isPending || wallet.isError ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-2 break-words font-display font-bold text-foreground ${valueTextSize(mask(cents(available)), true)}`}>{mask(cents(available))}</p>}
             <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
               <span className="text-muted-foreground">{wallet.isPending || wallet.isError ? ui("Carregando…") : ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
               <Link to="/financeiro" className="font-semibold text-primary hover:underline">{ui("Sacar")} <ArrowRight className="inline h-3 w-3" /></Link>
@@ -331,18 +332,18 @@ function Dashboard() {
           </div>
           <img src={moneyAsset.url} alt="" className="aspect-square w-full object-contain" />
         </div>
-        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_100px] xl:grid-cols-[minmax(0,1fr)_120px]">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_112px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_128px] xl:grid-cols-[minmax(0,1fr)_160px]">
           <div className="min-w-0">
-            <p className="text-sm text-muted-foreground">{ui("MRR líquido previsto")}</p>
-            {loading ? <Skeleton h="mt-3 h-10" /> : <p className={`numeric-tabular mt-3 break-words font-display font-bold text-primary ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}>{mask(formatBRL(s.forecast.net))}</p>}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground"><span className="min-w-0">{ui("MRR líquido previsto")}</span><MetricHelp title={ui("MRR líquido previsto")} description={ui("Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.")} /></div>
+            {loading ? <Skeleton h="mt-3 h-8" /> : <p className={`numeric-tabular mt-3 break-words font-display font-bold text-foreground ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}>{mask(formatBRL(s.forecast.net))}</p>}
             <p className="mt-3 text-xs font-medium text-muted-foreground">{ui("Próximos 30 dias")}</p>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{ui("Parcelas e recorrências emitidas, com taxas registradas descontadas. Não é saldo liberado.")}</p>
           </div>
           <img src={calendarAsset.url} alt="" className="aspect-square w-full object-contain" />
         </div>
       </section>
-      <section aria-label={ui("Indicadores do período")} className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-5">
-        <Stat icon={CircleDollarSign} label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
+      <section aria-label={ui("Indicadores do período")} className="surface-panel grid grid-cols-2 overflow-hidden lg:grid-cols-5">
+        <Stat className="col-span-2 lg:col-span-1" icon={CircleDollarSign} label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
         <Stat icon={Clock3} label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
         <Stat icon={AlertTriangle} label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
         <Stat icon={ListChecks} label={ui("Cobranças ativas")} value={String(s.activeCount)} hint={ui("Em aberto no período")} loading={loading} />
@@ -507,14 +508,24 @@ function Dashboard() {
   );
 }
 
-function Stat({ label, value, hint, change, loading, icon: Icon }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean; icon?: LucideIcon }) {
+function MetricHelp({ title, description }: { title: string; description: string }) {
   const { t: ui } = useTranslation("ui");
   return (
-    <div className="summary-strip-item min-w-0 p-5">
-      <p className="flex min-h-8 items-center gap-2 text-xs font-medium text-muted-foreground">{Icon && <Icon className="h-4 w-4 shrink-0 text-primary" />}<span className="min-w-0">{label}</span></p>
-      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}>{value}</p>}
-      <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-        {!loading && (change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint)}
+    <Popover>
+      <PopoverTrigger asChild><Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-muted-foreground" aria-label={ui("Como funciona: {{indicador}}", { indicador: title })}><CircleHelp className="h-4 w-4" /></Button></PopoverTrigger>
+      <PopoverContent className="max-w-[calc(100vw-2rem)] text-sm" align="start"><p className="mb-2 font-semibold">{title}</p><p className="leading-relaxed text-muted-foreground">{description}</p></PopoverContent>
+    </Popover>
+  );
+}
+
+function Stat({ label, value, hint, change, loading, icon: Icon, className = "" }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean; icon?: LucideIcon; className?: string }) {
+  const { t: ui } = useTranslation("ui");
+  return (
+    <div className={`min-w-0 border-b border-border p-4 last:border-b-0 odd:border-r lg:border-b-0 lg:border-r lg:last:border-r-0 ${className}`}>
+      <p className="flex min-h-8 items-center gap-2 text-xs font-medium text-muted-foreground">{Icon && <Icon size={16} strokeWidth={1.75} className="h-4 w-4 shrink-0 text-primary" />}<span className="min-w-0">{label}</span></p>
+      {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full break-words font-display font-bold ${valueTextSize(value)}`}>{value}</p>}
+      <div className="mt-2 flex min-h-8 flex-wrap items-center gap-x-1.5 gap-y-1 text-xs leading-relaxed text-muted-foreground">
+        {!loading && (change !== undefined ? (change === 0 || change === null ? ui("Sem métricas para analisar no período") : <><Change value={change} /> <span>{ui("no período")}</span></>) : hint)}
       </div>
     </div>
   );
@@ -522,10 +533,10 @@ function Stat({ label, value, hint, change, loading, icon: Icon }: { label: stri
 
 function valueTextSize(value: string, featured = false) {
   const length = value.length;
-  if (length > 20) return featured ? "text-xl sm:text-2xl" : "text-base sm:text-lg";
-  if (length > 16) return featured ? "text-2xl sm:text-3xl" : "text-lg sm:text-xl";
-  if (length > 13) return featured ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl";
-  return featured ? "text-4xl sm:text-5xl" : "text-2xl sm:text-[1.7rem]";
+  if (length > 20) return "text-base sm:text-lg";
+  if (length > 16) return "text-lg sm:text-xl";
+  if (length > 13) return "text-xl sm:text-2xl";
+  return featured ? "text-2xl sm:text-3xl" : "text-2xl sm:text-[1.7rem]";
 }
 
 function Mini({ label, value, change }: { label: string; value: string; change?: number | null }) {
