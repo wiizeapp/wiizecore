@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowUpRight, Inbox } from "lucide-react";
+import { DashboardAmount } from "./amount";
 
 export function Panel({ title, subtitle, action, children, className = "" }: { title: string; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
@@ -58,7 +59,7 @@ export function RankList({ items, format }: { items: { label: string; value: num
               <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-muted text-[10px] font-semibold text-muted-foreground">{idx + 1}</span>
               <span className="truncate font-medium">{i.label}</span>
             </span>
-            <span className="numeric-tabular shrink-0 font-semibold">{format(i.value)}</span>
+            <span className="numeric-tabular shrink-0 font-semibold"><DashboardAmount value={format(i.value)} /></span>
           </div>
           <div className="mt-1.5 flex items-center gap-2">
             <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">

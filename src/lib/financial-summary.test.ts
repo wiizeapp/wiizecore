@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countFirstChargeCustomers, forecastNext30Days, isOverdue, summarize } from "./financial-summary";
+import { countFirstChargeCustomers, forecastNext30Days, monthlyIssuedNetHistory, isOverdue, summarize } from "./financial-summary";
 
 describe("resumo financeiro compartilhado", () => {
   it("separa faturado, pago, aberto, vencido, taxas e líquido", () => {
@@ -118,5 +118,21 @@ describe("indicadores do painel", () => {
       { ...base, customer_id: "later", created_at: "2026-11-01T00:00:00Z" }, { ...base, customer_id: null },
     ];
     expect(countFirstChargeCustomers(rows, new Date("2026-10-01T00:00:00Z"), new Date("2026-11-01T00:00:00Z"))).toBe(1);
+  });
+});
+
+
+describe("histórico mensal emitido", () => {
+  const base = { status: "paid", gross_amount: "100.10", platform_fee_amount: "3.01", created_at: "2026-01-01T12:00:00Z", due_on: "2026-05-10", subscription_id: "sub" };
+  it("agrupa pelo vencimento e desconta taxas e reembolso", () => {
+    expect(monthlyIssuedNetHistory([base, { ...base, net_amount: "90.10", refunded_amount: "1.01" }, { ...base, subscription_id: null, installment_count: 3, due_on: "2026-06-10", status: "overdue" }], "2026-07-31", 3)).toEqual([{ month: "2026-05", net: 186.18, count: 2 }, { month: "2026-06", net: 97.09, count: 1 }, { month: "2026-07", net: 0, count: 0 }]);
+  });
+  it("exclui avulsos, cancelados, falhos, sem vencimento e fora da janela", () => {
+    const rows = [{ ...base, subscription_id: null }, { ...base, status: "cancelled" }, { ...base, status: "failed" }, { ...base, due_on: null }, { ...base, due_on: "2025-05-01" }, { ...base, due_on: "2026-08-01" }];
+    expect(monthlyIssuedNetHistory(rows, "2026-07-31", 3).every((x) => x.net === 0 && x.count === 0)).toBe(true);
+  });
+  it("respeita virada do ano, não projeta ciclos e impede líquido negativo", () => {
+    expect(monthlyIssuedNetHistory([{ ...base, due_on: "2025-12-20", net_amount: "1.00", refunded_amount: "2.00" }], "2026-01-01", 2)).toEqual([{ month: "2025-12", net: 0, count: 1 }, { month: "2026-01", net: 0, count: 0 }]);
+    expect(monthlyIssuedNetHistory([], "2026-01-01", 2)).toHaveLength(2);
   });
 });
