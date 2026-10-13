@@ -30,21 +30,21 @@ const metrics = [
   { value: "+3,8 mi", label: "contas criadas" },
   { value: "+549,3 mi", label: "cobranças pagas" },
   { value: "2021", label: "autorizada como instituição de pagamento pelo Banco Central" },
-];
+] as const;
 
 const commitments = [
   ["Transparência nas informações", "Taxas, prazos e condições ficam acessíveis antes de cobrar."],
   ["Tratamento responsável dos dados", "A WiizePay não armazena CVV, senha ou número completo do cartão."],
   ["Clareza operacional", "Um pagamento só muda de estado após a confirmação do provedor."],
   ["Evolução tecnológica responsável", "Regras financeiras e permissões são decididas no servidor, não no navegador."],
-];
+] as const;
 
 const principles = [
   ["Integração", "Acreditamos em processos que trabalham juntos, conectando informações e reduzindo a fragmentação."],
   ["Eficiência", "Buscamos simplificar rotinas e eliminar complexidades operacionais desnecessárias."],
   ["Responsabilidade", "Valorizamos a transparência, o cuidado com as informações e a clareza nas relações com nossos clientes."],
   ["Evolução", "Desenvolvemos tecnologia com atenção às necessidades reais dos negócios e à melhoria contínua da experiência."],
-];
+] as const;
 
 function SobrePage() {
   const { t: ui } = useTranslation("ui");
