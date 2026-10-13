@@ -75,12 +75,12 @@ function Split({ intro, notes, visual, reverse = false }: { intro: ReactNode; no
 export function OperationFlow() {
   const ui = useUi();
   const flow = [
-    { icon: Users, label: "Cliente" },
-    { icon: Briefcase, label: "Serviço" },
-    { icon: Receipt, label: "Cobrança" },
-    { icon: CreditCard, label: "Pagamento" },
-    { icon: Wallet, label: "Financeiro" },
-    { icon: FileText, label: "Nota fiscal" },
+    { icon: Users, label: "Cliente", tone: "bg-info text-info-foreground" },
+    { icon: Briefcase, label: "Serviço", tone: "bg-warning text-warning-foreground" },
+    { icon: Receipt, label: "Cobrança", tone: "bg-primary text-primary-foreground" },
+    { icon: CreditCard, label: "Pagamento", tone: "bg-success text-success-foreground" },
+    { icon: Wallet, label: "Financeiro", tone: "bg-primary text-primary-foreground" },
+    { icon: FileText, label: "Nota fiscal", tone: "bg-info text-info-foreground" },
   ];
   const modules = [
     { icon: Receipt, title: "Cobranças e pagamentos", text: "Crie cobranças avulsas, parceladas ou recorrentes e receba por Pix, Pix Automático, boleto ou cartão." },
@@ -94,18 +94,16 @@ export function OperationFlow() {
     <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
       <SectionIntro center eyebrow="A plataforma" title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
-        <div className="feature-visual feature-visual-1 relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
+        <div className="operation-flow-visual relative isolate overflow-hidden rounded-xl border border-primary/25 p-6 shadow-float lg:row-span-3 lg:p-8">
           <div className="feature-visual-grid absolute inset-0 -z-10" aria-hidden="true" />
-          <div className="feature-visual-glow absolute inset-0 -z-10" aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-x-0 top-0 -z-[5] h-44 bg-gradient-to-b from-background/90 via-background/60 to-transparent backdrop-blur-[2px]" aria-hidden="true" />
           <p className="section-kicker">{ui("Fluxo conectado")}</p>
           <h3 className="mt-3 text-2xl font-semibold leading-tight">{ui("Cada etapa alimenta a próxima.")}</h3>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{ui("Sem planilhas paralelas: o pagamento recebido atualiza o cliente, o saldo e o financeiro.")}</p>
           <ol className="mt-8 space-y-3" style={{ perspective: "800px" }}>
             {flow.map((step, i) => (
               <li key={step.label} className="operation-flow-step" style={{ transformStyle: "preserve-3d" }}>
-                <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-card/90 p-2.5 shadow-float backdrop-blur-sm">
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><step.icon className="size-4" /></span>
+                <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-2.5 shadow-card">
+                <span className={`grid size-8 shrink-0 place-items-center rounded-md ${step.tone}`}><step.icon className="size-4" /></span>
                 <span className="text-sm font-semibold">{ui(step.label)}</span>
                 <span className="ml-auto text-[10px] font-semibold text-muted-foreground">0{i + 1}</span>
                 </div>
@@ -134,7 +132,7 @@ export function HowItWorksSection() {
     ["04", Wallet, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
   ];
   return (
-    <section className="border-y border-border bg-surface">
+    <section className="how-it-works-band border-y border-primary/15">
       <div className="section-shell py-20 lg:py-28">
         <div className="mx-auto max-w-2xl text-center">
           <p className="section-kicker">{ui("Como funciona")}</p>

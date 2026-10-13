@@ -68,7 +68,7 @@ export function PublicHeader() {
   return (
     <header className="fixed left-1/2 top-3 z-40 w-[calc(100%-1.5rem)] max-w-[70rem] -translate-x-1/2 rounded-lg border border-border/70 bg-background/90 shadow-card backdrop-blur-xl sm:top-4 sm:w-[calc(100%-3rem)]">
       <div className="relative mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5">
-        <Link to="/" aria-label={t("home")} className="scale-105"><Brand /></Link>
+        <Link to="/" aria-label={t("home")} className="flex h-9 shrink-0 items-center"><Brand className="leading-none" /></Link>
         <nav className="hidden items-center gap-1 md:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
@@ -99,12 +99,12 @@ export function PublicFooter() {
   const { t } = useTranslation("footer");
   const { t: tn } = useTranslation("navigation");
   return (
-    <footer className="border-t border-border bg-surface">
+    <footer className="public-brand-surface border-t border-border">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
           <Brand compact />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
-          <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
+          <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
         </div>
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
