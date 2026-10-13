@@ -60,19 +60,7 @@ const faqs = [
 function Landing() {
   const { t: ui } = useTranslation("ui");
   return (
-    <PublicPage footerStart={
-      <section className="premium-cta public-brand-surface relative isolate overflow-hidden px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizePay")}>
-        <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="mx-auto max-w-3xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a WiizePay")}</span>
-          <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
-          <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
-          <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
-            <Link to="/auth" search={{ modo: "criar" }}>{ui("Vai, clica nesse botão\n")} <ArrowRight className="h-4 w-4" /></Link>
-          </Button>
-        </div>
-      </section>
-    }>
+    <PublicPage>
       <main>
         <section className="hero-payment relative overflow-hidden border-b border-border">
           <div className="section-shell relative z-10 flex flex-col items-center pb-5 pt-10 text-center sm:pt-12 lg:pt-14">
@@ -94,7 +82,7 @@ function Landing() {
           <div className="mx-auto max-w-2xl text-center"><p className="section-kicker">{ui("Funcionalidades")}</p><h2 className="mt-2 text-3xl font-semibold sm:text-5xl">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
           <div className="mt-14 space-y-14 lg:space-y-20">
             {featureGroups.map((group, index) => (
-              <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg border border-border bg-card shadow-card lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
+              <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
                 <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-start lg:px-9 lg:pb-5 lg:pt-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
                   <span className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground"><group.icon className="size-6" /></span>
                   <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
@@ -115,7 +103,7 @@ function Landing() {
                         <div className="feature-visual-glow absolute inset-0" aria-hidden="true" />
                         <div className="absolute inset-x-0 top-0 -bottom-8 z-10 flex justify-center px-3 pt-5 sm:px-5 lg:px-7">
                           <div className="feature-demo-stage h-full w-full max-w-2xl" data-visible="true">
-                            <div className="h-full w-full [&>*]:h-full [&>*]:shadow-card"><group.visual /></div>
+                            <div className="h-full w-full [&>*]:h-full [&>*]:shadow-float"><group.visual /></div>
                           </div>
                         </div>
                         <div className="feature-visual-bottom-fade absolute inset-x-0 bottom-0 z-20 h-20 sm:h-24" aria-hidden="true" />
@@ -132,6 +120,19 @@ function Landing() {
 
         <section className="section-shell grid gap-12 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:py-20"><div><p className="section-kicker">{ui("Perguntas frequentes")}</p><h2 className="mt-3 text-3xl font-semibold sm:text-4xl">{ui("Informação clara")} <span className="hero-shine">{ui("antes de começar.")}</span></h2></div><Accordion type="single" collapsible>{faqs.map(([question = "",answer = ""], index) => <AccordionItem key={question} value={`faq-${index}`}><AccordionTrigger className="text-base">{ui(question)}</AccordionTrigger><AccordionContent className="pr-8 leading-6 text-muted-foreground">{ui(answer)}</AccordionContent></AccordionItem>)}</Accordion></section>
 
+        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizePay")}>
+              <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
+              <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
+              <div className="mx-auto max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a WiizePay")}</span>
+                <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
+                <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
+                <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
+                  <Link to="/auth" search={{ modo: "criar" }}>{ui("Vai, clica nesse botão\n")} <ArrowRight className="h-4 w-4" /></Link>
+                </Button>
+              </div>
+              <div className="premium-cta-edge absolute inset-x-[8%] bottom-0 h-px" aria-hidden="true" />
+        </section>
       </main>
     </PublicPage>
   );

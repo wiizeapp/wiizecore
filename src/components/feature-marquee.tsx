@@ -1,4 +1,6 @@
 import { Boxes } from "lucide-react";
+import brandLogoUrl from "@/assets/wiizepay-logo.png";
+const brandLogo = { url: brandLogoUrl };
 import wiizeLogoUrl from "@/assets/ecosystem-wiize.png";
 const wiizeLogo = { url: wiizeLogoUrl };
 import metaLogoUrl from "@/assets/ecosystem-meta.png";
@@ -15,7 +17,6 @@ import metaDarkLogoUrl from "@/assets/ecosystem-meta-dark.png";
 const metaDarkLogo = { url: metaDarkLogoUrl };
 import whatsappDarkLogoUrl from "@/assets/ecosystem-whatsapp-dark.png";
 const whatsappDarkLogo = { url: whatsappDarkLogoUrl };
-import whatsappLightLogoUrl from "@/assets/ecosystem-whatsapp-light.png";
 import resendDarkLogoUrl from "@/assets/ecosystem-resend-dark.png";
 const resendDarkLogo = { url: resendDarkLogoUrl };
 import wiizeWordmarkDarkLogoUrl from "@/assets/ecosystem-wiize-wordmark-dark.png";
@@ -23,21 +24,21 @@ const wiizeWordmarkDarkLogo = { url: wiizeWordmarkDarkLogoUrl };
 import { Marquee } from "@/components/ui/marquee";
 
 const items = [
-  { label: "Wiize", logo: wiizeLogo.url, darkLogo: wiizeWordmarkDarkLogo.url },
+  { label: "Wiize", logo: wiizeLogo.url, darkLogo: wiizeWordmarkDarkLogo.url, withBrandMark: true },
   { label: "Asaas", logo: asaasLogo.url, darkLogo: asaasWhiteLogo.url },
   { label: "Meta", logo: metaLogo.url, darkLogo: metaDarkLogo.url },
-  { label: "WhatsApp", logo: whatsappLightLogoUrl, darkLogo: whatsappDarkLogo.url },
+  { label: "WhatsApp", logo: whatsappDarkLogo.url, darkLogo: whatsappDarkLogo.url },
   { label: "Resend", logo: resendLogo.url, darkLogo: resendDarkLogo.url },
   { label: "Vercel", logo: vercelDarkLogo.url, darkLogo: vercelDarkLogo.url },
 ];
 
 function EcosystemMark({ item, compact = false }: { item: (typeof items)[number]; compact?: boolean }) {
   const isWhatsApp = item.label === "WhatsApp";
-  const monochromeOnLight = item.label === "Vercel";
   const logoClass = compact ? "h-4 max-w-12 object-contain" : `${isWhatsApp ? "h-8 sm:h-9" : "h-7"} max-w-28 object-contain`;
   return (
     <span className="inline-flex items-center gap-1.5">
-      <img src={item.logo} alt="" className={`${logoClass} ${monochromeOnLight ? "brightness-0" : ""} dark:hidden`} />
+      {item.withBrandMark ? <img src={brandLogo.url} alt="" className={compact ? "size-4 rounded-sm" : "size-7 rounded-md"} /> : null}
+      <img src={item.logo} alt="" className={`${logoClass} dark:hidden`} />
       <img src={item.darkLogo ?? item.logo} alt="" className={`${logoClass} hidden dark:block`} />
     </span>
   );

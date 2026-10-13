@@ -4,6 +4,7 @@ import { ArrowRight, Palette, UserRoundCheck, BarChart3, BellRing, ChevronDown, 
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher, useLanguageBootstrap } from "@/components/language-switcher";
 
@@ -54,7 +55,7 @@ function ResourcesMenu() {
       <Button variant="ghost" size="sm" className="gap-1.5 text-sm font-medium" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{t("resources")} <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} /></Button>
       {/* Ponte invisível entre o botão e o painel para o mouse não "cair" no vão. */}
       {open ? <div className="absolute left-0 top-full h-12 w-full" aria-hidden="true" /> : null}
-      <div className={`fixed left-1/2 top-16 w-[min(66rem,calc(100vw-3rem))] -translate-x-1/2 pt-3 transition-opacity duration-200 ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
+      <div className={`fixed left-1/2 top-[4.5rem] w-[min(76rem,calc(100vw-4rem))] -translate-x-1/2 pt-3 transition-opacity duration-200 lg:top-[5.25rem] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
         <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-popover p-5 text-popover-foreground shadow-float">
           {resourceLinks.map((item) => <Link key={item.to} to={item.to} preload="intent" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1} className="group/item flex min-w-0 gap-3 rounded-md p-3 transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"><span className="grid size-9 shrink-0 place-items-center rounded-md bg-surface text-primary transition-colors group-hover/item:bg-primary group-hover/item:text-primary-foreground"><item.icon className="size-4" /></span><span className="min-w-0"><span className="block text-sm font-semibold text-foreground">{res(item.key)[0]}</span><span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{res(item.key)[1]}</span></span></Link>)}
         </div>
@@ -66,9 +67,9 @@ function ResourcesMenu() {
 export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
-    <header className="fixed left-1/2 top-3 z-40 w-[calc(100%-1.5rem)] max-w-[70rem] -translate-x-1/2 rounded-lg border border-border/70 bg-background/90 shadow-card backdrop-blur-xl sm:top-4 sm:w-[calc(100%-3rem)]">
-      <div className="relative mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5">
-        <Link to="/" aria-label={t("home")} className="flex h-9 shrink-0 items-center"><Brand className="leading-none" /></Link>
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
+      <div className="relative mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-5 px-5 lg:h-[5.25rem] lg:px-8">
+        <Link to="/" aria-label={t("home")} className="scale-105"><Brand /></Link>
         <nav className="hidden items-center gap-1 md:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
@@ -78,7 +79,7 @@ export function PublicHeader() {
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
           <Sheet>
             <SheetTrigger asChild><Button variant="ghost" size="icon" className="md:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
-            <SheetContent className="w-[min(22rem,88vw)] border-border bg-background text-foreground">
+            <SheetContent className="dark w-[min(22rem,88vw)] border-border bg-background text-foreground">
               <SheetHeader className="text-left"><SheetTitle>{t("menuTitle")}</SheetTitle></SheetHeader>
               <nav className="mt-8 grid gap-2" aria-label={t("mobileNav")}>
                 <p className="px-3 pt-2 text-xs font-bold uppercase text-muted-foreground">{t("resources")}</p>
@@ -95,17 +96,16 @@ export function PublicHeader() {
   );
 }
 
-export function PublicFooter({ start }: { start?: React.ReactNode }) {
+export function PublicFooter() {
   const { t } = useTranslation("footer");
   const { t: tn } = useTranslation("navigation");
   return (
-    <footer className={`bg-background ${start ? "" : "border-t border-border"}`}>
-      {start}
+    <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
-          <Brand className="rounded-lg bg-card p-1" />
+          <Brand compact />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
-          <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
+          <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
         </div>
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
@@ -125,11 +125,12 @@ export function PublicFooter({ start }: { start?: React.ReactNode }) {
   );
 }
 
-export function PublicPage({ children, footerStart }: { children: React.ReactNode; footerStart?: React.ReactNode }) {
+export function PublicPage({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
   useLanguageBootstrap();
   useRevealOnScroll();
   const { t } = useTranslation("footer");
-  return <div className="public-site min-h-screen bg-background text-foreground"><PublicHeader />{children}<PublicFooter start={footerStart} /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
+  return <div className={`${loading || !user ? "dark" : ""} min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
 /** Revela seções e cartões após o hero, sem animar o conteúdo interno. */
 function useRevealOnScroll() {

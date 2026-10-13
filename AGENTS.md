@@ -20,7 +20,7 @@
 - Public checkout order: customer data → sign current contract version (if linked) → payment; no step can be bypassed.
 - Payment method changes and regularization create a new `payment_attempts` row for the same `payments` row via `src/lib/payment-attempts.server.ts` (create new → cancel old → activate); webhooks for superseded attempts are discarded.
 - Checkout appearance is versioned in `checkout_appearance_versions`; each charge stores the version used at creation, and logos live in the private `checkout-logos` bucket served by signed URL. Why: old charges keep their look.
-- Scope internal styling to `.internal-app`; public pages inherit document theme and paired feature tokens, never auth overrides. Why: consistent first paint.
+- Internal light-theme styling is scoped through `.internal-app`; public pages keep their own look. Why: shared tokens must not flatten the sales site.
 - MFA recovery uses one non-regenerable, single-use backup code; password recovery preserves MFA, while disabling MFA requires a fresh TOTP or that backup code. Why: an authenticated session alone must never disable the second factor.
 - Card payments in the public checkout go through `payCheckoutWithCard` (Asaas payWithCreditCard); card data is never stored or logged, only last4 in audit, and status changes only via webhook.
 - Asaas decides activation approval; WiizePay creates the subaccount, sends documents and mirrors provider status; admins never approve it.

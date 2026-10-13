@@ -94,16 +94,18 @@ export function OperationFlow() {
     <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
       <SectionIntro center eyebrow="A plataforma" title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
-        <div className="operation-flow-visual relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
+        <div className="feature-visual feature-visual-1 relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
           <div className="feature-visual-grid absolute inset-0 -z-10" aria-hidden="true" />
+          <div className="feature-visual-glow absolute inset-0 -z-10" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 -z-[5] h-44 bg-gradient-to-b from-background/90 via-background/60 to-transparent backdrop-blur-[2px]" aria-hidden="true" />
           <p className="section-kicker">{ui("Fluxo conectado")}</p>
           <h3 className="mt-3 text-2xl font-semibold leading-tight">{ui("Cada etapa alimenta a próxima.")}</h3>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{ui("Sem planilhas paralelas: o pagamento recebido atualiza o cliente, o saldo e o financeiro.")}</p>
           <ol className="mt-8 space-y-3" style={{ perspective: "800px" }}>
             {flow.map((step, i) => (
               <li key={step.label} className="operation-flow-step" style={{ transformStyle: "preserve-3d" }}>
-                <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-2.5 shadow-card">
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><step.icon className="size-4" /></span>
+                <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-card/90 p-2.5 shadow-float backdrop-blur-sm">
+                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><step.icon className="size-4" /></span>
                 <span className="text-sm font-semibold">{ui(step.label)}</span>
                 <span className="ml-auto text-[10px] font-semibold text-muted-foreground">0{i + 1}</span>
                 </div>
@@ -132,7 +134,7 @@ export function HowItWorksSection() {
     ["04", Wallet, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
   ];
   return (
-    <section className="how-it-works-band border-y border-primary/15">
+    <section className="border-y border-border bg-surface">
       <div className="section-shell py-20 lg:py-28">
         <div className="mx-auto max-w-2xl text-center">
           <p className="section-kicker">{ui("Como funciona")}</p>
@@ -174,18 +176,18 @@ export function ComparisonSection() {
   return (
     <section className="section-shell py-20 lg:py-28">
       <SectionIntro center eyebrow="Por que a WiizePay" title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A WiizePay cuida do que vem antes e do que vem depois dele." />
-      <div className="public-comparison relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
+      <div className="relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
         <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 cmp-half-live" />
         <div className="relative">
-          <div className="comparison-header grid grid-cols-2">
-            <div className="flex min-w-0 flex-col items-start gap-2 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+          <div className="grid grid-cols-2">
+            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-border/70 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
               <span className="grid size-9 shrink-0 place-items-center rounded-xl border sm:size-11 border-border bg-muted/40 text-muted-foreground"><CreditCard className="size-5" /></span>
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{ui("Sem a WiizePay")}</p>
                 <p className="mt-0.5 font-display text-sm font-semibold text-muted-foreground sm:text-base">{ui("Só um link de pagamento")}</p>
               </div>
             </div>
-            <div className="flex min-w-0 flex-col items-start gap-2 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-l border-border/70 border-l-primary/20 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
               <img src={brandLogo.url} alt="WiizePay" width={44} height={44} className="size-9 shrink-0 rounded-xl sm:size-11" />
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a WiizePay")}</p>
@@ -195,7 +197,7 @@ export function ComparisonSection() {
             </div>
           </div>
           {rows.map(([label, off, on]) => (
-            <div key={label} className="cmp-anim grid grid-cols-2">
+            <div key={label} className="cmp-anim grid grid-cols-2 border-b border-border/70 last:border-b-0">
               <div className="min-w-0 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">{ui(label)}</p>
                 <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
@@ -203,7 +205,7 @@ export function ComparisonSection() {
                   <p className="text-xs leading-5 text-muted-foreground sm:text-[0.95rem] sm:leading-6">{ui(off)}</p>
                 </div>
               </div>
-              <div className="min-w-0 px-3 py-3 sm:px-7 sm:py-4">
+              <div className="min-w-0 border-l border-primary/15 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui(label)}</p>
                 <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
                   <span className="mt-0.5 grid size-5 shrink-0 sm:size-6 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3.5" /></span>
@@ -487,7 +489,7 @@ function TestimonialsRow({ items, duration, reverse = false }: { items: Testimon
         {[0, 1, 2].map((copy) => (
           <div key={copy} className="flex flex-row gap-4 md:gap-6" aria-hidden={copy !== 0}>
             {items.map(({ text, name, role }) => (
-              <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 md:w-[380px]">
+              <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 shadow-card md:w-[380px]">
                 <Quote className="mb-3 size-5 text-primary/40 sm:mb-4 sm:size-6" />
                 <blockquote className="m-0"><p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm md:text-base">{ui(text)}</p></blockquote>
                 <figcaption className="mt-4 flex items-center gap-3 sm:mt-6 sm:gap-4">

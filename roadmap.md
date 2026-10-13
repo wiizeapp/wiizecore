@@ -1,19 +1,5 @@
 # Roadmap
 
-- [x] Ajustar botão e minicard da CTA, colocá-la no início do rodapé sem separador, mostrar logo completa e suavizar brilho verde dos títulos; conferido a 1260px e 393px, botão abre cadastro, sem erros.
-
-- [x] Suavizar abertura e fundos das demonstrações e cartões de funcionalidades, preservando o verde dos botões; conferido a 1260px e 393px, sem imagens quebradas, transbordamento ou erros.
-
-- [x] Uniformizar ícones e fundo verde da jornada, recuperar comparativo com grade suave e divisórias completas, separar CTA e restaurar rodapé neutro; conferido a 1260px e 393px, sem transbordamento ou erros.
-
-- [x] Unir degradê da CTA ao rodapé, intensificar comparativo à direita e adaptar jornada à referência clara com borda padrão; conferido a 1260px e 393px, sem imagens quebradas ou erros.
-
-- [x] Ajustar CTA e rodapé para verde sólido, jornada mais viva, logo alinhada, abertura com grade e brilho branco e fundo verde suave nos quatro passos; página conferida a 393px, 768px e 1260px, sem imagens quebradas ou erros.
-
-- [x] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências; menus e layout conferidos a 1260px e 393px.
-
-- [x] Definir tema branco padrão, revisar logos do carrossel e fundos das funcionalidades, preservar sombra da jornada e remover sombras dos depoimentos; abertura, tema salvo e imagens conferidos.
-
 - [x] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; 10 testes aprovados e compilação OK.
 - [x] Manter os filtros de período em uma linha só no celular e separar todos os cards complementares no responsivo; conferido a 393px, 768px e 1280px.
 - [ ] Conferir visualmente o painel conectado: sessão disponível está bloqueada pela pesquisa inicial pendente; não alterar respostas do usuário para testar.
