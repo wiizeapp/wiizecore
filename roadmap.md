@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Alinhar títulos/valores superiores, equalizar tamanho visual das imagens, ampliar centavos e uniformizar gráficos com seleção de colunas/linha.
+
 - [x] Ajustar ícones, divisórias no celular, textos removidos e valores com centavos discretos.
 - [x] Acrescentar histórico mensal do líquido de parcelas/recorrências emitidas; 14 testes passaram e compilação sem erros. Conferência visual permanece na pendência abaixo.
 

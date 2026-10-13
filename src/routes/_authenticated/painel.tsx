@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authenticated/painel")({
   component: Dashboard,
 });
 
-const mrrChartConfig = { net: { label: "MRR líquido emitido", color: "var(--chart-2)" } } satisfies ChartConfig;
+const mrrChartConfig = { net: { label: "MRR líquido emitido", color: "var(--primary)" } } satisfies ChartConfig;
 const chartConfig = { sold: { label: "Faturamento", color: "var(--primary)" } } satisfies ChartConfig;
 
 const METHOD_LABEL: Record<string, string> = { pix: "Pix", boleto: "Boleto", credit_card: "Cartão de crédito", debit_card: "Cartão de débito" };
@@ -76,6 +76,7 @@ function Dashboard() {
   const [hidden, setHidden] = useState(false);
   const [journeyOpen, setJourneyOpen] = useState(true);
   const [revenueChart, setRevenueChart] = useState<"columns" | "line">("columns");
+  const [mrrChart, setMrrChart] = useState<"columns" | "line">("columns");
 
   const wallet = useTenantQuery("wallet", tenantId, async (t) => {
     const { data, error } = await supabase.from("wallets").select("available_balance, pending_balance").eq("tenant_id", t).maybeSingle();
@@ -319,16 +320,16 @@ function Dashboard() {
       {/* Saldo e previsão da empresa — independentes do filtro histórico. */}
       <section aria-label={ui("Resumo financeiro")} className="grid gap-3 sm:grid-cols-2 sm:gap-6">
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 border-b border-border/60 pb-6 pt-3 sm:grid-cols-[minmax(0,1fr)_112px] sm:border-b-0 sm:border-r sm:py-3 sm:pr-6 xl:grid-cols-[minmax(0,1fr)_128px]">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="grid min-w-0 grid-rows-[28px_40px_16px] gap-y-2">
+            <div className="flex h-7 min-w-0 items-center gap-2 text-sm text-muted-foreground">
               {ui("Saldo disponível")}
               <MetricHelp title={ui("Saldo disponível")} description={ui("Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.")} />
               <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")}>
                 {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
-            {wallet.isPending || wallet.isError ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-2 break-words font-display font-bold text-foreground ${valueTextSize(mask(cents(available)), true)}`}><DashboardAmount value={mask(cents(available))} /></p>}
-            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            {wallet.isPending || wallet.isError ? <Skeleton h="h-8 self-center" /> : <p className={`numeric-tabular self-center break-words font-display font-bold text-foreground ${valueTextSize(mask(cents(available)), true)}`}><DashboardAmount value={mask(cents(available))} /></p>}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
               <span className="text-muted-foreground">{wallet.isPending || wallet.isError ? ui("Carregando…") : ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
               <Link to="/financeiro" className="font-semibold text-primary hover:underline">{ui("Sacar")} <ArrowRight className="inline h-3 w-3" /></Link>
             </div>
@@ -336,11 +337,11 @@ function Dashboard() {
           <img src={moneyAsset.url} alt="" className="h-20 w-20 shrink-0 object-contain sm:h-28 sm:w-28 xl:h-32 xl:w-32" />
         </div>
         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_112px] xl:grid-cols-[minmax(0,1fr)_128px]">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground"><span className="min-w-0">{ui("MRR líquido previsto")}</span><MetricHelp title={ui("MRR líquido previsto")} description={ui("Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.")} /></div>
-            {loading ? <Skeleton h="mt-3 h-8" /> : <p className={`numeric-tabular mt-3 break-words font-display font-bold text-foreground ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}><DashboardAmount value={mask(formatBRL(s.forecast.net))} /></p>}
+          <div className="grid min-w-0 grid-rows-[28px_40px_16px] gap-y-2">
+            <div className="flex h-7 min-w-0 items-center gap-2 text-sm text-muted-foreground"><span className="min-w-0">{ui("MRR líquido previsto")}</span><MetricHelp title={ui("MRR líquido previsto")} description={ui("Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.")} /></div>
+            {loading ? <Skeleton h="h-8 self-center" /> : <p className={`numeric-tabular self-center break-words font-display font-bold text-foreground ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}><DashboardAmount value={mask(formatBRL(s.forecast.net))} /></p>}
           </div>
-          <img src={calendarAsset.url} alt="" className="h-20 w-20 shrink-0 object-contain sm:h-28 sm:w-28 xl:h-32 xl:w-32" />
+          <img src={calendarAsset.url} alt="" className="h-20 w-20 shrink-0 scale-[0.78] object-contain sm:h-28 sm:w-28 xl:h-32 xl:w-32" />
         </div>
       </section>
       <section aria-label={ui("Indicadores do período")} className="surface-panel grid grid-cols-2 overflow-hidden lg:grid-cols-5">
@@ -371,7 +372,7 @@ function Dashboard() {
 
       {/* 4. Faturamento */}
        <Panel title={ui("Faturamento")} subtitle={ui("Valor total vendido · {{granularity}}", { granularity: ui(range.granularity === "hour" ? "por hora" : "por dia") })}
-         action={<div className="flex shrink-0 items-center gap-3"><div className="flex rounded-lg border border-border p-0.5" aria-label={ui("Formato do gráfico")}><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${revenueChart === "columns" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setRevenueChart("columns")} aria-label={ui("Gráfico de colunas")}><BarChart3 /></Button><Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${revenueChart === "line" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => setRevenueChart("line")} aria-label={ui("Gráfico de linha")}><LineChartIcon /></Button></div><div className="text-right"><Change value={pctChange(s.curr.sold, s.prev.sold)} /><p className="text-[11px] text-muted-foreground">{ui("vs. período anterior")}</p></div></div>}>
+         action={<div className="flex shrink-0 items-center gap-3"><ChartMode value={revenueChart} onChange={setRevenueChart} /><div className="text-right"><Change value={pctChange(s.curr.sold, s.prev.sold)} /><p className="text-[11px] text-muted-foreground">{ui("vs. período anterior")}</p></div></div>}>
         {loading ? <Skeleton h="h-[280px]" /> : s.series.some((x) => x.sold) ? (
           <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full">
             {revenueChart === "columns" ? <BarChart data={s.series} margin={{ left: 4, right: 8, top: 8 }}>
@@ -392,17 +393,23 @@ function Dashboard() {
       </Panel>
 
       <Panel title={ui("Evolução do MRR")} subtitle={ui("MRR líquido emitido · últimos 12 meses")}
-        action={<MetricHelp title={ui("Evolução do MRR")} description={ui("Líquido das parcelas e recorrências já emitidas, agrupado pelo mês de vencimento, com taxas registradas e reembolsos descontados. Inclui cobranças pagas, em aberto e vencidas; exclui avulsas, canceladas e falhas. É a evolução da base emitida, não MRR contratual normalizado nem receita recebida. Não reconstrói alterações antigas nem projeta ciclos futuros. O mês atual está em andamento e este gráfico não depende do filtro de período.")} />}>
+        action={<div className="flex shrink-0 items-center gap-3"><ChartMode value={mrrChart} onChange={setMrrChart} /><MetricHelp title={ui("Evolução do MRR")} description={ui("Líquido das parcelas e recorrências já emitidas, agrupado pelo mês de vencimento, com taxas registradas e reembolsos descontados. Inclui cobranças pagas, em aberto e vencidas; exclui avulsas, canceladas e falhas. É a evolução da base emitida, não MRR contratual normalizado nem receita recebida. Não reconstrói alterações antigas nem projeta ciclos futuros. O mês atual está em andamento e este gráfico não depende do filtro de período.")} /></div>}>
         {loading ? <Skeleton h="h-[280px]" /> : s.mrrSeries.some((point) => point.count > 0) ? (
           <>
             <ChartContainer config={mrrChartConfig} className="aspect-auto h-[280px] w-full">
-              <LineChart data={s.mrrSeries} margin={{ left: 4, right: 12, top: 12, bottom: 8 }}>
+              {mrrChart === "columns" ? <BarChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
+                <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
+                <ChartTooltip cursor={{ fill: "var(--muted)" }} content={<MrrTooltip />} />
+                <Bar dataKey="net" fill="var(--primary)" radius={[5, 5, 0, 0]} maxBarSize={48} />
+              </BarChart> : <LineChart data={s.mrrSeries} margin={{ left: 4, right: 8, top: 8 }}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} minTickGap={24} />
                 <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v) => `R$ ${Number(v).toLocaleString(i18n.resolvedLanguage, { notation: "compact" })}`} />
                 <ChartTooltip cursor={{ strokeDasharray: "4 4" }} content={<MrrTooltip />} />
-                <Line type="linear" dataKey="net" stroke="var(--chart-2)" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
-              </LineChart>
+                <Line type="monotone" dataKey="net" stroke="var(--primary)" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+              </LineChart>}
             </ChartContainer>
             <div className="mt-4 grid grid-cols-3 gap-x-3 gap-y-4 border-t border-border/60 pt-4 sm:grid-cols-6 lg:grid-cols-12">
               {s.mrrSeries.map((point) => <div key={point.month} className="min-w-0"><p className="text-[11px] text-muted-foreground">{point.label}</p><p className="mt-1 text-sm font-semibold"><DashboardAmount value={mask(formatBRL(point.net))} /></p></div>)}
@@ -527,6 +534,14 @@ function Dashboard() {
       ) : null}
     </div>
   );
+}
+
+function ChartMode({ value, onChange }: { value: "columns" | "line"; onChange: (value: "columns" | "line") => void }) {
+  const { t: ui } = useTranslation("ui");
+  return <div className="flex rounded-lg border border-border p-0.5" aria-label={ui("Formato do gráfico")}>
+    <Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${value === "columns" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => onChange("columns")} aria-pressed={value === "columns"} aria-label={ui("Gráfico de colunas")}><BarChart3 /></Button>
+    <Button type="button" variant="ghost" size="icon" className={`h-7 w-7 ${value === "line" ? "bg-muted text-foreground" : "text-muted-foreground"}`} onClick={() => onChange("line")} aria-pressed={value === "line"} aria-label={ui("Gráfico de linha")}><LineChartIcon /></Button>
+  </div>;
 }
 
 function MetricHelp({ title, description }: { title: string; description: string }) {
