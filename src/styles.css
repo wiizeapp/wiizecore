@@ -182,6 +182,14 @@
   box-shadow: var(--public-shadow-float);
 }
 
+.public-site section[data-reveal="features"] .balance-hero {
+  background-color: var(--public-flow-step);
+  background-image: var(--feature-gradient-2);
+  color: var(--foreground);
+  border-color: var(--public-comparison-border);
+  box-shadow: var(--public-shadow-card);
+}
+
 .public-site .premium-cta-button {
   background-color: var(--public-on-brand);
   color: var(--public-brand-solid);
