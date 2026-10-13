@@ -4,7 +4,6 @@ import { ArrowRight, Palette, UserRoundCheck, BarChart3, BellRing, ChevronDown, 
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher, useLanguageBootstrap } from "@/components/language-switcher";
 
@@ -126,7 +125,6 @@ export function PublicFooter() {
 }
 
 export function PublicPage({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
   useLanguageBootstrap();
   useRevealOnScroll();
   const { t } = useTranslation("footer");
