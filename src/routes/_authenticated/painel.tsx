@@ -411,9 +411,6 @@ function Dashboard() {
                 <Line type="monotone" dataKey="net" stroke="var(--primary)" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
               </LineChart>}
             </ChartContainer>
-            <div className="mt-4 grid grid-cols-3 gap-x-3 gap-y-4 border-t border-border/60 pt-4 sm:grid-cols-6 lg:grid-cols-12">
-              {s.mrrSeries.map((point) => <div key={point.month} className="min-w-0"><p className="text-[11px] text-muted-foreground">{point.label}</p><p className="mt-1 text-sm font-semibold"><DashboardAmount value={mask(formatBRL(point.net))} /></p></div>)}
-            </div>
           </>
         ) : <Empty text={ui("Ainda não há parcelas ou recorrências emitidas para mostrar a evolução do MRR.")} />}
       </Panel>
@@ -569,10 +566,16 @@ function Stat({ label, value, hint, change, loading, icon: Icon, className = "" 
 
 function valueTextSize(value: string, featured = false) {
   const length = value.length;
+  if (featured) {
+    if (length > 20) return "text-lg sm:text-xl";
+    if (length > 16) return "text-xl sm:text-2xl";
+    if (length > 13) return "text-2xl sm:text-[1.75rem]";
+    return "text-[1.75rem] sm:text-[2.125rem]";
+  }
   if (length > 20) return "text-base sm:text-lg";
   if (length > 16) return "text-lg sm:text-xl";
   if (length > 13) return "text-xl sm:text-2xl";
-  return featured ? "text-2xl sm:text-3xl" : "text-2xl sm:text-[1.7rem]";
+  return "text-2xl sm:text-[1.7rem]";
 }
 
 function Mini({ label, value, change }: { label: string; value: string; change?: number | null }) {
