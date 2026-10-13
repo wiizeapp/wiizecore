@@ -204,6 +204,13 @@
       "when": 1791845855411,
       "tag": "0028_ext_webhooks",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791900000000,
+      "tag": "0029_dunning_fee_per_step",
+      "breakpoints": true
     }
   ]
 }
