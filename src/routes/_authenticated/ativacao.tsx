@@ -441,7 +441,7 @@ function Documents({ company, docs, errors, only }: { company: boolean; docs: { 
         return (
           <div key={k} className={`flex flex-col items-stretch justify-between gap-3 rounded-lg border p-4 sm:flex-row sm:items-center ${errors[k] ? "border-destructive" : ""}`}>
             <div><p className="font-medium text-sm">{DOC_LABEL[k]} {req && <span className="text-destructive">*</span>}</p>
-              <p className="text-xs text-muted-foreground">{sent ? "Enviado ✓ (envie de novo para substituir)" : req ? "Obrigatório" : "Opcional"}</p></div>
+              <p className={`text-xs ${errors[k] ? "text-destructive" : "text-muted-foreground"}`}>{errors[k] || (sent ? "Enviado ✓ (envie de novo para substituir)" : req ? "Obrigatório" : "Opcional")}</p></div>
             <ActivationDocumentUpload kind={k} sent={sent} busy={busy !== null} onUpload={(file) => onFile(k, file)} />
           </div>
         );
