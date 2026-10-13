@@ -211,7 +211,7 @@ function Dashboard() {
 
     return {
       curr, prev, series, mrr, mrrSeries, svcTop, ltv, recurring, newCustomers, origin, methods, upcoming, overdue,
-      openCount: open.length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
+      openCount: curr.sales.filter((row) => isOpen(row.status) || isOverdue(row)).length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
       hasPaid: rows.some((r) => r.status === "paid"), hasCharge: rows.length > 0, periodRows: curr.sales,
     };
   }, [payments.data, customers.data, services.data, range, i18n.resolvedLanguage]);
@@ -342,9 +342,9 @@ function Dashboard() {
       </section>
 
       <section aria-label={ui("Indicadores complementares")} className="grid overflow-hidden rounded-lg border border-border bg-card/60 grid-cols-2 xl:grid-cols-4">
-        <CompactStat label={ui("MRR")} value={mask(cents(s.mrr))} loading={payments.isPending} title={ui("Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias")} />
-        <CompactStat label={ui("Cobranças ativas")} value={hidden ? "••••" : String(s.openCount)} loading={payments.isPending} />
-        <CompactStat label={ui("Novos clientes no período")} value={hidden ? "••••" : String(s.newCustomers)} loading={loading} />
+        <CompactStat label={ui("MRR")} value={payments.isError ? "—" : mask(cents(s.mrr))} loading={payments.isPending} title={ui("Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias")} />
+        <CompactStat label={ui("Cobranças ativas")} value={payments.isError ? "—" : hidden ? "••••" : String(s.openCount)} loading={payments.isPending} />
+        <CompactStat label={ui("Novos clientes no período")} value={payments.isError ? "—" : hidden ? "••••" : String(s.newCustomers)} loading={loading} />
         <CompactStat label={ui("Reembolsos no período")} value={refunds.isError ? "—" : mask(cents((refunds.data ?? []).reduce((total, row) => total + toCents(row.refund_amount), 0)))} loading={refunds.isPending} />
       </section>
 
