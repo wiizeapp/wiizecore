@@ -75,12 +75,12 @@ function Split({ intro, notes, visual, reverse = false }: { intro: ReactNode; no
 export function OperationFlow() {
   const ui = useUi();
   const flow = [
-    { icon: Users, label: "Cliente", tone: "bg-info text-info-foreground" },
-    { icon: Briefcase, label: "Serviço", tone: "bg-warning text-warning-foreground" },
-    { icon: Receipt, label: "Cobrança", tone: "bg-primary text-primary-foreground" },
-    { icon: CreditCard, label: "Pagamento", tone: "bg-success text-success-foreground" },
-    { icon: Wallet, label: "Financeiro", tone: "bg-primary text-primary-foreground" },
-    { icon: FileText, label: "Nota fiscal", tone: "bg-info text-info-foreground" },
+    { icon: Users, label: "Cliente" },
+    { icon: Briefcase, label: "Serviço" },
+    { icon: Receipt, label: "Cobrança" },
+    { icon: CreditCard, label: "Pagamento" },
+    { icon: Wallet, label: "Financeiro" },
+    { icon: FileText, label: "Nota fiscal" },
   ];
   const modules = [
     { icon: Receipt, title: "Cobranças e pagamentos", text: "Crie cobranças avulsas, parceladas ou recorrentes e receba por Pix, Pix Automático, boleto ou cartão." },
@@ -103,7 +103,7 @@ export function OperationFlow() {
             {flow.map((step, i) => (
               <li key={step.label} className="operation-flow-step" style={{ transformStyle: "preserve-3d" }}>
                 <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-2.5 shadow-card">
-                <span className={`grid size-8 shrink-0 place-items-center rounded-md ${step.tone}`}><step.icon className="size-4" /></span>
+                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><step.icon className="size-4" /></span>
                 <span className="text-sm font-semibold">{ui(step.label)}</span>
                 <span className="ml-auto text-[10px] font-semibold text-muted-foreground">0{i + 1}</span>
                 </div>
@@ -174,18 +174,18 @@ export function ComparisonSection() {
   return (
     <section className="section-shell py-20 lg:py-28">
       <SectionIntro center eyebrow="Por que a WiizePay" title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A WiizePay cuida do que vem antes e do que vem depois dele." />
-      <div className="relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
+      <div className="public-comparison relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
         <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 cmp-half-live" />
         <div className="relative">
-          <div className="grid grid-cols-2">
-            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-border/70 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+          <div className="comparison-header grid grid-cols-2">
+            <div className="flex min-w-0 flex-col items-start gap-2 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
               <span className="grid size-9 shrink-0 place-items-center rounded-xl border sm:size-11 border-border bg-muted/40 text-muted-foreground"><CreditCard className="size-5" /></span>
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{ui("Sem a WiizePay")}</p>
                 <p className="mt-0.5 font-display text-sm font-semibold text-muted-foreground sm:text-base">{ui("Só um link de pagamento")}</p>
               </div>
             </div>
-            <div className="flex min-w-0 flex-col items-start gap-2 border-b border-l border-border/70 border-l-primary/20 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
+            <div className="flex min-w-0 flex-col items-start gap-2 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
               <img src={brandLogo.url} alt="WiizePay" width={44} height={44} className="size-9 shrink-0 rounded-xl sm:size-11" />
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a WiizePay")}</p>
@@ -195,7 +195,7 @@ export function ComparisonSection() {
             </div>
           </div>
           {rows.map(([label, off, on]) => (
-            <div key={label} className="cmp-anim grid grid-cols-2 border-b border-border/70 last:border-b-0">
+            <div key={label} className="cmp-anim grid grid-cols-2">
               <div className="min-w-0 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">{ui(label)}</p>
                 <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
@@ -203,7 +203,7 @@ export function ComparisonSection() {
                   <p className="text-xs leading-5 text-muted-foreground sm:text-[0.95rem] sm:leading-6">{ui(off)}</p>
                 </div>
               </div>
-              <div className="min-w-0 border-l border-primary/15 px-3 py-3 sm:px-7 sm:py-4">
+              <div className="min-w-0 px-3 py-3 sm:px-7 sm:py-4">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui(label)}</p>
                 <div className="mt-1.5 flex items-start gap-2 sm:gap-3">
                   <span className="mt-0.5 grid size-5 shrink-0 sm:size-6 place-items-center rounded-full bg-primary text-primary-foreground"><Check className="size-3.5" /></span>
