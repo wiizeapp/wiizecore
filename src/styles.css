@@ -1331,6 +1331,16 @@
   .compact-strip-item:last-child { border-right: 0; }
 }
 
+/* Painel: faixa principal em coluna única no celular e em duas colunas até o tamanho grande */
+@media (max-width: 39.999rem) {
+  .summary-strip--main .summary-strip-item { border-right: 0; }
+  .summary-strip--main .summary-strip-item:last-child { border-bottom: 0; }
+}
+@media (min-width: 40rem) and (max-width: 79.999rem) {
+  .summary-strip--main .summary-strip-item:nth-child(n+3) { border-bottom: 0; }
+}
+
+
 
 
 /* Abas no padrão do seletor de período do Dashboard */
