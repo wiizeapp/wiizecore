@@ -489,7 +489,7 @@ function TestimonialsRow({ items, duration, reverse = false }: { items: Testimon
         {[0, 1, 2].map((copy) => (
           <div key={copy} className="flex flex-row gap-4 md:gap-6" aria-hidden={copy !== 0}>
             {items.map(({ text, name, role }) => (
-              <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 shadow-card md:w-[380px]">
+              <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 md:w-[380px]">
                 <Quote className="mb-3 size-5 text-primary/40 sm:mb-4 sm:size-6" />
                 <blockquote className="m-0"><p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm md:text-base">{ui(text)}</p></blockquote>
                 <figcaption className="mt-4 flex items-center gap-3 sm:mt-6 sm:gap-4">
