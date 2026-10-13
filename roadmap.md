@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências.
+
 - [x] Definir tema branco padrão, revisar logos do carrossel e fundos das funcionalidades, preservar sombra da jornada e remover sombras dos depoimentos; abertura, tema salvo e imagens conferidos.
 
 - [x] Ajustar valores monetários, jornada persistente acima do faturamento, faixa secundária de indicadores e evolução mensal do MRR; 10 testes aprovados e compilação OK.
