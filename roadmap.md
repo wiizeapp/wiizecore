@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Ajustar CTA e rodapé para verde sólido, jornada mais viva, logo alinhada, abertura com grade e brilho branco e fundo verde suave nos quatro passos; conferir página pública.
+
 - [x] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências; menus e layout conferidos a 1260px e 393px.
 
 - [x] Definir tema branco padrão, revisar logos do carrossel e fundos das funcionalidades, preservar sombra da jornada e remover sombras dos depoimentos; abertura, tema salvo e imagens conferidos.
