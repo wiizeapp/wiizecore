@@ -153,7 +153,7 @@ function Regua() {
       ]} />
 
       <section className="surface-panel overflow-hidden border-primary/15 p-5 sm:p-6">
-        <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Sparkles className="size-5" /></span><div><h2 className="font-display text-xl font-semibold">Escolha como seus clientes serão lembrados</h2><p className="mt-1 text-sm text-muted-foreground">O preço é por cobrança individual. Não importa quantos avisos do plano forem enviados.</p></div></div>
+        <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Sparkles className="size-5" /></span><div><h2 className="font-display text-xl font-semibold">Escolha como seus clientes serão lembrados</h2><p className="mt-1 text-sm text-muted-foreground">O preço vale para cada aviso ligado (criação, antes do vencimento, no dia, atraso e pagamento recebido).</p></div></div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {PLAN_ORDER.map((p) => {
             const pl = data.plans.find((x: { code: string; price: number }) => x.code === p);
@@ -162,7 +162,7 @@ function Regua() {
                 className={`relative rounded-xl border p-5 text-left transition hover:-translate-y-0.5 ${plan === p ? "border-primary bg-primary/5 ring-2 ring-primary/25" : "hover:border-primary/40"}`}>
                 {plan === p ? <CheckCircle2 className="absolute right-4 top-4 size-5 text-primary" /> : null}
                 <p className="font-semibold">{PLAN_NAMES[p]}</p>
-                <p className="mt-1 font-display text-2xl font-bold">{formatBRL(pl?.price ?? 0)}<span className="text-xs font-normal text-muted-foreground"> / cobrança</span></p>
+                <p className="mt-1 font-display text-2xl font-bold">{formatBRL(pl?.price ?? 0)}<span className="text-xs font-normal text-muted-foreground"> / aviso</span></p>
                 <p className="mt-3 min-h-10 text-sm leading-5 text-muted-foreground">{PLAN_DESCRIPTIONS[p]}</p>
                 <div className="mt-3 rounded-lg border border-border bg-muted/40 p-2.5">
                   <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">O que seu cliente recebe</p>
@@ -201,7 +201,7 @@ function Regua() {
             </div>
           ))}
         </div>
-        <div className="mt-4 grid gap-3 rounded-xl border bg-muted/30 p-4 text-xs leading-5 text-muted-foreground sm:grid-cols-2"><p className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />{formatBRL(price)} por cobrança individual, não por mensagem. Cada parcela e cada novo ciclo recorrente são cobrados separadamente.</p><p className="flex gap-2"><Clock3 className="mt-0.5 size-4 shrink-0 text-primary" />Você pode usar até dois avisos antes do vencimento quando essas posições estiverem disponíveis nas notificações da conta conectada.</p></div>
+        <div className="mt-4 grid gap-3 rounded-xl border bg-muted/30 p-4 text-xs leading-5 text-muted-foreground sm:grid-cols-2"><p className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />{formatBRL(price)} por aviso ligado, descontado do saldo quando a cobrança é criada. Cada parcela e cada novo ciclo recorrente são cobrados separadamente.</p><p className="flex gap-2"><Clock3 className="mt-0.5 size-4 shrink-0 text-primary" />Você pode usar até dois avisos antes do vencimento quando essas posições estiverem disponíveis nas notificações da conta conectada.</p></div>
       </section>
 
       <Overrides overrides={data.overrides} canManage={data.canManage} />
