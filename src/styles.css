@@ -155,11 +155,12 @@
 .public-site {
   --public-brand-solid: var(--primary);
   --public-on-brand: oklch(1 0 0);
-  --public-hero-end: color-mix(in oklab, var(--primary) 30%, var(--background));
-  --public-hero-gradient: linear-gradient(180deg, color-mix(in oklab, var(--primary) 2%, var(--background)) 0%, color-mix(in oklab, var(--primary) 9%, var(--background)) 35%, color-mix(in oklab, var(--primary) 30%, var(--background)) 100%);
+  --public-hero-end: color-mix(in oklab, var(--primary) 32%, var(--background));
+  --public-hero-gradient: linear-gradient(180deg, color-mix(in oklab, var(--primary) 4%, var(--background)) 0%, color-mix(in oklab, var(--primary) 18%, var(--background)) 55%, color-mix(in oklab, var(--primary) 32%, var(--background)) 100%);
   --public-hero-grid: color-mix(in oklab, var(--primary) 9%, transparent);
   --public-steps-background: color-mix(in oklab, var(--primary) 10%, var(--background));
-  --public-flow-gradient: linear-gradient(165deg, color-mix(in oklab, var(--primary) 20%, var(--card)) 0%, color-mix(in oklab, var(--primary) 38%, var(--card)) 65%, color-mix(in oklab, var(--primary) 28%, var(--card)) 100%);
+  --public-flow-gradient: linear-gradient(165deg, color-mix(in oklab, var(--primary) 18%, var(--card)) 0%, color-mix(in oklab, var(--primary) 30%, var(--card)) 60%, var(--primary) 100%);
+  --public-cta-gradient: linear-gradient(150deg, color-mix(in oklab, var(--primary) 12%, var(--card)) 0%, color-mix(in oklab, var(--primary) 26%, var(--card)) 55%, var(--primary) 100%);
   --public-flow-step: color-mix(in oklab, var(--primary) 12%, var(--card));
   --public-comparison-gradient: linear-gradient(150deg, color-mix(in oklab, var(--primary) 10%, var(--card)) 0%, color-mix(in oklab, var(--primary) 24%, var(--card)) 55%, color-mix(in oklab, var(--primary) 32%, var(--card)) 100%);
   --public-comparison-grid: color-mix(in oklab, var(--primary) 6%, transparent);
@@ -179,13 +180,13 @@
 }
 
 .public-site .premium-cta-button {
-  background-color: var(--public-on-brand);
-  color: var(--public-brand-solid);
+  background-color: var(--primary);
+  color: var(--public-on-brand);
   box-shadow: none;
 }
 
 .public-site .premium-cta-button:hover {
-  background-color: color-mix(in oklab, var(--public-on-brand) 90%, var(--public-brand-solid));
+  background-color: color-mix(in oklab, var(--primary) 86%, oklch(0.25 0.05 160));
 }
 
 .public-site > main > section:first-child {
@@ -1110,7 +1111,7 @@
   display: grid;
   place-items: center;
   background-color: var(--public-hero-end);
-  background-image: var(--public-comparison-gradient);
+  background-image: var(--public-cta-gradient);
   margin-bottom: 2.5rem;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
@@ -1129,10 +1130,10 @@
 }
 
 @utility premium-cta-button {
-  background-color: var(--public-on-brand);
-  color: var(--public-brand-solid);
+  background-color: var(--primary);
+  color: var(--public-on-brand);
   box-shadow: none;
-  &:hover { background-color: color-mix(in oklab, var(--public-on-brand) 90%, var(--public-brand-solid)); }
+  &:hover { background-color: color-mix(in oklab, var(--primary) 86%, oklch(0.25 0.05 160)); }
 }
 
 @utility premium-cta-edge {
