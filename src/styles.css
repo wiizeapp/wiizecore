@@ -1111,7 +1111,7 @@
   display: grid;
   place-items: center;
   background-color: var(--public-hero-end);
-  background-image: var(--public-comparison-gradient);
+  background-image: var(--public-cta-gradient);
   margin-bottom: 2.5rem;
   border-top-left-radius: 2rem;
   border-top-right-radius: 2rem;
