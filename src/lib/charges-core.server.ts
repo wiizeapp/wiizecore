@@ -436,6 +436,33 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       await enqueueWiizeSaleEvent(admin, tenantId, chargeGroupId, "created");
     }
     const link = await issueLink(admin, { tenantId, chargeGroupId, customerId: customer.id, serviceId: service.id, contractId, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
+    // E-mail da cobrança ao cliente: só com lembretes ativos e canal e-mail na etapa "criada". Enviado 1x (chave única).
+    if (customer.email) {
+      try {
+        const { data: dc } = await admin.from("dunning_charges").select("payment_id").eq("tenant_id", tenantId).eq("status", "active").in("payment_id", (await admin.from("payments").select("id").eq("charge_group_id", chargeGroupId)).data?.map((p) => p.id) ?? []).limit(1);
+        const { data: cfg } = await admin.from("dunning_tenant_config").select("plan_code, steps").eq("tenant_id", tenantId).maybeSingle();
+        const { data: gp } = await admin.from("dunning_charge_plans").select("plan_code").eq("tenant_id", tenantId).eq("charge_group_id", chargeGroupId).maybeSingle();
+        const { sanitizeSteps } = await import("./dunning-rules");
+        const plan = (gp?.plan_code ?? cfg?.plan_code) as import("./dunning-rules").DunningPlanCode | undefined;
+        if (dc?.length && cfg && plan && sanitizeSteps(cfg.steps, plan).created.includes("email")) {
+          const { data: tenant } = await admin.from("tenants").select("name").eq("id", tenantId).maybeSingle();
+          const { emailPerson, brl } = await import("./notify.server");
+          await emailPerson(admin, {
+            tenantId, kind: "charge.created.customer", dedupeKey: `charge.created.customer:${chargeGroupId}`,
+            email: {
+              to: customer.email,
+              subject: `Nova cobrança de ${tenant?.name ?? "sua empresa"}`,
+              title: "Você recebeu uma cobrança",
+              intro: `${tenant?.name ?? "A empresa"} enviou uma cobrança para você.`,
+              lines: [{ label: "Serviço", value: description }, { label: "Valor", value: brl(amount) }, { label: "Vencimento", value: dueOn.split("-").reverse().join("/") }],
+              cta: { label: "Ver e pagar", url: `/c/${link.token}` },
+            },
+          });
+        }
+      } catch (e) {
+        console.error("charge email", e instanceof Error ? e.message : "falhou");
+      }
+    }
     await logAudit(admin, {
       tenantId,
       userId: userId,
