@@ -1,4 +1,6 @@
 {
+  "Como funciona o MRR": "How MRR works",
+  "O MRR deste painel é a previsão líquida das parcelas e cobranças recorrentes em aberto com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui cobranças avulsas nem valores já pagos, e não é saldo disponível.": "MRR in this dashboard is the net forecast of outstanding installments and recurring charges due in the next 30 days, less recorded fees. It excludes one-time charges and amounts already paid, and is not available balance.",
   "Indicadores complementares": "Additional indicators",
   "MRR": "MRR",
   "Cobranças ativas": "Active charges",

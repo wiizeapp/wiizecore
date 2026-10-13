@@ -8,7 +8,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import {
   AlertTriangle, ArrowRight, BarChart3, CalendarDays, Check, ChevronDown, ChevronUp, Download, Eye, EyeOff, FilePlus2, FileSignature,
   LineChart as LineChartIcon, Plus, RefreshCw, UserPlus, Wallet,
-  FileText, Route as JourneyIcon,
+  FileText, Route as JourneyIcon, CircleHelp, Clock3, ReceiptText, RotateCcw, TrendingUp, type LucideIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -324,28 +324,28 @@ function Dashboard() {
       <section className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
         <div className="summary-strip-item min-w-0 p-5">
           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            
+            <Wallet className="h-3.5 w-3.5 shrink-0" />
             {ui("Saldo disponível")}
              <button type="button" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")} className="rounded p-0.5 hover:text-foreground">
               {hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
           </div>
-          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}><MoneyValue value={mask(cents(available))} /></p>}
+          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}><MoneyValue value={mask(cents(available))} accentCents /></p>}
           <div className="mt-2 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
              <Link to="/financeiro" className="text-xs font-semibold text-primary hover:underline">{ui("Sacar")}</Link>
           </div>
         </div>
-         <Stat label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
-         <Stat label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
-         <Stat label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
+         <Stat icon={BarChart3} label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
+         <Stat icon={Clock3} label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
+         <Stat icon={AlertTriangle} label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
       </section>
 
-      <section aria-label={ui("Indicadores complementares")} className="grid overflow-hidden rounded-lg border border-border bg-card/60 grid-cols-2 xl:grid-cols-4">
-        <CompactStat label={ui("MRR")} value={payments.isError ? "—" : mask(cents(s.mrr))} loading={payments.isPending} title={ui("Previsão líquida de parcelas e recorrências emitidas para os próximos 30 dias")} />
-        <CompactStat label={ui("Cobranças ativas")} value={payments.isError ? "—" : hidden ? "••••" : String(s.openCount)} loading={payments.isPending} />
-        <CompactStat label={ui("Novos clientes no período")} value={payments.isError ? "—" : hidden ? "••••" : String(s.newCustomers)} loading={loading} />
-        <CompactStat label={ui("Reembolsos no período")} value={refunds.isError ? "—" : mask(cents((refunds.data ?? []).reduce((total, row) => total + toCents(row.refund_amount), 0)))} loading={refunds.isPending} />
+      <section aria-label={ui("Indicadores complementares")} className="grid overflow-hidden rounded-lg border border-border bg-card/60 grid-cols-2 sm:grid-cols-4">
+        <CompactStat icon={TrendingUp} label={ui("MRR")} value={payments.isError ? "—" : mask(cents(s.mrr))} loading={payments.isPending} help={ui("O MRR deste painel é a previsão líquida das parcelas e cobranças recorrentes em aberto com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui cobranças avulsas nem valores já pagos, e não é saldo disponível.")} />
+        <CompactStat icon={ReceiptText} label={ui("Cobranças ativas")} value={payments.isError ? "—" : hidden ? "••••" : String(s.openCount)} loading={payments.isPending} />
+        <CompactStat icon={UserPlus} label={ui("Novos clientes no período")} value={payments.isError ? "—" : hidden ? "••••" : String(s.newCustomers)} loading={loading} />
+        <CompactStat icon={RotateCcw} label={ui("Reembolsos no período")} value={refunds.isError ? "—" : mask(cents((refunds.data ?? []).reduce((total, row) => total + toCents(row.refund_amount), 0)))} loading={refunds.isPending} />
       </section>
 
       {/* Ações rápidas */}
@@ -527,11 +527,11 @@ function Dashboard() {
   );
 }
 
-function Stat({ label, value, hint, change, loading }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean }) {
+function Stat({ label, value, hint, change, loading, icon: Icon }: { icon: LucideIcon; label: string; value: string; hint?: string; change?: number | null; loading?: boolean }) {
   const { t: ui } = useTranslation("ui");
   return (
     <div className="summary-strip-item min-w-0 p-5">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground"><Icon className="h-3.5 w-3.5 shrink-0" />{label}</p>
       {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}><MoneyValue value={value} /></p>}
       <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
         {change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint}
@@ -615,9 +615,14 @@ function CustomRange({ active, onApply, onClear }: { active: boolean; onApply: (
   );
 }
 
-function CompactStat({ label, value, loading, title }: { label: string; value: string; loading?: boolean; title?: string }) {
-  return <div className="summary-strip-item min-w-0 px-4 py-3" title={title}>
-    <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+function CompactStat({ label, value, loading, help, icon: Icon }: { label: string; value: string; loading?: boolean; help?: string; icon: LucideIcon }) {
+  const { t: ui } = useTranslation("ui");
+  return <div className="summary-strip-item min-w-0 px-3 py-3 sm:px-4">
+    <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+      <Icon className="h-3.5 w-3.5 shrink-0" />
+      <span className="min-w-0">{label}</span>
+      {help && <Popover><PopoverTrigger asChild><Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" aria-label={ui("Como funciona o MRR")}><CircleHelp className="h-3.5 w-3.5" /></Button></PopoverTrigger><PopoverContent align="start" className="max-w-[calc(100vw-2rem)] text-xs leading-relaxed"><p className="mb-1 font-semibold">{ui("Como funciona o MRR")}</p><p className="text-muted-foreground">{help}</p></PopoverContent></Popover>}
+    </div>
     {loading ? <Skeleton h="mt-1 h-6" /> : <p className="numeric-tabular mt-1 overflow-hidden font-display text-lg font-semibold"><MoneyValue value={value} /></p>}
   </div>;
 }
