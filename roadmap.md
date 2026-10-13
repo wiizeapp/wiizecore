@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
+- [ ] Validar cálculos e apresentação em computador e celular; informar arquivos alterados.
+
 - [x] Refinar promoção na página Taxas, mostrar 0% à vista com aviso de duração e validar apresentação.
 
 - [x] Corrigir contraste da marca WiizePay na prévia do checkout.
