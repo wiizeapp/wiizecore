@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Unir degradê da CTA ao rodapé, intensificar comparativo à direita e adaptar jornada à referência clara com borda padrão; conferir computador e celular.
+
 - [x] Ajustar CTA e rodapé para verde sólido, jornada mais viva, logo alinhada, abertura com grade e brilho branco e fundo verde suave nos quatro passos; página conferida a 393px, 768px e 1260px, sem imagens quebradas ou erros.
 
 - [x] Refinar barra flutuante, degradês verdes da abertura e CTA, logos e sombras discretas conforme referências; menus e layout conferidos a 1260px e 393px.

@@ -94,7 +94,7 @@ export function OperationFlow() {
     <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
       <SectionIntro center eyebrow="A plataforma" title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
-        <div className="operation-flow-visual relative isolate overflow-hidden rounded-xl border border-primary/25 p-6 shadow-float lg:row-span-3 lg:p-8">
+        <div className="operation-flow-visual relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
           <div className="feature-visual-grid absolute inset-0 -z-10" aria-hidden="true" />
           <p className="section-kicker">{ui("Fluxo conectado")}</p>
           <h3 className="mt-3 text-2xl font-semibold leading-tight">{ui("Cada etapa alimenta a próxima.")}</h3>
