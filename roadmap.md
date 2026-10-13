@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Ajustar indicadores, imagens neon, fontes neutras e ajuda do saldo/MRR; conferir painel autenticado em computador e celular.
+
 - [x] Reorganizar resumo do painel com saldo, MRR líquido previsto da empresa e cinco indicadores filtrados.
 - [x] Validar cálculos (19 testes), traduções e imagens; informar arquivos alterados.
 - [ ] Conferir visualmente o painel autenticado em computador e celular — bloqueado: nenhuma sessão disponível; usuário precisa entrar na prévia.

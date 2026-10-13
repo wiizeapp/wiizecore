@@ -1,4 +1,8 @@
 {
+  "Sem métricas para analisar no período": "No metrics to analyze in this period",
+  "Como funciona: {{indicador}}": "How it works: {{indicador}}",
+  "Valor já liberado na sua carteira para solicitar saque. Valores a liberar ainda aguardam liquidação. Este saldo não muda com o filtro de período.": "Funds already available in your wallet for withdrawal. Pending funds still await settlement. This balance is unaffected by the period filter.",
+  "Previsão líquida da sua empresa: soma das parcelas e recorrências já emitidas, em aberto e com vencimento nos próximos 30 dias, descontadas as taxas registradas. Não inclui pagamentos concluídos, cancelados ou estornados, nem ciclos futuros ainda não emitidos. Não é saldo disponível e independe do filtro de período.": "Your company's net forecast: open installments and recurring charges already issued and due within the next 30 days, less recorded fees. Excludes completed, cancelled or refunded payments and future cycles not yet issued. This is not an available balance and is unaffected by the period filter.",
   "MRR líquido previsto": "Projected net MRR",
   "Parcelas e recorrências emitidas, com taxas registradas descontadas. Não é saldo liberado.": "Issued installments and recurring charges, less recorded fees. Not an available balance.",
   "Indicadores do período": "Period indicators",
