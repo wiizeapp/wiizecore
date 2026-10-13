@@ -10,7 +10,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "rec
 import {
   AlertTriangle, ArrowRight, BarChart3, CalendarDays, Check, ChevronDown, ChevronUp, Download, Eye, EyeOff, FilePlus2, FileSignature,
   LineChart as LineChartIcon, Plus, RefreshCw, UserPlus, Wallet,
-  FileText,
+  FileText, CircleDollarSign, Clock3, ListChecks, type LucideIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/hooks/useWorkspace";
@@ -21,7 +21,9 @@ import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/
 import { formatBRL, formatDate } from "@/lib/format";
 import { buckets, pctChange, PERIOD_OPTIONS, resolveRange, toCents, type PeriodKey } from "@/lib/dashboard-period";
 import { Change, Empty, Panel, RankList, Skeleton, type AppPath } from "@/components/dashboard/parts";
-import { isOpen, isOverdue, summarize, type SummaryRow } from "@/lib/financial-summary";
+import moneyAsset from "@/assets/dashboard-money.asset.json";
+import calendarAsset from "@/assets/dashboard-calendar.asset.json";
+import { countFirstChargeCustomers, forecastNext30Days, isOpen, isOverdue, summarize, type SummaryRow } from "@/lib/financial-summary";
 import { DataPagination, paginate } from "@/components/ds";
 
 type Search = { periodo?: PeriodKey | undefined; de?: string | undefined; ate?: string | undefined };
@@ -58,7 +60,7 @@ const inRange = (iso: string | null, a: Date, b: Date) => {
 };
 
 function useTenantQuery<T>(key: string, tenantId: string | undefined, fn: (t: string) => Promise<T>) {
-  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => fn(tenantId!) });
+  return useQuery({ queryKey: ["dash", key, tenantId], enabled: Boolean(tenantId), queryFn: () => { if (!tenantId) throw new Error("Empresa indisponível"); return fn(tenantId); } });
 }
 
 function Dashboard() {
@@ -79,19 +81,28 @@ function Dashboard() {
     return data;
   });
   const payments = useTenantQuery("payments", tenantId, async (t) => {
-    const { data, error } = await supabase
-      .from("payments")
-      .select("id, description, gross_amount, net_amount, platform_fee_amount, refunded_amount, status, method, created_at, paid_at, due_on, customer_id, service_id, subscription_id, installment_count")
-      .eq("tenant_id", t)
-      .order("created_at", { ascending: false })
-      .limit(5000);
-    if (error) throw error;
-    return data ?? [];
+    const fetchPage = async (offset: number) => {
+      const { data, error } = await supabase.from("payments")
+        .select("id, description, gross_amount, net_amount, platform_fee_amount, refunded_amount, status, method, created_at, paid_at, due_on, customer_id, service_id, subscription_id, installment_count")
+        .eq("tenant_id", t).order("created_at", { ascending: false }).order("id").range(offset, offset + 999);
+      if (error) throw error;
+      return data ?? [];
+    };
+    const rows = await fetchPage(0);
+    let page = rows;
+    while (page.length === 1000) { page = await fetchPage(rows.length); rows.push(...page); }
+    return rows;
   });
   const customers = useTenantQuery("customers", tenantId, async (t) => {
-    const { data, error } = await supabase.from("customers").select("id, name, created_at").eq("tenant_id", t).limit(5000);
-    if (error) throw error;
-    return data ?? [];
+    const fetchPage = async (offset: number) => {
+      const { data, error } = await supabase.from("customers").select("id, name, created_at").eq("tenant_id", t).order("id").range(offset, offset + 999);
+      if (error) throw error;
+      return data ?? [];
+    };
+    const rows = await fetchPage(0);
+    let page = rows;
+    while (page.length === 1000) { page = await fetchPage(rows.length); rows.push(...page); }
+    return rows;
   });
   const services = useTenantQuery("services", tenantId, async (t) => {
     const { data, error } = await supabase.from("services").select("id, name").eq("tenant_id", t);
@@ -121,7 +132,7 @@ function Dashboard() {
       invoicesError: (inv.data ?? []).filter((r) => r.status === "ERROR").length };
   });
 
-  const loading = payments.isPending || customers.isPending;
+  const loading = payments.isPending || customers.isPending || payments.isError || customers.isError;
   const failed = payments.isError || customers.isError || wallet.isError;
 
   const s = useMemo(() => {
@@ -174,7 +185,10 @@ function Dashboard() {
     const paidCounts = new Map<string, number>();
     for (const r of rows) if (r.status === "paid" && r.customer_id) paidCounts.set(r.customer_id, (paidCounts.get(r.customer_id) ?? 0) + 1);
     const recurring = [...paidCounts.values()].filter((n) => n > 1).length;
-    const newCustomers = (customers.data ?? []).filter((c) => inRange(c.created_at, range.start, range.end)).length;
+    const newCustomers = countFirstChargeCustomers(rows, range.start, range.end);
+    const previousNewCustomers = countFirstChargeCustomers(rows, range.prevStart, range.prevEnd);
+    const forecast = forecastNext30Days(rows);
+    const activeCount = curr.sales.filter((r) => isOpen(r.status) || isOverdue(r)).length;
 
     const origin = { Avulso: 0, Recorrente: 0, Parcelado: 0 };
     for (const r of curr.paid) {
@@ -189,7 +203,7 @@ function Dashboard() {
     const overdue = open.filter((r) => isOverdue(r));
 
     return {
-      curr, prev, series, svcTop, ltv, recurring, newCustomers, origin, methods, upcoming, overdue,
+      curr, prev, series, svcTop, ltv, recurring, newCustomers, previousNewCustomers, forecast, activeCount, origin, methods, upcoming, overdue,
       openCount: open.length, custName, svcName, totalCustomers: customers.data?.length ?? 0,
       hasPaid: rows.some((r) => r.status === "paid"), hasCharge: rows.length > 0, periodRows: curr.sales,
     };
@@ -299,25 +313,40 @@ function Dashboard() {
         </div>
       )}
 
-      {/* 2. Resumo financeiro compacto */}
-      <section className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
-        <div className="summary-strip-item min-w-0 p-5">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-            
-            {ui("Saldo disponível")}
-             <button type="button" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")} className="rounded p-0.5 hover:text-foreground">
-              {hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            </button>
+      {/* Saldo e previsão da empresa — independentes do filtro histórico. */}
+      <section aria-label={ui("Resumo financeiro")} className="grid gap-6 sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_100px] sm:border-r sm:border-border sm:pr-6 xl:grid-cols-[minmax(0,1fr)_120px]">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {ui("Saldo disponível")}
+              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => setHidden((h) => !h)} aria-label={ui(hidden ? "Mostrar valores" : "Ocultar valores")}>
+                {hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
+            {wallet.isPending || wallet.isError ? <Skeleton h="mt-2 h-10" /> : <p className={`numeric-tabular mt-2 break-words font-display font-bold text-primary ${valueTextSize(mask(cents(available)), true)}`}>{mask(cents(available))}</p>}
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <span className="text-muted-foreground">{wallet.isPending || wallet.isError ? ui("Carregando…") : ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
+              <Link to="/financeiro" className="font-semibold text-primary hover:underline">{ui("Sacar")} <ArrowRight className="inline h-3 w-3" /></Link>
+            </div>
           </div>
-          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}>{mask(cents(available))}</p>}
-          <div className="mt-2 flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
-             <Link to="/financeiro" className="text-xs font-semibold text-primary hover:underline">{ui("Sacar")}</Link>
-          </div>
+          <img src={moneyAsset.url} alt="" className="aspect-square w-full object-contain" />
         </div>
-         <Stat label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
-         <Stat label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
-         <Stat label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_80px] items-center gap-3 py-3 sm:grid-cols-[minmax(0,1fr)_100px] xl:grid-cols-[minmax(0,1fr)_120px]">
+          <div className="min-w-0">
+            <p className="text-sm text-muted-foreground">{ui("MRR líquido previsto")}</p>
+            {loading ? <Skeleton h="mt-3 h-10" /> : <p className={`numeric-tabular mt-3 break-words font-display font-bold text-primary ${valueTextSize(mask(formatBRL(s.forecast.net)), true)}`}>{mask(formatBRL(s.forecast.net))}</p>}
+            <p className="mt-3 text-xs font-medium text-muted-foreground">{ui("Próximos 30 dias")}</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{ui("Parcelas e recorrências emitidas, com taxas registradas descontadas. Não é saldo liberado.")}</p>
+          </div>
+          <img src={calendarAsset.url} alt="" className="aspect-square w-full object-contain" />
+        </div>
+      </section>
+      <section aria-label={ui("Indicadores do período")} className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-5">
+        <Stat icon={CircleDollarSign} label={ui("Faturado")} value={mask(cents(s.curr.sold))} change={pctChange(s.curr.sold, s.prev.sold)} loading={loading} />
+        <Stat icon={Clock3} label={ui("A receber")} value={mask(cents(s.curr.pending))} hint={ui(s.curr.pendingCount === 1 ? "{{count}} cobrança aguardando" : "{{count}} cobranças aguardando", { count: s.curr.pendingCount })} loading={loading} />
+        <Stat icon={AlertTriangle} label={ui("Vencidos")} value={mask(cents(s.curr.overdue))} hint={ui(s.curr.overdueCount === 1 ? "{{count}} cobrança vencida" : "{{count}} cobranças vencidas", { count: s.curr.overdueCount })} loading={loading} />
+        <Stat icon={ListChecks} label={ui("Cobranças ativas")} value={String(s.activeCount)} hint={ui("Em aberto no período")} loading={loading} />
+        <Stat icon={UserPlus} label={ui("Novos clientes")} value={String(s.newCustomers)} change={pctChange(s.newCustomers, s.previousNewCustomers)} loading={loading} />
       </section>
 
       {/* Ações rápidas */}
@@ -478,14 +507,14 @@ function Dashboard() {
   );
 }
 
-function Stat({ label, value, hint, change, loading }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean }) {
+function Stat({ label, value, hint, change, loading, icon: Icon }: { label: string; value: string; hint?: string; change?: number | null; loading?: boolean; icon?: LucideIcon }) {
   const { t: ui } = useTranslation("ui");
   return (
     <div className="summary-strip-item min-w-0 p-5">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="flex min-h-8 items-center gap-2 text-xs font-medium text-muted-foreground">{Icon && <Icon className="h-4 w-4 shrink-0 text-primary" />}<span className="min-w-0">{label}</span></p>
       {loading ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold ${valueTextSize(value)}`}>{value}</p>}
       <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-        {change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint}
+        {!loading && (change !== undefined ? <><Change value={change} /> <span>{ui("no período")}</span></> : hint)}
       </div>
     </div>
   );

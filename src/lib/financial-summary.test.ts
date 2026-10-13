@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isOverdue, summarize } from "./financial-summary";
+import { countFirstChargeCustomers, forecastNext30Days, isOverdue, summarize } from "./financial-summary";
 
 describe("resumo financeiro compartilhado", () => {
   it("separa faturado, pago, aberto, vencido, taxas e líquido", () => {
@@ -91,5 +91,32 @@ describe("resumo financeiro compartilhado", () => {
       overdue: 0,
       count: 0,
     });
+  });
+});
+
+
+describe("indicadores do painel", () => {
+  const base = { status: "awaiting_payment", gross_amount: "100.10", platform_fee_amount: "3.01", created_at: "2026-10-01T12:00:00Z", due_on: "2026-10-13", installment_count: 3 };
+  it("soma líquido por parcela e recorrência em centavos", () => {
+    expect(forecastNext30Days([base, { ...base, installment_count: 1, subscription_id: "sub", net_amount: "90.10", refunded_amount: "1.01" }], "2026-10-13")).toMatchObject({ net: 186.18, count: 2 });
+  });
+  it("exclui avulsos, pagas, recusadas, estornadas, atrasadas e fim exclusivo", () => {
+    const rows = ["paid", "refunded", "cancelled", "failed", "overdue"].map((status) => ({ ...base, status }));
+    rows.push({ ...base, due_on: "2026-10-12" }, { ...base, due_on: "2026-11-12" }, { ...base, installment_count: 1 });
+    expect(forecastNext30Days(rows, "2026-10-13")).toMatchObject({ net: 0, count: 0 });
+    expect(forecastNext30Days([{ ...base, due_on: "2026-11-11" }], "2026-10-13").count).toBe(1);
+  });
+  it("não inventa ciclos nem saldo negativo", () => {
+    expect(forecastNext30Days([], "2026-10-13").net).toBe(0);
+    expect(forecastNext30Days([{ ...base, net_amount: 1, refunded_amount: 2 }], "2026-10-13").net).toBe(0);
+  });
+  it("conta primeira cobrança, não cadastro, uma vez por cliente", () => {
+    const rows = [
+      { ...base, customer_id: "old", created_at: "2026-09-01T12:00:00Z", status: "cancelled" },
+      { ...base, customer_id: "old" }, { ...base, customer_id: "new" },
+      { ...base, customer_id: "new", created_at: "2026-10-02T12:00:00Z" },
+      { ...base, customer_id: "later", created_at: "2026-11-01T00:00:00Z" }, { ...base, customer_id: null },
+    ];
+    expect(countFirstChargeCustomers(rows, new Date("2026-10-01T00:00:00Z"), new Date("2026-11-01T00:00:00Z"))).toBe(1);
   });
 });
