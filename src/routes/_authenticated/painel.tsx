@@ -326,7 +326,7 @@ function Dashboard() {
       )}
 
       {/* 2. Resumo financeiro compacto */}
-      <section className="surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
+      <section className="summary-strip--main surface-panel grid overflow-hidden sm:grid-cols-2 xl:grid-cols-4">
         <div className="summary-strip-item min-w-0 p-5">
           <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Wallet className="h-3.5 w-3.5 shrink-0" />
