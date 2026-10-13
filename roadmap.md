@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Uniformizar ícones e fundo verde da jornada, recuperar comparativo com grade suave e divisórias completas, separar CTA e restaurar rodapé neutro; validar página pública.
+- [x] Uniformizar ícones e fundo verde da jornada, recuperar comparativo com grade suave e divisórias completas, separar CTA e restaurar rodapé neutro; conferido a 1260px e 393px, sem transbordamento ou erros.
 
 - [x] Unir degradê da CTA ao rodapé, intensificar comparativo à direita e adaptar jornada à referência clara com borda padrão; conferido a 1260px e 393px, sem imagens quebradas ou erros.
 
