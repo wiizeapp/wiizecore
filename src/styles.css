@@ -153,8 +153,18 @@
 }
 
 .public-site {
-  --shadow-card: 0 4px 18px -10px oklch(0.25 0.025 160 / 14%);
-  --shadow-float: 0 10px 28px -16px oklch(0.25 0.025 160 / 18%);
+  --public-shadow-card: 0 4px 18px -10px oklch(0.25 0.025 160 / 14%);
+  --public-shadow-float: 0 10px 28px -16px oklch(0.25 0.025 160 / 18%);
+  --shadow-card: var(--public-shadow-card);
+  --shadow-float: var(--public-shadow-float);
+}
+
+.public-site .shadow-card {
+  box-shadow: var(--public-shadow-card);
+}
+
+.public-site .shadow-float {
+  box-shadow: var(--public-shadow-float);
 }
 
 .public-site > main > section:first-child {
