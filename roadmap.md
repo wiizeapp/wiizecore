@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] No celular, pintar cartões e círculos numerados da jornada com o verde da Wiize e retirar a seta à direita dos cartões; conferido a 393px sem rolagem horizontal, sem setas no DOM e sem erros de execução, computador inalterado, compilação OK.
+
 - [x] Igualar fundo da jornada a Por que a WiizePay, retirar linha superior, destacar apenas wiizepay no endereço e aproximar fontes dos rótulos ao anexo; conferido a 320, 390 e 1347px, sem rolagem horizontal ou erros, compilação OK.
 
 - [x] Afastar setas da cápsula, espelhar a de pagamento para dentro, reduzir descrição e igualar destaque ao Hero e fundo a Como funciona; conferido a 320, 390, 768 e 1347px, com cores e efeito iguais às referências, sem rolagem horizontal ou erros.
