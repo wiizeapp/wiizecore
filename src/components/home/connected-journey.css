@@ -92,6 +92,6 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .cjm-num { position: relative; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--primary) 78%, white); background: linear-gradient(145deg, color-mix(in oklab, var(--primary) 88%, white), var(--primary) 62%, color-mix(in oklab, var(--primary) 82%, black)); color: var(--primary-foreground); font-size: .75rem; font-weight: 700; box-shadow: 0 0 14px color-mix(in oklab, var(--primary) 45%, transparent); }
   .cjm-card { padding: .8rem .9rem; border-radius: 14px; border: 1px solid var(--journey-icon-border); background: color-mix(in oklab, var(--journey-muted) 9%, var(--journey-background)); }
   .cjm-text { min-width: 0; display: grid; gap: .2rem; }
-  .cjm-text strong { color: var(--journey-foreground); font-family: var(--font-hand); font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
+  .cjm-text strong { color: var(--journey-foreground); font-family: var(--font-sans); font-size: 1rem; font-weight: 600; line-height: 1.35; }
   .cjm-text small { color: var(--journey-muted); font-size: .75rem; }
 }
