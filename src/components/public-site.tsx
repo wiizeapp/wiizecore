@@ -93,7 +93,7 @@ function MobileMenu() {
 }
 
 export function PublicHeader() {
-  const { t, res } = useNavLabels();
+  const { t } = useNavLabels();
   return (
     <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
       <div className="grid h-[4.5rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-6">
