@@ -147,7 +147,7 @@ function ProductPreview() {
               <DashboardNav icon={Wallet} label="Financeiro" />
             </div>
           </aside>
-          <div className="min-w-0 bg-background/35 p-2.5 sm:p-4 lg:p-5">
+          <div className="min-w-0 bg-background/35 p-2.5 pb-8 sm:p-4 lg:p-5">
             <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4"><div><p className="text-[9px] text-muted-foreground sm:text-[10px]">{ui("Visão geral")}</p><p className="text-xs font-semibold sm:text-sm">{ui("Olá, sua operação está em dia.")}</p></div><span className="hidden rounded-md border border-border bg-card px-2.5 py-1.5 text-[9px] text-muted-foreground sm:block">{ui("Últimos 30 dias")}</span></div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
               <DashboardMetric label="Disponível para saque" value={formatBRL(12500)} icon={Wallet} featured />
@@ -155,9 +155,9 @@ function ProductPreview() {
               <DashboardMetric label="Recebido no mês" value={formatBRL(24320)} icon={CheckCircle2} className="col-span-2 sm:col-span-1" />
             </div>
             <div className="mt-2 grid gap-2 sm:mt-3 sm:grid-cols-[1.25fr_0.9fr] sm:gap-3">
-              <div className="rounded-lg border border-border bg-card p-3 sm:p-4">
+              <div className="hidden rounded-lg border border-border bg-card p-3 sm:block sm:p-4">
                 <div className="flex items-center justify-between"><div><p className="text-[10px] font-semibold">{ui("Movimentações")}</p><p className="text-[9px] text-muted-foreground">{ui("Recebimentos confirmados")}</p></div><span className="text-[9px] font-semibold text-primary">+18,4%</span></div>
-                <div className="dashboard-chart relative mt-4 flex h-16 items-end gap-1.5 sm:h-28 sm:gap-2" aria-hidden="true">{bars.map((height, index) => <span key={index} className="dashboard-chart-bar flex-1 rounded-t-sm" style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }} />)}</div>
+                <div className="dashboard-chart relative mt-4 flex h-24 items-end gap-1.5 sm:h-28 sm:gap-2" aria-hidden="true">{bars.map((height, index) => <span key={index} className="dashboard-chart-bar flex-1 rounded-t-sm" style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }} />)}</div>
                 <div className="mt-2 hidden grid-cols-6 text-center text-[8px] text-muted-foreground sm:grid"><span>{ui("Abr")}</span><span>{ui("Mai")}</span><span>{ui("Jun")}</span><span>{ui("Jul")}</span><span>{ui("Ago")}</span><span>{ui("Set")}</span></div>
               </div>
               <div className="hidden rounded-lg border border-border bg-card p-3 sm:block sm:p-4">
