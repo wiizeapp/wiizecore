@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Eye, Layers, UserCheck } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { PublicPage } from '@/components/public-site';
@@ -14,9 +14,9 @@ const pillars = [
   { kind: 'documents', title: 'Documentos e experiência do cliente', copy: 'Disponibilize contratos, recibos e documentos fiscais em uma experiência centralizada, conforme os recursos habilitados na conta.' },
 ] as const;
 const principles = [
-  ['Clareza operacional', 'Informações organizadas para facilitar a compreensão da rotina financeira.'],
-  ['Integração', 'Menos fragmentação entre cobranças, contratos, clientes e documentos.'],
-  ['Autonomia do cliente', 'Uma experiência que facilita o acesso às informações e reduz a necessidade de solicitações repetitivas.'],
+  ['Clareza operacional', 'Informações organizadas para facilitar a compreensão da rotina financeira.', Eye],
+  ['Integração', 'Menos fragmentação entre cobranças, contratos, clientes e documentos.', Layers],
+  ['Autonomia do cliente', 'Uma experiência que facilita o acesso às informações e reduz a necessidade de solicitações repetitivas.', UserCheck],
 ] as const;
 
 export function AboutPage() {
@@ -34,7 +34,7 @@ export function AboutPage() {
 
     <InfrastructureSection />
 
-    <section><div className="section-shell institution-section"><div className="institution-section-heading"><div><p className="section-kicker">{t('Como pensamos a experiência')}</p><h2>{t('Tecnologia que organiza.')}<br /><span className="text-primary">{t('Experiência que simplifica.')}</span></h2></div><p>{t('Estes são os princípios que orientam nosso produto. Não são promessas de resultado: são escolhas sobre como construir uma experiência melhor.')}</p></div><div className="institution-principles">{principles.map(([title, copy], i) => <div key={title}><span>0{i + 1}</span><h3>{t(title)}</h3><p>{t(copy)}</p></div>)}</div></div></section>
+    <section><div className="section-shell institution-section"><div className="institution-section-heading"><div><p className="section-kicker">{t('Como pensamos a experiência')}</p><h2>{t('Tecnologia que organiza.')}<br /><span className="text-primary">{t('Experiência que simplifica.')}</span></h2></div><p>{t('Estes são os princípios que orientam nosso produto. Não são promessas de resultado: são escolhas sobre como construir uma experiência melhor.')}</p></div><div className="institution-principles">{principles.map(([title, copy, Icon], i) => <div key={title}><span className="institution-principle-head"><i className="institution-principle-icon"><Icon className="size-4" /></i>0{i + 1}</span><h3>{t(title)}</h3><p>{t(copy)}</p></div>)}</div></div></section>
 
     <section className="institution-vision"><div className="section-shell institution-section institution-split"><div><p className="section-kicker">{t('Nossa visão')}</p><h2 className="mt-4">{t('Uma gestão financeira mais conectada começa com uma operação mais simples.')}</h2><p className="institution-body-copy">{t('Acreditamos que empresas prestadoras de serviços merecem ferramentas que trabalhem em conjunto.')}</p><p className="institution-body-copy">{t('Nossa visão é continuar aproximando clientes, serviços, documentos, contratos e pagamentos, tornando essa jornada cada vez mais coerente para empresas e seus clientes.')}</p><p className="institution-body-copy">{t('Não se trata de adicionar ferramentas sem propósito. Trata-se de organizar melhor o que já faz parte da rotina de um negócio.')}</p></div><OperationDiagram compact /></div></section>
 
