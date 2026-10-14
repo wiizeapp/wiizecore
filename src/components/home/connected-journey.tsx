@@ -51,7 +51,7 @@ export function ConnectedJourneySection() {
                 <path d="M30 103C105 151 215 159 290 151M790 151C890 161 991 151 1050 106" />
               </g>
               <g markerEnd="url(#journey-arrow-desktop)">
-                <path d="M120 50C150 64 196 92 224 132" />
+                <path d="M150 58C182 66 210 92 226 128" />
                 <path d="M238 274C264 274 278 246 288 218" />
                 <path d="M960 64C930 76 884 98 856 132" />
                 <path d="M940 240C910 214 884 190 856 174" />
