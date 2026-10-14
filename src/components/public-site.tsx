@@ -23,6 +23,7 @@ export const resourceLinks = [
 ] as const;
 
 const publicLinks = [
+  { to: "/sobre", key: "about", label: "Sobre nós" },
   { to: "/taxas", key: "fees", label: "Taxas" },
   { to: "/prazos", key: "terms", label: "Prazos" },
   { to: "/seguranca-e-confianca", key: "security", label: "Segurança" },
@@ -72,7 +73,7 @@ export function PublicHeader() {
         <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" /></Link>
         <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
-          {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
+          {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button>)}
         </nav>
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
@@ -85,7 +86,7 @@ export function PublicHeader() {
                 <p className="px-3 pt-2 text-xs font-bold uppercase text-muted-foreground">{t("resources")}</p>
                 {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
                 <div className="my-2 border-t border-border" />
-                {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button></SheetClose>)}
+                {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
                 <SheetClose asChild><Button asChild className="mt-3"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button></SheetClose>
               </nav>
             </SheetContent>
