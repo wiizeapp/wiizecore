@@ -1,4 +1,4 @@
-import { ChevronRight, Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
+import { Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./connected-journey.css";
 
@@ -95,7 +95,6 @@ export function ConnectedJourneySection() {
                   <div className="cjm-card">
                     <span className="connected-journey-stage-icon"><Icon /></span>
                     <span className="cjm-text"><strong>{t(title)}</strong><small>{t(sub)}</small></span>
-                    <ChevronRight className="cjm-chev" />
                   </div>
                 </li>
               ))}

@@ -88,15 +88,14 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .cjm-link span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cjm-link strong { color: var(--journey-foreground); font-weight: 600; }
   .connected-journey-mobile ol { position: relative; margin-top: 1.75rem; display: grid; gap: 1.5rem; }
-  .connected-journey-mobile ol::before { content: ''; position: absolute; left: 15px; top: 1rem; bottom: 1rem; width: 1px; background: var(--journey-line); opacity: .5; }
+  .connected-journey-mobile ol::before { content: ''; position: absolute; left: 15px; top: 1rem; bottom: 1rem; width: 1px; background: color-mix(in oklab, var(--primary) 45%, transparent); opacity: .75; }
   .connected-journey-mobile li { position: relative; display: grid; grid-template-columns: 32px minmax(0,1fr); gap: .75rem; align-items: center; }
   .connected-journey-mobile li + li::before { content: ''; position: absolute; left: 50%; top: -1.2rem; width: 8px; height: 8px; border-right: 1.5px solid var(--journey-highlight); border-bottom: 1.5px solid var(--journey-highlight); transform: translateX(14px) rotate(45deg); }
-  .cjm-num { position: relative; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--journey-highlight); background: var(--journey-surface); color: var(--journey-foreground); font-size: .75rem; font-weight: 600; box-shadow: var(--journey-arrow-shadow, none) 0 0 8px; }
-  .cjm-card { display: grid; grid-template-columns: 44px minmax(0,1fr) 18px; align-items: center; gap: .75rem; padding: .75rem; border-radius: 14px; border: 1px solid var(--journey-icon-border); background: var(--journey-surface); }
-  .cjm-card .connected-journey-stage-icon { width: 44px; height: 44px; flex-basis: 44px; border-radius: 12px; }
+  .cjm-num { position: relative; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--primary) 78%, white); background: linear-gradient(145deg, color-mix(in oklab, var(--primary) 88%, white), var(--primary) 62%, color-mix(in oklab, var(--primary) 82%, black)); color: var(--primary-foreground); font-size: .75rem; font-weight: 700; box-shadow: 0 0 14px color-mix(in oklab, var(--primary) 45%, transparent); }
+  .cjm-card { display: grid; grid-template-columns: 44px minmax(0,1fr); align-items: center; gap: .75rem; padding: .75rem; border-radius: 14px; border: 1px solid color-mix(in oklab, var(--primary) 42%, transparent); background: linear-gradient(135deg, color-mix(in oklab, var(--primary) 22%, var(--journey-surface)), var(--journey-surface) 72%); box-shadow: 0 12px 26px -20px color-mix(in oklab, var(--primary) 70%, transparent); }
+  .cjm-card .connected-journey-stage-icon { width: 44px; height: 44px; flex-basis: 44px; border-radius: 12px; border-color: color-mix(in oklab, var(--primary) 45%, transparent); background: linear-gradient(145deg, color-mix(in oklab, var(--primary) 26%, var(--journey-icon-surface)), color-mix(in oklab, var(--primary) 10%, var(--journey-background))); color: color-mix(in oklab, var(--primary) 72%, white); }
   .cjm-card .connected-journey-stage-icon svg { width: 20px; height: 20px; }
   .cjm-text { min-width: 0; display: grid; gap: .15rem; }
   .cjm-text strong { color: var(--journey-foreground); font-size: .9375rem; font-weight: 600; line-height: 1.3; }
-  .cjm-text small { color: var(--journey-muted); font-size: .75rem; }
-  .cjm-chev { width: 18px; height: 18px; color: var(--journey-muted); }
+  .cjm-text small { color: color-mix(in oklab, var(--primary) 30%, var(--journey-muted)); font-size: .75rem; }
 }
