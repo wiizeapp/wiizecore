@@ -82,7 +82,7 @@ export function ConnectedJourneySection() {
               <span className="connected-journey-copy"><Copy className="connected-journey-copy-icon" aria-hidden="true" /></span>
             </div>
           </div>
-          <div className="connected-journey-mobile" aria-hidden="true">
+          <div className="connected-journey-mobile">
             <div className="cjm-link">
               <Link2 aria-hidden="true" />
               <span>pagamento.<strong>wiizepay</strong>.com/cliente</span>
