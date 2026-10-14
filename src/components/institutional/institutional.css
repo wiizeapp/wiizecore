@@ -235,3 +235,46 @@
 @media (prefers-reduced-motion: reduce) {
   .institution-connection::after, .institution-infrastructure.is-in-view .institution-growth-bars > div > span, .institution-portal-stage.is-visible > .institution-portal { animation: none; }
 }
+
+/* Premium pillar visuals */
+.institution-pillar-visual { position: relative; overflow: hidden; padding: 2rem 1.75rem 1.25rem; border: 1px solid color-mix(in oklab, var(--primary) 22%, var(--border)); border-left-width: 1px; border-radius: 1rem; background: radial-gradient(120% 90% at 85% 0%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 60%), linear-gradient(160deg, color-mix(in oklab, var(--primary) 7%, var(--surface)), var(--surface)); box-shadow: 0 30px 60px -35px color-mix(in oklab, var(--primary) 45%, transparent); }
+.institution-pillar-grid { position: absolute; inset: 0; background-image: linear-gradient(color-mix(in oklab, var(--primary) 10%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in oklab, var(--primary) 10%, transparent) 1px, transparent 1px); background-size: 24px 24px; mask-image: radial-gradient(ellipse at 70% 10%, #000 10%, transparent 70%); pointer-events: none; }
+.institution-pillar-card { position: relative; padding: 1rem 1.25rem 1.25rem; border: 1px solid var(--border); border-radius: .875rem; background: color-mix(in oklab, var(--background) 88%, transparent); backdrop-filter: blur(10px); box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent), 0 18px 40px -24px color-mix(in oklab, var(--foreground) 35%, transparent); }
+.institution-pillar-card .institution-window-dots { margin-bottom: .875rem; }
+.institution-pillar-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .6rem; color: var(--primary-foreground); background: linear-gradient(135deg, var(--primary), color-mix(in oklab, var(--primary) 65%, var(--foreground))); box-shadow: 0 6px 16px -6px var(--primary); }
+.institution-pillar-live { margin-left: auto; display: inline-flex; align-items: center; gap: .4rem; padding: .2rem .55rem; border-radius: 999px; font-size: .625rem; font-weight: 500; color: var(--primary); background: color-mix(in oklab, var(--primary) 10%, transparent); }
+.institution-pillar-progress { margin-top: 1rem; height: 4px; border-radius: 999px; background: var(--secondary); overflow: hidden; }
+.institution-pillar-progress span { display: block; height: 100%; width: 100%; border-radius: inherit; background: linear-gradient(90deg, color-mix(in oklab, var(--primary) 50%, transparent), var(--primary)); transform-origin: left; animation: institution-progress 2.4s cubic-bezier(.22,1,.36,1) both; }
+.institution-pillar-visual ol { margin-top: .75rem; }
+.institution-pillar-visual li { padding: .8rem .75rem; margin-top: .4rem; border: 1px solid var(--border); border-radius: .6rem; background: var(--background); animation: institution-row-in .6s ease both; }
+.institution-pillar-visual li:last-child { border-color: color-mix(in oklab, var(--primary) 35%, var(--border)); background: color-mix(in oklab, var(--primary) 6%, var(--background)); }
+.institution-pillar-contracts ol { margin-left: 0; border-left: 0; }
+.institution-pillar-contracts li { margin-left: 0; }
+.institution-pillar-visual .institution-step-symbol { display: grid; place-items: center; min-width: 1.5rem; height: 1.5rem; border-radius: 999px; font-size: .625rem; font-weight: 600; color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, transparent); }
+.institution-pillar-visual > p { position: relative; text-align: right; }
+@keyframes institution-progress { from { transform: scaleX(0); } }
+@keyframes institution-row-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* Floating fragments */
+.institution-fragments > span { border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); color: var(--foreground); font-weight: 500; box-shadow: 0 16px 30px -20px color-mix(in oklab, var(--foreground) 40%, transparent); }
+.institution-fragments > span svg { color: var(--primary); }
+.institution-fragments > span:nth-child(1) { --r: -6deg; --y: 0rem; animation: institution-float 6s ease-in-out infinite; }
+.institution-fragments > span:nth-child(2) { --r: 5deg; --y: .5rem; animation: institution-float 7s ease-in-out -1.5s infinite; }
+.institution-fragments > span:nth-child(3) { --r: 4deg; --y: 0rem; animation: institution-float 6.5s ease-in-out -3s infinite; }
+.institution-fragments > span:nth-child(4) { --r: -4deg; --y: 0rem; animation: institution-float 7.5s ease-in-out -4.5s infinite; }
+@keyframes institution-float { 0%, 100% { transform: rotate(var(--r)) translateY(var(--y)); } 50% { transform: rotate(calc(var(--r) * .6)) translateY(calc(var(--y) - .5rem)); } }
+
+/* Principle icons */
+.institution-principle-head { display: inline-flex !important; align-items: center; gap: .75rem; }
+.institution-principle-icon { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: .7rem; font-style: normal; color: var(--primary); background: color-mix(in oklab, var(--primary) 10%, transparent); border: 1px solid color-mix(in oklab, var(--primary) 22%, transparent); }
+
+/* Units inline with numbers */
+.institution-big-number { flex-wrap: wrap; }
+.institution-big-unit { font-size: 1.75rem; color: var(--foreground); -webkit-text-fill-color: currentColor; font-weight: 400; }
+.institution-infra-secondary strong > span:last-child { display: inline; font-size: 1rem; }
+.institution-inline-prefix { font-size: 1rem; }
+.institution-growth-bars b { font-size: .625rem; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .institution-fragments > span, .institution-pillar-progress span, .institution-pillar-visual li { animation: none !important; }
+}
