@@ -4,7 +4,6 @@ import { ArrowRight, BarChart3, Briefcase, CircleDollarSign, FileText, Palette, 
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PublicPage } from "@/components/public-site";
-import { FeatureMarquee } from "@/components/feature-marquee";
 import type { ReactNode } from "react";
 import { FeatureVisual, type FeatureVisualKind } from "@/components/home/feature-visual";
 import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } from "@/components/home/landing-sections";
@@ -58,7 +57,6 @@ function Landing() {
             <ProductPreview />
           </div>
         </section>
-        <FeatureMarquee />
 
         <OperationFlow />
         <HowItWorksSection />
