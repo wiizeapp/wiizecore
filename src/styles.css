@@ -82,6 +82,18 @@
 
 :root {
   --brand-pay: oklch(0.62 0.17 152);
+  /* Connected journey: intentionally dark in both public themes. */
+  --journey-background: oklch(0.155 0.022 162);
+  --journey-surface: oklch(0.19 0.03 162);
+  --journey-icon-surface: oklch(0.235 0.042 162);
+  --journey-foreground: oklch(0.97 0.008 162);
+  --journey-muted: oklch(0.76 0.025 162);
+  --journey-highlight: oklch(0.78 0.18 158);
+  --journey-line: color-mix(in oklab, var(--journey-highlight) 66%, transparent);
+  --journey-icon-border: color-mix(in oklab, var(--journey-highlight) 19%, transparent);
+  --journey-illumination: radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 13%, transparent), transparent 68%);
+  --journey-link-shadow: 0 0 0 1px color-mix(in oklab, var(--journey-highlight) 10%, transparent), 0 0 22px color-mix(in oklab, var(--journey-highlight) 12%, transparent), 0 0 60px color-mix(in oklab, var(--primary) 12%, transparent), inset 0 0 18px color-mix(in oklab, var(--primary) 6%, transparent);
+  --journey-arrow-shadow: 0 0 4px color-mix(in oklab, var(--journey-highlight) 24%, transparent);
   --radius: 0.85rem;
 
   --background: oklch(0.985 0.004 160);
