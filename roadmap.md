@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Refinar apenas a jornada conectada conforme a imagem agora recebida: proporções, curvas, iluminação e acabamento; conferir computador e celular.
+- [x] Refinar apenas a jornada conectada conforme a imagem agora recebida: proporções, curvas independentes, luz nas bordas, ícones e acabamento do link; conferido a 320, 390, 640, 768 e 1280px, textos e posição preservados, sem cortes, duplicação ou erros de execução.
 
 - [x] Substituir integralmente a jornada após Como funciona pela composição escura com cápsula central, quatro etapas e setas curvas, sem alterar demais seções.
 - [x] Conferir textos PT-BR, endereço ilustrativo exato, seção única e composição anterior ausente; apresentação a 320, 390, 640, 768 e 1280px sem rolagem horizontal ou erros de execução, compilação OK. Referência mencionada não recebida; execução baseada na descrição aprovada.

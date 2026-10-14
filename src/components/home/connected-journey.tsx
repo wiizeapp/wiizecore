@@ -47,7 +47,7 @@ export function ConnectedJourneySection() {
                 <path d="M175 76C212 68 245 91 263 119" />
                 <path d="M215 237C244 247 270 229 288 205" />
                 <path d="M806 112C838 125 871 102 889 76" />
-                <path d="M796 204C822 229 850 255 886 247" />
+                <path d="M796 204C820 228 839 236 858 224" />
               </g>
             </svg>
             <svg className="connected-journey-arrows connected-journey-arrows-mobile" viewBox="0 0 320 516" preserveAspectRatio="none" fill="none" aria-hidden="true">
