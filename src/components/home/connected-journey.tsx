@@ -44,10 +44,10 @@ export function ConnectedJourneySection() {
                 <path d="M30 103C105 151 215 159 290 151M790 151C890 161 991 151 1050 106" />
               </g>
               <g markerEnd="url(#journey-arrow-desktop)">
-                <path d="M175 76C212 68 245 91 263 119" />
-                <path d="M215 237C244 247 270 229 288 205" />
-                <path d="M889 76C871 102 838 125 806 112" />
-                <path d="M858 224C839 236 820 228 796 204" />
+                <path d="M175 70C212 52 247 68 270 95" />
+                <path d="M215 247C244 257 270 241 288 218" />
+                <path d="M905 70C868 52 833 68 810 95" />
+                <path d="M858 247C839 259 812 241 796 218" />
               </g>
             </svg>
             <svg className="connected-journey-arrows connected-journey-arrows-mobile" viewBox="0 0 320 516" preserveAspectRatio="none" fill="none" aria-hidden="true">
@@ -57,10 +57,10 @@ export function ConnectedJourneySection() {
                 </marker>
               </defs>
               <g markerEnd="url(#journey-arrow-mobile)">
-                <path d="M22 64C2 88 2 180 22 213" />
-                <path d="M40 165C24 177 24 193 40 210" />
-                <path d="M290 340C314 318 314 296 290 280" />
-                <path d="M292 441C314 409 314 331 302 279" />
+                <path d="M22 64C2 88 2 162 22 190" />
+                <path d="M40 165C29 173 29 182 40 190" />
+                <path d="M290 340C310 336 309 321 290 310" />
+                <path d="M292 441C313 409 314 340 302 310" />
               </g>
             </svg>
             {stages.map(({ position, icon: Icon, label }) => (
