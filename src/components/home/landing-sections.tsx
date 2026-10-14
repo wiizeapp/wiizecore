@@ -1,5 +1,9 @@
 import type { CSSProperties, ReactNode } from "react";
-import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, CircleDollarSign, Clock3, CreditCard, FileSignature, FileText, Landmark, Lock, PenLine, QrCode, Receipt, Repeat, Users, Wallet, Briefcase, Send, Quote, X } from "lucide-react";
+import howClientes from "@/assets/how-clientes.png.asset.json";
+import howCobranca from "@/assets/how-cobranca.png.asset.json";
+import howEnvio from "@/assets/how-envio.png.asset.json";
+import howRecebimento from "@/assets/how-recebimento.png.asset.json";
+import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, CircleDollarSign, Clock3, CreditCard, FileSignature, FileText, Landmark, Lock, PenLine, QrCode, Receipt, Repeat, Users, Wallet, Briefcase, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -115,8 +119,7 @@ export function OperationFlow() {
         </div>
         {modules.map((m) => (
           <div key={m.title} className="group rounded-xl border border-border bg-card p-6 shadow-card transition-colors hover:border-primary/50">
-            <span className="grid size-11 place-items-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"><m.icon className="size-5" /></span>
-            <h3 className="mt-5 text-lg font-semibold">{ui(m.title)}</h3>
+            <h3 className="text-lg font-semibold">{ui(m.title)}</h3>
             <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{ui(m.text)}</p>
           </div>
         ))}
@@ -127,11 +130,11 @@ export function OperationFlow() {
 
 export function HowItWorksSection() {
   const ui = useUi();
-  const steps: Array<[string, typeof Users, string, string, string]> = [
-    ["01", Users, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
-    ["02", FileSignature, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
-    ["03", Send, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
-    ["04", Wallet, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
+  const steps: Array<[string, string, string, string, string]> = [
+    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
+    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
+    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
+    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
   ];
   return (
     <section className="border-y border-border bg-surface">
@@ -142,11 +145,11 @@ export function HowItWorksSection() {
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
         <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(([n, Icon, title, text, tag], index) => (
+          {steps.map(([n, iconSrc, title, text, tag], index) => (
             <li key={n} className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
               {index < steps.length - 1 ? <span className="absolute -right-4 top-1/2 hidden h-px w-4 bg-border lg:block" aria-hidden="true" /> : null}
               <div className="flex items-center justify-between gap-3">
-                <span className="grid size-11 place-items-center rounded-xl border border-primary/30 bg-accent text-primary"><Icon className="size-5" /></span>
+                <img src={iconSrc} alt="" aria-hidden="true" loading="lazy" decoding="async" className="-my-2 -ml-1 size-20 object-contain drop-shadow-[0_10px_18px_color-mix(in_oklab,var(--primary)_22%,transparent)] sm:size-[5.5rem]" />
                 <span className="font-display text-xs font-semibold text-primary">{ui("Passo")} {n}</span>
               </div>
               <h3 className="mt-5 font-semibold">{ui(title)}</h3>
@@ -490,7 +493,7 @@ function TestimonialsRow({ items, duration, reverse = false }: { items: Testimon
           <div key={copy} className="flex flex-row gap-4 md:gap-6" aria-hidden={copy !== 0}>
             {items.map(({ text, name, role }) => (
               <figure key={`${copy}-${name}`} className="m-0 w-[250px] shrink-0 rounded-2xl border border-border bg-card p-4 sm:w-[320px] sm:p-6 shadow-card md:w-[380px]">
-                <Quote className="mb-3 size-5 text-primary/40 sm:mb-4 sm:size-6" />
+                
                 <blockquote className="m-0"><p className="text-[13px] leading-relaxed text-muted-foreground sm:text-sm md:text-base">{ui(text)}</p></blockquote>
                 <figcaption className="mt-4 flex items-center gap-3 sm:mt-6 sm:gap-4">
                   <span aria-hidden="true" className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary text-xs sm:size-12 sm:text-sm font-bold text-primary-foreground">{testimonialInitials(name)}</span>
