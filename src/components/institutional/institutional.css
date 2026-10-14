@@ -87,13 +87,13 @@
 .institution-big-number-bottom > span { display: flex; align-items: center; color: var(--primary); font-size: .6875rem; }
 .institution-growth > p { font-size: .75rem; }
 .institution-growth-bars { display: flex; align-items: end; justify-content: center; gap: 1.5rem; height: 11rem; border-bottom: 1px solid var(--border); padding-top: 1.5rem; margin-bottom: .75rem; }
-.institution-growth-bars > div { width: 4.5rem; height: 100%; display: flex; flex-direction: column; justify-content: end; }
+.institution-growth-bars > div { position: relative; width: 4.5rem; height: calc(100% - 1.5rem); margin-bottom: 1.5rem; display: flex; flex-direction: column; justify-content: end; }
 .institution-growth-bars > div > span { position: relative; display: block; border-radius: .25rem .25rem 0 0; transform-origin: bottom; }
 .institution-bar-2024 { height: 64.935%; background: var(--secondary); }
 .institution-bar-2025 { height: 100%; background: var(--primary); }
 .institution-growth-bars b { position: absolute; top: .6rem; width: 100%; text-align: center; font-size: .75rem; font-weight: 500; }
 .institution-bar-2025 b { color: var(--primary-foreground); }
-.institution-growth-bars small { margin-block: .5rem; text-align: center; font-size: .625rem; }
+.institution-growth-bars small { position: absolute; top: 100%; width: 100%; margin-top: .5rem; text-align: center; font-size: .625rem; }
 .institution-growth > small { color: var(--muted-foreground); font-size: .625rem; }
 .institution-infra-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .institution-infra-secondary > div + div { border-left: 1px solid var(--border); padding-left: 1.5rem; }
