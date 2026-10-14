@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { feeFor, fixedFeeCount } from "./fee-math";
 import { calculateFeeFromConfig, calculateAnticipationFromConfig } from "./fee-engine.server";
 
-// Espelho (apenas para teste) da tabela oficial vigente em payment_fee_settings v5.
+// Espelho (apenas para teste) da tabela oficial vigente em payment_fee_settings v6.
 const PIX = { fixed: 2.49, percent: 0.99 };
-const CARD = { 1: { fixed: 0.99, percent: 4.99 }, 2: { fixed: 0.99, percent: 5.49 }, 7: { fixed: 0.99, percent: 5.99 }, 13: { fixed: 0.99, percent: 6.29 } };
-const cfg = (r: { fixed: number; percent: number }) => ({ id: "v5", fixed_fee: r.fixed, percentage_fee: r.percent });
+const CARD = { 1: { fixed: 0.99, percent: 4.99 }, 2: { fixed: 0.99, percent: 6.99 }, 7: { fixed: 0.99, percent: 7.99 }, 13: { fixed: 0.99, percent: 9.99 } };
+const cfg = (r: { fixed: number; percent: number }) => ({ id: "v6", fixed_fee: r.fixed, percentage_fee: r.percent });
 
 describe("tabela oficial out/2026", () => {
   it.each([
@@ -13,9 +13,9 @@ describe("tabela oficial out/2026", () => {
     ["Pix Automático R$1.000", PIX, 1000, 12.39, 987.61],
     ["Boleto R$1.000", PIX, 1000, 12.39, 987.61],
     ["Cartão 1x", CARD[1], 1000, 50.89, 949.11],
-    ["Cartão 2–6x", CARD[2], 1000, 55.89, 944.11],
-    ["Cartão 7–12x", CARD[7], 1000, 60.89, 939.11],
-    ["Cartão 13–21x", CARD[13], 1000, 63.89, 936.11],
+    ["Cartão 2–6x", CARD[2], 1000, 70.89, 929.11],
+    ["Cartão 7–12x", CARD[7], 1000, 80.89, 919.11],
+    ["Cartão 13–21x", CARD[13], 1000, 100.89, 899.11],
     ["Pix R$10", PIX, 10, 2.59, 7.41],
     ["Pix R$100", PIX, 100, 3.48, 96.52],
     ["Pix R$10.000", PIX, 10000, 101.49, 9898.51],
