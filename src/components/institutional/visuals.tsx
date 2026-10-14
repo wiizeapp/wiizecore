@@ -1,4 +1,5 @@
-import { ArrowDown, ArrowRight, Bell, Check, CheckCheck, FileSignature, FileText, LayoutDashboard, Link2, LockKeyhole, MessageCircle, Receipt, Search, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowDown, ArrowRight, Bell, Check, CheckCheck, Download, FileSignature, FileText, LayoutDashboard, Link2, LockKeyhole, MessageCircle, Receipt, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Brand } from '@/components/brand';
 
@@ -40,21 +41,31 @@ export function OperationDashboard() {
 
 export function PortalIllustration() {
   const { t } = useTranslation('ui');
-  return <div className="institution-portal-stage feature-visual feature-visual-1"><div className="feature-visual-grid absolute inset-0" aria-hidden="true" /><div className="feature-visual-glow absolute inset-0" aria-hidden="true" /><figure className="institution-portal">
-    <div className="institution-dashboard-toolbar"><div className="institution-window-dots" aria-hidden="true"><i /><i /><i /></div><span><LockKeyhole className="size-3" />{t('Portal do cliente')}</span><Search className="size-3.5 text-muted-foreground" /></div>
-    <div className="institution-window-top"><Brand size="sm" /><span className="institution-portal-secure"><LockKeyhole className="size-3" />{t('Acesso seguro')}</span><span className="institution-status-dot" /></div>
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) { setVisible(true); observer.disconnect(); }
+    }, { threshold: 0.15 });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
+  return <figure className="institution-portal-preview"><div ref={stageRef} className={`institution-portal-stage feature-visual feature-visual-1 ${visible ? 'is-visible' : ''}`}><div className="feature-visual-grid absolute inset-0" aria-hidden="true" /><div className="feature-visual-glow absolute inset-0" aria-hidden="true" /><div className="institution-portal">
+    <div className="institution-window-top"><Brand size="sm" /><span className="institution-portal-secure"><LockKeyhole className="size-3" />{t('Portal do cliente')}</span></div>
     <div className="institution-portal-body">
-      <div className="institution-portal-greeting"><div className="institution-dashboard-avatar">CE</div><div><p>{t('Seu espaço, tudo organizado.')}</p><h3>{t('Olá, cliente exemplo.')}</h3><span>{t('Documentos e pagamentos da sua empresa.')}</span></div></div>
-      <div className="institution-portal-tabs">{[{ icon: Receipt, label: 'Suas cobranças' }, { icon: FileSignature, label: 'Seus contratos' }, { icon: FileText, label: 'Seus documentos' }].map(({ icon: Icon, label }, i) => <span className={i === 0 ? 'is-active' : ''} key={label}><Icon className="size-3.5" />{t(label)}</span>)}</div>
-      <div className="institution-portal-layout"><div>
+      <div className="institution-portal-greeting"><div className="institution-dashboard-avatar">CE</div><div><h3>{t('Olá, cliente exemplo.')}</h3><span>{t('Documentos e pagamentos da sua empresa.')}</span></div><LockKeyhole className="ml-auto hidden size-4 text-primary sm:block" /></div>
+      <div className="institution-portal-tabs">{[{ icon: Wallet, label: 'Cobranças' }, { icon: Receipt, label: 'Recibos' }, { icon: FileSignature, label: 'Contratos' }, { icon: FileText, label: 'Documentos' }].map(({ icon: Icon, label }, i) => <span className={i === 0 ? 'is-active' : ''} key={label}><Icon className="size-3.5" />{t(label)}</span>)}</div>
+      <div className="institution-portal-layout"><div className="institution-portal-payments"><div className="institution-portal-section-title"><Wallet className="size-4 text-primary" /><strong>{t('Suas cobranças')}</strong></div><div className="institution-payment-example"><span>{t('Consultoria estratégica')}</span><strong>R$ 850,00</strong><small><span className="institution-status-dot" />{t('Aguardando pagamento')}</small><span className="institution-payment-action">{t('Pagar cobrança')}<ArrowRight className="size-3.5" /></span></div><div className="institution-receipt-example"><Check className="size-4 text-primary" /><span><strong>{t('Pagamento confirmado')}</strong><small>{t('Recibo disponível em PDF')}</small></span><Download className="ml-auto size-4 text-muted-foreground" /></div></div><div className="institution-portal-files">
         <div className="institution-portal-section-title"><FileSignature className="size-4 text-primary" /><strong>{t('Seus contratos')}</strong></div>
-        <div className="institution-document-row"><span><strong>{t('Contrato de consultoria')}</strong><small>{t('Versão assinada disponível')}</small></span><CheckCheck className="size-4 text-primary" /></div>
+        <div className="institution-document-row"><span><strong>{t('Contrato de consultoria')}</strong><small>{t('Versão assinada disponível')}</small></span><Download className="size-4 text-primary" /></div>
         <div className="institution-portal-section-title"><FileText className="size-4 text-primary" /><strong>{t('Seus documentos')}</strong></div>
-        <div className="institution-document-row"><span><strong>{t('Relatório do serviço')}</strong><small>PDF · {t('Disponibilizado pela empresa')}</small></span><FileText className="size-4 text-muted-foreground" /></div>
+        <div className="institution-document-row"><span><strong>{t('Relatório do serviço')}</strong><small>PDF · {t('Disponibilizado pela empresa')}</small></span><Download className="size-4 text-muted-foreground" /></div>
         <div className="institution-document-row"><span><strong>{t('Nota fiscal de serviço')}</strong><small>{t('Quando emitida e autorizada')}</small></span><FileText className="size-4 text-muted-foreground" /></div>
-      </div><div className="institution-portal-payments"><div className="institution-portal-section-title"><Receipt className="size-4 text-primary" /><strong>{t('Suas cobranças')}</strong></div><div className="institution-payment-example"><span>{t('Consultoria estratégica')}</span><strong>R$ 850,00</strong><small>{t('Aguardando pagamento')}</small><span className="institution-payment-action">{t('Pagar cobrança')}<ArrowRight className="size-3.5" /></span></div><div className="institution-receipt-example"><Check className="size-4 text-primary" /><span><strong>{t('Pagamento confirmado')}</strong><small>{t('Recibo disponível em PDF')}</small></span></div></div></div>
-    </div><figcaption>{t('Exemplo ilustrativo. Não representa uma conta ou transação real.')}</figcaption>
-  </figure></div>;
+      </div></div>
+    </div>
+  </div><div className="institution-portal-bottom-fade" aria-hidden="true" /></div><figcaption>{t('Exemplo ilustrativo. Não representa uma conta ou transação real.')}</figcaption></figure>;
 }
 
 export function PillarVisual({ kind }: { kind: 'clients' | 'contracts' | 'payments' | 'documents' }) {
