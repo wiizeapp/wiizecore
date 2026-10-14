@@ -1,0 +1,57 @@
+import { ArrowDown, ArrowRight, Check, CheckCheck, FileSignature, FileText, Link2, MessageCircle, Receipt, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Brand } from '@/components/brand';
+
+const modules = [
+  { icon: Users, name: 'Clientes', detail: 'O relacionamento começa aqui.' },
+  { icon: FileSignature, name: 'Contratos', detail: 'Cada acordo, no seu lugar.' },
+  { icon: Wallet, name: 'Cobranças', detail: 'Do vencimento à confirmação.' },
+  { icon: FileText, name: 'Documentos', detail: 'Informação sempre acessível.' },
+];
+
+export function OperationDiagram({ compact = false }: { compact?: boolean }) {
+  const { t } = useTranslation('ui');
+  return <div className={`institution-operation ${compact ? 'is-compact' : ''}`} role="img" aria-label={t('Clientes, contratos, cobranças e documentos conectados pela WiizePay')}>
+    <div className="institution-operation-label"><span className="institution-status-dot" />{t('Uma operação conectada')}</div>
+    <div className="institution-module-grid">{modules.map(({ icon: Icon, name, detail }, i) => <div className="institution-module" key={name}><span className="institution-module-index">0{i + 1}</span><Icon className="size-5 text-primary" /><strong>{t(name)}</strong>{!compact && <p>{t(detail)}</p>}</div>)}</div>
+    <div className="institution-connection" aria-hidden="true"><span /><span /><span /><span /><i /></div>
+    <div className="institution-hub"><Brand /><span className="institution-hub-caption">{t('Gestão e pagamentos, juntos.')}<CheckCheck className="size-4 text-primary" /></span></div>
+  </div>;
+}
+
+export function FragmentationDiagram() {
+  const { t } = useTranslation('ui');
+  return <div className="institution-fragmentation" role="img" aria-label={t('De informações dispersas para uma operação organizada')}>
+    <div className="institution-fragments">{[ ['Conversas', MessageCircle], ['Arquivos', FileText], ['Cobranças', Receipt], ['Acordos', FileSignature] ].map(([label, Icon]) => { const Symbol = Icon as LucideIcon; return <span key={String(label)}><Symbol className="size-4" />{t(String(label))}</span>; })}</div>
+    <div className="institution-converge" aria-hidden="true"><ArrowDown className="size-5 text-primary" /></div>
+    <div className="institution-organized"><Brand size="sm" /><div><Check className="size-4 text-primary" />{t('Informações conectadas ao mesmo cliente')}</div></div>
+  </div>;
+}
+
+export function PortalIllustration() {
+  const { t } = useTranslation('ui');
+  return <figure className="institution-portal">
+    <div className="institution-window-top"><Brand size="sm" /><span>{t('Portal do cliente')}</span><span className="institution-status-dot" /></div>
+    <div className="institution-portal-body">
+      <div className="institution-portal-greeting"><p>{t('Seu espaço, tudo organizado.')}</p><h3>{t('Olá, cliente exemplo.')}</h3><span>{t('Documentos e pagamentos da sua empresa.')}</span></div>
+      <div className="institution-portal-layout"><div>
+        <div className="institution-portal-section-title"><FileSignature className="size-4 text-primary" /><strong>{t('Seus contratos')}</strong></div>
+        <div className="institution-document-row"><span><strong>{t('Contrato de consultoria')}</strong><small>{t('Versão assinada disponível')}</small></span><CheckCheck className="size-4 text-primary" /></div>
+        <div className="institution-portal-section-title"><FileText className="size-4 text-primary" /><strong>{t('Seus documentos')}</strong></div>
+        <div className="institution-document-row"><span><strong>{t('Relatório do serviço')}</strong><small>PDF · {t('Disponibilizado pela empresa')}</small></span><FileText className="size-4 text-muted-foreground" /></div>
+        <div className="institution-document-row"><span><strong>{t('Nota fiscal de serviço')}</strong><small>{t('Quando emitida e autorizada')}</small></span><FileText className="size-4 text-muted-foreground" /></div>
+      </div><div className="institution-portal-payments"><div className="institution-portal-section-title"><Receipt className="size-4 text-primary" /><strong>{t('Suas cobranças')}</strong></div><div className="institution-payment-example"><span>{t('Consultoria estratégica')}</span><strong>R$ 850,00</strong><small>{t('Aguardando pagamento')}</small><span className="institution-payment-action">{t('Pagar cobrança')}<ArrowRight className="size-3.5" /></span></div><div className="institution-receipt-example"><Check className="size-4 text-primary" /><span><strong>{t('Pagamento confirmado')}</strong><small>{t('Recibo disponível em PDF')}</small></span></div></div></div>
+    </div><figcaption>{t('Exemplo ilustrativo. Não representa uma conta ou transação real.')}</figcaption>
+  </figure>;
+}
+
+export function PillarVisual({ kind }: { kind: 'clients' | 'contracts' | 'payments' | 'documents' }) {
+  const { t } = useTranslation('ui');
+  const content = {
+    clients: { title: 'Um cliente. Um histórico.', icon: Users, rows: ['Dados cadastrais', 'Cobranças vinculadas', 'Contratos e documentos'] },
+    contracts: { title: 'Do acordo à assinatura.', icon: FileSignature, rows: ['Serviço definido', 'Contrato vinculado', 'Assinatura registrada'] },
+    payments: { title: 'Cada etapa, visível.', icon: Wallet, rows: ['Cobrança criada', 'Aguardando pagamento', 'Confirmação pelo provedor'] },
+    documents: { title: 'O que importa, acessível.', icon: FileText, rows: ['Contrato assinado', 'Recibo do pagamento', 'Documentos disponibilizados'] },
+  }[kind];
+  return <div className={`institution-pillar-visual institution-pillar-${kind}`} role="img" aria-label={t(content.title)}><div className="institution-pillar-caption"><content.icon className="size-5 text-primary" /><span>{t(content.title)}</span></div><ol>{content.rows.map((row, i) => <li key={row}><span className="institution-step-symbol">{kind === 'payments' || kind === 'contracts' ? `0${i + 1}` : <Check className="size-3.5" />}</span><span>{t(row)}</span>{i === 2 ? <CheckCheck className="ml-auto size-4 text-primary" /> : <Link2 className="ml-auto size-4 text-muted-foreground" />}</li>)}</ol><p>{t('Representação ilustrativa do produto')}</p></div>;
+}
