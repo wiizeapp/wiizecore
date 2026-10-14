@@ -129,7 +129,7 @@ function ProductPreview() {
   const { t: ui } = useTranslation("ui");
   const bars = [38, 54, 46, 67, 58, 78, 70, 92, 76, 86, 73, 96];
   return (
-    <div className="home-dashboard-stage relative mt-12 w-full max-w-6xl flex-1" aria-label={ui("Demonstração do painel financeiro WiizePay")}>
+    <div className="home-dashboard-stage relative mt-8 w-full max-w-6xl flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro WiizePay")}>
       <div className="home-dashboard-window relative z-10 mx-auto w-[96%] overflow-hidden rounded-t-xl border-x border-t border-border bg-card text-left shadow-float sm:w-[88%] lg:w-[82%]">
         <div className="grid h-11 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-surface/70 px-3 sm:px-4">
           <div className="flex gap-1.5" aria-hidden="true"><span className="size-2 rounded-full bg-destructive/60" /><span className="size-2 rounded-full bg-warning/70" /><span className="size-2 rounded-full bg-primary/70" /></div>
@@ -157,7 +157,7 @@ function ProductPreview() {
             <div className="mt-2 grid gap-2 sm:mt-3 sm:grid-cols-[1.25fr_0.9fr] sm:gap-3">
               <div className="rounded-lg border border-border bg-card p-3 sm:p-4">
                 <div className="flex items-center justify-between"><div><p className="text-[10px] font-semibold">{ui("Movimentações")}</p><p className="text-[9px] text-muted-foreground">{ui("Recebimentos confirmados")}</p></div><span className="text-[9px] font-semibold text-primary">+18,4%</span></div>
-                <div className="dashboard-chart relative mt-4 flex h-24 items-end gap-1.5 sm:h-28 sm:gap-2" aria-hidden="true">{bars.map((height, index) => <span key={index} className="dashboard-chart-bar flex-1 rounded-t-sm" style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }} />)}</div>
+                <div className="dashboard-chart relative mt-4 flex h-16 items-end gap-1.5 sm:h-28 sm:gap-2" aria-hidden="true">{bars.map((height, index) => <span key={index} className="dashboard-chart-bar flex-1 rounded-t-sm" style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }} />)}</div>
                 <div className="mt-2 hidden grid-cols-6 text-center text-[8px] text-muted-foreground sm:grid"><span>{ui("Abr")}</span><span>{ui("Mai")}</span><span>{ui("Jun")}</span><span>{ui("Jul")}</span><span>{ui("Ago")}</span><span>{ui("Set")}</span></div>
               </div>
               <div className="hidden rounded-lg border border-border bg-card p-3 sm:block sm:p-4">
