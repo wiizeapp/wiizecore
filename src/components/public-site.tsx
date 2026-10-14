@@ -65,6 +65,33 @@ function ResourcesMenu() {
   );
 }
 
+function MobileMenu() {
+  const { t, res } = useNavLabels();
+  const [open, setOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
+  return (
+    <Sheet open={open} onOpenChange={(value) => { setOpen(value); if (!value) setResourcesOpen(false); }}>
+      <SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
+      <SheetContent side="right" className="dark inset-0 h-[100dvh] w-full max-w-none overflow-y-auto border-0 bg-background text-foreground sm:max-w-none">
+        <SheetHeader className="text-left">
+          <SheetTitle className="sr-only">{t("menuTitle")}</SheetTitle>
+          <SheetClose asChild><Link to="/" aria-label={t("home")} className="inline-flex w-fit"><Brand size="lg" /></Link></SheetClose>
+        </SheetHeader>
+        <nav className="mt-8 grid gap-2" aria-label={t("mobileNav")}>
+          <Button variant="ghost" className="justify-between" aria-expanded={resourcesOpen} onClick={() => setResourcesOpen((v) => !v)}>
+            {t("resources")} <ChevronDown className={`transition-transform ${resourcesOpen ? "rotate-180" : ""}`} />
+          </Button>
+          {resourcesOpen ? <div className="grid gap-1 pl-2">
+            {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
+          </div> : null}
+          {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
+          <SheetClose asChild><Button asChild className="mt-3"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button></SheetClose>
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 export function PublicHeader() {
   const { t, res } = useNavLabels();
   return (
@@ -78,19 +105,8 @@ export function PublicHeader() {
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
           <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
-          <Sheet>
-            <SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
-            <SheetContent className="dark w-[min(22rem,88vw)] border-border bg-background text-foreground">
-              <SheetHeader className="text-left"><SheetTitle>{t("menuTitle")}</SheetTitle></SheetHeader>
-              <nav className="mt-8 grid gap-2" aria-label={t("mobileNav")}>
-                <p className="px-3 pt-2 text-xs font-bold uppercase text-muted-foreground">{t("resources")}</p>
-                {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
-                <div className="my-2 border-t border-border" />
-                {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
-                <SheetClose asChild><Button asChild className="mt-3"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button></SheetClose>
-              </nav>
-            </SheetContent>
-          </Sheet>
+          <MobileMenu />
+
         </div>
       </div>
     </header>
