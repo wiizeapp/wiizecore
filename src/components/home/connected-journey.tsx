@@ -23,17 +23,31 @@ export function ConnectedJourneySection() {
         </div>
         <figure className="connected-journey-figure">
           <div className="connected-journey-map">
-            <svg className="connected-journey-arrows connected-journey-arrows-desktop" viewBox="0 0 1080 360" fill="none" aria-hidden="true">
+            <svg className="connected-journey-arrows connected-journey-arrows-desktop" viewBox="0 0 1080 330" preserveAspectRatio="none" fill="none" aria-hidden="true">
               <defs>
-                <marker id="journey-arrow-desktop" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
-                  <path d="M1 1L7 4L1 7" />
+                <linearGradient id="journey-curve-light" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="var(--journey-highlight)" />
+                  <stop offset="1" stopColor="var(--journey-lime)" />
+                </linearGradient>
+                <linearGradient id="journey-rail-light">
+                  <stop offset="0" stopColor="var(--journey-highlight)" stopOpacity="0" />
+                  <stop offset="0.3" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
+                  <stop offset="0.5" stopColor="var(--journey-lime)" stopOpacity="0.8" />
+                  <stop offset="0.7" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
+                  <stop offset="1" stopColor="var(--journey-highlight)" stopOpacity="0" />
+                </linearGradient>
+                <marker id="journey-arrow-desktop" markerWidth="13" markerHeight="13" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+                  <path d="M2 1L10 6L2 11" />
                 </marker>
               </defs>
+              <g className="connected-journey-rails">
+                <path d="M30 103C105 151 215 159 290 151M790 151C890 161 991 151 1050 106" />
+              </g>
               <g markerEnd="url(#journey-arrow-desktop)">
-                <path d="M155 95C155 136 222 125 265 151" />
-                <path d="M155 265C155 226 222 235 265 209" />
-                <path d="M795 163C858 125 925 144 925 95" />
-                <path d="M795 197C858 235 925 218 925 265" />
+                <path d="M175 76C212 68 245 91 263 119" />
+                <path d="M215 237C244 247 270 229 288 205" />
+                <path d="M806 112C838 125 871 102 889 76" />
+                <path d="M796 204C822 229 850 255 886 247" />
               </g>
             </svg>
             <svg className="connected-journey-arrows connected-journey-arrows-mobile" viewBox="0 0 320 516" preserveAspectRatio="none" fill="none" aria-hidden="true">
@@ -58,7 +72,7 @@ export function ConnectedJourneySection() {
             <div className="connected-journey-link">
               <Link2 className="connected-journey-link-icon" aria-hidden="true" />
               <span className="connected-journey-url">https://pagamento.wiizepay.com/<wbr /><strong>seucliente</strong></span>
-              <Copy className="connected-journey-copy-icon" aria-hidden="true" />
+              <span className="connected-journey-copy"><Copy className="connected-journey-copy-icon" aria-hidden="true" /></span>
             </div>
           </div>
           <figcaption className="sr-only">{t("Exemplo ilustrativo. Não representa uma conta ou transação real.")}</figcaption>
