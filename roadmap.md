@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Remover ilustração da abertura de Sobre nós; destacar título e unificar descrição do portal, refinar sua apresentação e conferir em computador e celular.
+
 - [x] Refinar Sobre nós e síntese na home: remover links de fonte, ordenar menu, animar indicadores com brilho, arredondar composições e enriquecer ilustrações de painel e portal.
 - [x] Conferir mudanças em computador e celular (320, 390, 768, 1024 e 1810px), navegação, contagem crescente, movimento reduzido, traduções e quatro testes; listar arquivos da entrega institucional.
 
