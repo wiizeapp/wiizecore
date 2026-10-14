@@ -71,7 +71,7 @@ export function ConnectedJourneySection() {
             ))}
             <div className="connected-journey-link">
               <Link2 className="connected-journey-link-icon" aria-hidden="true" />
-              <span className="connected-journey-url">https://pagamento.<strong>wiizepay</strong>.com/<wbr />seucliente</span>
+              <span className="connected-journey-url">https://pagamento.<strong>wiizepay</strong>.com/<wbr />cliente</span>
               <span className="connected-journey-copy"><Copy className="connected-journey-copy-icon" aria-hidden="true" /></span>
             </div>
           </div>
