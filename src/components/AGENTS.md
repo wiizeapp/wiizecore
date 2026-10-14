@@ -5,3 +5,4 @@
 - Institutional dashboard and portal illustrations remain presentation-only and reuse public semantic tokens. Why: previews must never access live financial operations.
 - Institutional metric sources live in `institutional/infrastructure-data.ts`. Why: shared attribution.
 - The landing's connected journey is a presentation-only home component with an inert illustrative URL and SVG connections; its outer surface follows the ComparisonSection page-background token while the capsule uses section-specific global semantic tokens. Why: visual storytelling must not imply an active checkout or change other public sections.
+- The four 3D step icons in "Como funciona" are scaled from their measured visible content plus a per-artwork optical weight, never from a single fixed pixel size. Why: the drawings have very different shapes, so one fixed box makes one icon look bigger than the rest.
