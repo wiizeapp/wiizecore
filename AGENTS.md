@@ -39,4 +39,4 @@
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
 
 - Read subdirectories' scoped `AGENTS.md` before edits.
-- Institutional metric sources live in `components/institutional/infrastructure-data.ts`. Why: shared attribution.
+- Public illustration and attribution rules live in `src/components/AGENTS.md`. Why: scoped ownership.

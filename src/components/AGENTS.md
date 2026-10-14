@@ -3,3 +3,5 @@
 - Dashboard screenshot fixtures are local presentation-only, account-gated and opt-in; never cache/persist them or enable navigation, exports or financial actions while active. Why: mockups must not contaminate real account data.
 
 - Institutional dashboard and portal illustrations remain presentation-only and reuse public semantic tokens. Why: previews must never access live financial operations.
+- Institutional metric sources live in `institutional/infrastructure-data.ts`. Why: shared attribution.
+- The landing's connected journey is a presentation-only home component based on checkout and portal patterns, without live data or payment actions. Why: visual storytelling must never execute financial operations.
