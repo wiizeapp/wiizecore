@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -14,16 +15,7 @@ import { listPublicFees, simulatePaymentFee } from "@/lib/fees.functions";
 import { formatBRL, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/taxas")({
-  head: () => ({
-    meta: [
-      { title: "Taxas claras e gestão completa — WiizePay" },
-      { name: "description", content: "Saiba quanto custa receber por Pix, boleto e cartão na WiizePay. Cobrança, notas fiscais, contratos, clientes e gestão financeira em um só lugar, sem mensalidade e sem custos escondidos." },
-      { property: "og:title", content: "Taxas claras e gestão completa — WiizePay" },
-      { property: "og:description", content: "Taxas transparentes para receber e controle completo do seu negócio: notas fiscais, contratos, clientes e gestão financeira." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => pageHead({ path: "/taxas", title: "Taxas WiizePay | Tarifas e Condições de Pagamento", description: "Saiba quanto custa receber por Pix, boleto e cartão na WiizePay. Cobrança, notas fiscais, contratos, clientes e gestão financeira em um só lugar, sem mensalidade e sem custos escondidos.", ogDescription: "Taxas transparentes para receber e controle completo do seu negócio: notas fiscais, contratos, clientes e gestão financeira.", breadcrumb: [{ name: "Taxas", path: "/taxas" }] }),
   component: FeesPage,
 });
 

@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { ResourcePage, type ResourcePageConfig } from "@/components/resource-page";
 import { FileCheck2, Receipt, UserRound } from "lucide-react";
@@ -29,13 +30,6 @@ const config: ResourcePageConfig = {
 };
 
 export const Route = createFileRoute("/portal-do-cliente")({
-  head: () => ({ meta: [
-    { title: "Portal do cliente — WiizePay" },
-    { name: "description", content: "Um portal com sua marca para o cliente baixar recibos, ver contratos e documentos e pagar cobranças." },
-    { property: "og:title", content: "Portal do cliente — WiizePay" },
-    { property: "og:description", content: "Seu cliente com recibos, contratos e documentos na palma da mão." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  head: () => pageHead({ path: "/portal-do-cliente", title: "Central do Cliente | WiizePay", description: "Um portal com sua marca para o cliente baixar recibos, ver contratos e documentos e pagar cobranças.", ogDescription: "Seu cliente com recibos, contratos e documentos na palma da mão.", breadcrumb: [{ name: "Central do cliente", path: "/portal-do-cliente" }] }),
   component: () => <ResourcePage config={config} />,
 });

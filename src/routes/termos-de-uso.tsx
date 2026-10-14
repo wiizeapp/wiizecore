@@ -1,7 +1,8 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
 
-export const Route = createFileRoute("/termos-de-uso")({ head: () => ({ meta: [{ title: "Termos de Uso — WiizePay" }, { name: "description", content: "Termos aplicáveis ao uso do WiizePay." }, { property: "og:title", content: "Termos de Uso — WiizePay" }, { property: "og:description", content: "Condições para uso da plataforma WiizePay." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
+export const Route = createFileRoute("/termos-de-uso")({ head: () => pageHead({ path: "/termos-de-uso", title: "Termos de Uso — WiizePay", description: "Termos aplicáveis ao uso do WiizePay.", ogDescription: "Condições para uso da plataforma WiizePay.", breadcrumb: [{ name: "Termos de uso", path: "/termos-de-uso" }] }), component: Page });
 function Page() { return <LegalPage eyebrow="Documento jurídico" title="Termos de Uso" description="Regras para acesso e uso da WiizePay por empresas, profissionais e seus representantes. Leia o documento integralmente antes de criar uma conta ou utilizar os serviços." highlights={[
   { icon: "acceptance", title: "Aceite consciente", description: "O uso da plataforma representa concordância com estes Termos e com as políticas vinculadas." },
   { icon: "payments", title: "Responsabilidades claras", description: "A empresa usuária responde por sua atividade, seus clientes, serviços, cobranças e informações." },

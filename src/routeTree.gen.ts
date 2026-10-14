@@ -12,14 +12,21 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CentralDoClienteRouteImport } from './routes/central-do-cliente'
 import { Route as CheckoutComSuaMarcaRouteImport } from './routes/checkout-com-sua-marca'
 import { Route as CobrancasEPagamentosRouteImport } from './routes/cobrancas-e-pagamentos'
+import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ContratosDigitaisRouteImport } from './routes/contratos-digitais'
+import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as GestaoDeClientesRouteImport } from './routes/gestao-de-clientes'
+import { Route as GestaoDeCobrancasRouteImport } from './routes/gestao-de-cobrancas'
 import { Route as GestaoFinanceiraRouteImport } from './routes/gestao-financeira'
 import { Route as IntegracaoCrmWiizeRouteImport } from './routes/integracao-crm-wiize'
 import { Route as LembretesDeCobrancaRouteImport } from './routes/lembretes-de-cobranca'
+import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as PixAutomaticoRouteImport } from './routes/pix-automatico'
+import { Route as PlataformaDePagamentosRouteImport } from './routes/plataforma-de-pagamentos'
 import { Route as PoliticaDeCancelamentoEReembolsoRouteImport } from './routes/politica-de-cancelamento-e-reembolso'
 import { Route as PoliticaDeCookiesRouteImport } from './routes/politica-de-cookies'
 import { Route as PoliticaDePagamentosRouteImport } from './routes/politica-de-pagamentos'
@@ -28,6 +35,7 @@ import { Route as PortalDoClienteRouteImport } from './routes/portal-do-cliente'
 import { Route as PrazosRouteImport } from './routes/prazos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SegurancaEConfiancaRouteImport } from './routes/seguranca-e-confianca'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as TaxasRouteImport } from './routes/taxas'
@@ -101,6 +109,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CentralDoClienteRoute = CentralDoClienteRouteImport.update({
+  id: '/central-do-cliente',
+  path: '/central-do-cliente',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutComSuaMarcaRoute = CheckoutComSuaMarcaRouteImport.update({
   id: '/checkout-com-sua-marca',
   path: '/checkout-com-sua-marca',
@@ -111,14 +124,34 @@ const CobrancasEPagamentosRoute = CobrancasEPagamentosRouteImport.update({
   path: '/cobrancas-e-pagamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContratosDigitaisRoute = ContratosDigitaisRouteImport.update({
   id: '/contratos-digitais',
   path: '/contratos-digitais',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CriarContaRoute = CriarContaRouteImport.update({
+  id: '/criar-conta',
+  path: '/criar-conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GestaoDeClientesRoute = GestaoDeClientesRouteImport.update({
   id: '/gestao-de-clientes',
   path: '/gestao-de-clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GestaoDeCobrancasRoute = GestaoDeCobrancasRouteImport.update({
+  id: '/gestao-de-cobrancas',
+  path: '/gestao-de-cobrancas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GestaoFinanceiraRoute = GestaoFinanceiraRouteImport.update({
@@ -136,9 +169,19 @@ const LembretesDeCobrancaRoute = LembretesDeCobrancaRouteImport.update({
   path: '/lembretes-de-cobranca',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
+  id: '/perguntas-frequentes',
+  path: '/perguntas-frequentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PixAutomaticoRoute = PixAutomaticoRouteImport.update({
   id: '/pix-automatico',
   path: '/pix-automatico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlataformaDePagamentosRoute = PlataformaDePagamentosRouteImport.update({
+  id: '/plataforma-de-pagamentos',
+  path: '/plataforma-de-pagamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliticaDeCancelamentoEReembolsoRoute =
@@ -180,6 +223,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SegurancaEConfiancaRoute = SegurancaEConfiancaRouteImport.update({
   id: '/seguranca-e-confianca',
   path: '/seguranca-e-confianca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SobreRoute = SobreRouteImport.update({
@@ -494,14 +542,21 @@ const ApiPublicV1ExtCheckoutSessionsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/central-do-cliente': typeof CentralDoClienteRoute
   '/checkout-com-sua-marca': typeof CheckoutComSuaMarcaRoute
   '/cobrancas-e-pagamentos': typeof CobrancasEPagamentosRoute
+  '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
+  '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
+  '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-pagamentos': typeof PoliticaDePagamentosRoute
@@ -510,6 +565,7 @@ export interface FileRoutesByFullPath {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -572,14 +628,21 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/central-do-cliente': typeof CentralDoClienteRoute
   '/checkout-com-sua-marca': typeof CheckoutComSuaMarcaRoute
   '/cobrancas-e-pagamentos': typeof CobrancasEPagamentosRoute
+  '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
+  '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
+  '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-pagamentos': typeof PoliticaDePagamentosRoute
@@ -588,6 +651,7 @@ export interface FileRoutesByTo {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -652,14 +716,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/central-do-cliente': typeof CentralDoClienteRoute
   '/checkout-com-sua-marca': typeof CheckoutComSuaMarcaRoute
   '/cobrancas-e-pagamentos': typeof CobrancasEPagamentosRoute
+  '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
+  '/criar-conta': typeof CriarContaRoute
+  '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
+  '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
+  '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
   '/politica-de-cookies': typeof PoliticaDeCookiesRoute
   '/politica-de-pagamentos': typeof PoliticaDePagamentosRoute
@@ -668,6 +739,7 @@ export interface FileRoutesById {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -732,14 +804,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/central-do-cliente'
     | '/checkout-com-sua-marca'
     | '/cobrancas-e-pagamentos'
+    | '/contato'
     | '/contratos-digitais'
+    | '/criar-conta'
+    | '/entrar'
     | '/gestao-de-clientes'
+    | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
+    | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
     | '/politica-de-cookies'
     | '/politica-de-pagamentos'
@@ -748,6 +827,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -810,14 +890,21 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/central-do-cliente'
     | '/checkout-com-sua-marca'
     | '/cobrancas-e-pagamentos'
+    | '/contato'
     | '/contratos-digitais'
+    | '/criar-conta'
+    | '/entrar'
     | '/gestao-de-clientes'
+    | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
+    | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
     | '/politica-de-cookies'
     | '/politica-de-pagamentos'
@@ -826,6 +913,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -889,14 +977,21 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/central-do-cliente'
     | '/checkout-com-sua-marca'
     | '/cobrancas-e-pagamentos'
+    | '/contato'
     | '/contratos-digitais'
+    | '/criar-conta'
+    | '/entrar'
     | '/gestao-de-clientes'
+    | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
+    | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
     | '/politica-de-cookies'
     | '/politica-de-pagamentos'
@@ -905,6 +1000,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -969,14 +1065,21 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CentralDoClienteRoute: typeof CentralDoClienteRoute
   CheckoutComSuaMarcaRoute: typeof CheckoutComSuaMarcaRoute
   CobrancasEPagamentosRoute: typeof CobrancasEPagamentosRoute
+  ContatoRoute: typeof ContatoRoute
   ContratosDigitaisRoute: typeof ContratosDigitaisRoute
+  CriarContaRoute: typeof CriarContaRoute
+  EntrarRoute: typeof EntrarRoute
   GestaoDeClientesRoute: typeof GestaoDeClientesRoute
+  GestaoDeCobrancasRoute: typeof GestaoDeCobrancasRoute
   GestaoFinanceiraRoute: typeof GestaoFinanceiraRoute
   IntegracaoCrmWiizeRoute: typeof IntegracaoCrmWiizeRoute
   LembretesDeCobrancaRoute: typeof LembretesDeCobrancaRoute
+  PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PixAutomaticoRoute: typeof PixAutomaticoRoute
+  PlataformaDePagamentosRoute: typeof PlataformaDePagamentosRoute
   PoliticaDeCancelamentoEReembolsoRoute: typeof PoliticaDeCancelamentoEReembolsoRoute
   PoliticaDeCookiesRoute: typeof PoliticaDeCookiesRoute
   PoliticaDePagamentosRoute: typeof PoliticaDePagamentosRoute
@@ -985,6 +1088,7 @@ export interface RootRouteChildren {
   PrazosRoute: typeof PrazosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SegurancaEConfiancaRoute: typeof SegurancaEConfiancaRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   SuporteRoute: typeof SuporteRoute
   TaxasRoute: typeof TaxasRoute
@@ -1037,6 +1141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/central-do-cliente': {
+      id: '/central-do-cliente'
+      path: '/central-do-cliente'
+      fullPath: '/central-do-cliente'
+      preLoaderRoute: typeof CentralDoClienteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout-com-sua-marca': {
       id: '/checkout-com-sua-marca'
       path: '/checkout-com-sua-marca'
@@ -1051,6 +1162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CobrancasEPagamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contratos-digitais': {
       id: '/contratos-digitais'
       path: '/contratos-digitais'
@@ -1058,11 +1176,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContratosDigitaisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/criar-conta': {
+      id: '/criar-conta'
+      path: '/criar-conta'
+      fullPath: '/criar-conta'
+      preLoaderRoute: typeof CriarContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gestao-de-clientes': {
       id: '/gestao-de-clientes'
       path: '/gestao-de-clientes'
       fullPath: '/gestao-de-clientes'
       preLoaderRoute: typeof GestaoDeClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gestao-de-cobrancas': {
+      id: '/gestao-de-cobrancas'
+      path: '/gestao-de-cobrancas'
+      fullPath: '/gestao-de-cobrancas'
+      preLoaderRoute: typeof GestaoDeCobrancasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gestao-financeira': {
@@ -1086,11 +1225,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LembretesDeCobrancaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perguntas-frequentes': {
+      id: '/perguntas-frequentes'
+      path: '/perguntas-frequentes'
+      fullPath: '/perguntas-frequentes'
+      preLoaderRoute: typeof PerguntasFrequentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pix-automatico': {
       id: '/pix-automatico'
       path: '/pix-automatico'
       fullPath: '/pix-automatico'
       preLoaderRoute: typeof PixAutomaticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plataforma-de-pagamentos': {
+      id: '/plataforma-de-pagamentos'
+      path: '/plataforma-de-pagamentos'
+      fullPath: '/plataforma-de-pagamentos'
+      preLoaderRoute: typeof PlataformaDePagamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/politica-de-cancelamento-e-reembolso': {
@@ -1147,6 +1300,13 @@ declare module '@tanstack/react-router' {
       path: '/seguranca-e-confianca'
       fullPath: '/seguranca-e-confianca'
       preLoaderRoute: typeof SegurancaEConfiancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sobre': {
@@ -1635,14 +1795,21 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CentralDoClienteRoute: CentralDoClienteRoute,
   CheckoutComSuaMarcaRoute: CheckoutComSuaMarcaRoute,
   CobrancasEPagamentosRoute: CobrancasEPagamentosRoute,
+  ContatoRoute: ContatoRoute,
   ContratosDigitaisRoute: ContratosDigitaisRoute,
+  CriarContaRoute: CriarContaRoute,
+  EntrarRoute: EntrarRoute,
   GestaoDeClientesRoute: GestaoDeClientesRoute,
+  GestaoDeCobrancasRoute: GestaoDeCobrancasRoute,
   GestaoFinanceiraRoute: GestaoFinanceiraRoute,
   IntegracaoCrmWiizeRoute: IntegracaoCrmWiizeRoute,
   LembretesDeCobrancaRoute: LembretesDeCobrancaRoute,
+  PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PixAutomaticoRoute: PixAutomaticoRoute,
+  PlataformaDePagamentosRoute: PlataformaDePagamentosRoute,
   PoliticaDeCancelamentoEReembolsoRoute: PoliticaDeCancelamentoEReembolsoRoute,
   PoliticaDeCookiesRoute: PoliticaDeCookiesRoute,
   PoliticaDePagamentosRoute: PoliticaDePagamentosRoute,
@@ -1651,6 +1818,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrazosRoute: PrazosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SegurancaEConfiancaRoute: SegurancaEConfiancaRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   SuporteRoute: SuporteRoute,
   TaxasRoute: TaxasRoute,

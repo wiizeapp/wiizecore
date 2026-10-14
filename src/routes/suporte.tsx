@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MessageCircle, ReceiptText, ShieldCheck } from "lucide-react";
 import { PublicPage } from "@/components/public-site";
@@ -5,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { BRAND_CONFIG, supportMailto } from "@/lib/brand-config";
 
 export const Route = createFileRoute("/suporte")({
-  head: () => ({ meta: [
-    { title: "Suporte WiizePay" }, { name: "description", content: "Entre em contato com o suporte do WiizePay para dúvidas sobre a conta e pagamentos." },
-    { property: "og:title", content: "Suporte WiizePay" }, { property: "og:description", content: "Ajuda para sua conta, cobranças e pagamentos." },
-    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
-  ] }), component: SuportePage,
+  head: () => pageHead({ path: "/suporte", title: "Contato e Suporte | WiizePay", description: "Entre em contato com o suporte do WiizePay para dúvidas sobre a conta e pagamentos.", ogDescription: "Ajuda para sua conta, cobranças e pagamentos.", breadcrumb: [{ name: "Suporte", path: "/suporte" }] }), component: SuportePage,
 });
 
 function SuportePage() {

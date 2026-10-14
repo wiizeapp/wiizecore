@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, EyeOff, Fingerprint, History, KeyRound, MessageCircle, ServerCog, ShieldCheck } from "lucide-react";
 import { PublicPage } from "@/components/public-site";
@@ -5,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/seguranca-e-confianca")({
-  head: () => ({ meta: [
-    { title: "Segurança no WiizePay" }, { name: "description", content: "Conheça as medidas usadas pelo WiizePay para proteger acessos, operações e confirmações de pagamento." },
-    { property: "og:title", content: "Segurança no WiizePay" }, { property: "og:description", content: "Proteção de acesso, operações financeiras e dados de pagamento." },
-    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
-  ] }), component: SegurancaPublica,
+  head: () => pageHead({ path: "/seguranca-e-confianca", title: "Segurança no WiizePay", description: "Conheça as medidas usadas pelo WiizePay para proteger acessos, operações e confirmações de pagamento.", ogDescription: "Proteção de acesso, operações financeiras e dados de pagamento.", breadcrumb: [{ name: "Segurança e confiança", path: "/seguranca-e-confianca" }] }), component: SegurancaPublica,
 });
 
 const items = [
