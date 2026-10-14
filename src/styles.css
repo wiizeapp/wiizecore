@@ -83,17 +83,22 @@
 :root {
   --brand-pay: oklch(0.62 0.17 152);
   /* Connected journey: intentionally dark in both public themes. */
-  --journey-background: oklch(0.155 0.022 162);
-  --journey-surface: oklch(0.19 0.03 162);
-  --journey-icon-surface: oklch(0.235 0.042 162);
+  --journey-background: oklch(0.16 0.018 162);
+  --journey-surface: oklch(0.18 0.024 162);
+  --journey-icon-surface: oklch(0.205 0.026 162);
   --journey-foreground: oklch(0.97 0.008 162);
   --journey-muted: oklch(0.76 0.025 162);
-  --journey-highlight: oklch(0.78 0.18 158);
-  --journey-line: color-mix(in oklab, var(--journey-highlight) 66%, transparent);
-  --journey-icon-border: color-mix(in oklab, var(--journey-highlight) 19%, transparent);
-  --journey-illumination: radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 13%, transparent), transparent 68%);
-  --journey-link-shadow: 0 0 0 1px color-mix(in oklab, var(--journey-highlight) 10%, transparent), 0 0 22px color-mix(in oklab, var(--journey-highlight) 12%, transparent), 0 0 60px color-mix(in oklab, var(--primary) 12%, transparent), inset 0 0 18px color-mix(in oklab, var(--primary) 6%, transparent);
-  --journey-arrow-shadow: 0 0 4px color-mix(in oklab, var(--journey-highlight) 24%, transparent);
+  --journey-highlight: oklch(0.77 0.16 155);
+  --journey-lime: oklch(0.86 0.18 137);
+  --journey-line: color-mix(in oklab, var(--journey-highlight) 90%, transparent);
+  --journey-icon-border: color-mix(in oklab, var(--journey-muted) 19%, transparent);
+  --journey-illumination: radial-gradient(ellipse at center, color-mix(in oklab, var(--journey-highlight) 12%, transparent), transparent 66%);
+  --journey-link-shadow: 0 0 2px var(--journey-lime), 0 0 18px color-mix(in oklab, var(--journey-highlight) 24%, transparent), 0 0 48px color-mix(in oklab, var(--journey-highlight) 16%, transparent), inset 0 1px 14px color-mix(in oklab, var(--journey-highlight) 7%, transparent);
+  --journey-arrow-shadow: 0 0 5px color-mix(in oklab, var(--journey-highlight) 20%, transparent);
+  --journey-title-gradient: linear-gradient(110deg, var(--journey-highlight), var(--journey-lime));
+  --journey-border-gradient: linear-gradient(115deg, var(--journey-lime), var(--journey-highlight) 45%, var(--journey-lime));
+  --journey-icon-gradient: linear-gradient(145deg, color-mix(in oklab, var(--journey-muted) 5%, var(--journey-icon-surface)), var(--journey-background));
+  --journey-edge-light: linear-gradient(90deg, transparent, color-mix(in oklab, var(--journey-lime) 38%, transparent), transparent);
   --radius: 0.85rem;
 
   --background: oklch(0.985 0.004 160);
