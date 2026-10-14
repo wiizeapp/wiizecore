@@ -119,8 +119,13 @@ export function OperationFlow() {
         </div>
         {modules.map((m) => (
           <div key={m.title} className="group rounded-xl border border-border bg-card p-6 shadow-card transition-colors hover:border-primary/50">
-            <h3 className="text-lg font-semibold">{ui(m.title)}</h3>
-            <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{ui(m.text)}</p>
+            <div className="flex items-center gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-primary transition-colors group-hover:border-primary/40 group-hover:bg-primary/15" aria-hidden="true">
+                <m.icon className="size-4.5" strokeWidth={1.75} />
+              </span>
+              <h3 className="text-lg font-semibold">{ui(m.title)}</h3>
+            </div>
+            <p className="mt-2.5 text-sm leading-6 text-muted-foreground">{ui(m.text)}</p>
           </div>
         ))}
       </div>
