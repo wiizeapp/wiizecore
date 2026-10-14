@@ -1,5 +1,10 @@
 # Roadmap
 
+- [ ] Criar página institucional /sobre preservando a identidade e a abertura existentes, com narrativa editorial e portal fiel aos recursos reais.
+- [ ] Verificar e centralizar indicadores históricos da infraestrutura, com fonte documental e atribuição transparente.
+- [ ] Adicionar Sobre nós ao menu público e síntese de autoridade na home, sem alterar o hero comercial.
+- [ ] Validar navegação, idiomas, acessibilidade, movimento reduzido e telas de 320px a desktop.
+
 - [x] Reorganizar navbar: logo à esquerda, links no centro, idioma e acesso à direita; conferido sem transbordamento a 393, 1024 e 1810px.
 - [x] Alinhar a marca na mesma linha dos demais elementos, ampliar o logotipo e fixar a barra no topo da página sem acompanhar a rolagem; conferido a 390, 1280 e 1810px.
 - [x] Deixar a abertura com um único botão "Crie sua conta grátis agora" com seta e o aviso discreto "Sem mensalidade. Aprovação rápida" abaixo; conferido na prévia.
