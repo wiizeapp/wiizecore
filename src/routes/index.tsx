@@ -136,7 +136,7 @@ function ProductPreview() {
           <div className="flex min-w-0 items-center gap-2"><span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><LayoutDashboard className="size-3.5" /></span><span className="truncate text-[10px] font-semibold sm:text-xs">{ui("Painel WiizePay")}</span></div>
           <span className="hidden items-center gap-1.5 text-[9px] text-muted-foreground sm:flex"><span className="size-1.5 rounded-full bg-primary" />{ui("Atualizado agora")}</span>
         </div>
-        <div className="grid min-h-[21rem] grid-cols-[3.25rem_minmax(0,1fr)] sm:grid-cols-[9.5rem_minmax(0,1fr)] lg:min-h-[24rem]">
+        <div className="grid min-h-[15rem] grid-cols-[3.25rem_minmax(0,1fr)] sm:min-h-[21rem] sm:grid-cols-[9.5rem_minmax(0,1fr)] lg:min-h-[24rem]">
           <aside className="border-r border-border bg-surface/45 p-2.5 sm:p-3.5" aria-label={ui("Menu ilustrativo do painel")}>
             <div className="mb-5 flex items-center gap-2 px-1"><span className="grid size-7 shrink-0 place-items-center rounded-md bg-primary font-display text-[9px] font-bold text-primary-foreground">WP</span><span className="hidden text-[11px] font-semibold sm:block">{ui("Minha empresa")}</span></div>
             <div className="grid gap-1.5">
