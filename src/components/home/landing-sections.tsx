@@ -135,13 +135,15 @@ export function OperationFlow() {
 
 export function HowItWorksSection() {
   const ui = useUi();
-  // canvas width, canvas height and visible-content height of each 3D icon, used to
-  // render every icon with the same visible size inside its own card.
-  const steps: Array<[string, string, string, string, string, number, number, number]> = [
-    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 220],
-    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 325],
-    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 224],
-    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 279],
+  // Canvas size, visible-content size and optical weight of each 3D icon. The artwork
+  // boxes are very different (the plane is wide and flat, the document is tall), so
+  // every icon is scaled to the same visible area, and the weight compensates the
+  // drawings that are naturally lighter or denser than the others.
+  const steps: Array<[string, string, string, string, string, number, number, number, number, number]> = [
+    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 208, 189, 1.004],
+    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 232, 239, 0.961],
+    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 326, 224, 1.108],
+    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 286, 264, 0.959],
   ];
   return (
     <section className="border-y border-border bg-surface">
@@ -152,7 +154,7 @@ export function HowItWorksSection() {
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
         <ol className="how-steps mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(([n, iconSrc, title, text, tag, canvasW, canvasH, contentH], index) => (
+          {steps.map(([n, iconSrc, title, text, tag, canvasW, canvasH, contentW, contentH, weight], index) => (
             <li key={n} className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
               {index < steps.length - 1 ? <span className="absolute -right-4 top-1/2 hidden h-px w-4 bg-border lg:block" aria-hidden="true" /> : null}
               <div className="flex items-center justify-between gap-3">
@@ -163,7 +165,10 @@ export function HowItWorksSection() {
                   loading="lazy"
                   decoding="async"
                   className="shrink-0 object-contain"
-                  style={{ width: `calc(var(--how-icon) * ${canvasW / contentH})`, height: `calc(var(--how-icon) * ${canvasH / contentH})` }}
+                  style={{
+                    width: `calc(var(--how-icon) * ${((canvasW * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
+                    height: `calc(var(--how-icon) * ${((canvasH * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
+                  }}
                 />
                 <span className="font-display text-xs font-semibold text-primary">{ui("Passo")} {n}</span>
               </div>
