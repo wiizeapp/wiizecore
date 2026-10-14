@@ -278,3 +278,25 @@
 @media (prefers-reduced-motion: reduce) {
   .institution-fragments > span, .institution-pillar-progress span, .institution-pillar-visual li { animation: none !important; }
 }
+
+/* Refinements: no blur, feature background, responsive */
+.institution-pillar-visual { background: none; box-shadow: 0 24px 50px -36px color-mix(in oklab, var(--foreground) 35%, transparent); }
+.institution-pillar-visual.feature-visual { border-radius: 1rem; }
+.institution-pillar-card { z-index: 1; backdrop-filter: none; background: var(--background); }
+.institution-pillar-visual > p { z-index: 1; }
+.institution-fragments > span { box-shadow: 0 2px 6px -2px color-mix(in oklab, var(--foreground) 14%, transparent); filter: none; backdrop-filter: none; }
+.institution-portal-bottom-fade { backdrop-filter: none; }
+.institution-page { overflow-x: clip; }
+.institution-page * { min-width: 0; }
+.institution-page h1, .institution-page h2, .institution-page h3, .institution-page p { overflow-wrap: break-word; }
+@media (max-width: 639px) {
+  .institution-pillar-visual { padding: 1.25rem .875rem 1rem; }
+  .institution-pillar-card { padding: .875rem; }
+  .institution-fragments { gap: .875rem; padding: .5rem; }
+  .institution-fragments > span { font-size: .6875rem; gap: .4rem; min-height: 2.75rem; }
+  .institution-big-number { font-size: 3.5rem; }
+  .institution-big-unit { font-size: 1.25rem; }
+}
+@media (max-width: 380px) {
+  .institution-page h2 { font-size: 1.625rem; }
+}
