@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Refinar Sobre nós e síntese na home: remover links de fonte, ordenar menu, animar indicadores com brilho, arredondar composições e enriquecer ilustrações de painel e portal.
+- [ ] Conferir mudanças em computador e celular e listar arquivos da entrega institucional.
+
 - [x] Criar página institucional /sobre preservando a identidade e a abertura existentes, com narrativa editorial e portal fiel aos recursos reais.
 - [x] Verificar e centralizar indicadores históricos da infraestrutura, com fonte documental e atribuição transparente; quatro testes aprovados.
 - [x] Adicionar Sobre nós ao menu público e síntese de autoridade na home, sem alterar o hero comercial.
