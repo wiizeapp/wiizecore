@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Afastar setas da cápsula, espelhar a de pagamento para dentro, reduzir descrição e igualar destaque ao Hero e fundo a Como funciona; validar os dois temas e celular.
+- [x] Afastar setas da cápsula, espelhar a de pagamento para dentro, reduzir descrição e igualar destaque ao Hero e fundo a Como funciona; conferido a 320, 390, 768 e 1347px, com cores e efeito iguais às referências, sem rolagem horizontal ou erros.
 
 - [x] Refinar a jornada: título e endereço ampliados, “https://” suavizado, destaque igual à abertura, verde próximo da marca, setas direitas para o centro e quatro etapas com flutuação suave; conferido em PT-BR a 320, 390, 768 e 1347px, sem rolagem horizontal ou erros e com movimento reduzido respeitado.
 
