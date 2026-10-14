@@ -1,2 +1,51 @@
-{"resources":"Recursos","fees":"Tarifas","terms":"Plazos","security":"Seguridad","access":"Acceder a la plataforma","openMenu":"Abrir menú","menuTitle":"Menú WiizePay","mainNav":"Navegación principal","mobileNav":"Navegación móvil","home":"WiizePay — inicio",
-"items":{"charges":["Cobros y pagos","Links, Pix, boleto y tarjeta"],"pixAuto":["Pix Automático","Recurrencia autorizada por el banco"],"contracts":["Contratos digitales","Firma conectada al cobro"],"finance":["Gestión financiera","Ingresos, gastos y cuentas"],"checkout":["Checkout personalizado","Tu marca en la página de pago"],"portal":["Portal del cliente","Recibos, contratos y documentos"],"customers":["Gestión de clientes","Datos e historial organizados"],"crm":["Integración Wiize CRM","Negociación y pago conectados"],"reminders":["Recordatorios de cobro","Vencimientos siempre a la vista"]}}
+{
+  "resources": "Recursos",
+  "fees": "Tarifas",
+  "terms": "Plazos",
+  "security": "Seguridad",
+  "access": "Acceder a la plataforma",
+  "openMenu": "Abrir menú",
+  "menuTitle": "Menú WiizePay",
+  "mainNav": "Navegación principal",
+  "mobileNav": "Navegación móvil",
+  "home": "WiizePay — inicio",
+  "items": {
+    "charges": [
+      "Cobros y pagos",
+      "Links, Pix, boleto y tarjeta"
+    ],
+    "pixAuto": [
+      "Pix Automático",
+      "Recurrencia autorizada por el banco"
+    ],
+    "contracts": [
+      "Contratos digitales",
+      "Firma conectada al cobro"
+    ],
+    "finance": [
+      "Gestión financiera",
+      "Ingresos, gastos y cuentas"
+    ],
+    "checkout": [
+      "Checkout personalizado",
+      "Tu marca en la página de pago"
+    ],
+    "portal": [
+      "Portal del cliente",
+      "Recibos, contratos y documentos"
+    ],
+    "customers": [
+      "Gestión de clientes",
+      "Datos e historial organizados"
+    ],
+    "crm": [
+      "Integración Wiize CRM",
+      "Negociación y pago conectados"
+    ],
+    "reminders": [
+      "Recordatorios de cobro",
+      "Vencimientos siempre a la vista"
+    ]
+  },
+  "about": "Sobre nosotros"
+}

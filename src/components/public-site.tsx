@@ -23,6 +23,7 @@ export const resourceLinks = [
 ] as const;
 
 const publicLinks = [
+  { to: "/sobre", key: "about", label: "Sobre nós" },
   { to: "/taxas", key: "fees", label: "Taxas" },
   { to: "/prazos", key: "terms", label: "Prazos" },
   { to: "/seguranca-e-confianca", key: "security", label: "Segurança" },
@@ -69,10 +70,10 @@ export function PublicHeader() {
   return (
     <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
       <div className="grid h-[4.5rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-3 shadow-float backdrop-blur-xl sm:gap-3 sm:px-4 lg:h-[5.25rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-6">
-        <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" /></Link>
+        <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" className="max-[380px]:gap-1.5 max-[380px]:[&_img]:size-7 max-[380px]:[&>span]:text-lg" /></Link>
         <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
-          {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button>)}
+          {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button>)}
         </nav>
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
@@ -85,7 +86,7 @@ export function PublicHeader() {
                 <p className="px-3 pt-2 text-xs font-bold uppercase text-muted-foreground">{t("resources")}</p>
                 {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
                 <div className="my-2 border-t border-border" />
-                {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent">{t(item.key)}</Link></Button></SheetClose>)}
+                {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
                 <SheetClose asChild><Button asChild className="mt-3"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button></SheetClose>
               </nav>
             </SheetContent>

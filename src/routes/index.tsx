@@ -10,6 +10,7 @@ import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } 
 import { formatBRL } from "@/lib/format";
 import { ChargesPremium, ClientsPremium, ServicesPremium, CheckoutPremium, InvoicesPremium, PortalPremium } from "@/components/home/premium-visuals";
 import { useTranslation } from "react-i18next";
+import { AuthoritySection } from "@/components/institutional/infrastructure";
 
 function PortalVisual() {
   return <PortalPremium scene={1} />;
@@ -115,6 +116,7 @@ function Landing() {
           </div>
         </section>
 
+        <AuthoritySection />
         <AudienceSection />
 
 

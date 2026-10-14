@@ -38,4 +38,5 @@
 - One-time charges deduct the Asaas cost (subaccount fees API incl. still-valid promo price with safety margin, `src/lib/provider-fee-quote.ts`) from the WiizePay split, stored in `payments.provider_fee_covered_amount`; only the uncovered rest is reimbursed. Why: no round-trip transfer.
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
 
-- Read scoped `AGENTS.md` in `src/lib` and `src/components` before changing those directories.
+- Read subdirectories' scoped `AGENTS.md` before edits.
+- Institutional metric sources live in `components/institutional/infrastructure-data.ts`. Why: shared attribution.
