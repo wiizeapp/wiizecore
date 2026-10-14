@@ -1461,3 +1461,8 @@
   .premium-cta-grid { background-size: 40px 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .reveal-on .reveal-item { opacity: 1; transform: none; transition: none; } }
+
+/* "Como funciona": every 3D icon is drawn at the same visible height. */
+.how-steps { --how-icon: 3.5rem; }
+@media (min-width: 640px) { .how-steps { --how-icon: 4.25rem; } }
+
