@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Substituir integralmente a jornada após Como funciona pela composição escura com cápsula central, quatro etapas e setas curvas, sem alterar demais seções.
-- [ ] Conferir textos, endereço ilustrativo, ausência de duplicação e apresentação em computador, tablet e celular.
+- [x] Substituir integralmente a jornada após Como funciona pela composição escura com cápsula central, quatro etapas e setas curvas, sem alterar demais seções.
+- [x] Conferir textos PT-BR, endereço ilustrativo exato, seção única e composição anterior ausente; apresentação a 320, 390, 640, 768 e 1280px sem rolagem horizontal ou erros de execução, compilação OK. Referência mencionada não recebida; execução baseada na descrição aprovada.
 
 - [x] Atualizar somente os textos da abertura da home e adicionar jornada visual conectada imediatamente após Como funciona, preservando as demais seções.
 - [x] Validar textos exatos, posição, jornada ilustrativa, traduções, cadastro e apresentação a 320, 390, 768 e 1280px; sem transbordamento ou erros de execução, compilação OK. Teste institucional existente: 3/4 aprovados; uma expectativa antiga ainda exige “Mais de R$”, texto removido anteriormente pelo usuário, sem relação com esta entrega.
