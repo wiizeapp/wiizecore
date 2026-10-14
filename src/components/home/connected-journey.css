@@ -4,8 +4,8 @@
   padding-block: 6rem 3.75rem;
 }
 .connected-journey-intro { text-align: center; position: relative; z-index: 1; }
-.connected-journey-intro h2 { max-width: 52rem; margin-inline: auto; font-size: 3rem; font-weight: 600; line-height: 1.18; }
-.connected-journey-intro h2 span { color: var(--journey-highlight); background: var(--journey-title-gradient); background-clip: text; -webkit-text-fill-color: transparent; }
+.connected-journey-intro h2 { max-width: 56rem; margin-inline: auto; font-size: 3.25rem; font-weight: 600; line-height: 1.18; }
+.connected-journey-intro .hero-shine { --primary: var(--journey-highlight); --foreground: var(--journey-lime); }
 .connected-journey-intro p { max-width: 44rem; margin: 1.35rem auto 0; color: var(--journey-muted); font-size: 1.0625rem; line-height: 1.8; }
 .connected-journey-figure { margin: -.75rem 0 0; }
 .connected-journey-map { position: relative; isolation: isolate; height: 330px; max-width: 1080px; margin-inline: auto; }
@@ -15,26 +15,34 @@
 .connected-journey-arrows-desktop > g:not(.connected-journey-rails) > path { stroke: url(#journey-curve-light); stroke-width: 2; }
 .connected-journey-rails path { stroke: url(#journey-rail-light); stroke-width: 1.5; }
 .connected-journey-arrows-mobile { display: none; }
-.connected-journey-stage { position: absolute; display: flex; align-items: center; gap: .875rem; width: 225px; }
+.connected-journey-stage { position: absolute; display: flex; align-items: center; gap: .875rem; width: 225px; animation: journey-stage-float 6s ease-in-out infinite; }
 .connected-journey-stage-details { top: 4px; left: 0; }
-.connected-journey-stage-contract { top: 211px; left: 3%; }
-.connected-journey-stage-payment { top: 18px; right: -1%; }
-.connected-journey-stage-documents { top: 232px; right: 0; }
+.connected-journey-stage-contract { top: 211px; left: 3%; animation-delay: -3s; }
+.connected-journey-stage-payment { top: 18px; right: -1%; animation-delay: -1.5s; }
+.connected-journey-stage-documents { top: 232px; right: 0; animation-delay: -4.5s; }
 .connected-journey-stage-icon { display: grid; place-items: center; flex: 0 0 58px; width: 58px; height: 58px; border-radius: 16px; background: var(--journey-icon-gradient); border: 1px solid var(--journey-icon-border); color: var(--journey-highlight); }
 .connected-journey-stage-icon svg { width: 27px; height: 27px; stroke-width: 1.55; }
 .connected-journey-stage h3 { font-family: var(--font-sans); font-size: .9375rem; font-weight: 500; line-height: 1.6; }
-.connected-journey-link { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 27px minmax(0, 1fr) 46px; align-items: center; gap: .75rem; width: 560px; max-width: 52%; min-height: 76px; padding: .7rem .7rem .7rem 1.5rem; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(var(--journey-surface),var(--journey-surface)) padding-box, var(--journey-border-gradient) border-box; box-shadow: var(--journey-link-shadow); }
+.connected-journey-link { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 27px minmax(0, 1fr) 46px; align-items: center; gap: .75rem; width: 600px; max-width: 56%; min-height: 80px; padding: .7rem .7rem .7rem 1.5rem; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(var(--journey-surface),var(--journey-surface)) padding-box, var(--journey-border-gradient) border-box; box-shadow: var(--journey-link-shadow); }
 .connected-journey-link::before, .connected-journey-link::after { content: ''; position: absolute; left: 3%; right: 3%; height: 22px; background: var(--journey-edge-light); filter: blur(10px); pointer-events: none; z-index: -1; }
 .connected-journey-link::before { top: -10px; }
 .connected-journey-link::after { bottom: -10px; }
 .connected-journey-link-icon { width: 27px; height: 27px; color: var(--journey-highlight); stroke-width: 1.7; }
 .connected-journey-copy { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid var(--journey-icon-border); border-radius: 50%; background: var(--journey-icon-gradient); }
 .connected-journey-copy-icon { width: 23px; height: 23px; color: var(--journey-highlight); stroke-width: 1.4; }
-.connected-journey-url { min-width: 0; text-align: center; font-size: .9375rem; font-weight: 400; line-height: 1.6; }
+.connected-journey-url { min-width: 0; text-align: center; font-size: 1.0625rem; font-weight: 500; line-height: 1.6; }
+.connected-journey-protocol { color: var(--journey-protocol); font-weight: 400; }
 .connected-journey-url strong { font-weight: 600; color: var(--journey-foreground); }
+@keyframes journey-stage-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .connected-journey-stage { animation: none; }
+}
 @media (max-width: 1023px) and (min-width: 640px) {
   .connected-journey { padding-block: 5rem 3rem; }
-  .connected-journey-intro h2 { max-width: 43rem; font-size: 2.5rem; }
+  .connected-journey-intro h2 { max-width: 46rem; font-size: 2.75rem; }
   .connected-journey-intro p { font-size: 1rem; max-width: 38rem; }
   .connected-journey-figure { margin-top: 1rem; }
   .connected-journey-stage { width: 205px; gap: .625rem; }
@@ -45,13 +53,13 @@
   .connected-journey-stage h3 { font-size: .875rem; }
   .connected-journey-link { max-width: 72%; top: 119px; min-height: 70px; grid-template-columns: 22px minmax(0,1fr) 38px; padding-left: .875rem; gap: .5rem; }
   .connected-journey-copy { width: 38px; height: 38px; }
-  .connected-journey-url { font-size: .8125rem; }
+  .connected-journey-url { font-size: .875rem; }
   .connected-journey-stage-contract { top: 235px; }
   .connected-journey-stage-documents { top: 252px; }
 }
 @media (max-width: 639px) {
   .connected-journey { padding-block: 4rem 3rem; }
-  .connected-journey-intro h2 { font-size: 1.875rem; line-height: 1.25; }
+  .connected-journey-intro h2 { font-size: 2rem; line-height: 1.25; }
   .connected-journey-intro p { margin-top: 1.25rem; font-size: .9375rem; line-height: 1.75; }
   .connected-journey-figure { margin-top: 2.75rem; }
   .connected-journey-map { height: 516px; max-width: 400px; }

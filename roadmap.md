@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Refinar a jornada: ampliar título e endereço, suavizar “https://”, repetir destaque da abertura, aproximar verde da marca, apontar setas direitas para o centro e animar suavemente as quatro etapas; conferir computador e celular e informar arquivos.
+
 - [x] Refinar apenas a jornada conectada conforme a imagem agora recebida: proporções, curvas independentes, luz nas bordas, ícones e acabamento do link; conferido a 320, 390, 640, 768 e 1280px, textos e posição preservados, sem cortes, duplicação ou erros de execução.
 
 - [x] Substituir integralmente a jornada após Como funciona pela composição escura com cápsula central, quatro etapas e setas curvas, sem alterar demais seções.

@@ -17,7 +17,7 @@ export function ConnectedJourneySection() {
       <div className="section-shell">
         <div className="connected-journey-intro">
           <h2 id="connected-journey-title">
-            {t("Da contratação às próximas cobranças,")} <span>{t("tudo conectado.")}</span>
+            {t("Da contratação às próximas cobranças,")} <span className="hero-shine">{t("tudo conectado.")}</span>
           </h2>
           <p>{t("Um único link conecta as etapas da jornada do seu cliente, do preenchimento dos dados e assinatura do contrato ao pagamento e ao acesso às informações da cobrança.")}</p>
         </div>
@@ -46,8 +46,8 @@ export function ConnectedJourneySection() {
               <g markerEnd="url(#journey-arrow-desktop)">
                 <path d="M175 76C212 68 245 91 263 119" />
                 <path d="M215 237C244 247 270 229 288 205" />
-                <path d="M806 112C838 125 871 102 889 76" />
-                <path d="M796 204C820 228 839 236 858 224" />
+                <path d="M889 76C871 102 838 125 806 112" />
+                <path d="M858 224C839 236 820 228 796 204" />
               </g>
             </svg>
             <svg className="connected-journey-arrows connected-journey-arrows-mobile" viewBox="0 0 320 516" preserveAspectRatio="none" fill="none" aria-hidden="true">
@@ -59,8 +59,8 @@ export function ConnectedJourneySection() {
               <g markerEnd="url(#journey-arrow-mobile)">
                 <path d="M22 64C2 88 2 180 22 213" />
                 <path d="M40 165C24 177 24 193 40 210" />
-                <path d="M290 280C314 296 314 318 290 340" />
-                <path d="M302 279C324 331 314 409 292 441" />
+                <path d="M290 340C314 318 314 296 290 280" />
+                <path d="M292 441C314 409 314 331 302 279" />
               </g>
             </svg>
             {stages.map(({ position, icon: Icon, label }) => (
@@ -71,7 +71,7 @@ export function ConnectedJourneySection() {
             ))}
             <div className="connected-journey-link">
               <Link2 className="connected-journey-link-icon" aria-hidden="true" />
-              <span className="connected-journey-url">https://pagamento.wiizepay.com/<wbr /><strong>seucliente</strong></span>
+              <span className="connected-journey-url"><span className="connected-journey-protocol">https://</span>pagamento.wiizepay.com/<wbr /><strong>seucliente</strong></span>
               <span className="connected-journey-copy"><Copy className="connected-journey-copy-icon" aria-hidden="true" /></span>
             </div>
           </div>

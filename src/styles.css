@@ -88,8 +88,9 @@
   --journey-icon-surface: oklch(0.205 0.026 162);
   --journey-foreground: oklch(0.97 0.008 162);
   --journey-muted: oklch(0.76 0.025 162);
-  --journey-highlight: oklch(0.77 0.16 155);
-  --journey-lime: oklch(0.86 0.18 137);
+  --journey-highlight: color-mix(in oklab, var(--brand-pay) 82%, white);
+  --journey-lime: color-mix(in oklab, var(--brand-pay) 68%, white);
+  --journey-protocol: color-mix(in oklab, var(--journey-muted) 64%, var(--journey-surface));
   --journey-line: color-mix(in oklab, var(--journey-highlight) 90%, transparent);
   --journey-icon-border: color-mix(in oklab, var(--journey-muted) 19%, transparent);
   --journey-illumination: radial-gradient(ellipse at center, color-mix(in oklab, var(--journey-highlight) 12%, transparent), transparent 66%);
