@@ -280,7 +280,7 @@
 }
 
 /* Refinements: no blur, feature background, responsive */
-.institution-pillar-visual { background: none; box-shadow: 0 24px 50px -36px color-mix(in oklab, var(--foreground) 35%, transparent); }
+.institution-pillar-visual { background-image: var(--feature-gradient-1); box-shadow: 0 24px 50px -36px color-mix(in oklab, var(--foreground) 35%, transparent); }
 .institution-pillar-visual.feature-visual { border-radius: 1rem; }
 .institution-pillar-card { z-index: 1; backdrop-filter: none; background: var(--background); }
 .institution-pillar-visual > p { z-index: 1; }
