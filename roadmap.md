@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Igualar a altura visível dos quatro ícones 3D de "Como funciona" e retirar o sombreado; retirar os ícones dos cartões flutuantes da jornada e aplicar a fonte cursiva legível nos títulos; centralizar os textos dos painéis de funcionalidades. Conferido a 393, 820 e 1280px, sem rolagem horizontal, sem cortes e com a compilação OK.
+
 - [x] No celular, devolver aos cartões da jornada a cor neutra do computador e manter verde apenas nos números; conferido a 393px, sem rolagem horizontal, sem erros de execução, compilação OK.
 
 - [x] No celular, pintar cartões e círculos numerados da jornada com o verde da Wiize e retirar a seta à direita dos cartões; conferido a 393px sem rolagem horizontal, sem setas no DOM e sem erros de execução, computador inalterado, compilação OK.
