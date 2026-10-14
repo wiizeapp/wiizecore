@@ -23,10 +23,10 @@ export const resourceLinks = [
 ] as const;
 
 const publicLinks = [
-  { to: "/sobre", key: "about", label: "Sobre nós" },
   { to: "/taxas", key: "fees", label: "Taxas" },
   { to: "/prazos", key: "terms", label: "Prazos" },
   { to: "/seguranca-e-confianca", key: "security", label: "Segurança" },
+  { to: "/sobre", key: "about", label: "Sobre nós" },
 ] as const;
 
 /** Menu Recursos: abre ao passar o mouse, fica aberto ao entrar no painel e só fecha após um pequeno atraso. */
