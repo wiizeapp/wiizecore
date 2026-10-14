@@ -1,12 +1,11 @@
 .connected-journey {
-  background: var(--journey-background);
-  color: var(--journey-foreground);
+  background: var(--surface);
+  color: var(--foreground);
   padding-block: 6rem 3.75rem;
 }
 .connected-journey-intro { text-align: center; position: relative; z-index: 1; }
 .connected-journey-intro h2 { max-width: 56rem; margin-inline: auto; font-size: 3.25rem; font-weight: 600; line-height: 1.18; }
-.connected-journey-intro .hero-shine { --primary: var(--journey-highlight); --foreground: var(--journey-lime); }
-.connected-journey-intro p { max-width: 44rem; margin: 1.35rem auto 0; color: var(--journey-muted); font-size: 1.0625rem; line-height: 1.8; }
+.connected-journey-intro p { max-width: 44rem; margin: 1.35rem auto 0; color: var(--muted-foreground); font-size: .9375rem; line-height: 1.8; }
 .connected-journey-figure { margin: -.75rem 0 0; }
 .connected-journey-map { position: relative; isolation: isolate; height: 330px; max-width: 1080px; margin-inline: auto; }
 .connected-journey-map::before { content: ''; position: absolute; z-index: -1; inset: -20px 9% -10px; background: var(--journey-illumination); pointer-events: none; }
@@ -30,7 +29,7 @@
 .connected-journey-link-icon { width: 27px; height: 27px; color: var(--journey-highlight); stroke-width: 1.7; }
 .connected-journey-copy { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid var(--journey-icon-border); border-radius: 50%; background: var(--journey-icon-gradient); }
 .connected-journey-copy-icon { width: 23px; height: 23px; color: var(--journey-highlight); stroke-width: 1.4; }
-.connected-journey-url { min-width: 0; text-align: center; font-size: 1.0625rem; font-weight: 500; line-height: 1.6; }
+.connected-journey-url { min-width: 0; text-align: center; color: var(--journey-foreground); font-size: 1.0625rem; font-weight: 500; line-height: 1.6; }
 .connected-journey-protocol { color: var(--journey-protocol); font-weight: 400; }
 .connected-journey-url strong { font-weight: 600; color: var(--journey-foreground); }
 @keyframes journey-stage-float {
@@ -43,7 +42,7 @@
 @media (max-width: 1023px) and (min-width: 640px) {
   .connected-journey { padding-block: 5rem 3rem; }
   .connected-journey-intro h2 { max-width: 46rem; font-size: 2.75rem; }
-  .connected-journey-intro p { font-size: 1rem; max-width: 38rem; }
+  .connected-journey-intro p { font-size: .9375rem; max-width: 38rem; }
   .connected-journey-figure { margin-top: 1rem; }
   .connected-journey-stage { width: 205px; gap: .625rem; }
   .connected-journey-stage-details { left: 0; }
@@ -60,7 +59,7 @@
 @media (max-width: 639px) {
   .connected-journey { padding-block: 4rem 3rem; }
   .connected-journey-intro h2 { font-size: 2rem; line-height: 1.25; }
-  .connected-journey-intro p { margin-top: 1.25rem; font-size: .9375rem; line-height: 1.75; }
+  .connected-journey-intro p { margin-top: 1.25rem; font-size: .875rem; line-height: 1.75; }
   .connected-journey-figure { margin-top: 2.75rem; }
   .connected-journey-map { height: 516px; max-width: 400px; }
   .connected-journey-map::before { inset: 120px 0; }
