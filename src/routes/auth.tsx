@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { hasConsentDecision } from "@/lib/consent";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -33,16 +34,7 @@ export const Route = createFileRoute("/auth")({
     modo: search["modo"] === "criar" ? "criar" : "entrar",
     next: safeNext(search["next"]),
   }),
-  head: () => ({
-    meta: [
-      { title: "Entrar na WiizePay" },
-      { name: "description", content: "Acesse sua conta WiizePay para gerenciar cobranças, contratos e saldo." },
-      { property: "og:title", content: "Entrar na WiizePay" },
-      { property: "og:description", content: "Acesse sua conta WiizePay." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => pageHead({ path: "/auth", title: "Entrar na WiizePay", description: "Acesse sua conta WiizePay para gerenciar cobranças, contratos e saldo.", ogDescription: "Acesse sua conta WiizePay.", breadcrumb: [{ name: "Entrar", path: "/auth" }] }),
   component: AuthPage,
 });
 

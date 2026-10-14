@@ -1,6 +1,7 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-export const Route = createFileRoute("/politica-de-privacidade")({ head: () => ({ meta: [{ title: "Política de Privacidade — WiizePay" }, { name: "description", content: "Como o WiizePay trata dados pessoais." }, { property: "og:title", content: "Política de Privacidade — WiizePay" }, { property: "og:description", content: "Informações sobre coleta, uso, proteção e direitos relacionados a dados pessoais." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: Page });
+export const Route = createFileRoute("/politica-de-privacidade")({ head: () => pageHead({ path: "/politica-de-privacidade", title: "Política de Privacidade — WiizePay", description: "Como o WiizePay trata dados pessoais.", ogDescription: "Informações sobre coleta, uso, proteção e direitos relacionados a dados pessoais.", breadcrumb: [{ name: "Política de privacidade", path: "/politica-de-privacidade" }] }), component: Page });
 function Page() { return <LegalPage eyebrow="Privacidade e LGPD" title="Política de Privacidade" description="Saiba quais dados pessoais podem ser tratados na WiizePay, por que são necessários, com quem podem ser compartilhados e como exercer seus direitos." highlights={[
   { icon: "data", title: "Dados necessários", description: "Tratamos informações compatíveis com cadastro, contratos, cobranças, segurança e atendimento." },
   { icon: "privacy", title: "Direitos do titular", description: "Você pode solicitar acesso, correção e outras medidas previstas na legislação." },

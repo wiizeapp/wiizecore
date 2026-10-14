@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BadgeCheck, CalendarClock, CheckCircle2, Clock3, Landmark, Send, ShieldCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,16 +7,7 @@ import { PublicPage } from "@/components/public-site";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/prazos")({
-  head: () => ({
-    meta: [
-      { title: "Prazos de recebimento — WiizePay" },
-      { name: "description", content: "Consulte prazos de recebimento, antecipação e processamento de saques no WiizePay." },
-      { property: "og:title", content: "Prazos de recebimento — WiizePay" },
-      { property: "og:description", content: "Previsões de recebimento, análise de antecipação e etapas de saques por Pix." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () => pageHead({ path: "/prazos", title: "Prazos de recebimento — WiizePay", description: "Consulte prazos de recebimento, antecipação e processamento de saques no WiizePay.", ogDescription: "Previsões de recebimento, análise de antecipação e etapas de saques por Pix.", breadcrumb: [{ name: "Prazos", path: "/prazos" }] }),
   component: PrazosPage,
 });
 

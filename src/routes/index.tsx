@@ -1,3 +1,4 @@
+import { pageHead, organizationJsonLd } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, BarChart3, Briefcase, CircleDollarSign, FileText, Palette, Receipt, Repeat, CheckCircle2, CreditCard, FileSignature, Landmark, LayoutDashboard, Link2, QrCode, ShieldCheck, Users, UserRoundCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,23 +18,7 @@ function PortalVisual() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-       { title: "WiizePay — gestão financeira e recebimentos para empresas de serviços" },
-      {
-        name: "description",
-        content:
-          "Clientes, serviços, cobranças, recebimentos, contratos, notas fiscais e controle financeiro em uma única plataforma para empresas de serviços.",
-      },
-       { property: "og:title", content: "WiizePay — gestão financeira e recebimentos para empresas de serviços" },
-      {
-        property: "og:description",
-        content: "Venda seus serviços, organize suas cobranças e controle seus recebimentos.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  head: () => pageHead({ path: "/", title: "WiizePay | Plataforma de Pagamentos e Gestão Unificada", description: "Conheça a WiizePay, uma plataforma que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.", jsonLd: organizationJsonLd() }),
   component: Landing,
 });
 
