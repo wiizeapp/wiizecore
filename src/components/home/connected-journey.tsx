@@ -1,4 +1,4 @@
-import { ChevronRight, Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
+import { Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./connected-journey.css";
 

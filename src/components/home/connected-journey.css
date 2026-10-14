@@ -97,6 +97,5 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .cjm-card .connected-journey-stage-icon svg { width: 20px; height: 20px; }
   .cjm-text { min-width: 0; display: grid; gap: .15rem; }
   .cjm-text strong { color: var(--journey-foreground); font-size: .9375rem; font-weight: 600; line-height: 1.3; }
-  .cjm-text small { color: var(--journey-muted); font-size: .75rem; }
-  .cjm-chev { width: 18px; height: 18px; color: var(--journey-muted); }
+  .cjm-text small { color: color-mix(in oklab, var(--primary) 30%, var(--journey-muted)); font-size: .75rem; }
 }
