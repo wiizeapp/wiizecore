@@ -109,8 +109,11 @@
 .institution-text-link:hover { text-decoration: underline; }
 .institution-text-link:focus-visible, .institution-authority-note a:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 .institution-principles { margin-top: 3rem; }
-.institution-principles > div { display: grid; grid-template-columns: 2.5rem 1fr; column-gap: 1rem; border-top: 1px solid var(--border); padding-block: 1.5rem; }
-.institution-principles > div > span { grid-row: span 2; font-family: var(--font-display); color: var(--primary); font-size: 1.75rem; }
+.institution-principles > div { display: block; border-top: 1px solid var(--border); padding-block: 1.5rem; }
+.institution-principles > div > span { font-family: var(--font-display); color: var(--primary); font-size: 1.5rem; line-height: 1; }
+.institution-principles > div > h3 { margin-top: 1rem; }
+.institution-principle-icon svg { flex-shrink: 0; }
+.institution-principle-icon { flex-shrink: 0; }
 .institution-principles h3 { font-size: 1.125rem; font-weight: 500; }
 .institution-principles p { color: var(--muted-foreground); font-size: .875rem; line-height: 1.8; margin-top: .5rem; }
 .institution-vision { border-top: 1px solid var(--border); }
