@@ -135,11 +135,13 @@ export function OperationFlow() {
 
 export function HowItWorksSection() {
   const ui = useUi();
-  const steps: Array<[string, string, string, string, string]> = [
-    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
-    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
-    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
-    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
+  // canvas width, canvas height and visible-content height of each 3D icon, used to
+  // render every icon with the same visible size inside its own card.
+  const steps: Array<[string, string, string, string, string, number, number, number]> = [
+    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 220],
+    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 325],
+    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 224],
+    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 279],
   ];
   return (
     <section className="border-y border-border bg-surface">
