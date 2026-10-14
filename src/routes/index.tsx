@@ -70,13 +70,12 @@ function Landing() {
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
                 <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-start lg:px-9 lg:pb-5 lg:pt-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
-                  <span className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground"><group.icon className="size-6" /></span>
-                  <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
                   <h3 className="mt-4 text-2xl font-semibold sm:text-3xl">{ui(group.title)}</h3>
                   <p className="mt-3 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
                   <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                     {group.points.map((point) => (
-                      <li key={point} className="flex items-start gap-3 rounded-lg border border-border bg-surface/60 p-3 text-sm"><span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><CheckCircle2 className="size-3.5" /></span>{ui(point)}</li>
+                      <li key={point} className="flex items-start gap-3 rounded-lg border border-border bg-surface/60 p-3 text-sm"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />{ui(point)}</li>
                     ))}
                   </ul>
                 </div>
