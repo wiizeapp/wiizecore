@@ -4,4 +4,4 @@
 
 - Institutional dashboard and portal illustrations remain presentation-only and reuse public semantic tokens. Why: previews must never access live financial operations.
 - Institutional metric sources live in `institutional/infrastructure-data.ts`. Why: shared attribution.
-- The landing's connected journey is a presentation-only home component based on checkout and portal patterns, without live data or payment actions. Why: visual storytelling must never execute financial operations.
+- The landing's connected journey is a presentation-only home component with an inert illustrative URL and SVG connections; its dark palette uses section-specific global semantic tokens. Why: visual storytelling must not imply an active checkout or change other public sections.
