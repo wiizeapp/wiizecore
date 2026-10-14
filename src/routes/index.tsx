@@ -58,7 +58,6 @@ function Landing() {
             <ProductPreview />
           </div>
         </section>
-        <FeatureMarquee />
 
         <OperationFlow />
         <HowItWorksSection />
