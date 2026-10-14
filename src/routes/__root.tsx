@@ -175,6 +175,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "WiizePay" },
       { property: "og:description", content: "Pagamentos e gestão financeira para prestadores de serviços." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "WiizePay" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
