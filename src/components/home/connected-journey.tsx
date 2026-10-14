@@ -1,19 +1,19 @@
-import { Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
+import { Copy, Link2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./connected-journey.css";
 
 const stages = [
-  { position: "details", icon: UserRound, label: "Dados da contratação" },
-  { position: "contract", icon: FileSignature, label: "Assinatura do contrato" },
-  { position: "payment", icon: CreditCard, label: "Pagamento confirmado" },
-  { position: "documents", icon: FileChartColumn, label: "Próximas cobranças e documentos" },
+  { position: "details", label: "Dados da contratação" },
+  { position: "contract", label: "Assinatura do contrato" },
+  { position: "payment", label: "Pagamento confirmado" },
+  { position: "documents", label: "Próximas cobranças e documentos" },
 ];
 
 const mobileSteps = [
-  { icon: UserRound, title: "Dados da contratação", sub: "Informações do cliente e do serviço" },
-  { icon: FileSignature, title: "Assinatura do contrato", sub: "Formalização da contratação" },
-  { icon: CreditCard, title: "Pagamento", sub: "Checkout e confirmação" },
-  { icon: FileChartColumn, title: "Próximas cobranças e documentos", sub: "Acesso à área do cliente" },
+  { title: "Dados da contratação", sub: "Informações do cliente e do serviço" },
+  { title: "Assinatura do contrato", sub: "Formalização da contratação" },
+  { title: "Pagamento", sub: "Checkout e confirmação" },
+  { title: "Próximas cobranças e documentos", sub: "Acesso à área do cliente" },
 ];
 
 /** Static illustration only. The sample URL is not an active checkout or copy action. */
@@ -40,7 +40,7 @@ export function ConnectedJourneySection() {
                   <stop offset="0" stopColor="var(--journey-highlight)" stopOpacity="0" />
                   <stop offset="0.3" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
                   <stop offset="0.5" stopColor="var(--journey-lime)" stopOpacity="0.8" />
-                  <stop offset="0.7" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
+                  <stop offset="0.7" stopColor("var(--journey-highlight)") stopOpacity="0.3" />
                   <stop offset="1" stopColor="var(--journey-highlight)" stopOpacity="0" />
                 </linearGradient>
                 <marker id="journey-arrow-desktop" markerWidth="13" markerHeight="13" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
@@ -70,9 +70,8 @@ export function ConnectedJourneySection() {
                 <path d="M292 441C313 409 314 340 302 310" />
               </g>
             </svg>
-            {stages.map(({ position, icon: Icon, label }) => (
+            {stages.map(({ position, label }) => (
               <div key={position} className={`connected-journey-stage connected-journey-stage-${position}`}>
-                <span className="connected-journey-stage-icon"><Icon aria-hidden="true" /></span>
                 <h3>{t(label)}</h3>
               </div>
             ))}
@@ -89,11 +88,10 @@ export function ConnectedJourneySection() {
               <Copy aria-hidden="true" />
             </div>
             <ol>
-              {mobileSteps.map(({ icon: Icon, title, sub }, i) => (
+              {mobileSteps.map(({ title, sub }, i) => (
                 <li key={title}>
                   <span className="cjm-num">{String(i + 1).padStart(2, "0")}</span>
                   <div className="cjm-card">
-                    <span className="connected-journey-stage-icon"><Icon /></span>
                     <span className="cjm-text"><strong>{t(title)}</strong><small>{t(sub)}</small></span>
                   </div>
                 </li>
