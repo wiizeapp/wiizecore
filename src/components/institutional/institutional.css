@@ -227,15 +227,19 @@
   .institution-portal-tabs { gap: .65rem; justify-content: space-between; margin-top: 1rem; }
   .institution-portal-tabs > span { font-size: .5625rem; gap: .25rem; padding: .5rem .15rem; }
   .institution-portal-tabs svg { display: none; }
-  .institution-portal-layout { margin-top: 1rem; }
-  .institution-portal-section-title { margin-block: 1rem .375rem; font-size: .6875rem; }
-  .institution-payment-example { padding: .875rem; }
-  .institution-payment-example > strong { font-size: 1.25rem; margin-top: .35rem; }
-  .institution-payment-example > small { margin-top: .4rem; font-size: .625rem; }
-  .institution-payment-action { padding: .55rem .75rem; margin-top: .75rem; font-size: .6875rem; }
-  .institution-receipt-example { margin-top: .75rem; padding-top: .75rem; }
-  .institution-portal-files { padding-top: 1rem; }
-  .institution-document-row { padding-block: .625rem; gap: .5rem; }
+  .institution-portal-layout { grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .institution-portal-files { border-top: 0; padding-top: 0; border-left: 1px solid var(--border); padding-left: 1rem; }
+  .institution-portal-section-title { margin-block: .75rem .375rem; font-size: .625rem; gap: .3rem; }
+  .institution-payment-example { padding: .75rem; }
+  .institution-payment-example > span:first-child { font-size: .625rem; }
+  .institution-payment-example > strong { font-size: 1.05rem; margin-top: .3rem; }
+  .institution-payment-example > small { margin-top: .35rem; font-size: .5625rem; }
+  .institution-payment-action { padding: .5rem .6rem; margin-top: .6rem; font-size: .625rem; }
+  .institution-receipt-example { margin-top: .6rem; padding-top: .6rem; gap: .5rem; }
+  .institution-document-row { padding-block: .5rem; gap: .4rem; }
+  .institution-document-row strong, .institution-receipt-example strong { font-size: .625rem; }
+  .institution-document-row small, .institution-receipt-example small { font-size: .5rem; margin-top: .25rem; }
+  .institution-document-row svg, .institution-receipt-example svg { width: .875rem; height: .875rem; }
   .institution-portal-files .institution-document-row:last-child { display: none; }
   .institution-portal-bottom-fade { height: 2.5rem; }
   .institution-window-top { padding: .75rem 1rem; }
