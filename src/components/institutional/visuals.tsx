@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, Check, CheckCheck, FileSignature, FileText, Link2, MessageCircle, Receipt, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowDown, ArrowRight, Bell, Check, CheckCheck, FileSignature, FileText, LayoutDashboard, Link2, LockKeyhole, MessageCircle, Receipt, Search, Users, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Brand } from '@/components/brand';
 
@@ -28,12 +28,24 @@ export function FragmentationDiagram() {
   </div>;
 }
 
+export function OperationDashboard() {
+  const { t } = useTranslation('ui');
+  return <figure className="institution-dashboard payment-dashboard">
+    <div className="institution-dashboard-toolbar"><div className="institution-window-dots" aria-hidden="true"><i /><i /><i /></div><span><LockKeyhole className="size-3" />WiizePay</span><Bell className="size-3.5 text-muted-foreground" /></div>
+    <div className="institution-dashboard-layout"><aside className="institution-dashboard-sidebar"><Brand size="sm" /><div className="institution-dashboard-nav is-active"><LayoutDashboard className="size-4" /><span>{t('Visão geral')}</span></div>{modules.map(({ icon: Icon, name }) => <div className="institution-dashboard-nav" key={name}><Icon className="size-4" /><span>{t(name)}</span></div>)}<div className="institution-dashboard-security"><LockKeyhole className="size-3.5 text-primary" /><span>{t('Acesso seguro')}</span></div></aside>
+      <div className="institution-dashboard-content"><header><div><p>{t('Visão geral')}</p><h3>{t('Uma operação conectada')}</h3></div><span className="institution-dashboard-avatar">WP</span></header><div className="institution-dashboard-summary">{modules.slice(0, 3).map(({ icon: Icon, name }, i) => <div key={name}><Icon className="size-4" /><span>{t(name)}</span><div className="institution-mini-trend" aria-hidden="true">{Array.from({ length: 8 }, (_, j) => <i key={j} className={`institution-mini-bar-${(j + i) % 4}`} />)}</div></div>)}</div><OperationDiagram /><p className="institution-dashboard-caption">{t('Representação ilustrativa do produto')}</p></div>
+    </div>
+  </figure>;
+}
+
 export function PortalIllustration() {
   const { t } = useTranslation('ui');
-  return <figure className="institution-portal">
-    <div className="institution-window-top"><Brand size="sm" /><span>{t('Portal do cliente')}</span><span className="institution-status-dot" /></div>
+  return <div className="institution-portal-stage feature-visual feature-visual-1"><div className="feature-visual-grid absolute inset-0" aria-hidden="true" /><div className="feature-visual-glow absolute inset-0" aria-hidden="true" /><figure className="institution-portal">
+    <div className="institution-dashboard-toolbar"><div className="institution-window-dots" aria-hidden="true"><i /><i /><i /></div><span><LockKeyhole className="size-3" />{t('Portal do cliente')}</span><Search className="size-3.5 text-muted-foreground" /></div>
+    <div className="institution-window-top"><Brand size="sm" /><span className="institution-portal-secure"><LockKeyhole className="size-3" />{t('Acesso seguro')}</span><span className="institution-status-dot" /></div>
     <div className="institution-portal-body">
-      <div className="institution-portal-greeting"><p>{t('Seu espaço, tudo organizado.')}</p><h3>{t('Olá, cliente exemplo.')}</h3><span>{t('Documentos e pagamentos da sua empresa.')}</span></div>
+      <div className="institution-portal-greeting"><div className="institution-dashboard-avatar">CE</div><div><p>{t('Seu espaço, tudo organizado.')}</p><h3>{t('Olá, cliente exemplo.')}</h3><span>{t('Documentos e pagamentos da sua empresa.')}</span></div></div>
+      <div className="institution-portal-tabs">{[{ icon: Receipt, label: 'Suas cobranças' }, { icon: FileSignature, label: 'Seus contratos' }, { icon: FileText, label: 'Seus documentos' }].map(({ icon: Icon, label }, i) => <span className={i === 0 ? 'is-active' : ''} key={label}><Icon className="size-3.5" />{t(label)}</span>)}</div>
       <div className="institution-portal-layout"><div>
         <div className="institution-portal-section-title"><FileSignature className="size-4 text-primary" /><strong>{t('Seus contratos')}</strong></div>
         <div className="institution-document-row"><span><strong>{t('Contrato de consultoria')}</strong><small>{t('Versão assinada disponível')}</small></span><CheckCheck className="size-4 text-primary" /></div>
@@ -42,7 +54,7 @@ export function PortalIllustration() {
         <div className="institution-document-row"><span><strong>{t('Nota fiscal de serviço')}</strong><small>{t('Quando emitida e autorizada')}</small></span><FileText className="size-4 text-muted-foreground" /></div>
       </div><div className="institution-portal-payments"><div className="institution-portal-section-title"><Receipt className="size-4 text-primary" /><strong>{t('Suas cobranças')}</strong></div><div className="institution-payment-example"><span>{t('Consultoria estratégica')}</span><strong>R$ 850,00</strong><small>{t('Aguardando pagamento')}</small><span className="institution-payment-action">{t('Pagar cobrança')}<ArrowRight className="size-3.5" /></span></div><div className="institution-receipt-example"><Check className="size-4 text-primary" /><span><strong>{t('Pagamento confirmado')}</strong><small>{t('Recibo disponível em PDF')}</small></span></div></div></div>
     </div><figcaption>{t('Exemplo ilustrativo. Não representa uma conta ou transação real.')}</figcaption>
-  </figure>;
+  </figure></div>;
 }
 
 export function PillarVisual({ kind }: { kind: 'clients' | 'contracts' | 'payments' | 'documents' }) {
