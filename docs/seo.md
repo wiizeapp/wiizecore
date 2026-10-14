@@ -11,4 +11,4 @@
 2. Google Search Console: verificar o domínio (DNS), enviar `https://wiizepay.com/sitemap.xml`, inspecionar `/`, `/sobre`, `/taxas`.
 3. Bing Webmaster Tools: importar do Search Console.
 4. Acompanhar: indexação, cliques, impressões, CTR, consultas e Core Web Vitals (dados reais só após tráfego).
-5. Validar dados estruturados no Teste de Pocas Avançadas e no validator.schema.org após publicar.
+5. Validar dados estruturados no Teste de pesquisa aprimorada do Google e no validator.schema.org após publicar.

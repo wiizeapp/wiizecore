@@ -24,6 +24,7 @@ import { Route as GestaoDeCobrancasRouteImport } from './routes/gestao-de-cobran
 import { Route as GestaoFinanceiraRouteImport } from './routes/gestao-financeira'
 import { Route as IntegracaoCrmWiizeRouteImport } from './routes/integracao-crm-wiize'
 import { Route as LembretesDeCobrancaRouteImport } from './routes/lembretes-de-cobranca'
+import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as PixAutomaticoRouteImport } from './routes/pix-automatico'
 import { Route as PlataformaDePagamentosRouteImport } from './routes/plataforma-de-pagamentos'
 import { Route as PoliticaDeCancelamentoEReembolsoRouteImport } from './routes/politica-de-cancelamento-e-reembolso'
@@ -34,6 +35,7 @@ import { Route as PortalDoClienteRouteImport } from './routes/portal-do-cliente'
 import { Route as PrazosRouteImport } from './routes/prazos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SegurancaEConfiancaRouteImport } from './routes/seguranca-e-confianca'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as TaxasRouteImport } from './routes/taxas'
@@ -167,6 +169,11 @@ const LembretesDeCobrancaRoute = LembretesDeCobrancaRouteImport.update({
   path: '/lembretes-de-cobranca',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
+  id: '/perguntas-frequentes',
+  path: '/perguntas-frequentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PixAutomaticoRoute = PixAutomaticoRouteImport.update({
   id: '/pix-automatico',
   path: '/pix-automatico',
@@ -216,6 +223,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SegurancaEConfiancaRoute = SegurancaEConfiancaRouteImport.update({
   id: '/seguranca-e-confianca',
   path: '/seguranca-e-confianca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SobreRoute = SobreRouteImport.update({
@@ -542,6 +554,7 @@ export interface FileRoutesByFullPath {
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
@@ -552,6 +565,7 @@ export interface FileRoutesByFullPath {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -626,6 +640,7 @@ export interface FileRoutesByTo {
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
@@ -636,6 +651,7 @@ export interface FileRoutesByTo {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -712,6 +728,7 @@ export interface FileRoutesById {
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
   '/politica-de-cancelamento-e-reembolso': typeof PoliticaDeCancelamentoEReembolsoRoute
@@ -722,6 +739,7 @@ export interface FileRoutesById {
   '/prazos': typeof PrazosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/seguranca-e-confianca': typeof SegurancaEConfiancaRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
   '/suporte': typeof SuporteRoute
   '/taxas': typeof TaxasRoute
@@ -798,6 +816,7 @@ export interface FileRouteTypes {
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
@@ -808,6 +827,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -882,6 +902,7 @@ export interface FileRouteTypes {
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
@@ -892,6 +913,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -967,6 +989,7 @@ export interface FileRouteTypes {
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
     | '/politica-de-cancelamento-e-reembolso'
@@ -977,6 +1000,7 @@ export interface FileRouteTypes {
     | '/prazos'
     | '/reset-password'
     | '/seguranca-e-confianca'
+    | '/sitemap.xml'
     | '/sobre'
     | '/suporte'
     | '/taxas'
@@ -1053,6 +1077,7 @@ export interface RootRouteChildren {
   GestaoFinanceiraRoute: typeof GestaoFinanceiraRoute
   IntegracaoCrmWiizeRoute: typeof IntegracaoCrmWiizeRoute
   LembretesDeCobrancaRoute: typeof LembretesDeCobrancaRoute
+  PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PixAutomaticoRoute: typeof PixAutomaticoRoute
   PlataformaDePagamentosRoute: typeof PlataformaDePagamentosRoute
   PoliticaDeCancelamentoEReembolsoRoute: typeof PoliticaDeCancelamentoEReembolsoRoute
@@ -1063,6 +1088,7 @@ export interface RootRouteChildren {
   PrazosRoute: typeof PrazosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SegurancaEConfiancaRoute: typeof SegurancaEConfiancaRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
   SuporteRoute: typeof SuporteRoute
   TaxasRoute: typeof TaxasRoute
@@ -1199,6 +1225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LembretesDeCobrancaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perguntas-frequentes': {
+      id: '/perguntas-frequentes'
+      path: '/perguntas-frequentes'
+      fullPath: '/perguntas-frequentes'
+      preLoaderRoute: typeof PerguntasFrequentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pix-automatico': {
       id: '/pix-automatico'
       path: '/pix-automatico'
@@ -1267,6 +1300,13 @@ declare module '@tanstack/react-router' {
       path: '/seguranca-e-confianca'
       fullPath: '/seguranca-e-confianca'
       preLoaderRoute: typeof SegurancaEConfiancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sobre': {
@@ -1767,6 +1807,7 @@ const rootRouteChildren: RootRouteChildren = {
   GestaoFinanceiraRoute: GestaoFinanceiraRoute,
   IntegracaoCrmWiizeRoute: IntegracaoCrmWiizeRoute,
   LembretesDeCobrancaRoute: LembretesDeCobrancaRoute,
+  PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PixAutomaticoRoute: PixAutomaticoRoute,
   PlataformaDePagamentosRoute: PlataformaDePagamentosRoute,
   PoliticaDeCancelamentoEReembolsoRoute: PoliticaDeCancelamentoEReembolsoRoute,
@@ -1777,6 +1818,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrazosRoute: PrazosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SegurancaEConfiancaRoute: SegurancaEConfiancaRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
   SuporteRoute: SuporteRoute,
   TaxasRoute: TaxasRoute,
