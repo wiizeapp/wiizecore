@@ -219,12 +219,30 @@
   .institution-dashboard-content > header h3 { font-size: 1rem; }
   .institution-dashboard-summary { gap: .75rem; }
   .institution-dashboard-summary > div { gap: .3rem; }
-  .institution-portal-stage { padding: 2rem .75rem 0; }
-  .institution-portal-greeting { gap: .65rem; align-items: flex-start; }
-  .institution-portal-greeting h3 { font-size: 1.125rem; }
-  .institution-portal-tabs { gap: .65rem; justify-content: space-between; }
-  .institution-portal-tabs > span { font-size: .5625rem; gap: .25rem; }
+  .institution-portal-stage { padding: 1.5rem .5rem 0; }
+  .institution-portal-greeting { gap: .5rem; align-items: center; }
+  .institution-dashboard-avatar { width: 1.75rem; height: 1.75rem; font-size: .5625rem; }
+  .institution-portal-greeting h3 { font-size: 1rem; margin-top: 0; }
+  .institution-portal-greeting > div > span { font-size: .6875rem; margin-top: .25rem; line-height: 1.5; }
+  .institution-portal-tabs { gap: .65rem; justify-content: space-between; margin-top: 1rem; }
+  .institution-portal-tabs > span { font-size: .5625rem; gap: .25rem; padding: .5rem .15rem; }
   .institution-portal-tabs svg { display: none; }
+  .institution-portal-layout { grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .institution-portal-files { border-top: 0; padding-top: 0; border-left: 1px solid var(--border); padding-left: 1rem; }
+  .institution-portal-section-title { margin-block: .75rem .375rem; font-size: .625rem; gap: .3rem; }
+  .institution-payment-example { padding: .75rem; }
+  .institution-payment-example > span:first-child { font-size: .625rem; }
+  .institution-payment-example > strong { font-size: 1.05rem; margin-top: .3rem; }
+  .institution-payment-example > small { margin-top: .35rem; font-size: .5625rem; }
+  .institution-payment-action { padding: .5rem .6rem; margin-top: .6rem; font-size: .625rem; }
+  .institution-receipt-example { margin-top: .6rem; padding-top: .6rem; gap: .5rem; }
+  .institution-document-row { padding-block: .5rem; gap: .4rem; }
+  .institution-document-row strong, .institution-receipt-example strong { font-size: .625rem; }
+  .institution-document-row small, .institution-receipt-example small { font-size: .5rem; margin-top: .25rem; }
+  .institution-document-row svg, .institution-receipt-example svg { width: .875rem; height: .875rem; }
+  .institution-portal-files .institution-document-row:last-child { display: none; }
+  .institution-portal-bottom-fade { height: 2.5rem; }
+  .institution-window-top { padding: .75rem 1rem; }
   .institution-module-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .institution-module { padding: 1rem; }
   .institution-connection { height: 2.5rem; padding-inline: 25%; grid-template-columns: 1fr 1fr; }
