@@ -1,8 +1,4 @@
 import type { CSSProperties, ReactNode } from "react";
-import stepUsers from "@/assets/step-users.png.asset.json";
-import stepContract from "@/assets/step-contract.png.asset.json";
-import stepSend from "@/assets/step-send.png.asset.json";
-import stepWallet from "@/assets/step-wallet.png.asset.json";
 import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, CircleDollarSign, Clock3, CreditCard, FileSignature, FileText, Landmark, Lock, PenLine, QrCode, Receipt, Repeat, Users, Wallet, Briefcase, Send, Quote, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
@@ -131,11 +127,11 @@ export function OperationFlow() {
 
 export function HowItWorksSection() {
   const ui = useUi();
-  const steps: Array<[string, string, string, string, string]> = [
-    ["01", stepUsers.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
-    ["02", stepContract.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
-    ["03", stepSend.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
-    ["04", stepWallet.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
+  const steps: Array<[string, typeof Users, string, string, string]> = [
+    ["01", Users, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
+    ["02", FileSignature, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
+    ["03", Send, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
+    ["04", Wallet, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
   ];
   return (
     <section className="border-y border-border bg-surface">
@@ -146,11 +142,11 @@ export function HowItWorksSection() {
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
         <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(([n, iconSrc, title, text, tag], index) => (
+          {steps.map(([n, Icon, title, text, tag], index) => (
             <li key={n} className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
               {index < steps.length - 1 ? <span className="absolute -right-4 top-1/2 hidden h-px w-4 bg-border lg:block" aria-hidden="true" /> : null}
               <div className="flex items-center justify-between gap-3">
-                <img src={iconSrc} alt="" aria-hidden="true" width={64} height={64} loading="lazy" className="size-16 object-contain" />
+                <span className="grid size-11 place-items-center rounded-xl border border-primary/30 bg-accent text-primary"><Icon className="size-5" /></span>
                 <span className="font-display text-xs font-semibold text-primary">{ui("Passo")} {n}</span>
               </div>
               <h3 className="mt-5 font-semibold">{ui(title)}</h3>
