@@ -95,7 +95,6 @@ export function ConnectedJourneySection() {
                   <div className="cjm-card">
                     <span className="connected-journey-stage-icon"><Icon /></span>
                     <span className="cjm-text"><strong>{t(title)}</strong><small>{t(sub)}</small></span>
-                    <ChevronRight className="cjm-chev" />
                   </div>
                 </li>
               ))}
