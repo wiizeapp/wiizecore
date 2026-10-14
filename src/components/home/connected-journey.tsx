@@ -40,7 +40,7 @@ export function ConnectedJourneySection() {
                   <stop offset="0" stopColor="var(--journey-highlight)" stopOpacity="0" />
                   <stop offset="0.3" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
                   <stop offset="0.5" stopColor="var(--journey-lime)" stopOpacity="0.8" />
-                  <stop offset="0.7" stopColor("var(--journey-highlight)") stopOpacity="0.3" />
+                  <stop offset="0.7" stopColor="var(--journey-highlight)" stopOpacity="0.3" />
                   <stop offset="1" stopColor="var(--journey-highlight)" stopOpacity="0" />
                 </linearGradient>
                 <marker id="journey-arrow-desktop" markerWidth="13" markerHeight="13" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
