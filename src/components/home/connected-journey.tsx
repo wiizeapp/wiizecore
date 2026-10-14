@@ -1,4 +1,4 @@
-import { Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
+import { ChevronRight, Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./connected-journey.css";
 
@@ -7,6 +7,13 @@ const stages = [
   { position: "contract", icon: FileSignature, label: "Assinatura do contrato" },
   { position: "payment", icon: CreditCard, label: "Pagamento confirmado" },
   { position: "documents", icon: FileChartColumn, label: "Próximas cobranças e documentos" },
+];
+
+const mobileSteps = [
+  { icon: UserRound, title: "Dados da contratação", sub: "Informações do cliente e do serviço" },
+  { icon: FileSignature, title: "Assinatura do contrato", sub: "Formalização da contratação" },
+  { icon: CreditCard, title: "Pagamento", sub: "Checkout e confirmação" },
+  { icon: FileChartColumn, title: "Próximas cobranças e documentos", sub: "Acesso à área do cliente" },
 ];
 
 /** Static illustration only. The sample URL is not an active checkout or copy action. */
@@ -74,6 +81,25 @@ export function ConnectedJourneySection() {
               <span className="connected-journey-url">https://pagamento.<strong>wiizepay</strong>.com/<wbr />cliente</span>
               <span className="connected-journey-copy"><Copy className="connected-journey-copy-icon" aria-hidden="true" /></span>
             </div>
+          </div>
+          <div className="connected-journey-mobile" aria-hidden="true">
+            <div className="cjm-link">
+              <Link2 aria-hidden="true" />
+              <span>pagamento.<strong>wiizepay</strong>.com/cliente</span>
+              <Copy aria-hidden="true" />
+            </div>
+            <ol>
+              {mobileSteps.map(({ icon: Icon, title, sub }, i) => (
+                <li key={title}>
+                  <span className="cjm-num">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="cjm-card">
+                    <span className="connected-journey-stage-icon"><Icon /></span>
+                    <span className="cjm-text"><strong>{t(title)}</strong><small>{t(sub)}</small></span>
+                    <ChevronRight className="cjm-chev" />
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
           <figcaption className="sr-only">{t("Exemplo ilustrativo. Não representa uma conta ou transação real.")}</figcaption>
         </figure>
