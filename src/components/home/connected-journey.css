@@ -1,0 +1,68 @@
+.connected-journey { padding-block: 5rem; }
+.connected-journey-intro { display: grid; gap: 1.5rem; align-items: end; margin-bottom: 2.5rem; }
+.connected-journey-intro h2 { max-width: 44rem; }
+.connected-journey-intro p { max-width: 27rem; }
+.connected-journey-window { border: 1px solid var(--border); border-radius: 8px; background: var(--card); box-shadow: var(--shadow-float); overflow: hidden; }
+.connected-journey-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); }
+.connected-journey-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--muted-foreground); font-size: .75rem; }
+.connected-journey-link svg { color: var(--primary); flex-shrink: 0; }
+.connected-journey-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+.connected-journey-history { padding: 2rem; background: var(--surface); border-right: 1px solid var(--border); }
+.connected-journey-step { position: relative; padding-left: 3.25rem; }
+.connected-journey-step + .connected-journey-step { margin-top: 2.5rem; }
+.connected-journey-step:first-child::after { content: ''; position: absolute; left: .95rem; top: 2.4rem; bottom: -2rem; width: 1px; background: var(--border); }
+.connected-journey-number { position: absolute; left: 0; top: 0; width: 2rem; height: 2rem; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: var(--card); font-size: .65rem; font-weight: 600; color: var(--primary); }
+.connected-journey-label { display: flex; align-items: center; gap: .6rem; min-height: 2rem; font-size: .875rem; font-weight: 600; }
+.connected-journey-label svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--primary); }
+.connected-journey-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1rem; }
+.connected-journey-field { min-width: 0; }
+.connected-journey-field:first-child { grid-column: 1 / -1; }
+.connected-journey-field span { display: block; font-size: .65rem; color: var(--muted-foreground); }
+.connected-journey-field i { display: block; margin-top: .4rem; height: 1.6rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card); }
+.connected-journey-service { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; font-size: .75rem; }
+.connected-journey-service svg { flex-shrink: 0; color: var(--muted-foreground); }
+.connected-journey-document { padding: 1rem 0 0; }
+.connected-journey-document p { font-size: .75rem; font-weight: 500; }
+.connected-journey-document-lines { display: grid; gap: .45rem; margin-block: 1rem; }
+.connected-journey-document-lines i { height: 3px; background: var(--border); width: 100%; border-radius: 2px; }
+.connected-journey-document-lines i:last-child { width: 65%; }
+.connected-journey-signature { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding-top: .75rem; border-top: 1px solid var(--border); font-size: .7rem; color: var(--primary); }
+.connected-journey-signature-mark { width: 5rem; height: 2rem; color: var(--foreground); flex-shrink: 0; }
+.connected-journey-payment { display: flex; flex-direction: column; padding: 2rem 2.5rem; }
+.connected-journey-paid { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem 0 1rem; }
+.connected-journey-paid-icon { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 50%; color: var(--primary); background: var(--accent); margin-bottom: 1.25rem; }
+.connected-journey-paid h3 { font-size: 1.5rem; font-weight: 600; line-height: 1.25; }
+.connected-journey-paid p { margin-top: .6rem; font-size: .75rem; color: var(--muted-foreground); }
+.connected-journey-methods { display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; color: var(--muted-foreground); font-size: .7rem; }
+.connected-journey-methods span { display: flex; align-items: center; gap: .35rem; }
+.connected-journey-methods svg { width: .9rem; height: .9rem; }
+.connected-journey-continuation { display: flex; align-items: center; justify-content: center; gap: .5rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1.5rem; color: var(--primary); font-size: .75rem; font-weight: 500; }
+.connected-journey-portal { border-top: 1px solid var(--border); padding: 1.5rem 2rem 2rem; }
+.connected-journey-portal-heading { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+.connected-journey-portal-heading .connected-journey-number { position: static; flex-shrink: 0; }
+.connected-journey-portal-content { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 2.5rem; padding-left: 3.25rem; }
+.connected-journey-portal-subtitle { font-size: .65rem; color: var(--muted-foreground); margin-bottom: .5rem; }
+.connected-journey-row { display: flex; align-items: center; gap: .75rem; padding-block: .75rem; border-bottom: 1px solid var(--border); min-width: 0; font-size: .75rem; }
+.connected-journey-row > svg { flex-shrink: 0; width: 1rem; height: 1rem; color: var(--primary); }
+.connected-journey-row > span { flex: 1; min-width: 0; }
+.connected-journey-row small { display: block; font-size: .65rem; color: var(--muted-foreground); margin-top: .25rem; }
+.connected-journey-status { padding: .2rem .45rem; border-radius: 4px; background: var(--accent); color: var(--accent-foreground); font-size: .6rem; font-weight: 500; flex-shrink: 0; }
+.connected-journey-caption { margin-top: 1rem; color: var(--muted-foreground); font-size: .65rem; text-align: right; }
+@media (min-width: 1024px) { .connected-journey { padding-block: 7rem; } .connected-journey-intro { grid-template-columns: 1.3fr 1fr; gap: 4rem; } }
+@media (max-width: 767px) {
+  .connected-journey-workspace { grid-template-columns: 1fr; }
+  .connected-journey-history { border-right: 0; border-bottom: 1px solid var(--border); padding: 1.5rem; }
+  .connected-journey-payment { padding: 1.5rem; }
+  .connected-journey-paid { padding-top: 1.5rem; }
+  .connected-journey-portal { padding: 1.5rem; }
+  .connected-journey-portal-content { grid-template-columns: 1fr; gap: 1.5rem; padding-left: 0; }
+  .connected-journey-toolbar { padding: 1rem; }
+  .connected-journey-link span { display: none; }
+  .connected-journey-caption { text-align: left; }
+}
+@media (max-width: 374px) {
+  .connected-journey-history, .connected-journey-payment, .connected-journey-portal { padding: 1rem; }
+  .connected-journey-step { padding-left: 2.75rem; }
+  .connected-journey-label { font-size: .8rem; }
+  .connected-journey-row { gap: .5rem; }
+}

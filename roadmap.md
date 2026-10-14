@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Atualizar somente os textos da abertura da home e adicionar jornada visual conectada imediatamente após Como funciona, preservando as demais seções.
-- [ ] Validar textos exatos, posição, jornada fiel ao produto, traduções e apresentação em computador, tablet e celular; informar arquivos alterados.
+- [x] Atualizar somente os textos da abertura da home e adicionar jornada visual conectada imediatamente após Como funciona, preservando as demais seções.
+- [x] Validar textos exatos, posição, jornada ilustrativa, traduções, cadastro e apresentação a 320, 390, 768 e 1280px; sem transbordamento ou erros de execução, compilação OK. Teste institucional existente: 3/4 aprovados; uma expectativa antiga ainda exige “Mais de R$”, texto removido anteriormente pelo usuário, sem relação com esta entrega.
 
 - [x] Deixar o fundo das imagens dos cartões "Não é apenas sobre receber" verde, igual ao fundo do portal, conferido em computador e celular sem cortes.
 - [x] Remover ilustração da abertura de Sobre nós; destacar título e unificar descrição do portal; apresentação com entrada de baixo, sombra e desfoque leves conferida a 320, 390 e 1260px, botão do portal e quatro testes aprovados.
