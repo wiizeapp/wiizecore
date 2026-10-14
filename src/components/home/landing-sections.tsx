@@ -135,11 +135,13 @@ export function OperationFlow() {
 
 export function HowItWorksSection() {
   const ui = useUi();
-  const steps: Array<[string, string, string, string, string]> = [
-    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min"],
-    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único"],
-    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático"],
-    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real"],
+  // canvas width, canvas height and visible-content height of each 3D icon, used to
+  // render every icon with the same visible size inside its own card.
+  const steps: Array<[string, string, string, string, string, number, number, number]> = [
+    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 220],
+    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 325],
+    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 224],
+    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 279],
   ];
   return (
     <section className="border-y border-border bg-surface">
@@ -149,12 +151,20 @@ export function HowItWorksSection() {
           <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine">{ui("em 4 passos.")}</span></h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
-        <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(([n, iconSrc, title, text, tag], index) => (
+        <ol className="how-steps mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map(([n, iconSrc, title, text, tag, canvasW, canvasH, contentH], index) => (
             <li key={n} className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
               {index < steps.length - 1 ? <span className="absolute -right-4 top-1/2 hidden h-px w-4 bg-border lg:block" aria-hidden="true" /> : null}
               <div className="flex items-center justify-between gap-3">
-                <img src={iconSrc} alt="" aria-hidden="true" loading="lazy" decoding="async" className="-my-2 -ml-1 size-20 object-contain drop-shadow-[0_10px_18px_color-mix(in_oklab,var(--primary)_22%,transparent)] sm:size-[5.5rem]" />
+                <img
+                  src={iconSrc}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                  className="shrink-0 object-contain"
+                  style={{ width: `calc(var(--how-icon) * ${canvasW / contentH})`, height: `calc(var(--how-icon) * ${canvasH / contentH})` }}
+                />
                 <span className="font-display text-xs font-semibold text-primary">{ui("Passo")} {n}</span>
               </div>
               <h3 className="mt-5 font-semibold">{ui(title)}</h3>

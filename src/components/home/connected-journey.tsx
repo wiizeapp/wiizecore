@@ -1,19 +1,19 @@
-import { Copy, CreditCard, FileChartColumn, FileSignature, Link2, UserRound } from "lucide-react";
+import { Copy, Link2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./connected-journey.css";
 
 const stages = [
-  { position: "details", icon: UserRound, label: "Dados da contratação" },
-  { position: "contract", icon: FileSignature, label: "Assinatura do contrato" },
-  { position: "payment", icon: CreditCard, label: "Pagamento confirmado" },
-  { position: "documents", icon: FileChartColumn, label: "Próximas cobranças e documentos" },
+  { position: "details", label: "Dados da contratação" },
+  { position: "contract", label: "Assinatura do contrato" },
+  { position: "payment", label: "Pagamento confirmado" },
+  { position: "documents", label: "Próximas cobranças e documentos" },
 ];
 
 const mobileSteps = [
-  { icon: UserRound, title: "Dados da contratação", sub: "Informações do cliente e do serviço" },
-  { icon: FileSignature, title: "Assinatura do contrato", sub: "Formalização da contratação" },
-  { icon: CreditCard, title: "Pagamento", sub: "Checkout e confirmação" },
-  { icon: FileChartColumn, title: "Próximas cobranças e documentos", sub: "Acesso à área do cliente" },
+  { title: "Dados da contratação", sub: "Informações do cliente e do serviço" },
+  { title: "Assinatura do contrato", sub: "Formalização da contratação" },
+  { title: "Pagamento", sub: "Checkout e confirmação" },
+  { title: "Próximas cobranças e documentos", sub: "Acesso à área do cliente" },
 ];
 
 /** Static illustration only. The sample URL is not an active checkout or copy action. */
@@ -52,7 +52,7 @@ export function ConnectedJourneySection() {
               </g>
               <g markerEnd="url(#journey-arrow-desktop)">
                 <path d="M175 70C212 52 247 68 270 95" />
-                <path d="M215 247C244 257 270 241 288 218" />
+                <path d="M238 274C264 274 278 246 288 218" />
                 <path d="M905 70C868 52 833 68 810 95" />
                 <path d="M858 247C839 259 812 241 796 218" />
               </g>
@@ -70,9 +70,8 @@ export function ConnectedJourneySection() {
                 <path d="M292 441C313 409 314 340 302 310" />
               </g>
             </svg>
-            {stages.map(({ position, icon: Icon, label }) => (
+            {stages.map(({ position, label }) => (
               <div key={position} className={`connected-journey-stage connected-journey-stage-${position}`}>
-                <span className="connected-journey-stage-icon"><Icon aria-hidden="true" /></span>
                 <h3>{t(label)}</h3>
               </div>
             ))}
@@ -89,11 +88,10 @@ export function ConnectedJourneySection() {
               <Copy aria-hidden="true" />
             </div>
             <ol>
-              {mobileSteps.map(({ icon: Icon, title, sub }, i) => (
+              {mobileSteps.map(({ title, sub }, i) => (
                 <li key={title}>
                   <span className="cjm-num">{String(i + 1).padStart(2, "0")}</span>
                   <div className="cjm-card">
-                    <span className="connected-journey-stage-icon"><Icon /></span>
                     <span className="cjm-text"><strong>{t(title)}</strong><small>{t(sub)}</small></span>
                   </div>
                 </li>

@@ -69,7 +69,7 @@ function Landing() {
           <div className="mt-14 space-y-14 lg:space-y-20">
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
-                <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-start lg:px-9 lg:pb-5 lg:pt-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
+                <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-center lg:px-9 lg:py-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
                   <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
                   <h3 className="mt-4 text-2xl font-semibold sm:text-3xl">{ui(group.title)}</h3>
                   <p className="mt-3 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
