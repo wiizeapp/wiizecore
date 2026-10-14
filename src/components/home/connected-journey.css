@@ -110,8 +110,8 @@
   .connected-journey-stage-documents { top: 436px; bottom: auto; }
   .connected-journey-stage-icon { flex-basis: 48px; width: 48px; height: 48px; }
   .connected-journey-stage h3 { font-size: .9375rem; }
-  .connected-journey-link { top: 208px; width: 100%; max-width: 100%; padding: .9rem .875rem; gap: .5rem; grid-template-columns: 20px minmax(0, 1fr) 16px; }
+  .connected-journey-link { top: 208px; width: 100%; max-width: 100%; padding: .9rem .625rem; gap: .25rem; grid-template-columns: 16px minmax(0, 1fr) 16px; }
   .connected-journey-url { font-size: .8125rem; }
-  .connected-journey-link-icon { width: 20px; height: 20px; }
+  .connected-journey-link-icon { width: 16px; height: 16px; }
   .connected-journey-copy-icon { width: 16px; height: 16px; }
 }
