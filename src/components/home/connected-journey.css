@@ -20,7 +20,7 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
 .connected-journey-stage-contract { top: 211px; left: 3%; animation-delay: -3s; }
 .connected-journey-stage-payment { top: 18px; right: -1%; animation-delay: -1.5s; }
 .connected-journey-stage-documents { top: 232px; right: 0; animation-delay: -4.5s; }
-.connected-journey-stage h3 { font-family: var(--font-hand); font-size: 1.5rem; font-weight: 600; line-height: 1.35; letter-spacing: .01em; }
+.connected-journey-stage h3 { font-family: var(--font-hand); font-size: 1.875rem; font-weight: 700; line-height: 1.15; color: var(--journey-foreground); }
 .connected-journey-stage-details h3, .connected-journey-stage-contract h3 { text-align: left; }
 .connected-journey-stage-payment h3, .connected-journey-stage-documents h3 { text-align: right; }
 .connected-journey-link { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 27px minmax(0, 1fr) 46px; align-items: center; gap: .75rem; width: 600px; max-width: 56%; min-height: 80px; padding: .7rem .7rem .7rem 1.5rem; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(var(--journey-surface),var(--journey-surface)) padding-box, var(--journey-border-gradient) border-box; box-shadow: var(--journey-link-shadow); }
@@ -45,7 +45,7 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .connected-journey-intro p { font-size: .9375rem; max-width: 38rem; }
   .connected-journey-figure { margin-top: 1rem; }
   .connected-journey-stage { width: 205px; }
-  .connected-journey-stage h3 { font-size: 1.25rem; }
+  .connected-journey-stage h3 { font-size: 1.625rem; }
   .connected-journey-stage-details { left: 0; }
   .connected-journey-stage-contract { left: 2%; }
   .connected-journey-stage-payment, .connected-journey-stage-documents { right: 0; }
@@ -69,7 +69,7 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .connected-journey-stage-contract { top: 104px; }
   .connected-journey-stage-payment { top: 332px; }
   .connected-journey-stage-documents { top: 436px; }
-  .connected-journey-stage h3 { font-size: 1.25rem; }
+  .connected-journey-stage h3 { font-size: 1.625rem; }
   .connected-journey-link { top: 208px; width: 100%; max-width: 100%; min-height: 80px; padding: .9rem .625rem; gap: .25rem; grid-template-columns: 16px minmax(0,1fr) 16px; }
   .connected-journey-url { font-size: .8125rem; }
   .connected-journey-link-icon { width: 16px; height: 16px; }
@@ -92,6 +92,6 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
   .cjm-num { position: relative; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--primary) 78%, white); background: linear-gradient(145deg, color-mix(in oklab, var(--primary) 88%, white), var(--primary) 62%, color-mix(in oklab, var(--primary) 82%, black)); color: var(--primary-foreground); font-size: .75rem; font-weight: 700; box-shadow: 0 0 14px color-mix(in oklab, var(--primary) 45%, transparent); }
   .cjm-card { padding: .8rem .9rem; border-radius: 14px; border: 1px solid var(--journey-icon-border); background: color-mix(in oklab, var(--journey-muted) 9%, var(--journey-background)); }
   .cjm-text { min-width: 0; display: grid; gap: .2rem; }
-  .cjm-text strong { color: var(--journey-foreground); font-family: var(--font-hand); font-size: 1.25rem; font-weight: 600; line-height: 1.25; letter-spacing: .01em; }
+  .cjm-text strong { color: var(--journey-foreground); font-family: var(--font-hand); font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
   .cjm-text small { color: var(--journey-muted); font-size: .75rem; }
 }

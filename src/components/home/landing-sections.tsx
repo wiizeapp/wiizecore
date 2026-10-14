@@ -157,19 +157,21 @@ export function HowItWorksSection() {
           {steps.map(([n, iconSrc, title, text, tag, canvasW, canvasH, contentW, contentH, weight], index) => (
             <li key={n} className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-card">
               {index < steps.length - 1 ? <span className="absolute -right-4 top-1/2 hidden h-px w-4 bg-border lg:block" aria-hidden="true" /> : null}
-              <div className="flex items-center justify-between gap-3">
-                <img
-                  src={iconSrc}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  decoding="async"
-                  className="shrink-0 object-contain"
-                  style={{
-                    width: `calc(var(--how-icon) * ${((canvasW * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
-                    height: `calc(var(--how-icon) * ${((canvasH * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
-                  }}
-                />
+              <div className="flex h-11 items-center justify-between gap-3">
+                <span className="grid h-11 w-14 shrink-0 place-items-center">
+                  <img
+                    src={iconSrc}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    className="max-w-none object-contain"
+                    style={{
+                      width: `calc(var(--how-icon) * ${((canvasW * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
+                      height: `calc(var(--how-icon) * ${((canvasH * weight) / Math.sqrt(contentW * contentH)).toFixed(3)})`,
+                    }}
+                  />
+                </span>
                 <span className="font-display text-xs font-semibold text-primary">{ui("Passo")} {n}</span>
               </div>
               <h3 className="mt-5 font-semibold">{ui(title)}</h3>
