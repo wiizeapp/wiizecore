@@ -1,0 +1,23 @@
+# WiizePay
+
+> Plataforma de software que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.
+
+A WiizePay não é banco nem instituição de pagamento. O processamento dos pagamentos é feito pela infraestrutura parceira Asaas. Não há mensalidade; as taxas por pagamento recebido estão na página de taxas. Contato oficial: wiizepay@gmail.com.
+
+## Pages
+
+- [Início](https://wiizepay.com/): Visão geral da plataforma.
+- [Sobre a WiizePay](https://wiizepay.com/sobre): Propósito, público e infraestrutura.
+- [Taxas](https://wiizepay.com/taxas): Tabela oficial de tarifas e simulador.
+- [Cobranças e pagamentos](https://wiizepay.com/cobrancas-e-pagamentos): Pix, boleto, cartão e acompanhamento.
+- [Gestão financeira](https://wiizepay.com/gestao-financeira): Entradas, saídas e resultado do mês.
+- [Gestão de clientes](https://wiizepay.com/gestao-de-clientes): Clientes, contratos e histórico.
+- [Central do cliente](https://wiizepay.com/portal-do-cliente): Portal para o cliente final.
+- [Perguntas frequentes](https://wiizepay.com/perguntas-frequentes): Respostas diretas.
+- [Suporte](https://wiizepay.com/suporte): Canal oficial de atendimento.
+
+## Optional
+
+- [Termos de uso](https://wiizepay.com/termos-de-uso)
+- [Política de privacidade](https://wiizepay.com/politica-de-privacidade)
+- [Prazos](https://wiizepay.com/prazos)

@@ -12,3 +12,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /nimda
+
+Sitemap: https://wiizepay.com/sitemap.xml
