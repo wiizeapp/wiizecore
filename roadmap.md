@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Refinar a jornada: ampliar título e endereço, suavizar “https://”, repetir destaque da abertura, aproximar verde da marca, apontar setas direitas para o centro e animar suavemente as quatro etapas; conferir computador e celular e informar arquivos.
+- [x] Refinar a jornada: título e endereço ampliados, “https://” suavizado, destaque igual à abertura, verde próximo da marca, setas direitas para o centro e quatro etapas com flutuação suave; conferido em PT-BR a 320, 390, 768 e 1347px, sem rolagem horizontal ou erros e com movimento reduzido respeitado.
 
 - [x] Refinar apenas a jornada conectada conforme a imagem agora recebida: proporções, curvas independentes, luz nas bordas, ícones e acabamento do link; conferido a 320, 390, 640, 768 e 1280px, textos e posição preservados, sem cortes, duplicação ou erros de execução.
 
