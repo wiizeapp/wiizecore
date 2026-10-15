@@ -1,3 +1,4 @@
+import { SealFooter } from "@/components/financial-provider";
 import { SigningProgress } from "@/components/contracts/signing-progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -96,6 +97,7 @@ function AssinarPage() {
           </>
         ) : null}
       </div>
+      <SealFooter className="mt-10" />
     </main>
   );
 }

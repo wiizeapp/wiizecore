@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brand } from "@/components/brand";
-import { FinancialIdentity } from "@/components/financial-provider";
+import { SealFooter } from "@/components/financial-provider";
 import { formatBRL, formatDate } from "@/lib/format";
 import { paymentMethodLabels } from "@/lib/labels";
 import { openFile } from "@/lib/contract-files-client";
@@ -76,9 +76,7 @@ function PortalPage() {
           <PortalLogin portalKey={key} providerName={info.providerName} onSuccess={(t, e) => { try { sessionStorage.setItem(storeKey, JSON.stringify({ token: t, expiresAt: e })); } catch { /* */ } setToken(t); }} />
         )}
       </main>
-      <footer className={`checkout-panel border-t border-border px-4 py-1.5 text-center text-[11px] leading-tight text-muted-foreground/70 sm:pb-2 ${token ? "pb-[4.75rem]" : "pb-2"}`}>
-        <FinancialIdentity background={appearance.background} />
-      </footer>
+      <SealFooter background={appearance.background} className={`checkout-panel ${token ? "pb-[4.75rem] sm:pb-3" : ""}`} />
     </div>
   );
 }

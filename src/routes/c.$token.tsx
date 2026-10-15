@@ -1,3 +1,4 @@
+import { SealFooter } from "@/components/financial-provider";
 import { SignaturePad, type SignatureValue } from "@/components/contracts/signature-pad";
 import { SigningProgress } from "@/components/contracts/signing-progress";
 import { toast } from "sonner";
@@ -171,6 +172,7 @@ function PublicContract() {
           ) : null}
         </div>
       )}
+      <SealFooter className="mt-10" />
     </div>
   );
 }
