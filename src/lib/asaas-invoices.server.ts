@@ -85,6 +85,7 @@ export async function getFiscalClient(admin: AdminClient, tenantId: string) {
     environment,
     municipalOptions: () => call<MunicipalOptions>("GET", "/fiscalInfo/municipalOptions"),
     fiscalInfo: () => call<Record<string, unknown>>("GET", "/fiscalInfo", undefined, { allow404: true }),
+    enableNationalPortal: () => call<Record<string, unknown>>("POST", "/fiscalInfo/nationalPortal", { enabled: true }),
     saveFiscalInfo: (form: FormData) => call<Record<string, unknown>>("POST", "/fiscalInfo", undefined, { form }),
     municipalServices: (description?: string) =>
       call<{ data?: { id: string; description: string }[] }>("GET", `/fiscalInfo/services?limit=100${description ? `&description=${encodeURIComponent(description)}` : ""}`),
@@ -103,8 +104,6 @@ export function missingFiscalFields(s: Record<string, any> | null, opts: Municip
   if (!s) return ["Dados fiscais da empresa"];
   if (!s["municipal_inscription"]) miss.push("Falta informar sua inscrição municipal.");
   if (s["simples_nacional"] === null || s["simples_nacional"] === undefined) miss.push("Falta informar se a empresa é do Simples Nacional.");
-  if (!s["rps_serie"] && s["portal"] !== "national") miss.push("Falta informar a série do RPS.");
-  if (!s["rps_number"] && s["portal"] !== "national") miss.push("Falta informar o próximo número do RPS.");
   if (opts?.usesSpecialTaxRegimes && !s["special_tax_regime"]) miss.push("Falta informar o regime especial de tributação.");
   if (opts?.usesServiceListItem && !s["service_list_item"]) miss.push("Falta informar o item da lista de serviço.");
   if (opts?.authenticationType && !s["credentials_configured"]) miss.push("Falta informar o acesso ao portal da prefeitura.");
@@ -256,8 +255,8 @@ export async function issueInvoice(admin: AdminClient, input: IssueInput) {
     municipalServiceName: fs["municipal_service_name"] ?? fs["name"],
     taxes,
   };
-  if (fs["municipal_service_id"]) body["municipalServiceId"] = fs["municipal_service_id"];
-  else body["municipalServiceCode"] = fs["municipal_service_code"];
+  // Portal Nacional: o serviço é sempre informado por código (municipalServiceId não é aceito).
+  body["municipalServiceCode"] = fs["municipal_service_code"];
 
   try {
     const created = await client.createInvoice(body);
