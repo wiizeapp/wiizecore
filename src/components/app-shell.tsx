@@ -310,7 +310,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
           <div className="sidebar-theme"><ThemeToggle /></div>
-          <Link to="/ajuda" className={navLinkClass(pathname.startsWith("/ajuda"))} title={!sidebarExpanded ? ui("Central de Ajuda") : undefined}>
+          <Link to="/ajuda" className={`${navLinkClass(pathname.startsWith("/ajuda"))} sidebar-help`} title={!sidebarExpanded ? ui("Central de Ajuda") : undefined}>
             <span className="sidebar-icon-slot"><BookOpen className="sidebar-animated-icon" strokeWidth={1.8} /></span>
             <span className="sidebar-item-label">{ui("Central de Ajuda")}</span>
           </Link>

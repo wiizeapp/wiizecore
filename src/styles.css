@@ -683,7 +683,7 @@
 
 .app-sidebar-footer {
   position: relative;
-  height: 140px;
+  height: 180px;
   flex: none;
   margin-top: 8px;
   border-top: 1px solid transparent;
@@ -718,6 +718,14 @@
 }
 
 .app-sidebar[data-expanded="true"] .sidebar-theme { opacity: 1; pointer-events: auto; transition-delay: 90ms; }
+
+.sidebar-help {
+  position: absolute;
+  right: 0;
+  bottom: 38px;
+  left: 0;
+  min-height: 34px;
+}
 
 .sidebar-logout {
   position: absolute;
