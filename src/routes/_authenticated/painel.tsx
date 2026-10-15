@@ -353,7 +353,7 @@ function Dashboard() {
               {hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
           </div>
-          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-primary ${valueTextSize(mask(cents(available)))}`}><MoneyValue value={mask(cents(available))} accentCents /></p>}
+          {wallet.isPending ? <Skeleton h="mt-2 h-8" /> : <p className={`numeric-tabular mt-1.5 max-w-full overflow-hidden font-display font-bold text-foreground ${valueTextSize(mask(cents(available)))}`}><MoneyValue value={mask(cents(available))} /></p>}
           <div className="mt-2 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{ui("A liberar {{value}}", { value: mask(cents(toReceive)) })}</span>
              <Link to="/financeiro" className="text-xs font-semibold text-primary hover:underline">{ui("Sacar")}</Link>
