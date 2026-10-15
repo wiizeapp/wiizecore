@@ -130,30 +130,61 @@ export function FeeCalculator() {
   const settle = SETTLEMENT_RULES[settlementMethodOf(method === "pix_recurring" ? "pix" : method, n)];
   if (isLoading) return <div className="surface-panel space-y-3 p-5"><Shimmer className="h-10 w-full" /><Shimmer className="h-40 w-full" /></div>;
   if (error) return <ErrorState text={ui("Não foi possível carregar as taxas agora.")} onRetry={() => void refetch()} />;
+  const feeShare = r && r.gross > 0 ? Math.min(100, (r.fee / r.gross) * 100) : 0;
   return (
-    <div className="surface-panel grid gap-6 p-5 lg:grid-cols-2">
-      <div className="space-y-4">
-        <div className="space-y-1.5"><Label htmlFor="fc-amount">{ui("Valor da venda")}</Label><Input id="fc-amount" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-invalid={!gross} />{!gross ? <p className="text-xs text-destructive">{ui("Informe um valor maior que zero, por exemplo 1.500,00.")}</p> : null}</div>
-        <div className="space-y-1.5"><Label>{ui("Meio de pagamento")}</Label>
-          <Select value={method} onValueChange={(v) => { setMethod(v as HelpMethod); setInst(1); }}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{methods.map((m) => <SelectItem key={m} value={m}>{ui(METHOD_LABEL[m])}</SelectItem>)}</SelectContent></Select>
+    <div className="surface-panel overflow-hidden">
+      <div className="grid lg:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-6 p-5 sm:p-7">
+          <div className="space-y-2">
+            <Label htmlFor="fc-amount" className="text-xs uppercase tracking-wide text-muted-foreground">{ui("Valor da venda")}</Label>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg font-medium text-muted-foreground">R$</span>
+              <Input id="fc-amount" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-invalid={!gross} className="h-14 pl-12 font-display text-2xl font-semibold tabular-nums" />
+            </div>
+            {!gross ? <p className="text-xs text-destructive">{ui("Informe um valor maior que zero, por exemplo 1.500,00.")}</p> : null}
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui("Meio de pagamento")}</p>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={ui("Meio de pagamento")}>
+              {methods.map((m) => (
+                <button key={m} type="button" role="radio" aria-checked={method === m} onClick={() => { setMethod(m); setInst(1); }}
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${method === m ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"}`}>
+                  {ui(METHOD_LABEL[m])}
+                </button>
+              ))}
+            </div>
+          </div>
+          {max > 1 ? <div className="space-y-2">
+            <div className="flex items-center justify-between"><p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui("Parcelas")}</p><span className="text-sm font-semibold tabular-nums">{n}x</span></div>
+            <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-7">
+              {Array.from({ length: max }, (_, i) => i + 1).map((i) => (
+                <button key={i} type="button" aria-pressed={n === i} onClick={() => setInst(i)}
+                  className={`h-9 rounded-md border text-xs font-medium tabular-nums transition-colors ${n === i ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"}`}>{i}x</button>
+              ))}
+            </div>
+          </div> : null}
         </div>
-        {max > 1 ? <div className="space-y-1.5"><Label>{ui("Parcelas")}</Label>
-          <Select value={String(n)} onValueChange={(v) => setInst(Number(v))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Array.from({ length: max }, (_, i) => i + 1).map((i) => <SelectItem key={i} value={String(i)}>{i}x</SelectItem>)}</SelectContent></Select>
-        </div> : null}
+        <div className="border-t border-border bg-muted/30 p-5 sm:p-7 lg:border-l lg:border-t-0" aria-live="polite">
+          {r ? <>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{ui("Valor líquido estimado")}</p>
+            <p className="mt-1 font-display text-4xl font-bold tabular-nums text-primary">{formatBRL(r.net)}</p>
+            {n > 1 ? <p className="mt-1 text-sm text-muted-foreground tabular-nums">{n}x {ui("de")} {formatBRL(r.gross / n)} {ui("pagos pelo cliente")}</p> : null}
+            <div className="mt-5 flex h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+              <div className="bg-primary" style={{ width: `${100 - feeShare}%` }} />
+              <div className="bg-muted-foreground/40" style={{ width: `${feeShare}%` }} />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] text-muted-foreground"><span>{ui("Você recebe")}</span><span>{ui("Custo efetivo")} {pct(r.effectivePct)}</span></div>
+            <div className="mt-5 divide-y divide-border border-y border-border">
+              <Row label={ui("Valor bruto")} value={formatBRL(r.gross)} />
+              <Row label={`${ui("Taxa percentual")} (${pct(r.percent)})`} value={`− ${formatBRL(r.percentPart)}`} />
+              <Row label={`${ui("Tarifa fixa")}${r.fixedCount > 1 ? ` (${r.fixedCount}× ${formatBRL(r.fixed)})` : ""}`} value={`− ${formatBRL(r.fixedPart)}`} />
+              <Row label={ui("Custo total estimado")} value={formatBRL(r.fee)} strong />
+            </div>
+            <div className="mt-4 rounded-lg border border-border bg-card px-3 py-2.5 text-xs"><span className="text-muted-foreground">{ui("Prazo previsto")}: </span><span className="font-medium">{ui(settle.text)}{method === "pix_recurring" ? ` (${ui("a confirmar")})` : ""}</span></div>
+          </> : <p className="py-10 text-center text-sm text-muted-foreground">{gross ? ui("Não há taxa ativa para esta combinação.") : ui("Informe um valor válido para ver o resultado.")}</p>}
+        </div>
       </div>
-      <div className="rounded-xl border border-border bg-muted/30 p-4" aria-live="polite">
-        {r ? <>
-          <Row label={ui("Valor bruto")} value={formatBRL(r.gross)} />
-          <Row label={`${ui("Taxa percentual")} (${pct(r.percent)})`} value={formatBRL(r.percentPart)} />
-          <Row label={`${ui("Tarifa fixa")}${r.fixedCount > 1 ? ` (${r.fixedCount}× ${formatBRL(r.fixed)})` : ""}`} value={formatBRL(r.fixedPart)} />
-          <Row label={ui("Custo total estimado")} value={formatBRL(r.fee)} />
-          <Row label={ui("Custo efetivo")} value={pct(r.effectivePct)} />
-          <div className="my-2 border-t border-border" />
-          <Row label={ui("Valor líquido estimado")} value={<span className="text-primary">{formatBRL(r.net)}</span>} strong />
-          <p className="mt-2 text-xs text-muted-foreground">{ui("Prazo previsto")}: {ui(settle.text)}{method === "pix_recurring" ? ` (${ui("a confirmar")})` : ""}</p>
-        </> : <p className="py-6 text-center text-sm text-muted-foreground">{gross ? ui("Não há taxa ativa para esta combinação.") : ui("Informe um valor válido para ver o resultado.")}</p>}
-      </div>
-      <p className="text-xs text-muted-foreground lg:col-span-2">{ui("Valores estimados com as taxas vigentes. O valor definitivo depende das condições efetivas da transação.")}</p>
+      <p className="border-t border-border px-5 py-3 text-xs text-muted-foreground sm:px-7">{ui("Valores estimados com as taxas vigentes. O valor definitivo depende das condições efetivas da transação.")}</p>
     </div>
   );
 }
