@@ -76,12 +76,16 @@ import { Route as PagarTokenRouteImport } from './routes/pagar.$token'
 import { Route as PortalKeyRouteImport } from './routes/portal.$key'
 import { Route as VerificarIndexRouteImport } from './routes/verificar.index'
 import { Route as VerificarCodeRouteImport } from './routes/verificar.$code'
+import { Route as AuthenticatedAjudaIndexRouteImport } from './routes/_authenticated/ajuda.index'
+import { Route as AuthenticatedAjudaCategoriaRouteImport } from './routes/_authenticated/ajuda.$categoria'
+import { Route as AuthenticatedAjudaCalculadorasRouteImport } from './routes/_authenticated/ajuda.calculadoras'
 import { Route as AuthenticatedClientesIdRouteImport } from './routes/_authenticated/clientes_.$id'
 import { Route as AuthenticatedContratosIdRouteImport } from './routes/_authenticated/contratos_.$id'
 import { Route as AuthenticatedCoproducoesIdRouteImport } from './routes/_authenticated/coproducoes_.$id'
 import { Route as AuthenticatedNotasFiscaisIndexRouteImport } from './routes/_authenticated/notas-fiscais.index'
 import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authenticated/notas-fiscais.$id'
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
+import { Route as AuthenticatedAjudaArtigoSlugRouteImport } from './routes/_authenticated/ajuda.artigo.$slug'
 import { Route as ApiPublicCronNotificationsRouteImport } from './routes/api/public/cron/notifications'
 import { Route as ApiPublicExtDeliverRouteImport } from './routes/api/public/ext/deliver'
 import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/public/google-drive/callback'
@@ -439,6 +443,23 @@ const VerificarCodeRoute = VerificarCodeRouteImport.update({
   path: '/verificar/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAjudaIndexRoute = AuthenticatedAjudaIndexRouteImport.update({
+  id: '/ajuda/',
+  path: '/ajuda/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAjudaCategoriaRoute =
+  AuthenticatedAjudaCategoriaRouteImport.update({
+    id: '/ajuda/$categoria',
+    path: '/ajuda/$categoria',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAjudaCalculadorasRoute =
+  AuthenticatedAjudaCalculadorasRouteImport.update({
+    id: '/ajuda/calculadoras',
+    path: '/ajuda/calculadoras',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedClientesIdRoute = AuthenticatedClientesIdRouteImport.update({
   id: '/clientes_/$id',
   path: '/clientes/$id',
@@ -472,6 +493,12 @@ const AuthenticatedNotasFiscaisConfiguracoesRoute =
   AuthenticatedNotasFiscaisConfiguracoesRouteImport.update({
     id: '/notas-fiscais/configuracoes',
     path: '/notas-fiscais/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAjudaArtigoSlugRoute =
+  AuthenticatedAjudaArtigoSlugRouteImport.update({
+    id: '/ajuda/artigo/$slug',
+    path: '/ajuda/artigo/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicCronNotificationsRoute =
@@ -612,12 +639,16 @@ export interface FileRoutesByFullPath {
   '/portal/$key': typeof PortalKeyRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/verificar/': typeof VerificarIndexRoute
+  '/ajuda/$categoria': typeof AuthenticatedAjudaCategoriaRoute
+  '/ajuda/calculadoras': typeof AuthenticatedAjudaCalculadorasRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
   '/coproducoes/$id': typeof AuthenticatedCoproducoesIdRoute
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
+  '/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/ajuda/artigo/$slug': typeof AuthenticatedAjudaArtigoSlugRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
@@ -699,12 +730,16 @@ export interface FileRoutesByTo {
   '/portal/$key': typeof PortalKeyRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/verificar': typeof VerificarIndexRoute
+  '/ajuda/$categoria': typeof AuthenticatedAjudaCategoriaRoute
+  '/ajuda/calculadoras': typeof AuthenticatedAjudaCalculadorasRoute
   '/clientes/$id': typeof AuthenticatedClientesIdRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
   '/coproducoes/$id': typeof AuthenticatedCoproducoesIdRoute
   '/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
+  '/ajuda': typeof AuthenticatedAjudaIndexRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/ajuda/artigo/$slug': typeof AuthenticatedAjudaArtigoSlugRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
@@ -788,12 +823,16 @@ export interface FileRoutesById {
   '/portal/$key': typeof PortalKeyRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/verificar/': typeof VerificarIndexRoute
+  '/_authenticated/ajuda/$categoria': typeof AuthenticatedAjudaCategoriaRoute
+  '/_authenticated/ajuda/calculadoras': typeof AuthenticatedAjudaCalculadorasRoute
   '/_authenticated/clientes_/$id': typeof AuthenticatedClientesIdRoute
   '/_authenticated/contratos_/$id': typeof AuthenticatedContratosIdRoute
   '/_authenticated/coproducoes_/$id': typeof AuthenticatedCoproducoesIdRoute
   '/_authenticated/notas-fiscais/$id': typeof AuthenticatedNotasFiscaisIdRoute
   '/_authenticated/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
+  '/_authenticated/ajuda/': typeof AuthenticatedAjudaIndexRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/_authenticated/ajuda/artigo/$slug': typeof AuthenticatedAjudaArtigoSlugRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
@@ -877,12 +916,16 @@ export interface FileRouteTypes {
     | '/portal/$key'
     | '/verificar/$code'
     | '/verificar/'
+    | '/ajuda/$categoria'
+    | '/ajuda/calculadoras'
     | '/clientes/$id'
     | '/contratos/$id'
     | '/coproducoes/$id'
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
+    | '/ajuda/'
     | '/notas-fiscais/'
+    | '/ajuda/artigo/$slug'
     | '/api/public/cron/notifications'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
@@ -964,12 +1007,16 @@ export interface FileRouteTypes {
     | '/portal/$key'
     | '/verificar/$code'
     | '/verificar'
+    | '/ajuda/$categoria'
+    | '/ajuda/calculadoras'
     | '/clientes/$id'
     | '/contratos/$id'
     | '/coproducoes/$id'
     | '/notas-fiscais/$id'
     | '/notas-fiscais/configuracoes'
+    | '/ajuda'
     | '/notas-fiscais'
+    | '/ajuda/artigo/$slug'
     | '/api/public/cron/notifications'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
@@ -1052,12 +1099,16 @@ export interface FileRouteTypes {
     | '/portal/$key'
     | '/verificar/$code'
     | '/verificar/'
+    | '/_authenticated/ajuda/$categoria'
+    | '/_authenticated/ajuda/calculadoras'
     | '/_authenticated/clientes_/$id'
     | '/_authenticated/contratos_/$id'
     | '/_authenticated/coproducoes_/$id'
     | '/_authenticated/notas-fiscais/$id'
     | '/_authenticated/notas-fiscais/configuracoes'
+    | '/_authenticated/ajuda/'
     | '/_authenticated/notas-fiscais/'
+    | '/_authenticated/ajuda/artigo/$slug'
     | '/api/public/cron/notifications'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
@@ -1602,6 +1653,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerificarCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ajuda/': {
+      id: '/_authenticated/ajuda/'
+      path: '/ajuda'
+      fullPath: '/ajuda/'
+      preLoaderRoute: typeof AuthenticatedAjudaIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ajuda/$categoria': {
+      id: '/_authenticated/ajuda/$categoria'
+      path: '/ajuda/$categoria'
+      fullPath: '/ajuda/$categoria'
+      preLoaderRoute: typeof AuthenticatedAjudaCategoriaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ajuda/calculadoras': {
+      id: '/_authenticated/ajuda/calculadoras'
+      path: '/ajuda/calculadoras'
+      fullPath: '/ajuda/calculadoras'
+      preLoaderRoute: typeof AuthenticatedAjudaCalculadorasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/clientes_/$id': {
       id: '/_authenticated/clientes_/$id'
       path: '/clientes/$id'
@@ -1642,6 +1714,13 @@ declare module '@tanstack/react-router' {
       path: '/notas-fiscais/configuracoes'
       fullPath: '/notas-fiscais/configuracoes'
       preLoaderRoute: typeof AuthenticatedNotasFiscaisConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ajuda/artigo/$slug': {
+      id: '/_authenticated/ajuda/artigo/$slug'
+      path: '/ajuda/artigo/$slug'
+      fullPath: '/ajuda/artigo/$slug'
+      preLoaderRoute: typeof AuthenticatedAjudaArtigoSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/cron/notifications': {
@@ -1764,12 +1843,16 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRecebiveisRoute: typeof AuthenticatedRecebiveisRoute
   AuthenticatedSegurancaRoute: typeof AuthenticatedSegurancaRoute
   AuthenticatedServicosRoute: typeof AuthenticatedServicosRoute
+  AuthenticatedAjudaCategoriaRoute: typeof AuthenticatedAjudaCategoriaRoute
+  AuthenticatedAjudaCalculadorasRoute: typeof AuthenticatedAjudaCalculadorasRoute
   AuthenticatedClientesIdRoute: typeof AuthenticatedClientesIdRoute
   AuthenticatedContratosIdRoute: typeof AuthenticatedContratosIdRoute
   AuthenticatedCoproducoesIdRoute: typeof AuthenticatedCoproducoesIdRoute
   AuthenticatedNotasFiscaisIdRoute: typeof AuthenticatedNotasFiscaisIdRoute
   AuthenticatedNotasFiscaisConfiguracoesRoute: typeof AuthenticatedNotasFiscaisConfiguracoesRoute
+  AuthenticatedAjudaIndexRoute: typeof AuthenticatedAjudaIndexRoute
   AuthenticatedNotasFiscaisIndexRoute: typeof AuthenticatedNotasFiscaisIndexRoute
+  AuthenticatedAjudaArtigoSlugRoute: typeof AuthenticatedAjudaArtigoSlugRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1799,13 +1882,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRecebiveisRoute: AuthenticatedRecebiveisRoute,
   AuthenticatedSegurancaRoute: AuthenticatedSegurancaRoute,
   AuthenticatedServicosRoute: AuthenticatedServicosRoute,
+  AuthenticatedAjudaCategoriaRoute: AuthenticatedAjudaCategoriaRoute,
+  AuthenticatedAjudaCalculadorasRoute: AuthenticatedAjudaCalculadorasRoute,
   AuthenticatedClientesIdRoute: AuthenticatedClientesIdRoute,
   AuthenticatedContratosIdRoute: AuthenticatedContratosIdRoute,
   AuthenticatedCoproducoesIdRoute: AuthenticatedCoproducoesIdRoute,
   AuthenticatedNotasFiscaisIdRoute: AuthenticatedNotasFiscaisIdRoute,
   AuthenticatedNotasFiscaisConfiguracoesRoute:
     AuthenticatedNotasFiscaisConfiguracoesRoute,
+  AuthenticatedAjudaIndexRoute: AuthenticatedAjudaIndexRoute,
   AuthenticatedNotasFiscaisIndexRoute: AuthenticatedNotasFiscaisIndexRoute,
+  AuthenticatedAjudaArtigoSlugRoute: AuthenticatedAjudaArtigoSlugRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
