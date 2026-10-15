@@ -211,6 +211,13 @@
       "when": 1792008592610,
       "tag": "0029_cartao_taxas_v6",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792060522456,
+      "tag": "0030_service_checkout_links",
+      "breakpoints": true
     }
   ]
 }
