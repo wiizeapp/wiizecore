@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays, CheckCircle2, CreditCard, FileSignature, FileText, LockKeyhole, QrCode, ShieldCheck, UserRound } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FinancialIdentity, FinancialSupport } from "@/components/financial-provider";
+import { FinancialIdentity } from "@/components/financial-provider";
 import { headerTextColors, type CheckoutAppearance } from "@/lib/checkout-appearance";
 
 export type CheckoutStep = "customer" | "contract" | "payment";
@@ -131,17 +131,11 @@ export function CheckoutTermsPanel({ checked, onCheckedChange, interactive = tru
 export function CheckoutTrustFooter({ appearance, preview = false }: { appearance: CheckoutAppearance; preview?: boolean }) {
   return (
     <footer className="border-t border-border checkout-panel">
-      <div className={`mx-auto flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-border px-5 py-4 text-xs text-muted-foreground ${preview ? "max-w-full" : "max-w-6xl"}`}>
-        <span className="flex items-center gap-2"><CheckCircle2 className="size-4 text-primary" />Confirmação automática do pagamento</span>
-        <span className="flex items-center gap-2"><LockKeyhole className="size-4 text-primary" />Dados protegidos por conexão segura</span>
-        <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" />Pagamento processado com segurança</span>
+      <div className={`mx-auto space-y-5 px-5 py-6 ${preview ? "max-w-full" : "max-w-6xl"}`}>
+        <FinancialIdentity background={appearance.background} />
+        <nav aria-label="Termos de Uso" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground"><Link to="/termos-de-uso" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Termos de Uso</Link><Link to="/politica-de-privacidade" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Política de Privacidade</Link><Link to="/politica-de-pagamentos" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Política de Pagamento</Link><Link to="/ajuda" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Suporte financeiro</Link></nav>
+        {appearance.supportText || appearance.supportEmail || appearance.supportPhone ? <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-xs text-muted-foreground">{appearance.supportText ? <span>{appearance.supportText}</span> : null}{appearance.supportEmail ? <a href={`mailto:${appearance.supportEmail}`} className="hover:text-foreground">{appearance.supportEmail}</a> : null}{appearance.supportPhone ? <span>{appearance.supportPhone}</span> : null}</div> : null}
       </div>
-      <div className={`mx-auto grid gap-8 px-5 py-8 text-sm sm:grid-cols-3 ${preview ? "max-w-full" : "max-w-6xl"}`}>
-        <div className="space-y-3"><p className="font-medium text-foreground">Plataforma Wiize Recebe. Serviços financeiros prestados pelo Asaas.</p><p className="flex items-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5 text-primary" />Seus dados são protegidos durante a transmissão.</p></div>
-        <div className="flex flex-col gap-2 text-muted-foreground"><Link to="/termos-de-uso" target="_blank" rel="noopener noreferrer">Termos de Uso</Link><Link to="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">Política de Privacidade</Link><Link to="/politica-de-pagamentos" target="_blank" rel="noopener noreferrer">Política de Pagamento</Link><FinancialSupport compact /></div>
-        <div className="space-y-1 text-muted-foreground"><p className="font-medium text-foreground">Precisa de ajuda?</p><p>{appearance.supportText || "Fale com a equipe responsável por esta cobrança."}</p>{appearance.supportEmail ? <p className="text-primary">{appearance.supportEmail}</p> : null}{appearance.supportPhone ? <p>{appearance.supportPhone}</p> : null}</div>
-      </div>
-      <div className="border-t border-border px-5 py-5"><FinancialIdentity background={appearance.background} /></div>
     </footer>
   );
 }

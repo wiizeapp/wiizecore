@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Simplificar rodapés e reduzir selo oficial Asaas para 120×36; computador/celular sem rolagem lateral, sete testes aprovados; arquivos informados na entrega.
+
 - [x] Substituir a marca visível por Wiize Recebe, preservando Wiize, domínios, rotas e identificadores técnicos; telas públicas e sessão conectada conferidas.
 
 - [x] Adequar identificação Asaas nos checkouts e rodapé institucional, prévia e portal sem alterar operações financeiras.

@@ -119,17 +119,16 @@ export function PublicFooter() {
   const { t: tn } = useTranslation("navigation");
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
-        <div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-8 gap-y-8 px-5 py-10 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
+        <div className="col-span-2 md:col-span-1">
           <Brand />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
           <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
-          <div className="mt-6"><AsaasSeal /></div>
         </div>
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/cobrancas-e-pagamentos" className="hover:text-foreground">Plataforma de pagamentos</Link><Link to="/gestao-financeira" className="hover:text-foreground">Gestão financeira</Link><Link to="/gestao-de-clientes" className="hover:text-foreground">Gestão de clientes</Link><Link to="/portal-do-cliente" className="hover:text-foreground">Central do cliente</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Recebe</Link><Link to="/perguntas-frequentes" className="hover:text-foreground">Perguntas frequentes</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link><Link to="/suporte" className="hover:text-foreground">{t("supportShort")}</Link><Link to="/auth" className="hover:text-foreground">Entrar</Link>
+            <Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Recebe</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
           </div>
         </div>
         <div>
@@ -139,7 +138,7 @@ export function PublicFooter() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center gap-2 border-t border-border px-5 py-5 text-center text-xs text-muted-foreground sm:flex-row sm:gap-4"><span>{t("rights")}</span><LanguageSwitcher align="start" /></div>
+      <div className="border-t border-border"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-4 text-center text-xs text-muted-foreground sm:flex-row sm:text-left lg:px-8"><span>{t("rights")}</span><AsaasSeal /></div></div>
     </footer>
   );
 }
