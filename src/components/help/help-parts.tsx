@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -252,15 +253,32 @@ export function SuggestionDialog({ open, onOpenChange, defaultCategory, sourceLa
   );
 }
 
+export function useHasSession() {
+  const [signed, setSigned] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    void supabase.auth.getSession().then(({ data }) => { if (alive) setSigned(!!data.session); });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setSigned(!!session));
+    return () => { alive = false; sub.subscription.unsubscribe(); };
+  }, []);
+  return signed;
+}
+
+function SignInToAct() {
+  const { t: ui } = useTranslation("ui");
+  return <Button asChild variant="outline" className="shrink-0"><Link to="/auth">{ui("Entre para enviar")}</Link></Button>;
+}
+
 export function SuggestCTA({ category, sourceLabel }: { category?: keyof typeof CAT_LABEL; sourceLabel?: string }) {
   const { t: ui } = useTranslation("ui");
   const [open, setOpen] = useState(false);
+  const signed = useHasSession();
   return (
     <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Lightbulb className="size-5" aria-hidden="true" /></span>
         <div><p className="font-semibold">{ui("Não encontrou o que precisava?")}</p><p className="mt-1 text-sm text-muted-foreground">{ui("Ajude-nos a melhorar a WiizePay. Envie uma sugestão, compartilhe uma ideia ou informe o que poderia ser melhor.")}</p></div></div>
-      <Button onClick={() => setOpen(true)} className="shrink-0">{ui("Enviar sugestão")}</Button>
-      <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory={category} sourceLabel={sourceLabel} />
+      {signed ? <Button onClick={() => setOpen(true)} className="shrink-0">{ui("Enviar sugestão")}</Button> : <SignInToAct />}
+      {signed ? <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory={category} sourceLabel={sourceLabel} /> : null}
     </div>
   );
 }
@@ -269,7 +287,9 @@ export function ArticleFeedback({ slug }: { slug: string }) {
   const { t: ui } = useTranslation("ui");
   const rate = useServerFn(rateArticle);
   const [sent, setSent] = useState<boolean | null>(null);
+  const signed = useHasSession();
   const m = useMutation({ mutationFn: (helpful: boolean) => rate({ data: { slug, helpful } }), onSuccess: (_d, h) => setSent(h), onError: () => toast.error(ui("Não foi possível registrar sua avaliação.")) });
+  if (!signed) return null;
   return (
     <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6 text-sm">
       <span className="text-muted-foreground">{sent === null ? ui("Este conteúdo ajudou?") : ui("Obrigado pela avaliação!")}</span>
