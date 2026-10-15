@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { checkoutAppearanceVars } from "@/components/checkout/checkout-presentation";
+import { FinancialIdentity } from "@/components/financial-provider";
 import {
   discardCheckoutLogo, getCheckoutAppearance, importCheckoutLogo, saveCheckoutAppearance, uploadCheckoutLogo,
 } from "@/lib/checkout-appearance.functions";
@@ -294,6 +295,7 @@ function Preview({ a, device, company }: { a: CheckoutAppearance; device: "deskt
           <PreviewSummary compact={mobile} company={company} />
           <PreviewCheckoutBody compact={mobile} appearance={a} />
         </main>
+        <footer className="checkout-panel border-t border-border px-5 py-5"><FinancialIdentity background={a.background} /></footer>
       </div>
     </div>
   );

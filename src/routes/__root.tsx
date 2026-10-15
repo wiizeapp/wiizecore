@@ -33,7 +33,7 @@ function translateVisiblePage() {
   if (language === DEFAULT_LANG && !everTranslated) return;
   if (language !== DEFAULT_LANG) everTranslated = true;
   const translate = (value: string) => {
-    if (language === DEFAULT_LANG || value === "Wiize" || value === "Pay") return value;
+    if (language === DEFAULT_LANG || value === "Wiize" || value === "Recebe") return value;
     // Busca direta no dicionário: textos com ":" ou "." quebravam a busca padrão.
     const dict = (i18n.store.data[language]?.["ui"] ?? {}) as Record<string, string>;
     const key = value.replace(/\s+/g, " ");
