@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatBRL } from "@/lib/format";
 import { frequencyLabels } from "@/lib/labels";
+import { FinancialIdentity, FinancialSupport } from "@/components/financial-provider";
 
 export const Route = createFileRoute("/checkout/$token")({
   head: () => ({
@@ -47,6 +48,7 @@ function OpenCheckout() {
   const shell = (children: React.ReactNode) => (
     <main className="min-h-screen bg-muted/30 px-4 py-10">
       <div className="mx-auto max-w-lg rounded-2xl border border-border bg-card p-6 shadow-card sm:p-8">{children}</div>
+      <footer className="mx-auto mt-8 max-w-lg"><FinancialIdentity /><FinancialSupport /></footer>
     </main>
   );
   if (info.isLoading) return shell(<p className="text-sm text-muted-foreground">{t("Carregando...")}</p>);

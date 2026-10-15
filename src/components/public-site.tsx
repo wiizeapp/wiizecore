@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Palette, UserRoundCheck, BarChart3, BellRing, ChevronDown, FileSignature, Headphones, Link2, Menu, MessageCircle, RefreshCw, Users, Workflow } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { AsaasSeal } from "@/components/financial-provider";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
@@ -120,9 +121,10 @@ export function PublicFooter() {
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
-          <Brand compact />
+          <Brand />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
           <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
+          <div className="mt-6"><AsaasSeal /></div>
         </div>
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>

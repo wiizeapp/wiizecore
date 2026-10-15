@@ -40,7 +40,7 @@ export function buildCsp(opts: { supabaseUrl?: string | undefined; preview: bool
     "script-src": `'self' 'unsafe-inline' https://www.googletagmanager.com https://*.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net`,
     "style-src": "'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src": "'self' data: https://fonts.gstatic.com",
-    "img-src": `'self' data: blob: ${supaHttp} https://*.googleusercontent.com ${ga} https://www.facebook.com`,
+    "img-src": `'self' data: blob: ${supaHttp} https://baas.asaas.com https://*.googleusercontent.com ${ga} https://www.facebook.com`,
     "connect-src": `'self' ${supaHttp} ${supaWs} https://viacep.com.br https://oauth.lovable.app ${ga} ${fb}${opts.dev ? " ws: http://localhost:*" : ""}`,
     "frame-src": "'self' blob: https://oauth.lovable.app https://www.googletagmanager.com",
     "worker-src": "'self' blob:",

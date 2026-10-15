@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { matchesSearch } from "@/components/ds/search-field";
 import { SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
+import { FinancialSupport } from "@/components/financial-provider";
 
 export const Route = createFileRoute("/ajuda/")({
   head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Recebe" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }] }),
@@ -78,6 +79,7 @@ function HelpHome() {
           </Link>
         ))}
       </div>
+      <FinancialSupport />
       <SuggestCTA sourceLabel="Central de Ajuda" />
       {signed ? <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory="help_content" sourceLabel={`Busca: ${q}`} /> : null}
     </div>

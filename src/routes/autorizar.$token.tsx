@@ -7,6 +7,7 @@ import { getPublicPixAuthorization } from "@/lib/pix-automatic.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Brand } from "@/components/brand";
+import { FinancialIdentity, FinancialSupport } from "@/components/financial-provider";
 import { formatBRL, formatDate } from "@/lib/format";
 import { useTranslation } from "react-i18next";
 
@@ -91,6 +92,7 @@ function AuthorizePage() {
             ) : null}
           </div>
         ) : null}
+        <footer className="pt-4"><FinancialIdentity /><FinancialSupport compact /></footer>
       </div>
     </main>
   );
