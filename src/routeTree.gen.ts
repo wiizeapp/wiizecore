@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AjudaRouteImport } from './routes/ajuda'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CentralDoClienteRouteImport } from './routes/central-do-cliente'
 import { Route as CheckoutComSuaMarcaRouteImport } from './routes/checkout-com-sua-marca'
@@ -107,6 +108,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AjudaRoute = AjudaRouteImport.update({
+  id: '/ajuda',
+  path: '/ajuda',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -389,19 +395,19 @@ const AuthenticatedServicosRoute = AuthenticatedServicosRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AjudaIndexRoute = AjudaIndexRouteImport.update({
-  id: '/ajuda/',
-  path: '/ajuda/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AjudaRoute,
 } as any)
 const AjudaCategoriaRoute = AjudaCategoriaRouteImport.update({
-  id: '/ajuda/$categoria',
-  path: '/ajuda/$categoria',
-  getParentRoute: () => rootRouteImport,
+  id: '/$categoria',
+  path: '/$categoria',
+  getParentRoute: () => AjudaRoute,
 } as any)
 const AjudaCalculadorasRoute = AjudaCalculadorasRouteImport.update({
-  id: '/ajuda/calculadoras',
-  path: '/ajuda/calculadoras',
-  getParentRoute: () => rootRouteImport,
+  id: '/calculadoras',
+  path: '/calculadoras',
+  getParentRoute: () => AjudaRoute,
 } as any)
 const AssinarTokenRoute = AssinarTokenRouteImport.update({
   id: '/assinar/$token',
@@ -494,9 +500,9 @@ const AuthenticatedNotasFiscaisConfiguracoesRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AjudaArtigoSlugRoute = AjudaArtigoSlugRouteImport.update({
-  id: '/ajuda/artigo/$slug',
-  path: '/ajuda/artigo/$slug',
-  getParentRoute: () => rootRouteImport,
+  id: '/artigo/$slug',
+  path: '/artigo/$slug',
+  getParentRoute: () => AjudaRoute,
 } as any)
 const ApiPublicCronNotificationsRoute =
   ApiPublicCronNotificationsRouteImport.update({
@@ -571,6 +577,7 @@ const ApiPublicV1ExtCheckoutSessionsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ajuda': typeof AjudaRouteWithChildren
   '/auth': typeof AuthRoute
   '/central-do-cliente': typeof CentralDoClienteRoute
   '/checkout-com-sua-marca': typeof CheckoutComSuaMarcaRoute
@@ -755,6 +762,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/ajuda': typeof AjudaRouteWithChildren
   '/auth': typeof AuthRoute
   '/central-do-cliente': typeof CentralDoClienteRoute
   '/checkout-com-sua-marca': typeof CheckoutComSuaMarcaRoute
@@ -848,6 +856,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ajuda'
     | '/auth'
     | '/central-do-cliente'
     | '/checkout-com-sua-marca'
@@ -1031,6 +1040,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/ajuda'
     | '/auth'
     | '/central-do-cliente'
     | '/checkout-com-sua-marca'
@@ -1124,6 +1134,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AjudaRoute: typeof AjudaRouteWithChildren
   AuthRoute: typeof AuthRoute
   CentralDoClienteRoute: typeof CentralDoClienteRoute
   CheckoutComSuaMarcaRoute: typeof CheckoutComSuaMarcaRoute
@@ -1153,8 +1164,6 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   TaxasRoute: typeof TaxasRoute
   TermosDeUsoRoute: typeof TermosDeUsoRoute
-  AjudaCategoriaRoute: typeof AjudaCategoriaRoute
-  AjudaCalculadorasRoute: typeof AjudaCalculadorasRoute
   AssinarTokenRoute: typeof AssinarTokenRoute
   AtivacaoCelularTokenRoute: typeof AtivacaoCelularTokenRoute
   AutorizarTokenRoute: typeof AutorizarTokenRoute
@@ -1165,9 +1174,7 @@ export interface RootRouteChildren {
   PagarTokenRoute: typeof PagarTokenRoute
   PortalKeyRoute: typeof PortalKeyRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
-  AjudaIndexRoute: typeof AjudaIndexRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
-  AjudaArtigoSlugRoute: typeof AjudaArtigoSlugRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
   ApiPublicExtDeliverRoute: typeof ApiPublicExtDeliverRoute
   ApiPublicGoogleDriveCallbackRoute: typeof ApiPublicGoogleDriveCallbackRoute
@@ -1197,6 +1204,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ajuda': {
+      id: '/ajuda'
+      path: '/ajuda'
+      fullPath: '/ajuda'
+      preLoaderRoute: typeof AjudaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1579,24 +1593,24 @@ declare module '@tanstack/react-router' {
     }
     '/ajuda/': {
       id: '/ajuda/'
-      path: '/ajuda'
+      path: '/'
       fullPath: '/ajuda/'
       preLoaderRoute: typeof AjudaIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AjudaRoute
     }
     '/ajuda/$categoria': {
       id: '/ajuda/$categoria'
-      path: '/ajuda/$categoria'
+      path: '/$categoria'
       fullPath: '/ajuda/$categoria'
       preLoaderRoute: typeof AjudaCategoriaRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AjudaRoute
     }
     '/ajuda/calculadoras': {
       id: '/ajuda/calculadoras'
-      path: '/ajuda/calculadoras'
+      path: '/calculadoras'
       fullPath: '/ajuda/calculadoras'
       preLoaderRoute: typeof AjudaCalculadorasRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AjudaRoute
     }
     '/assinar/$token': {
       id: '/assinar/$token'
@@ -1719,10 +1733,10 @@ declare module '@tanstack/react-router' {
     }
     '/ajuda/artigo/$slug': {
       id: '/ajuda/artigo/$slug'
-      path: '/ajuda/artigo/$slug'
+      path: '/artigo/$slug'
       fullPath: '/ajuda/artigo/$slug'
       preLoaderRoute: typeof AjudaArtigoSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AjudaRoute
     }
     '/api/public/cron/notifications': {
       id: '/api/public/cron/notifications'
@@ -1891,9 +1905,26 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AjudaRouteChildren {
+  AjudaCategoriaRoute: typeof AjudaCategoriaRoute
+  AjudaCalculadorasRoute: typeof AjudaCalculadorasRoute
+  AjudaIndexRoute: typeof AjudaIndexRoute
+  AjudaArtigoSlugRoute: typeof AjudaArtigoSlugRoute
+}
+
+const AjudaRouteChildren: AjudaRouteChildren = {
+  AjudaCategoriaRoute: AjudaCategoriaRoute,
+  AjudaCalculadorasRoute: AjudaCalculadorasRoute,
+  AjudaIndexRoute: AjudaIndexRoute,
+  AjudaArtigoSlugRoute: AjudaArtigoSlugRoute,
+}
+
+const AjudaRouteWithChildren = AjudaRoute._addFileChildren(AjudaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AjudaRoute: AjudaRouteWithChildren,
   AuthRoute: AuthRoute,
   CentralDoClienteRoute: CentralDoClienteRoute,
   CheckoutComSuaMarcaRoute: CheckoutComSuaMarcaRoute,
@@ -1923,8 +1954,6 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   TaxasRoute: TaxasRoute,
   TermosDeUsoRoute: TermosDeUsoRoute,
-  AjudaCategoriaRoute: AjudaCategoriaRoute,
-  AjudaCalculadorasRoute: AjudaCalculadorasRoute,
   AssinarTokenRoute: AssinarTokenRoute,
   AtivacaoCelularTokenRoute: AtivacaoCelularTokenRoute,
   AutorizarTokenRoute: AutorizarTokenRoute,
@@ -1935,9 +1964,7 @@ const rootRouteChildren: RootRouteChildren = {
   PagarTokenRoute: PagarTokenRoute,
   PortalKeyRoute: PortalKeyRoute,
   VerificarCodeRoute: VerificarCodeRoute,
-  AjudaIndexRoute: AjudaIndexRoute,
   VerificarIndexRoute: VerificarIndexRoute,
-  AjudaArtigoSlugRoute: AjudaArtigoSlugRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
   ApiPublicExtDeliverRoute: ApiPublicExtDeliverRoute,
   ApiPublicGoogleDriveCallbackRoute: ApiPublicGoogleDriveCallbackRoute,

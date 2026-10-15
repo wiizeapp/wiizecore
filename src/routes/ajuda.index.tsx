@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { matchesSearch } from "@/components/ds/search-field";
-import { CategoryIcon, SuggestCTA, SuggestionDialog } from "@/components/help/help-parts";
+import { CategoryIcon, SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/")({
@@ -20,6 +20,7 @@ function HelpHome() {
   const { t: ui } = useTranslation("ui");
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const signed = useHasSession();
   const results = useMemo(() => {
     if (q.trim().length < 2) return null;
     const arts = HELP_ARTICLES.filter((a) => matchesSearch(q, [a.title, a.summary, ...(a.body ?? []), ...(a.steps ?? []), categoryById(a.category)?.title])).map((a) => ({ kind: "Artigo", slug: a.slug, title: a.title, summary: a.summary, cat: categoryById(a.category)?.title ?? "" }));
@@ -49,7 +50,7 @@ function HelpHome() {
               <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
               <p className="font-medium">{ui("Nenhum resultado encontrado")}</p>
               <p className="max-w-md text-sm text-muted-foreground">{ui("Tente outras palavras, envie uma sugestão de conteúdo ou fale com o suporte.")}</p>
-              <div className="flex flex-wrap justify-center gap-2"><Button size="sm" onClick={() => setOpen(true)}>{ui("Enviar sugestão")}</Button><Button size="sm" variant="outline" asChild><Link to="/suporte">{ui("Falar com o suporte")}</Link></Button></div>
+              <div className="flex flex-wrap justify-center gap-2">{signed ? <Button size="sm" onClick={() => setOpen(true)}>{ui("Enviar sugestão")}</Button> : null}<Button size="sm" variant="outline" asChild><Link to="/suporte">{ui("Falar com o suporte")}</Link></Button></div>
             </div>}
           </div>
         ) : null}
@@ -80,7 +81,7 @@ function HelpHome() {
         ))}
       </div>
       <SuggestCTA sourceLabel="Central de Ajuda" />
-      <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory="help_content" sourceLabel={`Busca: ${q}`} />
+      {signed ? <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory="help_content" sourceLabel={`Busca: ${q}`} /> : null}
     </div>
   );
 }
