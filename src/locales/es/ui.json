@@ -5089,5 +5089,14 @@
   "Informações do cliente e do serviço": "Datos del cliente y del servicio",
   "Formalização da contratação": "Formalización de la contratación",
   "Checkout e confirmação": "Checkout y confirmación",
-  "Acesso à área do cliente": "Acceso al área del cliente"
+  "Acesso à área do cliente": "Acceso al área del cliente",
+  "Este link de checkout não está disponível.": "Este enlace de pago no está disponible.",
+  "Seus dados": "Tus datos",
+  "Nome completo ou razão social": "Nombre completo o razón social",
+  "Avançar": "Continuar",
+  "Encontramos uma cobrança em aberto para você.": "Encontramos un cobro pendiente para ti.",
+  "Continuar cobrança existente": "Continuar cobro existente",
+  "Cobrança automática a cada ciclo, sem parcelamento.": "Cobro en cada ciclo, sin cuotas.",
+  "Uma cobrança nova é enviada a cada mês.": "Se envía un nuevo cobro cada mes.",
+  "Ir para o pagamento": "Ir al pago"
 }

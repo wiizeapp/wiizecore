@@ -69,6 +69,7 @@ import { Route as AssinarTokenRouteImport } from './routes/assinar.$token'
 import { Route as AtivacaoCelularTokenRouteImport } from './routes/ativacao-celular.$token'
 import { Route as AutorizarTokenRouteImport } from './routes/autorizar.$token'
 import { Route as CTokenRouteImport } from './routes/c.$token'
+import { Route as CheckoutTokenRouteImport } from './routes/checkout.$token'
 import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
 import { Route as OauthAuthorizeRouteImport } from './routes/oauth.authorize'
 import { Route as PagarTokenRouteImport } from './routes/pagar.$token'
@@ -403,6 +404,11 @@ const CTokenRoute = CTokenRouteImport.update({
   path: '/c/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutTokenRoute = CheckoutTokenRouteImport.update({
+  id: '/checkout/$token',
+  path: '/checkout/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConviteTokenRoute = ConviteTokenRouteImport.update({
   id: '/convite/$token',
   path: '/convite/$token',
@@ -599,6 +605,7 @@ export interface FileRoutesByFullPath {
   '/ativacao-celular/$token': typeof AtivacaoCelularTokenRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
+  '/checkout/$token': typeof CheckoutTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
@@ -685,6 +692,7 @@ export interface FileRoutesByTo {
   '/ativacao-celular/$token': typeof AtivacaoCelularTokenRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
+  '/checkout/$token': typeof CheckoutTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
@@ -773,6 +781,7 @@ export interface FileRoutesById {
   '/ativacao-celular/$token': typeof AtivacaoCelularTokenRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/c/$token': typeof CTokenRoute
+  '/checkout/$token': typeof CheckoutTokenRoute
   '/convite/$token': typeof ConviteTokenRoute
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
@@ -861,6 +870,7 @@ export interface FileRouteTypes {
     | '/ativacao-celular/$token'
     | '/autorizar/$token'
     | '/c/$token'
+    | '/checkout/$token'
     | '/convite/$token'
     | '/oauth/authorize'
     | '/pagar/$token'
@@ -947,6 +957,7 @@ export interface FileRouteTypes {
     | '/ativacao-celular/$token'
     | '/autorizar/$token'
     | '/c/$token'
+    | '/checkout/$token'
     | '/convite/$token'
     | '/oauth/authorize'
     | '/pagar/$token'
@@ -1034,6 +1045,7 @@ export interface FileRouteTypes {
     | '/ativacao-celular/$token'
     | '/autorizar/$token'
     | '/c/$token'
+    | '/checkout/$token'
     | '/convite/$token'
     | '/oauth/authorize'
     | '/pagar/$token'
@@ -1097,6 +1109,7 @@ export interface RootRouteChildren {
   AtivacaoCelularTokenRoute: typeof AtivacaoCelularTokenRoute
   AutorizarTokenRoute: typeof AutorizarTokenRoute
   CTokenRoute: typeof CTokenRoute
+  CheckoutTokenRoute: typeof CheckoutTokenRoute
   ConviteTokenRoute: typeof ConviteTokenRoute
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
   PagarTokenRoute: typeof PagarTokenRoute
@@ -1540,6 +1553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/$token': {
+      id: '/checkout/$token'
+      path: '/checkout/$token'
+      fullPath: '/checkout/$token'
+      preLoaderRoute: typeof CheckoutTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/convite/$token': {
       id: '/convite/$token'
       path: '/convite/$token'
@@ -1827,6 +1847,7 @@ const rootRouteChildren: RootRouteChildren = {
   AtivacaoCelularTokenRoute: AtivacaoCelularTokenRoute,
   AutorizarTokenRoute: AutorizarTokenRoute,
   CTokenRoute: CTokenRoute,
+  CheckoutTokenRoute: CheckoutTokenRoute,
   ConviteTokenRoute: ConviteTokenRoute,
   OauthAuthorizeRoute: OauthAuthorizeRoute,
   PagarTokenRoute: PagarTokenRoute,

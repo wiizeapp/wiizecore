@@ -8,6 +8,7 @@ import { useWorkspace } from "@/hooks/useWorkspace";
 import { PageHeader } from "@/components/app-shell";
 import { FiscalServiceDialog } from "@/components/invoices/fiscal-service-dialog";
 import { getFiscalOverview } from "@/lib/invoices.functions";
+import { listServiceCheckoutLinks, setServiceCheckoutLink } from "@/lib/service-checkout.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { DataPagination, paginate, SummaryStrip, StatusBadge, SearchField, matchesSearch } from "@/components/ds";
 import { Button } from "@/components/ui/button";
@@ -149,6 +150,19 @@ function Servicos() {
       if (error) throw new Error("Não foi possível atualizar o serviço.");
     },
     onSuccess: () => { toast.success("Serviço atualizado."); void queryClient.invalidateQueries({ queryKey: ["services", tenantId] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const fetchOpen = useServerFn(listServiceCheckoutLinks);
+  const setOpenFn = useServerFn(setServiceCheckoutLink);
+  const openLinks = useQuery({ queryKey: ["service-open-links", tenantId], enabled: Boolean(tenantId), queryFn: () => fetchOpen() });
+  const toggleOpen = useMutation({
+    mutationFn: (v: { serviceId: string; active: boolean }) => setOpenFn({ data: v }),
+    onSuccess: (r) => {
+      if (r.url) { void navigator.clipboard.writeText(r.url).catch(() => {}); toast.success("Link de checkout criado e copiado."); }
+      else toast.success("Link de checkout desativado.");
+      void openLinks.refetch();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -350,6 +364,17 @@ function Servicos() {
                     })()}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-right">
+                    {!service.archived_at && service.active && !service.custom_amount && !service.flexible_type ? (() => {
+                      const ol = openLinks.data?.find((l) => l.serviceId === service.id && l.active);
+                      return ol?.url ? (
+                        <>
+                          <Button size="sm" variant="ghost" onClick={() => { void navigator.clipboard.writeText(ol.url!); toast.success("Link de checkout copiado."); }}>Copiar link de checkout</Button>
+                          <Button size="sm" variant="ghost" disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: false })}>Desativar link</Button>
+                        </>
+                      ) : (
+                        <Button size="sm" variant="ghost" disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}>Criar link de checkout</Button>
+                      );
+                    })() : null}
                     {service.archived_at ? (
                       <Button size="sm" variant="ghost" disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: null } })}>Restaurar</Button>
                     ) : (
