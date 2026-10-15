@@ -21,7 +21,7 @@ export function buildSubscriptionInvoiceSettings(
   fs: FiscalServiceRow,
   opts: { rule: SubscriptionRule; days?: number | null; observations?: string | null },
 ): Record<string, unknown> {
-  if (!fs.municipal_service_id && !fs.municipal_service_code) throw new Error("Serviço fiscal sem código municipal.");
+  if (!fs.municipal_service_code) throw new Error("Serviço fiscal sem código de serviço.");
   const t = (fs.taxes && typeof fs.taxes === "object" ? fs.taxes : {}) as Record<string, unknown>;
   const taxes: Record<string, unknown> = {
     retainIss: Boolean(fs.retain_iss),
@@ -42,7 +42,6 @@ export function buildSubscriptionInvoiceSettings(
     taxes,
   };
   if (opts.rule === "BEFORE_PAYMENT_DUE_DATE") body["daysBeforeDueDate"] = opts.days ?? 5;
-  if (fs.municipal_service_id) body["municipalServiceId"] = fs.municipal_service_id;
-  else body["municipalServiceCode"] = fs.municipal_service_code;
+  body["municipalServiceCode"] = fs.municipal_service_code;
   return body;
 }

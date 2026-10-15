@@ -78,7 +78,7 @@ export const refreshMunicipalOptions = createServerFn({ method: "POST" })
     const opts = await client.municipalOptions();
     const remote = await client.fiscalInfo();
     const { data: cur } = await db.from("fiscal_settings").select("*").eq("tenant_id", m.tenant_id).maybeSingle();
-    const merged: Record<string, any> = { ...(cur ?? { portal: "municipal", credentials_configured: false }) };
+    const merged: Record<string, any> = { ...(cur ?? { portal: "national", credentials_configured: false }) };
     if (remote) {
       merged["municipal_inscription"] ??= remote["municipalInscription"] ?? null;
       merged["simples_nacional"] ??= remote["simplesNacional"] ?? null;
@@ -99,7 +99,7 @@ export const refreshMunicipalOptions = createServerFn({ method: "POST" })
   });
 
 const settingsSchema = z.object({
-  portal: z.enum(["municipal", "national"]),
+  portal: z.literal("national").default("national"),
   email: z.string().email().max(200).nullable().optional(),
   municipalInscription: z.string().trim().max(40).nullable().optional(),
   simplesNacional: z.boolean(),
@@ -147,10 +147,7 @@ export const saveFiscalSettings = createServerFn({ method: "POST" })
     put("specialTaxRegime", data.specialTaxRegime);
     put("serviceListItem", data.serviceListItem);
     put("nbsCode", data.nbsCode);
-    put("rpsSerie", data.rpsSerie);
-    put("rpsNumber", data.rpsNumber);
-    put("loteNumber", data.loteNumber);
-    if (data.portal === "national") put("nationalPortalTaxCalculationRegime", data.nationalRegime);
+    put("nationalPortalTaxCalculationRegime", data.nationalRegime);
     put("username", data.username);
     put("password", data.password);
     put("accessToken", data.accessToken);
@@ -159,6 +156,8 @@ export const saveFiscalSettings = createServerFn({ method: "POST" })
       form.append("certificateFile", new Blob([bytes], { type: "application/x-pkcs12" }), data.certificateName ?? "certificado.pfx");
       put("certificatePassword", data.certificatePassword);
     }
+    // Emissor municipal descontinuado no provedor: a conta é sempre configurada no Portal Nacional.
+    await client.enableNationalPortal();
     await client.saveFiscalInfo(form);
 
     const sentCredentials = Boolean(data.password || data.accessToken || data.certificateBase64);
@@ -208,7 +207,7 @@ const fiscalServiceSchema = z.object({
   iss: z.number().min(0).max(100).nullable().optional(),
   retainIss: z.boolean().default(false),
   serviceId: z.string().uuid().nullable().optional(),
-}).refine((v) => v.municipalServiceId || v.municipalServiceCode, { message: "Informe o código do serviço municipal." });
+}).refine((v) => Boolean(v.municipalServiceCode), { message: "Informe o código do serviço." });
 
 export const saveFiscalService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -223,7 +222,7 @@ export const saveFiscalService = createServerFn({ method: "POST" })
     }
     const row = {
       tenant_id: m.tenant_id, name: data.name, description: data.description ?? null,
-      municipal_service_id: data.municipalServiceId || null, municipal_service_code: data.municipalServiceCode || null,
+      municipal_service_id: null, municipal_service_code: data.municipalServiceCode || null,
       municipal_service_name: data.municipalServiceName ?? data.name, iss: data.iss ?? null, retain_iss: data.retainIss,
       service_id: data.serviceId ?? null, active: true,
     };
