@@ -108,7 +108,7 @@ function SettingsForm({ d, onSaved }: { d: Ov; onSaved: () => void }) {
   const s = d.settings;
   const o = d.options ?? {};
   const [f, setF] = useState({
-    portal: (s?.portal ?? "municipal") as "municipal" | "national", municipalInscription: s?.municipalInscription ?? "", simplesNacional: s?.simplesNacional ?? true,
+    portal: "national" as const, municipalInscription: s?.municipalInscription ?? "", simplesNacional: s?.simplesNacional ?? true,
     cnae: s?.cnae ?? "", specialTaxRegime: s?.specialTaxRegime ?? "", serviceListItem: s?.serviceListItem ?? "", nbsCode: s?.nbsCode ?? "",
     rpsSerie: s?.rpsSerie ?? "", rpsNumber: s?.rpsNumber ? String(s.rpsNumber) : "", nationalRegime: s?.nationalRegime ?? "", email: s?.email ?? "",
   });
@@ -142,20 +142,7 @@ function SettingsForm({ d, onSaved }: { d: Ov; onSaved: () => void }) {
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); m.mutate(); }} className="space-y-6">
-      <FormSection title="Portal emissor" description="Recomendamos o Portal Nacional da NFS-e.">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {([["national", "Portal Nacional", "Recomendado. Emissor nacional da NFS-e, adotado pela maioria dos municípios."], ["municipal", "Portal municipal", "Apenas se sua prefeitura ainda mantém sistema próprio."]] as const).map(([k, t, dsc]) => (
-            <button key={k} type="button" onClick={() => set("portal", k)} className={`rounded-xl border p-3 text-left text-sm ${f.portal === k ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}>
-              <span className="flex items-center gap-2 font-medium">{t}{k === "national" ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Recomendado</span> : null}</span><span className="text-xs text-muted-foreground">{dsc}</span>
-            </button>
-          ))}
-        </div>
-        {f.portal === "municipal" ? (
-          <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-600 dark:text-amber-400">
-            Muitos municípios descontinuaram o portal próprio. Se o seu já migrou para o Portal Nacional, as notas podem ser recusadas. Confirme com a prefeitura antes de emitir.
-          </p>
-        ) : null}
-      </FormSection>
+      <p className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm"><span className="font-medium">Portal Nacional da NFS-e</span><span className="block text-xs text-muted-foreground">As notas são emitidas pelo emissor nacional. O emissor municipal foi descontinuado pelo provedor.</span></p>
 
       <FormSection title="Dados fiscais" description="Mostramos somente o que sua prefeitura exige.">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -169,7 +156,6 @@ function SettingsForm({ d, onSaved }: { d: Ov; onSaved: () => void }) {
           </div>
           {field("cnae", "CNAE (opcional)")}
           {field("email", "E-mail para avisos fiscais (opcional)", null, { type: "email" })}
-          {f.portal === "municipal" ? <>{field("rpsSerie", "Série do RPS")}{field("rpsNumber", "Próximo número do RPS", "Se a última nota usou o RPS 100, informe 101.", { inputMode: "numeric" })}</> : null}
           {o.usesSpecialTaxRegimes ? (
             <div>
               <Label>Regime especial de tributação</Label>
@@ -233,7 +219,7 @@ function FiscalServices({ d, onSaved }: { d: Ov; onSaved: () => void }) {
         ))}
         {d.canEdit ? <Button variant="outline" size="sm" onClick={() => setEdit("new")}><Plus className="mr-1.5 h-4 w-4" />Novo serviço fiscal</Button> : null}
       </div>
-      {edit ? <FiscalServiceDialog row={edit === "new" ? null : edit} portal={(d.settings?.portal ?? "municipal") as string} codeHelp={d.options?.municipalServiceCodeHelp} onClose={() => setEdit(null)} onSaved={onSaved} /> : null}
+      {edit ? <FiscalServiceDialog row={edit === "new" ? null : edit} portal="national" codeHelp={d.options?.municipalServiceCodeHelp} onClose={() => setEdit(null)} onSaved={onSaved} /> : null}
     </FormSection>
   );
 }

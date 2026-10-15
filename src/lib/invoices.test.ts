@@ -64,7 +64,7 @@ describe("configuração fiscal", () => {
   });
   it("exige regime especial e acesso quando a prefeitura pede", () => {
     const miss = missingFiscalFields(
-      { portal: "municipal", municipal_inscription: "1", simples_nacional: false, rps_serie: "A", rps_number: 1 },
+      { portal: "national", municipal_inscription: "1", simples_nacional: false },
       { usesSpecialTaxRegimes: true, authenticationType: "TOKEN" },
     );
     expect(miss).toHaveLength(2);
