@@ -84,7 +84,7 @@
     "totalCustomer": "Total pago pelo cliente",
     "installmentsEst": "{{n}} parcelas estimadas",
     "installmentsOf": "{{n}}x de {{v}}",
-    "fee": "Taxa Wiize Recebe",
+    "fee": "Taxa financeira",
     "calculating": "Calculando…",
     "net": "Valor líquido",
     "disclaimer": "Resultado estimado com as regras vigentes. O valor final é confirmado na criação da cobrança.",

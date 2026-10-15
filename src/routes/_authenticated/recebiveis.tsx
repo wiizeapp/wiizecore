@@ -141,7 +141,7 @@ function Recebiveis() {
         money = ["Valor", "Taxa", "Líquido"];
       } else if (kind === "extrato") {
         const { data } = await supabase.from("transactions").select("occurred_at, kind, description, amount").eq("tenant_id", tenantId).order("occurred_at", { ascending: false }).limit(50000);
-        rows = (data ?? []).map((x) => ({ Data: brDate(x.occurred_at), Tipo: x.kind === "provider_fee" || x.kind === "platform_fee" ? "Taxa Wiize Recebe" : x.kind, "Descrição": x.description ?? "", Valor: Number(x.amount) }));
+        rows = (data ?? []).map((x) => ({ Data: brDate(x.occurred_at), Tipo: x.kind === "provider_fee" || x.kind === "platform_fee" ? "Taxa financeira" : x.kind, "Descrição": x.description ?? "", Valor: Number(x.amount) }));
         money = ["Valor"];
       } else {
         const all = (await fetchAll(() => build(SELECT))) as Row[];

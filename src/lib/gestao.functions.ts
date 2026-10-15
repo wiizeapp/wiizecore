@@ -20,7 +20,7 @@ function addMonths(date: string, n: number) {
   return t.toISOString().slice(0, 10);
 }
 const AUTO_LABEL: Record<string, string> = {
-  payment: "Recebimento Wiize Recebe", platform_fee: "Taxa Wiize Recebe", provider_fee: "Taxa Wiize Recebe", refund: "Estorno",
+  payment: "Recebimento Wiize Recebe", platform_fee: "Taxa financeira", provider_fee: "Taxa financeira", refund: "Estorno",
   withdrawal: "Saque para o banco", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação",
 };
 

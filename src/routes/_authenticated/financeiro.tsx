@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_authenticated/financeiro")({
 
 const kindLabels: Record<string, string> = {
   payment: "Recebimento",
-  platform_fee: "Taxa Wiize Recebe",
+  platform_fee: "Taxa financeira",
   provider_fee: "Taxa do provedor",
   refund: "Estorno",
   withdrawal: "Saque",
