@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays, CheckCircle2, CreditCard, FileSignature, FileText, LockKeyhole, QrCode, ShieldCheck, UserRound } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AsaasSeal } from "@/components/financial-provider";
+import { BrandWithSeal } from "@/components/financial-provider";
 import { headerTextColors, type CheckoutAppearance } from "@/lib/checkout-appearance";
 
 export type CheckoutStep = "customer" | "contract" | "payment";
