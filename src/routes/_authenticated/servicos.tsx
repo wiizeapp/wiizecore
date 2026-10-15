@@ -160,6 +160,18 @@ function Servicos() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const [linkConfig, setLinkConfig] = useState<{ serviceId: string; name: string; customAmount: boolean; flexible: boolean; existing: boolean } | null>(null);
+  const [linkAmount, setLinkAmount] = useState("");
+  const [linkType, setLinkType] = useState<"one_time" | "installment" | "recurring">("installment");
+  const [linkFrequency, setLinkFrequency] = useState("monthly");
+  const [linkMax, setLinkMax] = useState("21");
+  const configureLink = (service: NonNullable<typeof services>[number], existing = false) => {
+    setLinkAmount(service.custom_amount ? "" : String(service.amount));
+    setLinkType(service.flexible_type ? "installment" : service.type);
+    setLinkFrequency(service.frequency ?? "monthly");
+    setLinkMax("21");
+    setLinkConfig({ serviceId: service.id, name: service.name, customAmount: service.custom_amount, flexible: service.flexible_type, existing });
+  };
   const fetchOpen = useServerFn(listServiceCheckoutLinks);
   const setOpenFn = useServerFn(setServiceCheckoutLink);
   const openLinks = useQuery({ queryKey: ["service-open-links", tenantId], enabled: Boolean(tenantId), queryFn: () => fetchOpen() });
@@ -174,10 +186,11 @@ function Servicos() {
     }
   };
   const toggleOpen = useMutation({
-    mutationFn: (v: { serviceId: string; active: boolean }) => setOpenFn({ data: v }),
+    mutationFn: (v: { serviceId: string; active: boolean; amount?: string; chargeType?: "one_time" | "installment" | "recurring"; frequency?: string; maxInstallments?: number; newVersion?: boolean }) => setOpenFn({ data: v }),
     onSuccess: (r, variables) => {
       if (r.url) { void copyCheckoutLink(variables.serviceId, r.url); }
       else toast.success(ui("Link de checkout desativado."));
+      setLinkConfig(null);
       void openLinks.refetch();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -354,7 +367,7 @@ function Servicos() {
             ) : filteredServices.length > 0 ? (
                 paginate(filteredServices, page, 10).map((service) => {
                   const ol = openLinks.data?.find((l) => l.serviceId === service.id && l.active);
-                  const canHaveLink = !service.archived_at && service.active && !service.custom_amount && !service.flexible_type;
+                  const canHaveLink = !service.archived_at && service.active;
                   const linkPending = toggleOpen.isPending && toggleOpen.variables?.serviceId === service.id;
                   return (
                 <TableRow key={service.id}>
@@ -399,15 +412,16 @@ function Servicos() {
                            <span className="grid size-6 place-items-center rounded-md bg-background text-foreground shadow-sm">{copiedLink === service.id ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}</span>
                          </Button>
                          <Tooltip><TooltipTrigger asChild><Button size="icon" variant="ghost" className="size-8 text-muted-foreground" asChild aria-label={ui("Abrir checkout")}><a href={ol.url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3.5" /></a></Button></TooltipTrigger><TooltipContent>{ui("Abrir checkout")}</TooltipContent></Tooltip>
-                       </> : <Button size="sm" variant="outline" className="h-8 gap-2 border-dashed text-muted-foreground shadow-none" disabled={linkPending || openLinks.isError} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}>{linkPending ? <Loader2 className="size-3.5 animate-spin" /> : <Link2 className="size-3.5" />}{ui("Criar link")}</Button>}
+                       </> : <Button size="sm" variant="outline" className="h-8 gap-2 border-dashed text-muted-foreground shadow-none" disabled={linkPending || openLinks.isError} onClick={() => configureLink(service)}>{linkPending ? <Loader2 className="size-3.5 animate-spin" /> : <Link2 className="size-3.5" />}{ui("Criar link")}</Button>}
                      </div> : <span className="text-muted-foreground">—</span>}
                    </TableCell>
                    <TableCell className="whitespace-nowrap text-right">
                      <DropdownMenu>
                        <DropdownMenuTrigger asChild><Button size="icon" variant="ghost" className="size-8 text-muted-foreground" aria-label={ui("Ações")}><MoreHorizontal className="size-4" /></Button></DropdownMenuTrigger>
                        <DropdownMenuContent align="end" className="w-52">
+                         {canHaveLink && <DropdownMenuItem onClick={() => configureLink(service, Boolean(ol?.url))}><Pencil className="size-4" />{ui("Configurar novo link")}</DropdownMenuItem>}
                          {canHaveLink && !openLinks.isLoading && !openLinks.isError ? <>
-                           {ol?.url ? <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: false })}><Unlink className="size-4" />{ui("Desativar link de checkout")}</DropdownMenuItem> : <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}><Link2 className="size-4" />{ui("Criar link de checkout")}</DropdownMenuItem>}
+                           {ol?.url ? <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: false })}><Unlink className="size-4" />{ui("Desativar link de checkout")}</DropdownMenuItem> : <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => configureLink(service)}><Link2 className="size-4" />{ui("Criar link de checkout")}</DropdownMenuItem>}
                            <DropdownMenuSeparator />
                          </> : null}
                          {service.archived_at ? <DropdownMenuItem disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: null } })}><ArchiveRestore className="size-4" />{ui("Restaurar")}</DropdownMenuItem> : <>
@@ -431,6 +445,20 @@ function Servicos() {
         <DataPagination page={page} pageSize={10} total={filteredServices.length} onPageChange={setPage} />
       </div>
       </TooltipProvider>
+      <Dialog open={Boolean(linkConfig)} onOpenChange={(v) => { if (!v) setLinkConfig(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>{ui("Configurar link de checkout")}</DialogTitle></DialogHeader>
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (!linkConfig) return; toggleOpen.mutate({ serviceId: linkConfig.serviceId, active: true, ...(linkConfig.customAmount ? { amount: linkAmount } : {}), chargeType: linkType, frequency: linkFrequency, maxInstallments: Number(linkMax), newVersion: true }); }}>
+            <p className="font-medium">{linkConfig?.name}</p>
+            <div className="space-y-2"><Label htmlFor="link-amount">{ui("Valor do link (R$)")}</Label><Input id="link-amount" inputMode="decimal" required value={linkAmount} disabled={!linkConfig?.customAmount} onChange={(e) => setLinkAmount(e.target.value)} /></div>
+            {linkConfig?.flexible ? <div className="space-y-2"><Label>{ui("Forma de cobrança")}</Label><Select value={linkType} onValueChange={(v) => setLinkType(v as typeof linkType)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="one_time">{ui("Pagamento único")}</SelectItem><SelectItem value="installment">{ui("À vista ou parcelado")}</SelectItem><SelectItem value="recurring">{ui("Recorrente")}</SelectItem></SelectContent></Select></div> : null}
+            {linkType === "installment" ? <div className="space-y-2"><Label htmlFor="link-max">{ui("Máximo de parcelas")}</Label><Input id="link-max" type="number" min={1} max={21} required value={linkMax} onChange={(e) => setLinkMax(e.target.value)} /></div> : null}
+            {linkType === "recurring" ? <div className="space-y-2"><Label>{ui("Periodicidade")}</Label><Select value={linkFrequency} onValueChange={setLinkFrequency}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Object.entries(frequencyLabels).map(([v,l]) => <SelectItem key={v} value={v}>{ui(l)}</SelectItem>)}</SelectContent></Select></div> : null}
+            {linkConfig?.existing ? <p className="text-xs text-muted-foreground">{ui("Um novo link será criado. Links já enviados mantêm as condições anteriores.")}</p> : null}
+            <Button className="w-full" type="submit" disabled={toggleOpen.isPending}>{ui("Salvar e copiar link")}</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
       {fiscalEdit ? <FiscalServiceDialog row={fiscalEdit.row} presetServiceId={fiscalEdit.serviceId} portal={String(fiscal.data?.settings?.portal ?? "municipal")} codeHelp={fiscal.data?.options?.municipalServiceCodeHelp}
         onClose={() => setFiscalEdit(null)} onSaved={() => void queryClient.invalidateQueries({ queryKey: ["fiscal-overview"] })} /> : null}
     </div>

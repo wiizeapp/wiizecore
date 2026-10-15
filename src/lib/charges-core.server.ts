@@ -27,6 +27,7 @@ function todayBR() {
 const toBillingType = { undefined: "UNDEFINED", pix: "PIX", boleto: "BOLETO", credit_card: "CREDIT_CARD", debit_card: "DEBIT_CARD" } as const;
 
 export type ChargeCoreInput = {
+  serviceCheckoutVersionId?: string;
   customerId: string; serviceId: string; contractId?: string | null | undefined; dueOn?: string | null | undefined;
   method: "undefined" | "pix" | "boleto" | "credit_card" | "debit_card"; idempotencyKey: string; linkDays: number;
   linkMinutes?: number | undefined; collectCustomerData: boolean; feePassShare: number; customAmount?: number | null | undefined;
@@ -112,6 +113,17 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     ]);
     if (!customer) throw new Error("Cliente não encontrado.");
     if (!service) throw new Error("Serviço não encontrado ou inativo.");
+    // Trusted conditions: loaded only from the immutable, tenant-scoped issued link.
+    if (data.serviceCheckoutVersionId) {
+      const { data: v } = await admin.from("service_checkout_versions").select("*").eq("id", data.serviceCheckoutVersionId).eq("tenant_id", tenantId).eq("service_id", service.id).maybeSingle();
+      if (!v) throw new Error("Condições do link inválidas.");
+      const { data: link } = await admin.from("service_checkout_links").select("active").eq("id", v.link_id).eq("tenant_id", tenantId).maybeSingle();
+      if (!link?.active) throw new Error("Link desativado.");
+      const { isValidChoice } = await import("./service-checkout-rules");
+      const methods = v.accepted_methods;
+      if (!isValidChoice(v.charge_type as "one_time" | "installment" | "recurring", methods, data.method, data.installmentCount ?? 1, v.max_installments)) throw new Error("Forma de pagamento indisponível para este serviço.");
+      Object.assign(service, { name: v.service_name, description: v.description, amount: v.amount, type: v.charge_type, accepted_methods: methods, custom_amount: false, flexible_type: false, frequency: v.frequency, cycles: v.cycles, due_days: v.due_days });
+    }
     // Serviço com forma personalizada: o tipo vem desta cobrança.
     if ((service as { flexible_type?: boolean }).flexible_type) {
       if (!data.chargeType) throw new Error("Escolha se esta cobrança é à vista, parcelada ou recorrente.");

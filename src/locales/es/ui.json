@@ -1,4 +1,12 @@
 {
+  "Configurar novo link": "Configurar nuevo enlace",
+  "Configurar link de checkout": "Configurar enlace de checkout",
+  "Valor do link (R$)": "Importe del enlace (R$)",
+  "À vista ou parcelado": "Al contado o en cuotas",
+  "Máximo de parcelas": "Máximo de cuotas",
+  "Um novo link será criado. Links já enviados mantêm as condições anteriores.": "Se creará un nuevo enlace. Los enlaces enviados mantienen sus condiciones anteriores.",
+  "Salvar e copiar link": "Guardar y copiar enlace",
+  "A empresa ainda está concluindo a ativação para receber pagamentos. Este link ficará disponível após a aprovação da conta.": "La empresa todavía está completando la activación para recibir pagos. Este enlace estará disponible después de la aprobación de la cuenta.",
   "Cobranças inteligentes": "Cobros inteligentes",
   "Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.": "Pagos, contratos, firmas, facturas y gestión financiera en una única plataforma, creada para simplificar la operación de tu empresa.",
   "Da contratação às próximas cobranças,": "Desde la contratación hasta los próximos cobros,",
