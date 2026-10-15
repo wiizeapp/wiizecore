@@ -32,7 +32,11 @@ export function FinancialSupport({ compact = false }: { compact?: boolean }) {
     {!compact ? <p className="mt-4 text-xs text-muted-foreground">{t("Para acesso, configuração e uso da plataforma, fale com o suporte Wiize Core.")}</p> : null}
   </section>;
 }
-/** Rodapé discreto com o selo oficial, igual ao do site institucional. */
+/** Logo Wiize Core ao lado do selo oficial, separados por um divisor sutil. */
+export function BrandWithSeal({ background }: { background?: string | undefined }) {
+  return <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"><Brand size="sm" /><span aria-hidden="true" className="h-6 w-px bg-border" /><AsaasSeal background={background} /></div>;
+}
+/** Rodapé discreto com a logo Wiize Core e o selo oficial lado a lado. */
 export function SealFooter({ background, className = "" }: { background?: string | undefined; className?: string }) {
-  return <footer className={`flex justify-center border-t border-border px-4 py-3 ${className}`}><AsaasSeal background={background} /></footer>;
+  return <footer className={`flex justify-center border-t border-border px-4 py-3 ${className}`}><BrandWithSeal background={background} /></footer>;
 }

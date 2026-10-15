@@ -132,7 +132,7 @@ export function CheckoutTrustFooter({ appearance, preview = false }: { appearanc
   return (
     <footer className="border-t border-border checkout-panel">
       <div className={`mx-auto space-y-5 px-5 py-6 ${preview ? "max-w-full" : "max-w-6xl"}`}>
-        <div className="flex justify-center"><AsaasSeal background={appearance.background} /></div>
+        <div className="flex justify-center"><BrandWithSeal background={appearance.background} /></div>
         <nav aria-label="Termos de Uso" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground"><Link to="/termos-de-uso" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Termos de Uso</Link><Link to="/politica-de-privacidade" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Política de Privacidade</Link><Link to="/politica-de-pagamentos" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Política de Pagamento</Link><Link to="/ajuda" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Suporte financeiro</Link></nav>
         {appearance.supportText || appearance.supportEmail || appearance.supportPhone ? <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-xs text-muted-foreground">{appearance.supportText ? <span>{appearance.supportText}</span> : null}{appearance.supportEmail ? <a href={`mailto:${appearance.supportEmail}`} className="hover:text-foreground">{appearance.supportEmail}</a> : null}{appearance.supportPhone ? <span>{appearance.supportPhone}</span> : null}</div> : null}
       </div>
