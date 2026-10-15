@@ -2,7 +2,7 @@
 
 ## Entrega — 15/10/2026
 - Marca visível Wiize Recebe aplicada em telas públicas/internas, checkout, portal, ajuda, títulos, e-mails e PDFs futuros. Wiize e seu símbolo preservados. Documentos já assinados, arquivos históricos e mensagens enviadas não foram reescritos.
-- Selos individualizados oficiais remotos, sem recoloração, com link https://asaas.com em nova aba e noopener/noreferrer. Seleção positiva/branca pelo fundo. Aplicados ao rodapé institucional, pagamento, checkout aberto, autorização Pix, portal e prévia personalizada.
+- Selos individualizados oficiais remotos, sem recoloração, com link https://asaas.com em nova aba e noopener/noreferrer. Seleção positiva/branca pelo fundo. Aplicados ao rodapé institucional, pagamento, checkout aberto, autorização Pix, portal e prévia personalizada. O rodapé final foi simplificado e o selo reduzido para 120×36, secundário à marca.
 - Identificação: plataforma Wiize Recebe; serviços financeiros Asaas. Recibos futuros deixam de atribuir processamento à plataforma.
 - Suporte financeiro separado do atendimento de software na Central de Ajuda e telas pertinentes: 0800 009 0037 (telefone PJ e mensagens), contato@asaas.com.br. Botão usa mailto, sem inventar chat ou página de suporte; não foi enviado e-mail nem realizada ligação.
 - Termos/Política de Pagamentos: identificação do prestador, sem aplicar cláusula-modelo ou modificar taxas, garantias e obrigações financeiras. Privacidade e Cookies revisados conforme implementação existente, com reabertura das preferências.
