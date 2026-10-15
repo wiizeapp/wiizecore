@@ -9,8 +9,8 @@ describe("checkout aberto", () => {
     expect(openInstallments("installment").at(-1)).toBe(21);
   });
   it("respeita as formas aceitas pelo serviço", () => {
-    expect(openMethods("one_time", ["pix"])).toEqual(["pix"]);
-    expect(openMethods("recurring", all)).toEqual(["pix", "boleto", "credit_card"]);
+    expect(openMethods(["pix"])).toEqual(["pix"]);
+    expect(openMethods(all)).toEqual(["pix", "boleto", "credit_card"]);
   });
   it("recusa escolhas fora da regra", () => {
     expect(isValidChoice("recurring", all, "credit_card", 3)).toBe(false);

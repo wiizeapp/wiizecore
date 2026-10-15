@@ -4,11 +4,9 @@ export type OpenServiceType = "one_time" | "installment" | "recurring";
 
 export const MAX_OPEN_INSTALLMENTS = 21;
 
-/** Formas oferecidas conforme o tipo do serviço, limitadas ao que o serviço aceita. */
-export function openMethods(type: OpenServiceType, accepted: readonly string[]): OpenMethod[] {
-  const all: OpenMethod[] = ["pix", "boleto", "credit_card"];
-  return all.filter((m) => accepted.includes(m));
-  // Todos os tipos aceitam as três formas; o que muda são as parcelas (ver openInstallments).
+/** Formas oferecidas: Pix, boleto e cartão, limitadas ao que o serviço aceita. */
+export function openMethods(accepted: readonly string[]): OpenMethod[] {
+  return (["pix", "boleto", "credit_card"] as OpenMethod[]).filter((m) => accepted.includes(m));
 }
 
 /** Opções de parcelas: só serviço parcelado; 1 = à vista. Recorrente e único não parcelam. */
@@ -18,5 +16,5 @@ export function openInstallments(type: OpenServiceType): number[] {
 }
 
 export function isValidChoice(type: OpenServiceType, accepted: readonly string[], method: string, n: number) {
-  return (openMethods(type, accepted) as string[]).includes(method) && openInstallments(type).includes(n);
+  return (openMethods(accepted) as string[]).includes(method) && openInstallments(type).includes(n);
 }
