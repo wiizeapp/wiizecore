@@ -11,7 +11,7 @@ import bling from "@/assets/integrations/bling.png";
 import omie from "@/assets/integrations/omie.png";
 
 export const Route = createFileRoute("/_authenticated/integracoes")({
-  head: () => ({ meta: [{ title: "Integrações — WiizePay" }, { name: "description", content: "Conecte a WiizePay a outros sistemas." }] }),
+  head: () => ({ meta: [{ title: "Integrações — Wiize Recebe" }, { name: "description", content: "Conecte a Wiize Recebe a outros sistemas." }] }),
   component: Integracoes,
 });
 
@@ -28,11 +28,11 @@ function Integracoes() {
   const { t } = useTranslation("ui");
   return (
     <div className="space-y-6">
-      <PageHeader title="Integrações" description="Conecte a WiizePay aos sistemas que você já usa." />
+      <PageHeader title="Integrações" description="Conecte a Wiize Recebe aos sistemas que você já usa." />
       <Link to="/integracao-externa" className="surface-panel flex items-center justify-between gap-3 p-5 transition-colors hover:border-primary/40 sm:p-6">
         <div>
           <h2 className="font-display text-base font-semibold tracking-tight">{t("Integração Externa")}</h2>
-          <p className="mt-1 text-xs text-muted-foreground">{t("Conecte seu próprio software ou SaaS à WiizePay para criar cobranças e receber avisos de pagamento.")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("Conecte seu próprio software ou SaaS à Wiize Recebe para criar cobranças e receber avisos de pagamento.")}</p>
         </div>
         <span className="text-sm font-semibold text-primary">{t("Abrir")} →</span>
       </Link>

@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ds";
 import { CustomerDocuments } from "@/components/customers/customer-documents";
 
 export const Route = createFileRoute("/_authenticated/documentos")({
-  head: () => ({ meta: [{ title: "Arquivos e documentos — WiizePay" }, { name: "description", content: "Documentos dos clientes guardados no Google Drive da empresa." }] }),
+  head: () => ({ meta: [{ title: "Arquivos e documentos — Wiize Recebe" }, { name: "description", content: "Documentos dos clientes guardados no Google Drive da empresa." }] }),
   component: Documentos,
 });
 

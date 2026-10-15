@@ -1,7 +1,7 @@
 /**
  * Agregação de Unit Economics (pura, testável). Tudo em centavos internamente.
  * TPV = soma do valor bruto de pagamentos com status "paid" (estornados, cancelados e não pagos ficam fora).
- * Receita = taxas cobradas pela WiizePay. Custo = tarifa real do provedor (ou estimativa configurada).
+ * Receita = taxas cobradas pela Wiize Recebe. Custo = tarifa real do provedor (ou estimativa configurada).
  */
 import { MIX_LABELS, mixKeyFor, type MixKey } from "./fee-math";
 

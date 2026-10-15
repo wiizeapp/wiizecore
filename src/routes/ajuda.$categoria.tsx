@@ -9,7 +9,7 @@ import { HELP_ARTICLES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/$categoria")({
   loader: ({ params }) => { const c = categoryById(params.categoria); if (!c) throw notFound(); return { category: c }; },
-  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda WiizePay` }] }),
+  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda Wiize Recebe` }] }),
   component: CategoryPage,
 });
 

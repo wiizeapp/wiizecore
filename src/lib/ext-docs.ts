@@ -73,16 +73,16 @@ export type AiPromptInput = { saas: string; language: string; database: string; 
 const clean = (v: string, fb: string) => v.replace(/[\r\n]+/g, " ").trim().slice(0, 200) || fb;
 
 export function buildExtAiPrompt(i: AiPromptInput) {
-  return `Você é um desenvolvedor sênior. Integre o sistema "${clean(i.saas, "meu SaaS")}" à WiizePay (pagamentos).
+  return `Você é um desenvolvedor sênior. Integre o sistema "${clean(i.saas, "meu SaaS")}" à Wiize Recebe (pagamentos).
 
 Contexto do meu sistema:
 - Linguagem: ${clean(i.language, "a definir")}
 - Banco de dados: ${clean(i.database, "a definir")}
 - Hospedagem: ${clean(i.hosting, "a definir")}
-- O que vendo: ${clean(i.services, "serviços cadastrados na WiizePay")}
+- O que vendo: ${clean(i.services, "serviços cadastrados na Wiize Recebe")}
 - Formas de pagamento: ${clean(i.methods, "Pix, boleto e cartão")}
 
-API da WiizePay:
+API da Wiize Recebe:
 - Base: ${EXT_API_BASE}
 - Autenticação: header "Authorization: Bearer <WIIZEPAY_SECRET_KEY>" (variável de ambiente do servidor; nunca no navegador).
 - Toda criação exige header "Idempotency-Key" (8–128 caracteres, único por pedido; repetir devolve o mesmo resultado).
@@ -91,7 +91,7 @@ API da WiizePay:
     external_subscription_id?, success_url? (https), cancel_url? (https),
     customer: { name, document (CPF/CNPJ), email?, phone?, external_customer_id? } }
   Resposta: { id, charge_id, status, url, expires_at, external_customer_id, external_subscription_id }.
-  Redirecione o comprador para "url". Preço e tipo vêm do serviço na WiizePay; não envie valor.
+  Redirecione o comprador para "url". Preço e tipo vêm do serviço na Wiize Recebe; não envie valor.
 - Erros: ${EXT_DOCS_SNIPPETS.errors.replace(/\s+/g, " ")}
 
 Webhooks (avisos):

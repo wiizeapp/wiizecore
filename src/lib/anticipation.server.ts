@@ -1,7 +1,7 @@
 /**
- * Serviço de antecipação WiizePay.
+ * Serviço de antecipação Wiize Recebe.
  * Regra: só recebíveis JÁ PAGOS/CONFIRMADOS e marcados como antecipáveis pelo Asaas.
- * O cálculo definitivo e a execução são do Asaas; a WiizePay apresenta, confirma,
+ * O cálculo definitivo e a execução são do Asaas; a Wiize Recebe apresenta, confirma,
  * registra a taxa comercial separada do custo do provedor e concilia via webhook.
  */
 import { anticipationEventToStatus } from "./asaas.server";
@@ -77,7 +77,7 @@ export async function checkAnticipationEligibility(admin: AdminClient, tenantId:
   };
 }
 
-/** simulateAnticipation — usa o cálculo oficial do Asaas e separa a taxa comercial WiizePay. */
+/** simulateAnticipation — usa o cálculo oficial do Asaas e separa a taxa comercial Wiize Recebe. */
 export async function simulateAnticipationFor(admin: AdminClient, tenantId: string, paymentId: string) {
   const { eligibility, payment, prov } = await checkAnticipationEligibility(admin, tenantId, paymentId);
   if (!eligibility.eligible || !payment || !prov) return { eligibility, simulation: null };
@@ -179,7 +179,7 @@ export async function flagAnticipationImpact(admin: AdminClient, paymentId: stri
   });
 }
 
-/** Transfere a margem WiizePay da subconta para a conta principal (uma vez). */
+/** Transfere a margem Wiize Recebe da subconta para a conta principal (uma vez). */
 async function collectMargin(admin: AdminClient, requestId: string) {
   const { data: r } = await admin.from("anticipation_requests").select("tenant_id, wiize_margin_amount, margin_transfer_id").eq("id", requestId).single();
   const margin = Number(r?.wiize_margin_amount ?? 0);
@@ -188,7 +188,7 @@ async function collectMargin(admin: AdminClient, requestId: string) {
   const prov = await getTenantProvider(admin, r.tenant_id);
   if (!prov) return;
   try {
-    const t = await prov.provider.createTransfer({ value: margin, walletId, description: "Margem WiizePay — antecipação" });
+    const t = await prov.provider.createTransfer({ value: margin, walletId, description: "Margem Wiize Recebe — antecipação" });
     await admin.from("anticipation_requests").update({ margin_transfer_id: t.id, margin_collected_at: new Date().toISOString() }).eq("id", requestId);
   } catch (e) {
     await admin.from("audit_logs").insert({

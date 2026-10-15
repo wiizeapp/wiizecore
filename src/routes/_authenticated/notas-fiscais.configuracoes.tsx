@@ -22,9 +22,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/notas-fiscais/configuracoes")({
   head: () => ({
     meta: [
-      { title: "Configurações fiscais — WiizePay" },
+      { title: "Configurações fiscais — Wiize Recebe" },
       { name: "description", content: "Configure os dados necessários para emissão de NFS-e." },
-      { property: "og:title", content: "Configurações fiscais — WiizePay" },
+      { property: "og:title", content: "Configurações fiscais — Wiize Recebe" },
       { property: "og:description", content: "Configure os dados necessários para emissão de NFS-e." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -171,7 +171,7 @@ function SettingsForm({ d, onSaved }: { d: Ov; onSaved: () => void }) {
       </FormSection>
 
       {o.authenticationType ? (
-        <FormSection title="Acesso ao portal da prefeitura" description="Enviado com segurança direto ao emissor. O WiizePay não guarda nem mostra esses dados.">
+        <FormSection title="Acesso ao portal da prefeitura" description="Enviado com segurança direto ao emissor. O Wiize Recebe não guarda nem mostra esses dados.">
           {s?.credentialsConfigured ? <p className="mb-3 flex items-center gap-1.5 text-xs font-medium text-primary"><KeyRound className="h-3.5 w-3.5" />Credenciais configuradas. Preencha apenas se quiser trocar.</p> : null}
           <div className="grid gap-4 sm:grid-cols-2">
             {o.authenticationType === "USER_AND_PASSWORD" ? <>

@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/app-shell";
 import { AnticipationCalculator, FeeCalculator, HelpBreadcrumb, SuggestCTA } from "@/components/help/help-parts";
 
 export const Route = createFileRoute("/ajuda/calculadoras")({
-  head: () => ({ meta: [{ title: "Calculadoras | Central de Ajuda WiizePay" }] }),
+  head: () => ({ meta: [{ title: "Calculadoras | Central de Ajuda Wiize Recebe" }] }),
   component: CalculatorsPage,
 });
 

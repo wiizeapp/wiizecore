@@ -15,9 +15,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/notas-fiscais/$id")({
   head: () => ({
     meta: [
-      { title: "Nota Fiscal — WiizePay" },
+      { title: "Nota Fiscal — Wiize Recebe" },
       { name: "description", content: "Detalhes, documentos e histórico da nota fiscal de serviço." },
-      { property: "og:title", content: "Nota Fiscal — WiizePay" },
+      { property: "og:title", content: "Nota Fiscal — Wiize Recebe" },
       { property: "og:description", content: "Detalhes, documentos e histórico da nota fiscal de serviço." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -77,7 +77,7 @@ export const getOnboardingInsights = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data: isAdmin } = await (context as Ctx).supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
-    if (!isAdmin) throw new Error("Acesso restrito à equipe WiizePay.");
+    if (!isAdmin) throw new Error("Acesso restrito à equipe Wiize Recebe.");
     const { assertTwoFactor } = await import("./finance.server");
     assertTwoFactor(context.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

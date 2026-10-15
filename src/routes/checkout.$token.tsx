@@ -14,9 +14,9 @@ import { frequencyLabels } from "@/lib/labels";
 export const Route = createFileRoute("/checkout/$token")({
   head: () => ({
     meta: [
-      { title: "Checkout — WiizePay" },
+      { title: "Checkout — Wiize Recebe" },
       { name: "description", content: "Informe seus dados, escolha a forma de pagamento e conclua sua contratação com segurança." },
-      { property: "og:title", content: "Checkout — WiizePay" },
+      { property: "og:title", content: "Checkout — Wiize Recebe" },
       { property: "og:description", content: "Informe seus dados, escolha a forma de pagamento e conclua sua contratação com segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

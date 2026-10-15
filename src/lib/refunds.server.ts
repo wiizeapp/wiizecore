@@ -36,7 +36,7 @@ export async function sendRefundToProvider(admin: AdminClient, refundId: string)
   }
 }
 
-/** Retorna true quando o evento pertence a um reembolso iniciado pela WiizePay. */
+/** Retorna true quando o evento pertence a um reembolso iniciado pela Wiize Recebe. */
 export async function handleRefundWebhook(admin: AdminClient, tenantId: string | null, providerPaymentId: string, eventType: string, eventId: string) {
   let q = admin.from("payments").select("id").eq("provider_payment_id", providerPaymentId);
   if (tenantId) q = q.eq("tenant_id", tenantId);

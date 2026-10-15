@@ -4,7 +4,7 @@ import { Fingerprint, Lock, ShieldCheck } from "lucide-react";
 import { Brand } from "@/components/brand";
 
 const POINTS = [
-  { icon: ShieldCheck, title: "Autenticidade", text: "Confirma se o contrato foi emitido e assinado pela WiizePay." },
+  { icon: ShieldCheck, title: "Autenticidade", text: "Confirma se o contrato foi emitido e assinado pela Wiize Recebe." },
   { icon: Fingerprint, title: "Integridade", text: "Qualquer alteração no PDF muda a impressão digital do arquivo." },
   { icon: Lock, title: "Privacidade", text: "O arquivo enviado não sai do seu aparelho." },
 ];
@@ -14,7 +14,7 @@ export function VerifyLayout({ title, subtitle, children }: { title: string; sub
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-          <Link to="/" aria-label="WiizePay"><Brand /></Link>
+          <Link to="/" aria-label="Wiize Recebe"><Brand /></Link>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
             <ShieldCheck className="h-3.5 w-3.5" /> Verificação oficial
           </span>
@@ -23,7 +23,7 @@ export function VerifyLayout({ title, subtitle, children }: { title: string; sub
 
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-primary/10 to-transparent">
         <div className="mx-auto max-w-5xl px-4 py-12 md:py-16">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary">WiizePay Contratos</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Wiize Recebe Contratos</p>
           <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">{subtitle}</p>
         </div>
@@ -44,7 +44,7 @@ export function VerifyLayout({ title, subtitle, children }: { title: string; sub
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} WiizePay</span>
+          <span>© {new Date().getFullYear()} Wiize Recebe</span>
           <Link to="/verificar" className="hover:text-foreground">Verificar outro contrato</Link>
         </div>
       </footer>

@@ -134,7 +134,7 @@ export const disableMfaWithRecoveryCode = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Sem código de recuperação: envia pedido para análise da equipe WiizePay. */
+/** Sem código de recuperação: envia pedido para análise da equipe Wiize Recebe. */
 export const requestAdminRecovery = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { reason: string }) => z.object({ reason: z.string().trim().min(10).max(500) }).parse(i))
@@ -166,7 +166,7 @@ type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any
 
 async function requireAdmin(context: Ctx) {
   const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
-  if (!data) throw new Error("Acesso restrito à equipe WiizePay.");
+  if (!data) throw new Error("Acesso restrito à equipe Wiize Recebe.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -212,7 +212,7 @@ export const reviewRecoveryRequest = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Painel do Admin: volume dos clientes separado da receita WiizePay. */
+/** Painel do Admin: volume dos clientes separado da receita Wiize Recebe. */
 export const getAdminConsole = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { days: number }) => z.object({ days: z.number().int().min(1).max(365) }).parse(i))

@@ -20,7 +20,7 @@ function addMonths(date: string, n: number) {
   return t.toISOString().slice(0, 10);
 }
 const AUTO_LABEL: Record<string, string> = {
-  payment: "Recebimento WiizePay", platform_fee: "Taxa WiizePay", provider_fee: "Taxa WiizePay", refund: "Estorno",
+  payment: "Recebimento Wiize Recebe", platform_fee: "Taxa Wiize Recebe", provider_fee: "Taxa Wiize Recebe", refund: "Estorno",
   withdrawal: "Saque para o banco", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação",
 };
 
@@ -44,7 +44,7 @@ export const getGestao = createServerFn({ method: "GET" })
       sb.from("wallets").select("available_balance").eq("tenant_id", m.tenant_id).maybeSingle(),
     ]);
     if (acc.error || cat.error || ent.error) throw new Error("Não foi possível carregar a gestão financeira.");
-    // Tarifas do mesmo pagamento aparecem juntas como "Taxa WiizePay" (visual).
+    // Tarifas do mesmo pagamento aparecem juntas como "Taxa Wiize Recebe" (visual).
     const { mergeFeeRows } = await import("./tx-display");
     const auto = mergeFeeRows((tx.data ?? []) as any[]).map((t: any) => ({
       id: `auto-${t.id}`, auto: true, direction: Number(t.amount) >= 0 ? "in" : "out", amount: Math.abs(Number(t.amount)),
@@ -112,7 +112,7 @@ export const createEntry = createServerFn({ method: "POST" })
     const m = await membership(ctx, true);
     const { data: firstPayment, error: paymentError } = await ctx.supabase.from("payments").select("id")
       .eq("tenant_id", m.tenant_id).in("status", ["paid", "refunded"]).limit(1).maybeSingle();
-    if (paymentError || !firstPayment) throw new Error("Novas movimentações serão liberadas após o primeiro pagamento recebido pela WiizePay.");
+    if (paymentError || !firstPayment) throw new Error("Novas movimentações serão liberadas após o primeiro pagamento recebido pela Wiize Recebe.");
     const cents = Math.round(data.amount * 100);
     const n = data.repeat === "none" ? 1 : (data.times ?? 12);
     const groupId = n > 1 ? crypto.randomUUID() : null;

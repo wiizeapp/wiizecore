@@ -10,7 +10,7 @@ import { SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/h
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/")({
-  head: () => ({ meta: [{ title: "Central de Ajuda | WiizePay" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da WiizePay." }] }),
+  head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Recebe" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }] }),
   component: HelpHome,
 });
 
@@ -31,7 +31,7 @@ function HelpHome() {
 
   return (
     <div>
-      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a WiizePay e consulte informações sobre taxas, pagamentos e recebimentos.")} />
+      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a Wiize Recebe e consulte informações sobre taxas, pagamentos e recebimentos.")} />
       <div className="mb-10">
         <div className="relative mx-auto max-w-2xl">
           <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />

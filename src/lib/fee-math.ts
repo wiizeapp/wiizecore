@@ -1,5 +1,5 @@
 /**
- * Fórmulas puras de taxas WiizePay (fonte única de cálculo).
+ * Fórmulas puras de taxas Wiize Recebe (fonte única de cálculo).
  * Os VALORES das taxas nunca ficam aqui: vêm de payment_fee_settings / provider_cost_settings.
  */
 export type FeeRate = { fixed: number; percent: number };

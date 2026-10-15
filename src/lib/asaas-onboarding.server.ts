@@ -1,6 +1,6 @@
 /**
  * Aprovação da conta pelo Asaas: cria a subconta a partir do cadastro de ativação,
- * envia os documentos e espelha a situação informada pelo Asaas na ativação da WiizePay.
+ * envia os documentos e espelha a situação informada pelo Asaas na ativação da Wiize Recebe.
  * Quem aprova é o Asaas; nenhuma ação do admin altera essa situação.
  */
 import type { AsaasDocumentGroup } from "./asaas.server";
@@ -44,7 +44,7 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
   const company = act?.person_type === "company";
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
   const environment = (process.env["ASAAS_ENVIRONMENT"] === "production" ? "production" : "sandbox") as "sandbox" | "production";
-  if (!masterKey) throw new Error("A conta principal da WiizePay ainda não foi configurada.");
+  if (!masterKey) throw new Error("A conta principal da Wiize Recebe ainda não foi configurada.");
   const { AsaasProvider } = await import("./asaas.server");
   const { encryptSecret } = await import("./crypto.server");
   const master = new AsaasProvider(masterKey, environment);
@@ -93,7 +93,7 @@ function kindsFor(group: AsaasDocumentGroup, company: boolean): string[] {
   return [];
 }
 
-/** Envia ao Asaas os documentos pendentes ou recusados que a WiizePay já tem. */
+/** Envia ao Asaas os documentos pendentes ou recusados que a Wiize Recebe já tem. */
 export async function pushDocuments(admin: Admin, tenantId: string) {
   const { getTenantProvider } = await import("./billing.server");
   const conn = await getTenantProvider(admin, tenantId);
@@ -137,7 +137,7 @@ const NOTIFY: Record<string, { title: string; body: string }> = {
   rejected: { title: "Cadastro recusado", body: "Seu cadastro foi recusado. Veja os detalhes em Ativar pagamentos." },
 };
 
-/** Lê a situação da conta no Asaas e espelha na ativação da WiizePay. */
+/** Lê a situação da conta no Asaas e espelha na ativação da Wiize Recebe. */
 export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
   const { getTenantProvider } = await import("./billing.server");
   const conn = await getTenantProvider(admin, tenantId);
@@ -189,7 +189,7 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
       await notifyTenant(admin, {
         tenantId, kind: `activation.${next}`, title: n.title, body: n.body, link: "/ativacao",
         dedupeKey: `activation.${next}:${tenantId}:${now}`,
-        email: { subject: `WiizePay — ${n.title}`, ...(next === "action_required" && patch["review_message"] ? { lines: [{ label: "O que falta", value: String(patch["review_message"]).slice(0, 200) }] } : {}) },
+        email: { subject: `Wiize Recebe — ${n.title}`, ...(next === "action_required" && patch["review_message"] ? { lines: [{ label: "O que falta", value: String(patch["review_message"]).slice(0, 200) }] } : {}) },
       });
     }
   }
@@ -202,7 +202,7 @@ export async function syncProviderOnboarding(admin: Admin, tenantId: string) {
       tenantId, kind: "activation.pending_item", link: "/ativacao",
       dedupeKey: `activation.pending_item:${tenantId}:${fresh.map((i) => `${i.key}:${i.status}`).sort().join(",")}`,
       title: "Há um item para concluir na ativação", body: `Confira em Ative seus pagamentos: ${fresh.map((i) => i.label).join(", ").slice(0, 160)}.`,
-      email: { subject: "WiizePay — Item pendente na ativação" },
+      email: { subject: "Wiize Recebe — Item pendente na ativação" },
     });
   }
   return { status: mirror ? next : current, items };
@@ -214,7 +214,7 @@ function friendlySendError(e: unknown): string {
   if (e instanceof Error && e.name === "ProviderRequestError" && (e as Error & { status?: number }).status && (e as Error & { status: number }).status < 500 && raw) {
     return `A instituição de pagamento não aceitou o cadastro: ${raw.slice(0, 240).replace(/[.\s]*$/, ".")} Corrija este ponto e envie novamente.`;
   }
-  if (/conta principal|criptografia/i.test(raw)) return "O envio para análise está temporariamente indisponível por uma configuração da WiizePay. Seus dados ficaram salvos; tente novamente mais tarde ou fale com o suporte.";
+  if (/conta principal|criptografia/i.test(raw)) return "O envio para análise está temporariamente indisponível por uma configuração da Wiize Recebe. Seus dados ficaram salvos; tente novamente mais tarde ou fale com o suporte.";
   return "Não foi possível falar com a instituição de pagamento agora. Seus dados ficaram salvos; tente novamente em alguns minutos.";
 }
 

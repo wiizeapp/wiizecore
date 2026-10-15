@@ -136,7 +136,7 @@ export function CheckoutTrustFooter({ appearance, preview = false }: { appearanc
         <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" />Pagamento processado com segurança</span>
       </div>
       <div className={`mx-auto grid gap-8 px-5 py-8 text-sm sm:grid-cols-3 ${preview ? "max-w-full" : "max-w-6xl"}`}>
-        <div className="space-y-3"><p className="font-medium text-foreground">Pagamento seguro e processado pela WiizePay.</p><p className="flex items-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5 text-primary" />Seus dados são protegidos durante a transmissão.</p></div>
+        <div className="space-y-3"><p className="font-medium text-foreground">Pagamento seguro e processado pela Wiize Recebe.</p><p className="flex items-center gap-2 text-xs text-muted-foreground"><LockKeyhole className="size-3.5 text-primary" />Seus dados são protegidos durante a transmissão.</p></div>
         <div className="flex flex-col gap-2 text-muted-foreground"><span>Termos de Uso</span><span>Política de Privacidade</span><span>Política de Pagamento</span></div>
         <div className="space-y-1 text-muted-foreground"><p className="font-medium text-foreground">Precisa de ajuda?</p><p>{appearance.supportText || "Fale com a equipe responsável por esta cobrança."}</p>{appearance.supportEmail ? <p className="text-primary">{appearance.supportEmail}</p> : null}{appearance.supportPhone ? <p>{appearance.supportPhone}</p> : null}</div>
       </div>

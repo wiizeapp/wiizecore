@@ -10,9 +10,9 @@ async function isPlatformAdmin(context: Ctx) {
   return Boolean(data);
 }
 
-/** Admin WiizePay: papel platform_admin + sessão com 2FA (aal2). */
+/** Admin Wiize Recebe: papel platform_admin + sessão com 2FA (aal2). */
 async function requireAdmin(context: Ctx) {
-  if (!(await isPlatformAdmin(context))) throw new Error("Acesso restrito à equipe WiizePay.");
+  if (!(await isPlatformAdmin(context))) throw new Error("Acesso restrito à equipe Wiize Recebe.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -168,7 +168,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           email: { subject: "Seu saque não foi concluído" },
         });
       };
-      // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à WiizePay).
+      // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à Wiize Recebe).
       const fee = Number(wd.fee_amount ?? 0);
       // 2) Taxa ok: envia o Pix.
       await admin.from("withdrawals").update({ status: "processing", provider_requested_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", wd.id);
@@ -180,7 +180,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           operationType: "PIX",
           pixAddressKey: pix.key,
           pixAddressKeyType: pix.type,
-          description: data.note || `Saque WiizePay ${wd.id}`,
+          description: data.note || `Saque Wiize Recebe ${wd.id}`,
         });
         reference = transfer.id;
         await admin.from("withdrawals").update({ provider_transfer_id: transfer.id, provider_status: transfer.status ?? "requested", transfer_reference: transfer.id }).eq("id", wd.id);

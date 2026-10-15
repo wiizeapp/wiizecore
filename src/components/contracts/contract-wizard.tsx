@@ -210,7 +210,7 @@ export function ContractWizard({ open, onOpenChange, tenantId }: { open: boolean
                   <p className="mt-1 text-xs text-muted-foreground">Os arquivos dos contratos ficam no Drive da sua empresa, numa pasta “WiizePay – Contratos”. Você também pode escrever o contrato aqui mesmo sem conectar.</p>
                 </div>
                 {drive.data && !drive.data.configured ? (
-                  <p className="text-xs text-warning">A conexão com o Google Drive está aguardando configuração da WiizePay.</p>
+                  <p className="text-xs text-warning">A conexão com o Google Drive está aguardando configuração da Wiize Recebe.</p>
                 ) : drive.data && !drive.data.canManage ? (
                   <p className="text-xs text-muted-foreground">Peça ao proprietário ou administrador da empresa para conectar o Drive.</p>
                 ) : (

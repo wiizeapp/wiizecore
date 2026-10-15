@@ -20,7 +20,7 @@ type Props = {
   shortcuts?: { label: string; days: number }[];
 };
 
-/** Seletor de data da WiizePay: calendário em português, mês/ano rápidos e atalhos. Valor em AAAA-MM-DD. */
+/** Seletor de data da Wiize Recebe: calendário em português, mês/ano rápidos e atalhos. Valor em AAAA-MM-DD. */
 export function DateField({ value, onChange, min, max, placeholder = "Escolher data", id, invalid, shortcuts }: Props) {
   const [open, setOpen] = useState(false);
   const selected = value ? fromISO(value) : undefined;

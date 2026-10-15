@@ -1,7 +1,7 @@
 export const BRAND_CONFIG = {
   brandName: "Wiize",
-  productName: "WiizePay",
-  displayName: "WiizePay",
+  productName: "Wiize Recebe",
+  displayName: "Wiize Recebe",
   siteDomain: "wiize.com.br",
   contactEmail: "wiizepay@gmail.com",
   legal: {

@@ -30,6 +30,6 @@ const config: ResourcePageConfig = {
 };
 
 export const Route = createFileRoute("/portal-do-cliente")({
-  head: () => pageHead({ path: "/portal-do-cliente", title: "Central do Cliente | WiizePay", description: "Um portal com sua marca para o cliente baixar recibos, ver contratos e documentos e pagar cobranças.", ogDescription: "Seu cliente com recibos, contratos e documentos na palma da mão.", breadcrumb: [{ name: "Central do cliente", path: "/portal-do-cliente" }] }),
+  head: () => pageHead({ path: "/portal-do-cliente", title: "Central do Cliente | Wiize Recebe", description: "Um portal com sua marca para o cliente baixar recibos, ver contratos e documentos e pagar cobranças.", ogDescription: "Seu cliente com recibos, contratos e documentos na palma da mão.", breadcrumb: [{ name: "Central do cliente", path: "/portal-do-cliente" }] }),
   component: () => <ResourcePage config={config} />,
 });

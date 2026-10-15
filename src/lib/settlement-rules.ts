@@ -1,5 +1,5 @@
 /**
- * Configuração central de prazos da WiizePay (fonte única).
+ * Configuração central de prazos da Wiize Recebe (fonte única).
  * Previsões apenas informam o usuário; o saldo só é liberado pela confirmação real do provedor.
  * Arquivo sem segredos: usado no servidor (cálculo) e nas páginas (textos).
  */

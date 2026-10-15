@@ -8,6 +8,6 @@ export async function canReceivePayments(admin: any, tenantId: string): Promise<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function assertCanReceivePayments(admin: any, tenantId: string) {
   if (!(await canReceivePayments(admin, tenantId))) {
-    throw new Error("O WiizePay ainda não está ativado para esta empresa. Conclua a ativação em Ativar pagamentos.");
+    throw new Error("O Wiize Recebe ainda não está ativado para esta empresa. Conclua a ativação em Ativar pagamentos.");
   }
 }

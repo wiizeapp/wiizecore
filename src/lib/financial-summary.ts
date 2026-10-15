@@ -53,7 +53,7 @@ export function summarize(rows: SummaryRow[], today = todayBR()) {
       t.billed += g;
       t.paid += g;
       t.paidCount++;
-      // Taxa = bruto − líquido (inclui custo do provedor e taxa WiizePay, como no extrato).
+      // Taxa = bruto − líquido (inclui custo do provedor e taxa Wiize Recebe, como no extrato).
       const net = r.net_amount != null ? cents(r.net_amount) : g - cents(r.platform_fee_amount);
       t.fees += g - net;
       t.net += net;

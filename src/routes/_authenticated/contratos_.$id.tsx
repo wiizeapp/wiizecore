@@ -57,9 +57,9 @@ export const Route = createFileRoute("/_authenticated/contratos_/$id")({
     TABS.some((t) => t.id === s["aba"]) ? { aba: s["aba"] as Tab } : {},
   head: () => ({
     meta: [
-      { title: "Contrato — WiizePay" },
+      { title: "Contrato — Wiize Recebe" },
       { name: "description", content: "Documento, assinaturas, auditoria e cobranças do contrato." },
-      { property: "og:title", content: "Contrato — WiizePay" },
+      { property: "og:title", content: "Contrato — Wiize Recebe" },
       { property: "og:description", content: "Documento, assinaturas, auditoria e cobranças do contrato." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -311,7 +311,7 @@ function ContratoDetalhe() {
               ) : null;
             })()}
           </div>
-          <p className="mb-4 text-xs text-muted-foreground">Os arquivos deste contrato ficam no Google Drive da sua empresa. “Visualizar PDF” só monta o documento na hora para você ver, sem guardar cópia na WiizePay.</p>
+          <p className="mb-4 text-xs text-muted-foreground">Os arquivos deste contrato ficam no Google Drive da sua empresa. “Visualizar PDF” só monta o documento na hora para você ver, sem guardar cópia na Wiize Recebe.</p>
           {original ? <p className="mb-3 text-xs text-muted-foreground">Arquivo original: {original.source_format === "pdf" ? "PDF" : original.source_format === "docx" ? "Word, convertido para PDF" : "Google Docs, convertido para PDF"} — {original.file_name}</p> : null}
           {original?.source_format === "pdf"
             ? <div className="rounded-lg border border-border bg-muted/30 p-5 text-sm text-muted-foreground">Este contrato foi enviado em PDF. Use “Visualizar PDF” para ver o documento completo com a página de assinaturas.</div>
