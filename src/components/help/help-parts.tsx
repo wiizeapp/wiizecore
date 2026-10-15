@@ -217,11 +217,11 @@ const CAT_LABEL: Record<(typeof SUGGESTION_CATEGORIES)[number], string> = {
 };
 export const SUGGESTION_CATEGORY_LABEL = CAT_LABEL;
 
-export function SuggestionDialog({ open, onOpenChange, defaultCategory = "feature", sourceLabel }: { open: boolean; onOpenChange: (v: boolean) => void; defaultCategory?: keyof typeof CAT_LABEL; sourceLabel?: string }) {
+export function SuggestionDialog({ open, onOpenChange, defaultCategory, sourceLabel }: { open: boolean; onOpenChange: (v: boolean) => void; defaultCategory?: keyof typeof CAT_LABEL | undefined; sourceLabel?: string | undefined }) {
   const { t: ui } = useTranslation("ui");
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const send = useServerFn(submitSuggestion);
-  const [category, setCategory] = useState<keyof typeof CAT_LABEL>(defaultCategory);
+  const [category, setCategory] = useState<keyof typeof CAT_LABEL>(defaultCategory ?? "feature");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [extra, setExtra] = useState("");

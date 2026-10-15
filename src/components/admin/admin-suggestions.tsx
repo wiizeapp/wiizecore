@@ -99,7 +99,7 @@ function SuggestionSheet({ row, onClose }: { row: Row | null; onClose: () => voi
   const [note, setNote] = useState("");
   const d = useQuery({ queryKey: ["admin-suggestion", row?.id], queryFn: () => detailFn({ data: { id: row!.id } }), enabled: !!row });
   const m = useMutation({
-    mutationFn: (patch: Omit<Parameters<typeof updateFn>[0]["data"], "id">) => updateFn({ data: { id: row!.id, ...patch } }),
+    mutationFn: (patch: { status?: (typeof SUGGESTION_STATUSES)[number]; priority?: (typeof SUGGESTION_PRIORITIES)[number]; assignToMe?: boolean; unassign?: boolean; note?: string }) => updateFn({ data: { id: row!.id, ...patch } }),
     onSuccess: () => { setNote(""); void qc.invalidateQueries({ queryKey: ["admin-suggestions"] }); void qc.invalidateQueries({ queryKey: ["admin-suggestion", row?.id] }); toast.success("Sugestão atualizada."); },
     onError: (e) => toast.error((e as Error).message),
   });

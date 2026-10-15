@@ -10,7 +10,7 @@ export type HelpWidget = "fees" | "settlement" | "fee-calc" | "anticipation-calc
 
 export type HelpArticle = {
   slug: string; category: HelpCategoryId; title: string; summary: string; minutes: number; updated: string;
-  body: string[]; steps?: string[]; notes?: string[]; pending?: string;
+  body?: string[]; steps?: string[]; notes?: string[]; pending?: string;
   link?: { to: string; label: string }; widget?: HelpWidget; related?: string[];
 };
 

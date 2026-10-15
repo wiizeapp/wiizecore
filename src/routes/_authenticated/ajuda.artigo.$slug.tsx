@@ -27,7 +27,7 @@ function ArticlePage() {
           <span className="flex items-center gap-1"><CalendarDays className="size-3.5" aria-hidden="true" />{ui("Atualizado em")} {formatDate(a.updated)}</span>
           <span className="flex items-center gap-1"><Clock className="size-3.5" aria-hidden="true" />{a.minutes} min {ui("de leitura")}</span>
         </div>
-        <div className="mt-8 space-y-4 text-[15px] leading-7">{a.body.map((p) => <p key={p}>{ui(p)}</p>)}</div>
+        <div className="mt-8 space-y-4 text-[15px] leading-7">{(a.body ?? []).map((p) => <p key={p}>{ui(p)}</p>)}</div>
         {a.steps ? <ol className="mt-6 space-y-3">{a.steps.map((s, i) => (
           <li key={s} className="flex gap-3 rounded-xl border border-border bg-card p-4"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i + 1}</span><span className="pt-0.5 text-sm">{ui(s)}</span></li>
         ))}</ol> : null}

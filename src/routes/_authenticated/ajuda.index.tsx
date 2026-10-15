@@ -22,7 +22,7 @@ function HelpHome() {
   const [open, setOpen] = useState(false);
   const results = useMemo(() => {
     if (q.trim().length < 2) return null;
-    const arts = HELP_ARTICLES.filter((a) => matchesSearch(q, [a.title, a.summary, ...a.body, ...(a.steps ?? []), categoryById(a.category)?.title])).map((a) => ({ kind: "Artigo", slug: a.slug, title: a.title, summary: a.summary, cat: categoryById(a.category)?.title ?? "" }));
+    const arts = HELP_ARTICLES.filter((a) => matchesSearch(q, [a.title, a.summary, ...(a.body ?? []), ...(a.steps ?? []), categoryById(a.category)?.title])).map((a) => ({ kind: "Artigo", slug: a.slug, title: a.title, summary: a.summary, cat: categoryById(a.category)?.title ?? "" }));
     const faq = HELP_FAQ.filter((f) => matchesSearch(q, [f.q, f.a])).map((f) => ({ kind: "Dúvida frequente", slug: f.slug, title: f.q, summary: f.a, cat: "Dúvidas frequentes" }));
     return [...arts, ...faq].slice(0, 20);
   }, [q]);
