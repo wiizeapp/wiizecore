@@ -1,13 +1,13 @@
-# Wiize Recebe
+# Wiize Core
 
 > Plataforma de software que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.
 
-A Wiize Recebe não é banco nem instituição de pagamento. O processamento dos pagamentos é feito pela infraestrutura parceira Asaas. Não há mensalidade; as taxas por pagamento recebido estão na página de taxas. Contato oficial: wiizepay@gmail.com.
+A Wiize Core não é banco nem instituição de pagamento. O processamento dos pagamentos é feito pela infraestrutura parceira Asaas. Não há mensalidade; as taxas por pagamento recebido estão na página de taxas. Contato oficial: wiizepay@gmail.com.
 
 ## Pages
 
 - [Início](https://wiizepay.com/): Visão geral da plataforma.
-- [Sobre a Wiize Recebe](https://wiizepay.com/sobre): Propósito, público e infraestrutura.
+- [Sobre a Wiize Core](https://wiizepay.com/sobre): Propósito, público e infraestrutura.
 - [Taxas](https://wiizepay.com/taxas): Tabela oficial de tarifas e simulador.
 - [Cobranças e pagamentos](https://wiizepay.com/cobrancas-e-pagamentos): Pix, boleto, cartão e acompanhamento.
 - [Gestão financeira](https://wiizepay.com/gestao-financeira): Entradas, saídas e resultado do mês.

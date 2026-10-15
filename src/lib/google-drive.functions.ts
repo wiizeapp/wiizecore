@@ -26,7 +26,7 @@ export const startDriveConnect = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, ["owner", "admin"]);
     const d = await import("./google-drive.server");
-    if (!d.driveConfigured()) throw new Error("A integração com o Google Drive ainda não foi configurada pela Wiize Recebe.");
+    if (!d.driveConfigured()) throw new Error("A integração com o Google Drive ainda não foi configurada pela Wiize Core.");
     const { safeOrigin } = await import("./contract-docs.server");
     const origin = safeOrigin(data.origin);
     return { url: d.buildAuthUrl(origin, d.signState({ t: m.tenant_id, u: context.userId, o: origin })) };

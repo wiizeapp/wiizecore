@@ -86,11 +86,11 @@ export function AdminUnitEconomics({ f }: { f: AdminFinanceState }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <RealBadge />
-        <Button size="sm" variant="outline" disabled={!q.data.rows.length} onClick={() => void exportRows(q.data!.rows.map((r) => ({ Data: formatDateTime(r.data), Cliente: r.cliente, Método: r.metodo, Status: r.status, "Valor (TPV)": r.valor, "Taxa Wiize Recebe": r.taxa, "Custo provedor": r.custo ?? "não configurado", Margem: r.margem ?? "" })), "unit-economics", "xlsx")}><Download className="h-3.5 w-3.5" /> Exportar Excel</Button>
+        <Button size="sm" variant="outline" disabled={!q.data.rows.length} onClick={() => void exportRows(q.data!.rows.map((r) => ({ Data: formatDateTime(r.data), Cliente: r.cliente, Método: r.metodo, Status: r.status, "Valor (TPV)": r.valor, "Taxa Wiize Core": r.taxa, "Custo provedor": r.custo ?? "não configurado", Margem: r.margem ?? "" })), "unit-economics", "xlsx")}><Download className="h-3.5 w-3.5" /> Exportar Excel</Button>
       </div>
       <Kpis items={[
         { label: "TPV", value: formatBRL(s.tpv) },
-        { label: "Receita bruta Wiize Recebe", value: formatBRL(s.revenue) },
+        { label: "Receita bruta Wiize Core", value: formatBRL(s.revenue) },
         { label: "Custo de processamento", value: formatBRL(s.cost), hint: s.uncosted ? `${s.uncosted} transações sem custo configurado` : undefined },
         { label: "Margem bruta", value: formatBRL(s.margin) },
         { label: "Margem sobre TPV", value: pct(s.marginPct) },
@@ -150,7 +150,7 @@ export function AdminUnitEconomics({ f }: { f: AdminFinanceState }) {
 
       <section className="surface-panel overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border p-4">
-          <div><h3 className="font-semibold">Rentabilidade dos clientes</h3><p className="text-xs text-muted-foreground">Valor do cliente para a Wiize: Wiize Recebe + notas fiscais.</p></div>
+          <div><h3 className="font-semibold">Rentabilidade dos clientes</h3><p className="text-xs text-muted-foreground">Valor do cliente para a Wiize: Wiize Core + notas fiscais.</p></div>
           <div className="flex flex-wrap gap-1 rounded-lg border border-border p-1 text-xs">
             {([["tpv", "TPV"], ["revenue", "Receita"], ["margin", "Margem"], ["count", "Transações"], ["ticket", "Ticket"]] as [SortKey, string][]).map(([k, l]) => (
               <button key={k} type="button" onClick={() => setSort(k)} className={`rounded-md px-2 py-1 ${sort === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>{l}</button>
@@ -275,7 +275,7 @@ export function AdminFeeSettings() {
       <section className="surface-panel overflow-hidden">
         <div className="border-b border-border p-4"><h3 className="font-semibold">Taxas comerciais × custo do provedor</h3><p className="text-xs text-muted-foreground">Cada alteração cria uma nova versão com histórico. Transações já criadas mantêm a taxa e o custo da época.</p>{TIERS.some((t) => !find(cfg.data.costs, t)) ? <p className="mt-2 rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning">Custos do provedor ainda não informados em {TIERS.filter((t) => !find(cfg.data.costs, t)).length} faixa(s). Clique em "Não configurado" e preencha com os valores do seu contrato. Até lá, a margem usa a tarifa real enviada pelo provedor em cada pagamento, quando disponível.</p> : null}</div>
         <div className="overflow-x-auto"><Table>
-          <TableHeader><TableRow><TableHead>Método</TableHead><TableHead>Taxa cobrada (Wiize Recebe)</TableHead><TableHead>Custo do provedor</TableHead><TableHead className="text-right">Margem em R$ 1.000</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>Método</TableHead><TableHead>Taxa cobrada (Wiize Core)</TableHead><TableHead>Custo do provedor</TableHead><TableHead className="text-right">Margem em R$ 1.000</TableHead></TableRow></TableHeader>
           <TableBody>{TIERS.map((t) => {
             const fee = find(cfg.data.fees, t), cost = find(cfg.data.costs, t);
             const label = `${METHOD_LABEL[t.method]}${t.method === "credit_card" || t.method === "boleto" ? ` ${t.min === t.max ? `${t.min}x` : `${t.min}–${t.max}x`}` : ""}`;

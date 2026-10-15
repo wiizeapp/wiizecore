@@ -29,10 +29,10 @@ import { ActivationDocumentUpload } from "@/components/activation-document-uploa
 export const Route = createFileRoute("/_authenticated/ativacao")({
   head: () => ({
     meta: [
-      { title: "Ativar pagamentos — Wiize Recebe" },
-      { name: "description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no Wiize Recebe." },
-      { property: "og:title", content: "Ativar pagamentos — Wiize Recebe" },
-      { property: "og:description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no Wiize Recebe." },
+      { title: "Ativar pagamentos — Wiize Core" },
+      { name: "description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no Wiize Core." },
+      { property: "og:title", content: "Ativar pagamentos — Wiize Core" },
+      { property: "og:description", content: "Envie seus dados e documentos para ativar o recebimento de pagamentos no Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -50,11 +50,11 @@ function AtivacaoPage() {
   return (
     <div>
       <PartnerNotice storageKey="activation-asaas" title="Análise feita em parceria com o Asaas">
-        <p>A ativação de recebimentos da Wiize Recebe é realizada em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
+        <p>A ativação de recebimentos da Wiize Core é realizada em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
         <p>O Asaas é responsável pela análise dos seus dados e documentos e pela aprovação da conta, seguindo as exigências regulatórias de prevenção à fraude.</p>
         <p>Você faz tudo por aqui e acompanha cada etapa nesta tela. Avisaremos assim que houver uma resposta.</p>
       </PartnerNotice>
-      <PageHeader title="Ative seus pagamentos" description="Para receber pelo Wiize Recebe, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos. Avisaremos tudo por aqui e no seu e-mail de acesso." />
+      <PageHeader title="Ative seus pagamentos" description="Para receber pelo Wiize Core, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos. Avisaremos tudo por aqui e no seu e-mail de acesso." />
       {isError ? <ErrorState onRetry={() => refetch()} /> : !isFetchedAfterMount || !data ? <ListSkeleton rows={4} /> : <Content data={data} />}
     </div>
   );
@@ -120,13 +120,13 @@ function ProcessSteps({ data }: { data: Awaited<ReturnType<typeof getActivation>
 
 function StatusCard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
   const map: Record<string, { icon: typeof Clock; title: string; text: string }> = {
-    not_started: { icon: ShieldCheck, title: "Wiize Recebe ainda não ativado", text: "Preencha as etapas abaixo e envie para análise. Você pode salvar e continuar depois." },
+    not_started: { icon: ShieldCheck, title: "Wiize Core ainda não ativado", text: "Preencha as etapas abaixo e envie para análise. Você pode salvar e continuar depois." },
     draft: { icon: ShieldCheck, title: "Cadastro em rascunho", text: "Continue de onde parou." },
     in_progress: { icon: ShieldCheck, title: "Cadastro em preenchimento", text: "Continue de onde parou. Seu progresso fica salvo." },
     submitted: { icon: Clock, title: "Cadastro enviado", text: "Recebemos seus dados e enviamos para a análise da instituição de pagamento. Você será avisado aqui no sistema." },
     under_review: { icon: Clock, title: "Cadastro em análise", text: "Seus dados e documentos estão em análise. Você recebe um aviso assim que houver resposta." },
     action_required: { icon: AlertTriangle, title: "Precisamos de mais informações", text: "Corrija os pontos indicados e envie novamente." },
-    approved: { icon: BadgeCheck, title: "Wiize Recebe ativado", text: "Sua conta foi aprovada. Você já pode criar cobranças e receber pagamentos." },
+    approved: { icon: BadgeCheck, title: "Wiize Core ativado", text: "Sua conta foi aprovada. Você já pode criar cobranças e receber pagamentos." },
     rejected: { icon: XCircle, title: "Cadastro não aprovado", text: "Não foi possível aprovar a ativação. Em caso de dúvida, fale com o suporte: wiizepay@gmail.com." },
     suspended: { icon: XCircle, title: "Recebimentos suspensos", text: "Os recebimentos desta conta estão suspensos. Fale com o suporte: wiizepay@gmail.com." },
   };
@@ -378,7 +378,7 @@ function Wizard({ data }: { data: Awaited<ReturnType<typeof getActivation>> }) {
         <div className="grid gap-4">
           <div className="grid sm:grid-cols-2 gap-4">
             {F({ k: "monthlyRevenue", label: "Faturamento mensal aproximado", inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => { setForm((current) => ({ ...current, monthlyRevenue: formatBRLInput(event.target.value) })); setErrors((current) => ({ ...current, monthlyRevenue: "" })); } })}
-            {F({ k: "expectedVolume", label: "Quanto espera receber por mês no Wiize Recebe", inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => { setForm((current) => ({ ...current, expectedVolume: formatBRLInput(event.target.value) })); setErrors((current) => ({ ...current, expectedVolume: "" })); } })}
+            {F({ k: "expectedVolume", label: "Quanto espera receber por mês no Wiize Core", inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => { setForm((current) => ({ ...current, expectedVolume: formatBRLInput(event.target.value) })); setErrors((current) => ({ ...current, expectedVolume: "" })); } })}
           </div>
           <div className="space-y-1.5"><Label htmlFor="businessModel">O que você vende ou qual serviço presta?</Label><Textarea id="businessModel" value={form["businessModel"] ?? ""} onChange={set("businessModel")} aria-invalid={!!errors['businessModel']} />{errors['businessModel'] ? <p className="text-xs text-destructive">{errors['businessModel']}</p> : null}</div>
           <div className="space-y-1.5"><Label htmlFor="paymentSources">Como seus clientes costumam pagar pelos seus serviços?</Label><Textarea id="paymentSources" value={form["paymentSources"] ?? ""} onChange={set("paymentSources")} aria-invalid={!!errors['paymentSources']} placeholder="Ex.: Pix, boleto, cartão ou transferência." />{errors['paymentSources'] ? <p className="text-xs text-destructive">{errors['paymentSources']}</p> : null}</div>

@@ -15,9 +15,9 @@ import { FinancialIdentity, FinancialSupport } from "@/components/financial-prov
 export const Route = createFileRoute("/checkout/$token")({
   head: () => ({
     meta: [
-      { title: "Checkout — Wiize Recebe" },
+      { title: "Checkout — Wiize Core" },
       { name: "description", content: "Informe seus dados, escolha a forma de pagamento e conclua sua contratação com segurança." },
-      { property: "og:title", content: "Checkout — Wiize Recebe" },
+      { property: "og:title", content: "Checkout — Wiize Core" },
       { property: "og:description", content: "Informe seus dados, escolha a forma de pagamento e conclua sua contratação com segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

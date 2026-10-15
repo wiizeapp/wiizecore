@@ -170,8 +170,8 @@ export function AdminFinanceDashboard({ f, onDrill }: { f: AdminFinanceState; on
       {/* Visão executiva */}
       <section className="surface-panel overflow-hidden">
         <div className="border-b border-border px-5 py-4 sm:px-6">
-          <h2 className="font-display text-base font-semibold">Como está a Wiize Recebe hoje?</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Volume é dinheiro dos clientes. Receita é o que efetivamente pertence à Wiize Recebe.</p>
+          <h2 className="font-display text-base font-semibold">Como está a Wiize Core hoje?</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">Volume é dinheiro dos clientes. Receita é o que efetivamente pertence à Wiize Core.</p>
         </div>
         <KpiStrip loading={isLoading} items={[
           { label: "Processamos", value: formatBRL(c?.volume), hint: c && p ? <Delta cur={c.volume} prev={p.volume} label={cmp} /> : null, onClick: all },
@@ -196,7 +196,7 @@ export function AdminFinanceDashboard({ f, onDrill }: { f: AdminFinanceState; on
 
       {/* Receita: bruta -> líquida */}
       <div className="grid gap-6 xl:grid-cols-5">
-        <Panel className="xl:col-span-3" title="Receita da Wiize Recebe" description="Receita bruta ≠ receita líquida. Custos são as taxas pagas ao provedor.">
+        <Panel className="xl:col-span-3" title="Receita da Wiize Core" description="Receita bruta ≠ receita líquida. Custos são as taxas pagas ao provedor.">
           {isLoading ? <Shimmer className="h-56 w-full" /> : <RevenueWaterfall c={c!} p={p!} cmp={cmp} />}
         </Panel>
         <Panel className="xl:col-span-2" title="Taxas e custos" description="Taxas recebidas − custos de processamento = margem operacional.">
@@ -398,7 +398,7 @@ export function AdminTransactions({ f, preset }: { f: AdminFinanceState; preset?
       </div>
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader><TableRow><TableHead>{th("date", "Data")}</TableHead><TableHead>Empresa</TableHead><TableHead>Método</TableHead><TableHead className="text-right">{th("amount", "Valor")}</TableHead><TableHead className="text-right">Taxa</TableHead><TableHead className="text-right">Custo</TableHead><TableHead className="text-right">{th("revenue", "Receita Wiize Recebe")}</TableHead><TableHead>Status</TableHead><TableHead>Liquidação</TableHead></TableRow></TableHeader>
+          <TableHeader><TableRow><TableHead>{th("date", "Data")}</TableHead><TableHead>Empresa</TableHead><TableHead>Método</TableHead><TableHead className="text-right">{th("amount", "Valor")}</TableHead><TableHead className="text-right">Taxa</TableHead><TableHead className="text-right">Custo</TableHead><TableHead className="text-right">{th("revenue", "Receita Wiize Core")}</TableHead><TableHead>Status</TableHead><TableHead>Liquidação</TableHead></TableRow></TableHeader>
           <TableBody>
             {f.isLoading ? <TableStateRow cols={9}><Shimmer className="h-6 w-full" /></TableStateRow>
               : !rows.length ? <TableStateRow cols={9}><span className="text-sm text-muted-foreground">Nenhuma transação no período.</span></TableStateRow>
@@ -424,7 +424,7 @@ export function AdminTransactions({ f, preset }: { f: AdminFinanceState; preset?
           <SheetHeader><SheetTitle>Detalhes da transação</SheetTitle></SheetHeader>
           {open ? (
             <dl className="mt-6 space-y-3 text-sm">
-              {[["ID", open.id], ["Data", formatDateTime(String(open.date))], ["Empresa", open.tenant], ["Tipo", open.type], ["Método", METHOD[String(open.method)] ?? open.method], ["Descrição", open.description ?? "—"], ["Valor", formatBRL(open.amount)], ["Taxa cobrada", formatBRL(open.fee)], ["Custo do provedor", formatBRL(open.cost)], ["Receita Wiize Recebe", formatBRL(open.revenue)], ["Status", STATUS[String(open.status)] ?? open.status], ["Liquidação prevista", open.settlement ? formatDate(String(open.settlement)) : "—"], ["Situação do saldo", open.settlementStatus ?? "—"], ["Conta relacionada", "Carteira da empresa"]].map(([k, v]) => (
+              {[["ID", open.id], ["Data", formatDateTime(String(open.date))], ["Empresa", open.tenant], ["Tipo", open.type], ["Método", METHOD[String(open.method)] ?? open.method], ["Descrição", open.description ?? "—"], ["Valor", formatBRL(open.amount)], ["Taxa cobrada", formatBRL(open.fee)], ["Custo do provedor", formatBRL(open.cost)], ["Receita Wiize Core", formatBRL(open.revenue)], ["Status", STATUS[String(open.status)] ?? open.status], ["Liquidação prevista", open.settlement ? formatDate(String(open.settlement)) : "—"], ["Situação do saldo", open.settlementStatus ?? "—"], ["Conta relacionada", "Carteira da empresa"]].map(([k, v]) => (
                 <div key={String(k)} className="flex justify-between gap-4 border-b border-border pb-2"><dt className="text-muted-foreground">{k}</dt><dd className="break-all text-right font-medium">{String(v)}</dd></div>
               ))}
             </dl>
@@ -497,7 +497,7 @@ export function AdminRefunds({ f }: { f: AdminFinanceState }) {
   const rows = f.data?.refunds ?? [];
   return (
     <section className="surface-panel overflow-hidden">
-      <div className="flex items-center justify-between gap-3 border-b border-border p-4"><p className="text-sm text-muted-foreground">Estornos concluídos no período. O valor devolvido é dinheiro do cliente; a taxa retida fica com a Wiize Recebe.</p><ExportButtons rows={rows.map((r) => ({ Empresa: r.tenant, Valor: r.amount, TaxaRetida: r.retained, Data: r.date, Motivo: r.reason }))} name="estornos-wiizepay" /></div>
+      <div className="flex items-center justify-between gap-3 border-b border-border p-4"><p className="text-sm text-muted-foreground">Estornos concluídos no período. O valor devolvido é dinheiro do cliente; a taxa retida fica com a Wiize Core.</p><ExportButtons rows={rows.map((r) => ({ Empresa: r.tenant, Valor: r.amount, TaxaRetida: r.retained, Data: r.date, Motivo: r.reason }))} name="estornos-wiizepay" /></div>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader><TableRow><TableHead>Data</TableHead><TableHead>Empresa</TableHead><TableHead>Motivo</TableHead><TableHead className="text-right">Devolvido</TableHead><TableHead className="text-right">Taxa retida</TableHead></TableRow></TableHeader>

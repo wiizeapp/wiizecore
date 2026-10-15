@@ -80,7 +80,7 @@ export const addBankAccount = createServerFn({ method: "POST" })
     ]);
     const f = (await import("./activation-form-crypto.server")).openForm(act);
     const allowed = new Set([f["cpf"], f["cnpj"], tenant?.document].filter(Boolean).map((d) => onlyDigits(d as string)));
-    if (!allowed.size) throw new Error("Conclua a ativação do Wiize Recebe antes de cadastrar a conta de saque.");
+    if (!allowed.size) throw new Error("Conclua a ativação do Wiize Core antes de cadastrar a conta de saque.");
     if (!allowed.has(data.holderDocument)) throw new Error("A conta de saque precisa estar no mesmo CPF/CNPJ do cadastro da empresa.");
     const verified = act?.status === "approved";
     await supabaseAdmin.from("bank_accounts").update({ is_default: false }).eq("tenant_id", m.tenant_id);
@@ -100,7 +100,7 @@ export const addBankAccount = createServerFn({ method: "POST" })
         is_default: true,
         verification_status: verified ? "verified" : "pending",
         verified_at: verified ? new Date().toISOString() : null,
-        verification_notes: verified ? "Titular confere com o cadastro aprovado" : "Aguardando aprovação do cadastro Wiize Recebe",
+        verification_notes: verified ? "Titular confere com o cadastro aprovado" : "Aguardando aprovação do cadastro Wiize Core",
       })
       .select("id")
       .single();

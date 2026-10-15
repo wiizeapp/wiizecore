@@ -16,10 +16,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/perfil")({
   head: () => ({
     meta: [
-      { title: "Meu perfil — Wiize Recebe" },
-      { name: "description", content: "Seu nome, foto de perfil e tema da interface na Wiize Recebe." },
-      { property: "og:title", content: "Meu perfil — Wiize Recebe" },
-      { property: "og:description", content: "Seu nome, foto de perfil e tema da interface na Wiize Recebe." },
+      { title: "Meu perfil — Wiize Core" },
+      { name: "description", content: "Seu nome, foto de perfil e tema da interface na Wiize Core." },
+      { property: "og:title", content: "Meu perfil — Wiize Core" },
+      { property: "og:description", content: "Seu nome, foto de perfil e tema da interface na Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

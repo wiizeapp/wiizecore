@@ -261,7 +261,7 @@ export function SuggestionDialog({ open, onOpenChange, defaultCategory, sourceLa
   const m = useMutation({
     mutationFn: () => send({ data: { category, title, description, extra: extra || undefined, sourcePage: pathname, idempotencyKey: key.current } }),
     onSuccess: () => {
-      toast.success(ui("Obrigado por compartilhar sua ideia! Sua sugestão foi enviada para a equipe Wiize Recebe."));
+      toast.success(ui("Obrigado por compartilhar sua ideia! Sua sugestão foi enviada para a equipe Wiize Core."));
       setTitle(""); setDescription(""); setExtra(""); key.current = crypto.randomUUID(); onOpenChange(false);
     },
     onError: (e) => toast.error((e as Error).message || ui("Não foi possível enviar. Tente novamente.")),
@@ -270,7 +270,7 @@ export function SuggestionDialog({ open, onOpenChange, defaultCategory, sourceLa
   return (
     <Dialog open={open} onOpenChange={(v) => !m.isPending && onOpenChange(v)}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader><DialogTitle>{ui("Envie sua sugestão")}</DialogTitle><DialogDescription>{ui("Sua opinião ajuda a melhorar a Wiize Recebe. Conte o que você gostaria de ver ou o que podemos melhorar.")}</DialogDescription></DialogHeader>
+        <DialogHeader><DialogTitle>{ui("Envie sua sugestão")}</DialogTitle><DialogDescription>{ui("Sua opinião ajuda a melhorar a Wiize Core. Conte o que você gostaria de ver ou o que podemos melhorar.")}</DialogDescription></DialogHeader>
         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (valid && !m.isPending) m.mutate(); }}>
           <div className="space-y-1.5"><Label>{ui("Tipo de sugestão")}</Label><Select value={category} onValueChange={(v) => setCategory(v as keyof typeof CAT_LABEL)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{SUGGESTION_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{ui(CAT_LABEL[c])}</SelectItem>)}</SelectContent></Select></div>
           <div className="space-y-1.5"><Label htmlFor="sg-title">{ui("Título da sugestão")}</Label><Input id="sg-title" maxLength={140} value={title} onChange={(e) => setTitle(e.target.value)} required /></div>
@@ -307,7 +307,7 @@ export function SuggestCTA({ category, sourceLabel }: { category?: keyof typeof 
   return (
     <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Lightbulb className="size-5" aria-hidden="true" /></span>
-        <div><p className="font-semibold">{ui("Não encontrou o que precisava?")}</p><p className="mt-1 text-sm text-muted-foreground">{ui("Ajude-nos a melhorar a Wiize Recebe. Envie uma sugestão, compartilhe uma ideia ou informe o que poderia ser melhor.")}</p></div></div>
+        <div><p className="font-semibold">{ui("Não encontrou o que precisava?")}</p><p className="mt-1 text-sm text-muted-foreground">{ui("Ajude-nos a melhorar a Wiize Core. Envie uma sugestão, compartilhe uma ideia ou informe o que poderia ser melhor.")}</p></div></div>
       {signed ? <Button onClick={() => setOpen(true)} className="shrink-0">{ui("Enviar sugestão")}</Button> : <SignInToAct />}
       {signed ? <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory={category} sourceLabel={sourceLabel} /> : null}
     </div>

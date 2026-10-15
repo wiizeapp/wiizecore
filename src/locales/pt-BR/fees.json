@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Taxas claras e gestão completa — Wiize Recebe",
-    "description": "Saiba quanto custa receber por Pix, boleto e cartão na Wiize Recebe e veja como cobrança, notas fiscais, contratos, clientes e gestão financeira ficam em um só lugar. Sem mensalidade e sem custos escondidos."
+    "title": "Taxas claras e gestão completa — Wiize Core",
+    "description": "Saiba quanto custa receber por Pix, boleto e cartão na Wiize Core e veja como cobrança, notas fiscais, contratos, clientes e gestão financeira ficam em um só lugar. Sem mensalidade e sem custos escondidos."
   },
   "hero": {
     "eyebrow": "Preços",
@@ -126,7 +126,7 @@
   "dunning": {
     "eyebrow": "Lembretes de cobrança",
     "title": "Receba sem transformar cobrança em trabalho.",
-    "subtitle": "A Wiize Recebe acompanha cada vencimento e mantém seu cliente informado nos canais certos. Menos atrasos, menos conversas repetitivas e mais tempo para fazer seu negócio crescer.",
+    "subtitle": "A Wiize Core acompanha cada vencimento e mantém seu cliente informado nos canais certos. Menos atrasos, menos conversas repetitivas e mais tempo para fazer seu negócio crescer.",
     "per": "por cobrança",
     "popular": "Mais escolhido",
     "cta": "Quero cobrar melhor",

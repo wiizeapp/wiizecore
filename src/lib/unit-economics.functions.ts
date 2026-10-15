@@ -9,7 +9,7 @@ type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any
 /** platform_admin + 2FA obrigatórios. Somente leitura, exceto a edição de taxas/custos (auditada). */
 async function requireAdmin(context: Ctx) {
   const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
-  if (!data) throw new Error("Acesso restrito à equipe Wiize Recebe.");
+  if (!data) throw new Error("Acesso restrito à equipe Wiize Core.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

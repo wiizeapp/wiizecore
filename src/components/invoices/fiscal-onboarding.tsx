@@ -18,7 +18,7 @@ export function FiscalOnboarding({ steps, done }: { steps: Steps; done: number }
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="font-display text-base font-semibold tracking-tight">Configure suas notas fiscais</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Vamos configurar sua empresa para emitir NFS-e pelo Wiize Recebe.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Vamos configurar sua empresa para emitir NFS-e pelo Wiize Core.</p>
         </div>
         <Button asChild><Link to="/notas-fiscais/configuracoes">Começar configuração</Link></Button>
       </div>

@@ -28,7 +28,7 @@ export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; item
     { id: "pagar", label: "Contas a pagar", icon: ListChecks },
     { id: "conciliacao", label: "Conciliação", icon: Scale },
   ] },
-  { id: "wiizepay", label: "Wiize Recebe", icon: CreditCard, items: [
+  { id: "wiizepay", label: "Wiize Core", icon: CreditCard, items: [
     { id: "pagamentos", label: "Pagamentos", icon: Receipt },
     { id: "cobrancas", label: "Cobranças", icon: FileText },
     { id: "clientes", label: "Clientes", icon: Users },

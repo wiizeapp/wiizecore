@@ -16,10 +16,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/convite/$token")({
   head: () => ({
     meta: [
-      { title: "Convite para equipe — Wiize Recebe" },
-      { name: "description", content: "Aceite o convite para entrar na equipe de uma empresa na Wiize Recebe." },
-      { property: "og:title", content: "Convite para equipe — Wiize Recebe" },
-      { property: "og:description", content: "Entre na equipe da sua empresa na Wiize Recebe." },
+      { title: "Convite para equipe — Wiize Core" },
+      { name: "description", content: "Aceite o convite para entrar na equipe de uma empresa na Wiize Core." },
+      { property: "og:title", content: "Convite para equipe — Wiize Core" },
+      { property: "og:description", content: "Entre na equipe da sua empresa na Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

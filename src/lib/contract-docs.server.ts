@@ -113,11 +113,11 @@ export async function buildContractPdf(input: {
   const doc = input.originalPdf ? await PDFDocument.load(input.originalPdf, { ignoreEncryption: true }) : await PDFDocument.create();
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const footer = `Wiize Recebe · Código de verificação ${input.verificationCode} · ${input.verifyUrl}`;
+  const footer = `Wiize Core · Código de verificação ${input.verificationCode} · ${input.verifyUrl}`;
   const fixed = new Date(input.completedAt ?? "2024-01-01T00:00:00Z");
   doc.setTitle(input.title);
-  doc.setProducer("Wiize Recebe");
-  doc.setCreator("Wiize Recebe Contratos");
+  doc.setProducer("Wiize Core");
+  doc.setCreator("Wiize Core Contratos");
   doc.setCreationDate(fixed);
   doc.setModificationDate(fixed);
 
@@ -129,7 +129,7 @@ export async function buildContractPdf(input: {
     // Rodapé em TODAS as páginas: remover ou trocar páginas deixa o documento inconsistente com o código.
     pages.forEach((pg, i) => {
       const { width } = pg.getSize();
-      const t = clean(`Wiize Recebe · Código ${input.verificationCode} · Página ${i + 1} de ${total} · SHA-256 ${input.contentHash.slice(0, 16)}…`);
+      const t = clean(`Wiize Core · Código ${input.verificationCode} · Página ${i + 1} de ${total} · SHA-256 ${input.contentHash.slice(0, 16)}…`);
       pg.drawText(t, { x: Math.max(12, (width - font.widthOfTextAtSize(t, 6.5)) / 2), y: 10, size: 6.5, font, color: rgb(0.45, 0.45, 0.45) });
     });
     const byKey = new Map(input.signers.map((s) => [s.key, s]));
@@ -214,7 +214,7 @@ async function drawCertificate(
     } else {
       page.drawText("W", { x: M + 17 - bold.widthOfTextAtSize("W", 20) / 2, y: H - 56, size: 20, font: bold, color: rgb(1, 1, 1) });
     }
-    page.drawText("Wiize Recebe", { x: M + 44, y: H - 47, size: 16, font: bold, color: rgb(1, 1, 1) });
+    page.drawText("Wiize Core", { x: M + 44, y: H - 47, size: 16, font: bold, color: rgb(1, 1, 1) });
     page.drawText("Assinatura eletrônica", { x: M + 44, y: H - 61, size: 8.5, font, color: rgb(0.8, 0.93, 0.86) });
     const lbl = first ? "CERTIFICADO DE ASSINATURAS" : "CERTIFICADO · CONTINUAÇÃO";
     page.drawText(lbl, { x: W - M - bold.widthOfTextAtSize(lbl, 8.5), y: H - 47, size: 8.5, font: bold, color: rgb(1, 1, 1) });
@@ -304,7 +304,7 @@ async function drawCertificate(
   page.drawText(fitT(`Acesse ${input.verifyUrl} e informe o código ${input.verificationCode}.`, 8.5, W - M * 2 - 28), { x: M + 14, y: y - 32, size: 8.5, font, color: ink });
   page.drawText(fitT("Qualquer alteração no arquivo muda a impressão digital e invalida a verificação.", 7.8, W - M * 2 - 28), { x: M + 14, y: y - 46, size: 7.8, font, color: grey });
   y -= 78;
-  for (const l of wrap("Assinaturas eletrônicas registradas pela Wiize Recebe com data, hora, IP, dispositivo e impressão digital do documento, nos termos da MP 2.200-2/2001 e da Lei 14.063/2020.", font, 7.5, W - M * 2)) {
+  for (const l of wrap("Assinaturas eletrônicas registradas pela Wiize Core com data, hora, IP, dispositivo e impressão digital do documento, nos termos da MP 2.200-2/2001 e da Lei 14.063/2020.", font, 7.5, W - M * 2)) {
     page.drawText(l, { x: M, y, size: 7.5, font, color: grey }); y -= 11;
   }
 }

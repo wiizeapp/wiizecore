@@ -24,7 +24,7 @@ async function run(request: Request) {
         title: "Cobrança em atraso", body: `A cobrança de ${c?.name ?? "cliente"} (${brl(p.gross_amount)}) está em atraso.`,
         email: { subject: `Cobrança em atraso — ${c?.name ?? "cliente"}` },
       });
-      // Cliente final não recebe lembretes da Wiize Recebe: só os do Asaas, quando a empresa contrata o plano de lembretes.
+      // Cliente final não recebe lembretes da Wiize Core: só os do Asaas, quando a empresa contrata o plano de lembretes.
     }
   }
 
@@ -49,7 +49,7 @@ async function run(request: Request) {
     await notifyTenant(admin, {
       tenantId: a.tenant_id, kind: "activation.reminder", dedupeKey: `activation.reminder:${a.tenant_id}:${dayKey}`, link: "/ativacao",
       title: "Sua ativação ainda tem pendências", body: a.review_message ? String(a.review_message).slice(0, 200) : "Abra Ative seus pagamentos para concluir o que falta.",
-      email: { subject: "Wiize Recebe — Conclua a ativação de pagamentos" },
+      email: { subject: "Wiize Core — Conclua a ativação de pagamentos" },
     });
     sent++;
   }

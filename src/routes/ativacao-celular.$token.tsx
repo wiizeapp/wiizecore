@@ -19,9 +19,9 @@ import { ActivationDocumentUpload } from "@/components/activation-document-uploa
 
 export const Route = createFileRoute("/ativacao-celular/$token")({
   head: () => ({ meta: [
-    { title: "Continuar ativação — Wiize Recebe" },
-    { name: "description", content: "Acesso temporário e seguro para continuar a ativação de pagamentos da Wiize Recebe." },
-    { property: "og:title", content: "Continuar ativação — Wiize Recebe" },
+    { title: "Continuar ativação — Wiize Core" },
+    { name: "description", content: "Acesso temporário e seguro para continuar a ativação de pagamentos da Wiize Core." },
+    { property: "og:title", content: "Continuar ativação — Wiize Core" },
     { property: "og:description", content: "Acesso temporário e seguro para continuar a ativação de pagamentos." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex,nofollow" },
   ] }),
@@ -92,7 +92,7 @@ function MobileActivationPage() {
     : !sessionToken ? (verifyFailed ? <div className="mx-auto max-w-sm py-10 text-center"><LockKeyhole className="mx-auto size-10 text-destructive" /><h1 className="mt-4 text-xl font-semibold">QR Code expirado ou já usado</h1><p className="mt-2 text-sm text-muted-foreground">Por segurança, cada QR Code vale 15 minutos e funciona uma única vez. Gere um novo no computador.</p></div> : <div className="flex min-h-48 items-center justify-center"><Loader2 className="size-6 animate-spin text-primary" /></div>)
     : query.isLoading ? <div className="flex min-h-48 items-center justify-center"><Loader2 className="size-6 animate-spin text-primary" /></div>
     : query.isError ? <div className="py-10 text-center"><h1 className="font-semibold">Este acesso não está mais disponível</h1><p className="mt-2 text-sm text-muted-foreground">Gere um novo acesso no computador.</p></div>
-    : <div className="space-y-7"><div><h1 className="text-xl font-semibold">Continue sua ativação</h1><p className="mt-1 text-sm text-muted-foreground">Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos. Avisaremos tudo na Wiize Recebe e no seu e-mail de acesso.</p></div>
+    : <div className="space-y-7"><div><h1 className="text-xl font-semibold">Continue sua ativação</h1><p className="mt-1 text-sm text-muted-foreground">Este acesso vale por 15 minutos e permite somente preencher dados e enviar documentos. Avisaremos tudo na Wiize Core e no seu e-mail de acesso.</p></div>
       <div className="grid gap-4 sm:grid-cols-2">{field("fullName", personType === "company" ? "Seu nome completo" : "Nome completo")}{field("cpf", "CPF", { inputMode: "numeric" })}{field("birthDate", "Data de nascimento", { type: "date" })}{field("phone", "Celular com DDD", { inputMode: "tel" })}{personType === "company" ? <>{field("legalName", "Razão social")}{field("tradeName", "Nome fantasia (opcional)")}{field("cnpj", "CNPJ", { inputMode: "numeric" })}{field("companyType", "Tipo de empresa")}{field("openedOn", "Data de abertura", { type: "date" })}{field("legalRepName", "Nome do responsável legal")}{field("legalRepCpf", "CPF do responsável legal", { inputMode: "numeric" })}</> : null}</div>
       <div className="grid gap-4 sm:grid-cols-2">{field("zipCode", "CEP", { inputMode: "numeric" })}{field("address", "Rua / Avenida")}{field("number", "Número")}{field("complement", "Complemento (opcional)")}{field("district", "Bairro")}{field("city", "Cidade")}<div className="space-y-1.5"><Label>Estado</Label><Select value={form['state'] ?? ""} onValueChange={(value) => setValue("state", value)}><SelectTrigger><SelectValue placeholder="Selecione o Estado" /></SelectTrigger><SelectContent>{BRAZIL_STATES.map(([uf, name]) => <SelectItem key={uf} value={uf}>{uf} — {name}</SelectItem>)}</SelectContent></Select></div></div>
       <div className="grid gap-4 sm:grid-cols-2">{field("monthlyRevenue", "Faturamento mensal aproximado", { inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => setValue("monthlyRevenue", formatBRLInput(event.target.value)) })}{field("expectedVolume", "Quanto espera receber por mês", { inputMode: "numeric", placeholder: "R$ 0,00", onChange: (event) => setValue("expectedVolume", formatBRLInput(event.target.value)) })}</div>

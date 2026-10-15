@@ -130,7 +130,7 @@ export async function importFromDriveLink(admin: Admin, tenantId: string, fileId
   const { token } = await accessToken(admin, tenantId);
   const meta = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?fields=name,mimeType,size`, { headers: { Authorization: `Bearer ${token}` } });
   if (!meta.ok) {
-    // Com acesso restrito, o Drive só abre arquivos criados pela Wiize Recebe. Para links públicos, baixamos a versão compartilhada.
+    // Com acesso restrito, o Drive só abre arquivos criados pela Wiize Core. Para links públicos, baixamos a versão compartilhada.
     for (const u of [`https://docs.google.com/document/d/${fileId}/export?format=pdf`, `https://drive.google.com/uc?export=download&id=${fileId}`]) {
       const r = await fetch(u, { redirect: "follow" }).catch(() => null);
       if (!r?.ok) continue;
@@ -162,7 +162,7 @@ export function extractDriveId(url: string) {
   return m?.[1] ?? null;
 }
 
-/** Move para a lixeira do Drive um arquivo criado pela Wiize Recebe. */
+/** Move para a lixeira do Drive um arquivo criado pela Wiize Core. */
 export async function trashOnDrive(admin: Admin, tenantId: string, fileId: string) {
   const { token } = await accessToken(admin, tenantId);
   await gfetch(token, `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {

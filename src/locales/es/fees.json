@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Tarifas claras y control total — Wiize Recebe",
-    "description": "Conoce cuánto cuesta cobrar por Pix, boleto y tarjeta con Wiize Recebe y cómo cobros, facturas, contratos, clientes y gestión financiera se unen en un solo lugar. Sin mensualidad y sin costos ocultos."
+    "title": "Tarifas claras y control total — Wiize Core",
+    "description": "Conoce cuánto cuesta cobrar por Pix, boleto y tarjeta con Wiize Core y cómo cobros, facturas, contratos, clientes y gestión financiera se unen en un solo lugar. Sin mensualidad y sin costos ocultos."
   },
   "hero": {
     "eyebrow": "Precios",
@@ -84,7 +84,7 @@
     "totalCustomer": "Total pagado por el cliente",
     "installmentsEst": "{{n}} cuotas estimadas",
     "installmentsOf": "{{n}}x de {{v}}",
-    "fee": "Tarifa Wiize Recebe",
+    "fee": "Tarifa Wiize Core",
     "calculating": "Calculando…",
     "net": "Valor neto",
     "disclaimer": "Resultado estimado con las reglas vigentes. El valor final se confirma al crear el cobro.",
@@ -126,7 +126,7 @@
   "dunning": {
     "eyebrow": "Recordatorios de cobro",
     "title": "Cobra sin convertir el seguimiento en trabajo.",
-    "subtitle": "Wiize Recebe acompaña cada vencimiento y mantiene a tu cliente informado en los canales correctos. Menos retrasos y más tiempo para crecer.",
+    "subtitle": "Wiize Core acompaña cada vencimiento y mantiene a tu cliente informado en los canales correctos. Menos retrasos y más tiempo para crecer.",
     "per": "por cobro",
     "popular": "Más elegido",
     "cta": "Quiero cobrar mejor",

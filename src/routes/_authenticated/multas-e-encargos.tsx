@@ -16,9 +16,9 @@ import { getLateFees, saveLateFees } from "@/lib/late-fees.functions";
 export const Route = createFileRoute("/_authenticated/multas-e-encargos")({
   head: () => ({
     meta: [
-      { title: "Multas e encargos — Wiize Recebe" },
+      { title: "Multas e encargos — Wiize Core" },
       { name: "description", content: "Configure multa e juros por atraso aplicados às novas cobranças." },
-      { property: "og:title", content: "Multas e encargos — Wiize Recebe" },
+      { property: "og:title", content: "Multas e encargos — Wiize Core" },
       { property: "og:description", content: "Regras padrão de atraso das suas cobranças." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

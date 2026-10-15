@@ -19,9 +19,9 @@ export const Route = createFileRoute("/portal/$key")({
   loader: ({ params }) => getPortalInfo({ data: { key: params.key } }),
   head: () => ({
     meta: [
-      { title: "Portal do cliente · Wiize Recebe" },
+      { title: "Portal do cliente · Wiize Core" },
       { name: "description", content: "Acesse seus recibos, contratos e documentos com segurança." },
-      { property: "og:title", content: "Portal do cliente · Wiize Recebe" },
+      { property: "og:title", content: "Portal do cliente · Wiize Core" },
       { property: "og:description", content: "Recibos, contratos e documentos em um só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

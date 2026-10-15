@@ -1,4 +1,4 @@
-/** Perguntas da pesquisa de boas-vindas da Wiize Recebe. Fonte única para a tela e para o Admin. */
+/** Perguntas da pesquisa de boas-vindas da Wiize Core. Fonte única para a tela e para o Admin. */
 export type OnboardingKey =
   | "role" | "business_type" | "team_size" | "biggest_challenge" | "payment_methods" | "monthly_revenue" | "goal_90d" | "acquisition_source";
 
@@ -22,7 +22,7 @@ export type OnboardingIcon =
   | "google" | "social" | "youtube" | "referral" | "wiize" | "partner";
 
 export const ONBOARDING_STEPS: OnboardingStep[] = [
-  { key: "role", title: "Qual opção melhor descreve você?", subtitle: "Vamos adaptar a Wiize Recebe ao seu papel na empresa.", options: [
+  { key: "role", title: "Qual opção melhor descreve você?", subtitle: "Vamos adaptar a Wiize Core ao seu papel na empresa.", options: [
     { id: "dono", label: "Dono / Sócio", icon: "owner" },
     { id: "financeiro", label: "Financeiro", icon: "finance" },
     { id: "administrativo", label: "Administrativo", icon: "admin" },
@@ -69,7 +69,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     { id: "1m+", label: "Mais de R$ 1 milhão", icon: "growth" },
     { id: "nao-dizer", label: "Prefiro não dizer", icon: "private" },
   ] },
-  { key: "goal_90d", title: "Qual resultado quer nos próximos 90 dias?", subtitle: "Vamos montar seus primeiros passos na Wiize Recebe a partir disso.", options: [
+  { key: "goal_90d", title: "Qual resultado quer nos próximos 90 dias?", subtitle: "Vamos montar seus primeiros passos na Wiize Core a partir disso.", options: [
     { id: "centralizar_cobranca", label: "Centralizar cobranças", description: "Reunir toda a cobrança da operação em um só lugar.", icon: "centralize" },
     { id: "controle_financeiro", label: "Simplificar o financeiro", description: "Controlar entradas, saídas e saldo sem depender de planilhas.", icon: "simplify" },
     { id: "contrato_e_cobranca", label: "Contratos e pagamentos", description: "Assinar contratos e receber pagamentos no mesmo fluxo.", icon: "contract-payment" },
@@ -77,7 +77,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     { id: "reduzir_atrasos", label: "Reduzir atrasos", description: "Usar lembretes inteligentes para receber no prazo.", icon: "reminders" },
     { id: "portal_cliente", label: "Dar autonomia ao cliente", description: "Oferecer 2ª via, recibos e notas em um portal próprio.", icon: "portal" },
   ] },
-  { key: "acquisition_source", title: "Como você conheceu a Wiize Recebe?", subtitle: "Só para sabermos por onde você chegou.", options: [
+  { key: "acquisition_source", title: "Como você conheceu a Wiize Core?", subtitle: "Só para sabermos por onde você chegou.", options: [
     { id: "google", label: "Google", icon: "google" },
     { id: "instagram_tiktok", label: "Instagram / TikTok", icon: "social" },
     { id: "youtube", label: "YouTube", icon: "youtube" },

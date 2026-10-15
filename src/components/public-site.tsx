@@ -128,7 +128,7 @@ export function PublicFooter() {
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Recebe</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
+            <Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Core</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
           </div>
         </div>
         <div>

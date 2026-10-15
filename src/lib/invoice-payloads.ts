@@ -38,7 +38,7 @@ export function buildSubscriptionInvoiceSettings(
     receivedOnly: opts.rule === "ON_PAYMENT_CONFIRMATION",
     updatePayment: false,
     deductions: 0,
-    observations: opts.observations || "Nota emitida pelo Wiize Recebe.",
+    observations: opts.observations || "Nota emitida pelo Wiize Core.",
     taxes,
   };
   if (opts.rule === "BEFORE_PAYMENT_DUE_DATE") body["daysBeforeDueDate"] = opts.days ?? 5;

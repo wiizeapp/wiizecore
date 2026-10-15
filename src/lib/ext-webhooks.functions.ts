@@ -108,7 +108,7 @@ export const sendExtWebhook = createServerFn({ method: "POST" })
     } else {
       const { randomToken } = await import("./crypto.server");
       const eventId = `evt_test_${randomToken(12)}`;
-      const body = { id: eventId, object: "event", type: "webhook.test", created: Math.floor(Date.now() / 1000), data: { message: "Teste da Wiize Recebe" } };
+      const body = { id: eventId, object: "event", type: "webhook.test", created: Math.floor(Date.now() / 1000), data: { message: "Teste da Wiize Core" } };
       row = (await d.from("ext_webhook_deliveries").insert({ tenant_id: a.tenantId, endpoint_id: data.endpointId, event_id: eventId, type: "webhook.test", body: body as never }).select("id, endpoint_id, body, attempts").single()).data;
       if (!row) throw new Error("Não foi possível enviar o teste.");
     }

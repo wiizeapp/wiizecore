@@ -30,10 +30,10 @@ import { disableMfaWithRecoveryCode } from "@/lib/mfa-recovery.functions";
 export const Route = createFileRoute("/_authenticated/seguranca")({
   head: () => ({
     meta: [
-      { title: "Segurança — Wiize Recebe" },
-      { name: "description", content: "Gerencie 2FA, senha financeira e auditoria da conta Wiize Recebe." },
-      { property: "og:title", content: "Segurança — Wiize Recebe" },
-      { property: "og:description", content: "Gerencie 2FA, senha financeira e auditoria da conta Wiize Recebe." },
+      { title: "Segurança — Wiize Core" },
+      { name: "description", content: "Gerencie 2FA, senha financeira e auditoria da conta Wiize Core." },
+      { property: "og:title", content: "Segurança — Wiize Core" },
+      { property: "og:description", content: "Gerencie 2FA, senha financeira e auditoria da conta Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

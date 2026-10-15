@@ -16,7 +16,7 @@ import { ExtAiGuide, ExtDocs, ExtLogs, ExtOverview } from "@/components/ext-insi
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
-  head: () => ({ meta: [{ title: "Integração Externa — Wiize Recebe" }, { name: "description", content: "Conecte seu software à Wiize Recebe com chaves de API." }, { property: "og:title", content: "Integração Externa — Wiize Recebe" }, { property: "og:description", content: "Conecte seu software à Wiize Recebe com chaves de API." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "Integração Externa — Wiize Core" }, { name: "description", content: "Conecte seu software à Wiize Core com chaves de API." }, { property: "og:title", content: "Integração Externa — Wiize Core" }, { property: "og:description", content: "Conecte seu software à Wiize Core com chaves de API." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: Page,
 });
 
@@ -69,7 +69,7 @@ function Page() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t("Integração Externa")} description={t("Conecte seu próprio software ou SaaS à Wiize Recebe para criar cobranças e receber avisos de pagamento.")} />
+      <PageHeader title={t("Integração Externa")} description={t("Conecte seu próprio software ou SaaS à Wiize Core para criar cobranças e receber avisos de pagamento.")} />
       <Link to="/integracoes" className="text-xs text-muted-foreground hover:text-foreground">← {t("Integrações")}</Link>
 
       {revealed && (
@@ -95,7 +95,7 @@ function Page() {
         <TabsContent value="overview" className="space-y-4">
           <ExtOverview />
           <div className="surface-panel space-y-3 p-5 text-sm">
-          <p>{t("Com a Integração Externa, o seu sistema pede à Wiize Recebe para criar clientes e cobranças, e a Wiize Recebe avisa o seu sistema quando o pagamento acontece.")}</p>
+          <p>{t("Com a Integração Externa, o seu sistema pede à Wiize Core para criar clientes e cobranças, e a Wiize Core avisa o seu sistema quando o pagamento acontece.")}</p>
           <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
             <li>{t("Chave pública: pode aparecer no site do seu sistema.")}</li>
             <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
@@ -108,7 +108,7 @@ function Page() {
         <TabsContent value="ai"><ExtAiGuide /></TabsContent>
 
         <TabsContent value="webhooks" className="space-y-4">
-          <p className="text-xs text-muted-foreground">{t("A Wiize Recebe avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
+          <p className="text-xs text-muted-foreground">{t("A Wiize Core avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
           {items.filter((i) => i.status !== "revoked").length === 0 ? <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Crie uma integração primeiro.")}</p> : items.filter((i) => i.status !== "revoked").map((i) => (
             <section key={i.id} className="surface-panel space-y-3 p-5">
               <p className="font-semibold">{i.name}</p>

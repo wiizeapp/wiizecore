@@ -47,10 +47,10 @@ export const Route = createFileRoute("/_authenticated/cobrancas")({
   },
   head: () => ({
     meta: [
-      { title: "Cobranças — Wiize Recebe" },
-      { name: "description", content: "Crie cobranças, links de pagamento e acompanhe eventos de pagamento da Wiize Recebe." },
-      { property: "og:title", content: "Cobranças — Wiize Recebe" },
-      { property: "og:description", content: "Crie cobranças, links de pagamento e acompanhe eventos de pagamento da Wiize Recebe." },
+      { title: "Cobranças — Wiize Core" },
+      { name: "description", content: "Crie cobranças, links de pagamento e acompanhe eventos de pagamento da Wiize Core." },
+      { property: "og:title", content: "Cobranças — Wiize Core" },
+      { property: "og:description", content: "Crie cobranças, links de pagamento e acompanhe eventos de pagamento da Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

@@ -112,7 +112,7 @@ const settingsSchema = z.object({
   rpsNumber: z.number().int().min(1).max(999999999).nullable().optional(),
   loteNumber: z.number().int().min(1).max(999999999).nullable().optional(),
   nationalRegime: z.string().trim().max(40).nullable().optional(),
-  // Credenciais: repassadas ao provedor e descartadas; nunca gravadas no Wiize Recebe.
+  // Credenciais: repassadas ao provedor e descartadas; nunca gravadas no Wiize Core.
   username: z.string().max(200).optional(),
   password: z.string().max(200).optional(),
   accessToken: z.string().max(2000).optional(),
