@@ -477,7 +477,7 @@
   overscroll-behavior: contain;
   margin-right: -12px;
   padding: 6px 12px 8px 0;
-  scrollbar-color: color-mix(in oklab, var(--sidebar-foreground) 24%, transparent) transparent;
+  scrollbar-color: color-mix(in oklab, var(--sidebar-foreground) 32%, var(--sidebar)) var(--sidebar);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
 }
@@ -498,33 +498,40 @@
 }
 
 .app-sidebar-nav::-webkit-scrollbar { width: 6px; }
-.app-sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.app-sidebar-nav::-webkit-scrollbar-track { background: var(--sidebar); }
 .app-sidebar-nav::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: color-mix(in oklab, var(--sidebar-foreground) 16%, transparent);
+  background: color-mix(in oklab, var(--sidebar-foreground) 32%, var(--sidebar));
+}
+.app-sidebar-nav:hover {
+  scrollbar-color: color-mix(in oklab, var(--sidebar-foreground) 44%, var(--sidebar)) var(--sidebar);
 }
 .app-sidebar-nav:hover::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--sidebar-foreground) 34%, transparent);
+  background: color-mix(in oklab, var(--sidebar-foreground) 44%, var(--sidebar));
 }
 .app-sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklab, var(--sidebar-foreground) 50%, transparent);
+  background: color-mix(in oklab, var(--sidebar-foreground) 55%, var(--sidebar));
 }
 
-/* Barra de rolagem geral: fina, arredondada e discreta. */
-html, body, * {
+/* A trilha opaca acompanha o tema; transparência na raiz expõe o canvas branco. */
+html {
+  background-color: var(--background);
+}
+* {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
+  scrollbar-color: color-mix(in oklab, var(--foreground) 35%, var(--background)) var(--background);
 }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner { background: var(--background); }
 *::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  border: 2px solid transparent;
+  border: 2px solid var(--background);
   background-clip: padding-box;
-  background-color: color-mix(in oklab, var(--foreground) 22%, transparent);
+  background-color: color-mix(in oklab, var(--foreground) 35%, var(--background));
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+  background-color: color-mix(in oklab, var(--foreground) 50%, var(--background));
 }
 
 .sidebar-nav-item {
