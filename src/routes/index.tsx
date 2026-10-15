@@ -51,7 +51,7 @@ function Landing() {
         <section className="hero-payment relative overflow-hidden border-b border-border">
           <div className="section-shell relative z-10 flex flex-col items-center pb-5 pt-10 text-center sm:pt-12 lg:pt-14">
             <div>
-              <h1 className="hero-title mx-auto mt-7 max-w-4xl text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold leading-[1.08]"><span className="block">{ui("Cobranças inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
+              <h1 className="hero-title mx-auto mt-7 max-w-4xl text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold leading-[1.08]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços\n")}</span></h1>
               <p className="mx-auto mt-5 max-w-xl text-balance text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.")}</p>
               <div className="mt-7 flex flex-col items-center gap-2.5"><Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }}>{ui("Crie sua conta grátis agora")} <ArrowRight className="size-4" /></Link></Button><p className="text-[11px] font-medium text-muted-foreground sm:text-xs"><strong className="font-semibold">{ui("Sem mensalidade")}</strong>. {ui("Aprovação rápida")}</p></div>
             </div>
