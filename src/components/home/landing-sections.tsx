@@ -1,8 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
-import howClientes from "@/assets/how-clientes.png.asset.json";
-import howCobranca from "@/assets/how-cobranca.png.asset.json";
-import howEnvio from "@/assets/how-envio.png.asset.json";
-import howRecebimento from "@/assets/how-recebimento.png.asset.json";
+import howClientes from "@/assets/how-clientes.png";
+import howCobranca from "@/assets/how-cobranca.png";
+import howEnvio from "@/assets/how-envio.png";
+import howRecebimento from "@/assets/how-recebimento.png";
 import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, CircleDollarSign, Clock3, CreditCard, FileSignature, FileText, Landmark, Lock, PenLine, QrCode, Receipt, Repeat, Users, Wallet, Briefcase, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
