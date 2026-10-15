@@ -29,6 +29,7 @@ import {
   ListChecks,
   UsersRound,
   MessagesSquare,
+  BookOpen,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useWorkspace } from "@/hooks/useWorkspace";
@@ -43,7 +44,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
-type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/documentos" | "/cupons" | "/coproducoes";
+type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/documentos" | "/cupons" | "/coproducoes" | "/ajuda";
 
 const operationItems = [
   { to: "/clientes", label: "Clientes", icon: Users },
@@ -309,6 +310,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </Link>
           <div className="sidebar-theme"><ThemeToggle /></div>
+          <Link to="/ajuda" className={navLinkClass(pathname.startsWith("/ajuda"))} title={!sidebarExpanded ? ui("Central de Ajuda") : undefined}>
+            <span className="sidebar-icon-slot"><BookOpen className="sidebar-animated-icon" strokeWidth={1.8} /></span>
+            <span className="sidebar-item-label">{ui("Central de Ajuda")}</span>
+          </Link>
           <button
             type="button"
             className="sidebar-nav-item sidebar-logout group"

@@ -1,3 +1,4 @@
+import { AdminSuggestions } from "@/components/admin/admin-suggestions";
 import { AdminInbox } from "@/components/admin/admin-inbox";
 import { AdminWiizeCredentials } from "@/components/admin/admin-wiize-credentials";
 import { AdminTracking } from "@/components/admin/admin-tracking";
@@ -315,6 +316,7 @@ function AdminContent() {
     analise: <AdminActivations />,
     aprovacoes: <div className="space-y-6">{saquesView}<div className="surface-panel p-2"><AdminRecoveries /></div></div>,
     caixa: <AdminInbox />,
+    sugestoes: <AdminSuggestions />,
     suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da WiizePay."),
     auditoria: <div className="surface-panel p-4"><AdminAudit /></div>,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,

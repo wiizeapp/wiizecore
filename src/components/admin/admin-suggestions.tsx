@@ -13,8 +13,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate, formatDateTime } from "@/lib/format";
 
-const STATUS: Record<string, { label: string; tone: "neutral" | "info" | "success" | "warning" | "danger" }> = {
-  new: { label: "Nova", tone: "info" }, analysis: { label: "Em análise", tone: "warning" }, planned: { label: "Planejada", tone: "neutral" },
+const STATUS: Record<string, { label: string; tone: "neutral" | "success" | "warning" | "danger" }> = {
+  new: { label: "Nova", tone: "neutral" }, analysis: { label: "Em análise", tone: "warning" }, planned: { label: "Planejada", tone: "neutral" },
   in_progress: { label: "Em desenvolvimento", tone: "warning" }, done: { label: "Implementada", tone: "success" }, rejected: { label: "Não aprovada", tone: "danger" },
 };
 const PRIORITY: Record<string, string> = { low: "Baixa", medium: "Média", high: "Alta" };
@@ -31,7 +31,7 @@ export function AdminSuggestions() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [sort, setSort] = useState("recent");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [openId, setOpenId] = useState<string | null>(null);
   const items = q.data ?? [];
   const filtered = useMemo(() => {
@@ -57,9 +57,9 @@ export function AdminSuggestions() {
       </StatGrid>
       <div className="surface-panel">
         <div className="flex flex-wrap items-center gap-2 border-b border-border p-4">
-          <SearchField value={search} onChange={(v) => { setSearch(v); setPage(1); }} placeholder="Buscar por título ou descrição" />
-          <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1); }}><SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos os status</SelectItem>{SUGGESTION_STATUSES.map((s) => <SelectItem key={s} value={s}>{STATUS[s]!.label}</SelectItem>)}</SelectContent></Select>
-          <Select value={cat} onValueChange={(v) => { setCat(v); setPage(1); }}><SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todas as categorias</SelectItem>{SUGGESTION_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{SUGGESTION_CATEGORY_LABEL[c]}</SelectItem>)}</SelectContent></Select>
+          <SearchField value={search} onChange={(v) => { setSearch(v); setPage(0); }} placeholder="Buscar por título ou descrição" />
+          <Select value={status} onValueChange={(v) => { setStatus(v); setPage(0); }}><SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todos os status</SelectItem>{SUGGESTION_STATUSES.map((s) => <SelectItem key={s} value={s}>{STATUS[s]!.label}</SelectItem>)}</SelectContent></Select>
+          <Select value={cat} onValueChange={(v) => { setCat(v); setPage(0); }}><SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Todas as categorias</SelectItem>{SUGGESTION_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{SUGGESTION_CATEGORY_LABEL[c]}</SelectItem>)}</SelectContent></Select>
           <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-[150px]" aria-label="De" />
           <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-[150px]" aria-label="Até" />
           <Select value={sort} onValueChange={setSort}><SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="recent">Mais recentes</SelectItem><SelectItem value="old">Mais antigas</SelectItem><SelectItem value="priority">Prioridade</SelectItem></SelectContent></Select>
