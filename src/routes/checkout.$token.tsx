@@ -52,6 +52,7 @@ function OpenCheckout() {
     </main>
   );
   if (info.isLoading) return shell(<p className="text-sm text-muted-foreground">{t("Carregando...")}</p>);
+  if (d?.state === "activation_pending") return shell(<p role="status" className="text-sm">{t("A empresa ainda está concluindo a ativação para receber pagamentos. Este link ficará disponível após a aprovação da conta.")}</p>);
   if (info.isError || !d || d.state !== "ok") return shell(<p className="text-sm">{t("Este link de checkout não está disponível.")}</p>);
 
   const svc = d.service;
@@ -106,7 +107,7 @@ function OpenCheckout() {
             </div>
           ) : null}
           <Button className="w-full" disabled={busy || !method} onClick={() => void run(async () => { const r = await choose({ data: { token, session, method, installments: Number(n) } }); window.location.assign(r.payUrl); })}>{t("Ir para o pagamento")}</Button>
-          <button type="button" className="w-full text-xs text-muted-foreground underline" onClick={() => setSession(null)}>{t("Voltar")}</button>
+          <Button type="button" variant="ghost" className="w-full" onClick={() => setSession(null)}>{t("Voltar")}</Button>
         </div>
       )}
       {error ? <p role="alert" className="mt-4 text-sm text-destructive">{error}</p> : null}

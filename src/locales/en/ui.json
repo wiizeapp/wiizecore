@@ -1,4 +1,12 @@
 {
+  "Configurar novo link": "Configure new link",
+  "Configurar link de checkout": "Configure checkout link",
+  "Valor do link (R$)": "Link amount (R$)",
+  "À vista ou parcelado": "Pay in full or in installments",
+  "Máximo de parcelas": "Maximum installments",
+  "Um novo link será criado. Links já enviados mantêm as condições anteriores.": "A new link will be created. Previously sent links keep their original conditions.",
+  "Salvar e copiar link": "Save and copy link",
+  "A empresa ainda está concluindo a ativação para receber pagamentos. Este link ficará disponível após a aprovação da conta.": "The company is still completing payment account activation. This link will become available after the account is approved.",
   "Cobranças inteligentes": "Smart billing",
   "Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.": "Payments, contracts, signatures, invoices and financial management in a single platform, built to simplify your business operations.",
   "Da contratação às próximas cobranças,": "From the agreement to future charges,",
