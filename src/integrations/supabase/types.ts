@@ -2642,6 +2642,135 @@ export type Database = {
           },
         ]
       }
+      feature_suggestion_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          from_value: string | null
+          id: string
+          suggestion_id: string
+          to_value: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          suggestion_id: string
+          to_value?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          from_value?: string | null
+          id?: string
+          suggestion_id?: string
+          to_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_suggestion_events_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "feature_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_suggestion_notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          note: string
+          suggestion_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          note: string
+          suggestion_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          suggestion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_suggestion_notes_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "feature_suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feature_suggestions: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          extra: string | null
+          id: string
+          idempotency_key: string
+          priority: string
+          source_page: string | null
+          status: string
+          tenant_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: string
+          created_at?: string
+          description: string
+          extra?: string | null
+          id?: string
+          idempotency_key: string
+          priority?: string
+          source_page?: string | null
+          status?: string
+          tenant_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          extra?: string | null
+          id?: string
+          idempotency_key?: string
+          priority?: string
+          source_page?: string | null
+          status?: string
+          tenant_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_suggestions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_change_log: {
         Row: {
           changed_by: string | null
@@ -3382,6 +3511,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      help_article_feedback: {
+        Row: {
+          article_slug: string
+          created_at: string
+          helpful: boolean
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          article_slug: string
+          created_at?: string
+          helpful: boolean
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          article_slug?: string
+          created_at?: string
+          helpful?: boolean
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       inbound_emails: {
         Row: {
