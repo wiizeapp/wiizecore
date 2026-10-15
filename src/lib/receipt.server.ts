@@ -131,7 +131,7 @@ export async function buildReceiptPdf(r: ReceiptData) {
     } catch { /* logo opcional */ }
   }
   hr(fy + 16);
-  const foot = "Pagamento processado por Wiize Recebe";
+  const foot = "Plataforma Wiize Recebe · Serviços financeiros Asaas";
   text(foot, (595 - font.widthOfTextAtSize(foot, 9)) / 2, fy, 9, font, muted);
   const em = `Emitido em ${fmtDate(new Date().toISOString())}`;
   text(em, (595 - font.widthOfTextAtSize(safe(em), 8)) / 2, fy - 13, 8, font, muted);

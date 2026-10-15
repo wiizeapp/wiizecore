@@ -9,7 +9,8 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Marca visível sempre “WiizePay”; dados públicos/jurídicos vêm de `src/lib/brand-config.ts`.
+- Visible product identity comes from `src/lib/brand-config.ts`; preserve existing technical identifiers, URLs and persisted integration names when changing the display brand. Why: rebranding must not break integrations or historical records.
+- Official financial-provider URLs and channels live in `src/lib/financial-provider.ts`; shared branding/support render through `src/components/financial-provider.tsx`. Why: keep checkout, public site and help consistent without modifying official seals.
 - Operações financeiras são autorizadas no servidor, isoladas por empresa, auditadas e idempotentes; valores monetários usam Decimal/NUMERIC.
 - Asaas usa subcontas/split; liquidação só após confirmação do provedor; antecipação segue `docs/antecipacao.md`.
 - Taxas e custos ficam nas configurações versionadas; cálculos em `src/lib/fee-math.ts`; totais em `src/lib/financial-summary.ts`.
