@@ -3,14 +3,14 @@ import { useState } from "react";
 import {
   ArrowDownUp, BadgeCheck, Banknote, Building2, ChevronRight, CircleDollarSign, ClipboardCheck, FileText, Gauge, KeyRound,
   LayoutDashboard, LifeBuoy, ListChecks, Percent, Receipt, RotateCcw, ScrollText, Settings, ShieldAlert, ShieldCheck, TrendingDown,
-  TrendingUp, UserCog, Users, Wallet, Inbox, Scale, CreditCard, Briefcase, PieChart, FlaskConical,
+  TrendingUp, UserCog, Users, Wallet, Inbox, Scale, CreditCard, Briefcase, PieChart, FlaskConical, Lightbulb,
 } from "lucide-react";
 
 export type AdminSection =
   | "dashboard" | "unit" | "regua" | "simulador" | "visao" | "transacoes" | "receitas" | "despesas" | "taxas" | "contas" | "receber" | "pagar" | "conciliacao"
   | "pagamentos" | "cobrancas" | "clientes" | "faturas" | "saques" | "chargebacks" | "estornos"
   | "empresas" | "publico" | "analise" | "aprovacoes" | "suporte" | "auditoria"
-  | "configuracoes" | "permissoes" | "admins" | "caixa";
+  | "configuracoes" | "permissoes" | "admins" | "caixa" | "sugestoes";
 
 type Item = { id: AdminSection; label: string; icon: typeof Users };
 export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; items: Item[] }[] = [
@@ -43,6 +43,7 @@ export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; item
     { id: "analise", label: "Contas em análise", icon: BadgeCheck },
     { id: "aprovacoes", label: "Aprovações", icon: ClipboardCheck },
     { id: "caixa", label: "Caixa de entrada", icon: Inbox },
+    { id: "sugestoes", label: "Sugestões de usuários", icon: Lightbulb },
     { id: "suporte", label: "Suporte", icon: LifeBuoy },
     { id: "auditoria", label: "Logs e auditoria", icon: ShieldCheck },
   ] },
