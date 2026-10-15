@@ -20,9 +20,9 @@ import { BEFORE_OFFSETS, CHANNELS, PLAN_CHANNELS, PLAN_ORDER, minPlanFor, type D
 export const Route = createFileRoute("/_authenticated/lembrete-de-cobranca")({
   head: () => ({
     meta: [
-      { title: "Lembretes de cobrança — WiizePay" },
+      { title: "Lembretes de cobrança — Wiize Recebe" },
       { name: "description", content: "Configure avisos automáticos por WhatsApp, SMS, e-mail e ligação para suas cobranças." },
-      { property: "og:title", content: "Lembretes de cobrança — WiizePay" },
+      { property: "og:title", content: "Lembretes de cobrança — Wiize Recebe" },
       { property: "og:description", content: "Avisos automáticos das suas cobranças." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -135,7 +135,7 @@ function Regua() {
       <PartnerNotice storageKey="dunning-asaas" title="Como funcionam os lembretes">
         <p>Os avisos de cobrança chegam aos seus clientes em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
         <p>Nessa parceria, o Asaas cuida da entrega das mensagens de lembrete: o e-mail, o SMS e o WhatsApp que avisam antes do vencimento, no dia e depois de atrasado.</p>
-        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na WiizePay. Em alguns avisos, o Asaas aparece identificado como remetente da mensagem.</p>
+        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na Wiize Recebe. Em alguns avisos, o Asaas aparece identificado como remetente da mensagem.</p>
       </PartnerNotice>
 
       {data.level !== "normal" ? (

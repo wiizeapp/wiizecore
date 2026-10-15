@@ -190,7 +190,7 @@ export async function switchPaymentAttempt(
         const { splitFor } = await import("./coproduction.server");
         const split = await splitFor(admin, p.charge_group_id, q.total, fee.totalFeeCents / 100);
         if (!split.length && fee.totalFeeCents > 0) {
-          // À vista sem coprodução: o Asaas retém o custo dele e a WiizePay recebe só a diferença.
+          // À vista sem coprodução: o Asaas retém o custo dele e a Wiize Recebe recebe só a diferença.
           if (singleCash && conn.provider.getMyFees) {
             try {
               const { estimateProviderFeeCents, coveredProviderFeeCents } = await import("./provider-fee-quote");

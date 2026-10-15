@@ -16,7 +16,7 @@ type Report = {
   items: { reference: string; kind: string; expected: number | null; actual: number | null; difference: number | null; explanation: string }[];
 };
 const KIND: Record<string, string> = {
-  taxa_wiizepay: "Taxa WiizePay", custo_provedor: "Custo do provedor", repasse: "Repasse", devolucao_custo: "Devolução de custo",
+  taxa_wiizepay: "Taxa Wiize Recebe", custo_provedor: "Custo do provedor", repasse: "Repasse", devolucao_custo: "Devolução de custo",
   ausente_no_extrato: "Falta no extrato", ausente_no_sistema: "Falta no sistema", outro: "Outro",
 };
 const iso = (d: Date) => d.toISOString().slice(0, 10);

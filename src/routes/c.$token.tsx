@@ -18,10 +18,10 @@ import { Brand } from "@/components/brand";
 export const Route = createFileRoute("/c/$token")({
   head: () => ({
     meta: [
-      { title: "Assinatura de contrato — WiizePay" },
+      { title: "Assinatura de contrato — Wiize Recebe" },
       { name: "description", content: "Leia e assine seu contrato de prestação de serviços com segurança." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Assinatura de contrato — WiizePay" },
+      { property: "og:title", content: "Assinatura de contrato — Wiize Recebe" },
       { property: "og:description", content: "Leia e assine seu contrato de prestação de serviços com segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

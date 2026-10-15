@@ -12,6 +12,7 @@ describe("security headers", () => {
     expect(csp).not.toMatch(/(^|\s)\*(\s|;|$)/);
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("wss://abc.supabase.co");
+    expect(csp.split(";").find((part) => part.trim().startsWith("img-src"))).toContain("https://baas.asaas.com");
   });
   it("dados privados nunca ficam em cache", () => {
     for (const p of ["/painel", "/pagar/x", "/portal/k", "/api/public/v1/charges", "/_serverFn/abc", "/nimda", "/auth"]) {

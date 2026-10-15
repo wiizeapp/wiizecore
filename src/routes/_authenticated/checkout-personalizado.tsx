@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { checkoutAppearanceVars } from "@/components/checkout/checkout-presentation";
+import { FinancialIdentity } from "@/components/financial-provider";
 import {
   discardCheckoutLogo, getCheckoutAppearance, importCheckoutLogo, saveCheckoutAppearance, uploadCheckoutLogo,
 } from "@/lib/checkout-appearance.functions";
@@ -24,9 +25,9 @@ import { contrastIssues, DEFAULT_APPEARANCE, headerTextColors, readableOn, THEME
 export const Route = createFileRoute("/_authenticated/checkout-personalizado")({
   head: () => ({
     meta: [
-      { title: "Aparência do checkout — WiizePay" },
+      { title: "Aparência do checkout — Wiize Recebe" },
       { name: "description", content: "Personalize logo, cores e textos do checkout dos seus clientes." },
-      { property: "og:title", content: "Aparência do checkout — WiizePay" },
+      { property: "og:title", content: "Aparência do checkout — Wiize Recebe" },
       { property: "og:description", content: "Logo, cores e textos do seu checkout." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -47,7 +48,7 @@ const COLOR_FIELDS: { key: "background" | "header" | "surface" | "button" | "but
 ];
 const ISSUE: Record<string, string> = { text: "Texto principal", mutedText: "Texto secundário", buttonText: "Texto do botão", background: "Fundo da página" };
 const THEME_NAMES = {
-  wiize: { name: "WiizePay", description: "Verde preciso e fundo suave" },
+  wiize: { name: "Wiize Recebe", description: "Verde preciso e fundo suave" },
   clean: { name: "Minimalista", description: "Branco e alto contraste" },
   dark: { name: "Escuro", description: "Elegante e confortável" },
 } as const;
@@ -294,6 +295,7 @@ function Preview({ a, device, company }: { a: CheckoutAppearance; device: "deskt
           <PreviewSummary compact={mobile} company={company} />
           <PreviewCheckoutBody compact={mobile} appearance={a} />
         </main>
+        <footer className="checkout-panel border-t border-border px-5 py-5"><FinancialIdentity background={a.background} /></footer>
       </div>
     </div>
   );
@@ -309,6 +311,6 @@ function PreviewSummary({ compact, company }: { compact: boolean; company: strin
 }
 
 function PreviewCheckoutBody({ compact, appearance }: { compact: boolean; appearance: CheckoutAppearance }) {
-  return <section className={`flex min-w-0 flex-col border-border bg-background ${compact ? "border-t p-6" : "border-l p-10 lg:p-12"}`}><div className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground"><span className="grid size-6 place-items-center rounded-md bg-accent text-accent-foreground"><Check className="size-3.5" /></span><span>Dados confirmados</span><span className="h-px flex-1 bg-border" /><span className="grid size-6 place-items-center rounded-md bg-primary text-primary-foreground"><CreditCard className="size-3.5" /></span><span className="text-primary">Pagamento</span></div><div className={compact ? "mt-7" : "mt-10"}><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Pagamento</p><h3 className="mt-2 font-display text-2xl font-semibold">Pague com Pix</h3><p className="mt-1 text-sm text-muted-foreground">Pagamento rápido e confirmação automática.</p></div><div className={`mt-6 rounded-lg border border-border bg-card shadow-sm ${compact ? "p-5" : "p-6"}`}><div className="flex items-center gap-4"><span className="grid size-12 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><QrCode className="size-6" /></span><div><p className="font-semibold">Pix</p><p className="text-xs text-muted-foreground">Copie o código ou escaneie para pagar</p></div></div><div className="mt-6 grid grid-cols-[1fr_auto] gap-2"><span className="h-11 rounded-md border border-border bg-muted" /><span className="grid size-11 place-items-center rounded-md border border-border text-muted-foreground"><LockKeyhole className="size-4" /></span></div><div className="mt-3 flex h-12 items-center justify-center rounded-md bg-primary font-semibold text-primary-foreground">Copiar código Pix</div></div><div className="mt-auto border-t border-border pt-6"><p className="text-xs font-medium">{appearance.supportText || "Precisa de ajuda? Fale com a nossa equipe."}</p><div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-muted-foreground">{appearance.supportEmail ? <span className="flex items-center gap-1.5"><Mail className="size-3.5 text-primary" />{appearance.supportEmail}</span> : null}{appearance.supportPhone ? <span className="flex items-center gap-1.5"><Phone className="size-3.5 text-primary" />{appearance.supportPhone}</span> : null}<span className="flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />Processado pela WiizePay</span></div></div></section>;
+  return <section className={`flex min-w-0 flex-col border-border bg-background ${compact ? "border-t p-6" : "border-l p-10 lg:p-12"}`}><div className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground"><span className="grid size-6 place-items-center rounded-md bg-accent text-accent-foreground"><Check className="size-3.5" /></span><span>Dados confirmados</span><span className="h-px flex-1 bg-border" /><span className="grid size-6 place-items-center rounded-md bg-primary text-primary-foreground"><CreditCard className="size-3.5" /></span><span className="text-primary">Pagamento</span></div><div className={compact ? "mt-7" : "mt-10"}><p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary">Pagamento</p><h3 className="mt-2 font-display text-2xl font-semibold">Pague com Pix</h3><p className="mt-1 text-sm text-muted-foreground">Pagamento rápido e confirmação automática.</p></div><div className={`mt-6 rounded-lg border border-border bg-card shadow-sm ${compact ? "p-5" : "p-6"}`}><div className="flex items-center gap-4"><span className="grid size-12 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><QrCode className="size-6" /></span><div><p className="font-semibold">Pix</p><p className="text-xs text-muted-foreground">Copie o código ou escaneie para pagar</p></div></div><div className="mt-6 grid grid-cols-[1fr_auto] gap-2"><span className="h-11 rounded-md border border-border bg-muted" /><span className="grid size-11 place-items-center rounded-md border border-border text-muted-foreground"><LockKeyhole className="size-4" /></span></div><div className="mt-3 flex h-12 items-center justify-center rounded-md bg-primary font-semibold text-primary-foreground">Copiar código Pix</div></div><div className="mt-auto border-t border-border pt-6"><p className="text-xs font-medium">{appearance.supportText || "Precisa de ajuda? Fale com a nossa equipe."}</p><div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-muted-foreground">{appearance.supportEmail ? <span className="flex items-center gap-1.5"><Mail className="size-3.5 text-primary" />{appearance.supportEmail}</span> : null}{appearance.supportPhone ? <span className="flex items-center gap-1.5"><Phone className="size-3.5 text-primary" />{appearance.supportPhone}</span> : null}<span className="flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-primary" />Serviços financeiros Asaas</span></div></div></section>;
 }
 

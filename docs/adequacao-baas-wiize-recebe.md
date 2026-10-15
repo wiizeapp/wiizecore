@@ -1,0 +1,221 @@
+# Wiize Recebe — adequação BaaS Asaas
+
+## Entrega — 15/10/2026
+- Marca visível Wiize Recebe aplicada em telas públicas/internas, checkout, portal, ajuda, títulos, e-mails e PDFs futuros. Wiize e seu símbolo preservados. Documentos já assinados, arquivos históricos e mensagens enviadas não foram reescritos.
+- Selos individualizados oficiais remotos, sem recoloração, com link https://asaas.com em nova aba e noopener/noreferrer. Seleção positiva/branca pelo fundo. Aplicados ao rodapé institucional, pagamento, checkout aberto, autorização Pix, portal e prévia personalizada.
+- Identificação: plataforma Wiize Recebe; serviços financeiros Asaas. Recibos futuros deixam de atribuir processamento à plataforma.
+- Suporte financeiro separado do atendimento de software na Central de Ajuda e telas pertinentes: 0800 009 0037 (telefone PJ e mensagens), contato@asaas.com.br. Botão usa mailto, sem inventar chat ou página de suporte; não foi enviado e-mail nem realizada ligação.
+- Termos/Política de Pagamentos: identificação do prestador, sem aplicar cláusula-modelo ou modificar taxas, garantias e obrigações financeiras. Privacidade e Cookies revisados conforme implementação existente, com reabertura das preferências.
+- Traduções EN/ES atualizadas. Domínios, rotas, assinaturas, chaves e nomes técnicos/integrações preservados. Não houve migração, alteração de banco, autenticação, permissões, webhooks ou cálculos financeiros.
+
+## Testes e limites
+- Compilação automática: OK.
+- 63 testes aprovados em 7 arquivos: aparência, checkout aberto/externo, cabeçalhos de segurança, calculadoras, taxas e notas fiscais.
+- Suíte institucional adicional: 3 aprovados e 1 falha preexistente, expectativa “Mais de R$” contra texto atual “R$”; já registrada no roadmap anterior. Não desfeita alteração visual anterior.
+- Navegador: home, ajuda, termos, privacidade, cookies e estados de erro de checkout/pagamento/autorização em 1260 e 390 px; sem rolagem lateral, marca antiga ou erros de execução. Selos carregaram.
+- Sessão conectada: painel, aparência do checkout e ajuda abrem com Wiize Recebe. Selo da prévia carregado e fotografado, sem salvar alterações.
+- Recusa de cookies persistiu após recarga; análise/marketing recusados e zero scripts de rastreamento naquele estado. Reabrir preferências funcionou.
+- Comparação com retrato inicial não encontrou remoção de URLs existentes. Nenhum pagamento foi efetuado. Links inválidos verificam apresentação de erro, não jornada financeira completa. Portal de cliente, assinatura e autorização real de Pix não foram exercitados ponta a ponta.
+
+## Pendências externas — não representa homologação
+1. Asaas: aprovação formal da marca Wiize Recebe, posicionamento dos selos e jornada completa. A troca visual foi realizada agora; aprovação não presumida.
+2. Jurídico/Asaas: validar cláusula financeira e nome empresarial exato. Modelo da página 11 contém grafias divergentes (“ASAAAS”); não copiado automaticamente nem convertido em obrigações novas.
+3. Responsável pela plataforma: fornecer razão social, CNPJ, endereço e encarregado/canal de privacidade validados. Configuração oficial ainda sem esses dados; nada inventado.
+4. Privacidade: validar bases legais, papéis por operação, retenção, transferências internacionais e inventário de cookies de terceiros conforme ferramentas efetivamente habilitadas. Descrição técnica não substitui revisão jurídica.
+5. Operação: conferir links válidos de pagamento, portal, assinatura e Pix sob controle da empresa; nenhum dinheiro movimentado nesta revisão.
+6. Publicação não solicitada: alterações na prévia, sem acionar publicação.
+
+## Fontes
+- Playbook de BaaS para clientes Asaas fornecido: marca/identificação (página 5), cláusula-modelo (página 11), canais (página 16).
+- URLs oficiais individualizados mantidos integralmente em `src/lib/financial-provider.ts`.
+- Implementação atual de consentimento e dados oficiais de `src/lib/brand-config.ts`; ferramentas ativas não foram inferidas apenas pelo código.
+
+## Arquivos criados
+- `src/lib/financial-provider.ts`
+- `src/components/financial-provider.tsx`
+- `docs/adequacao-baas-wiize-recebe.md`
+
+## Arquivos editados
+- `AGENTS.md`
+- `public/llms.txt`
+- `roadmap.md`
+- `src/components/AGENTS.md`
+- `src/components/admin-console.tsx`
+- `src/components/admin/admin-finance.tsx`
+- `src/components/admin/admin-nav.tsx`
+- `src/components/admin/admin-unit-economics.tsx`
+- `src/components/admin/admin-wiize-credentials.tsx`
+- `src/components/ai-reconciliation.tsx`
+- `src/components/app-shell.tsx`
+- `src/components/charges/charge-sheet.tsx`
+- `src/components/charges/coproduction-card.tsx`
+- `src/components/charges/refunds-panel.tsx`
+- `src/components/checkout/checkout-presentation.tsx`
+- `src/components/confirm-dialog.tsx`
+- `src/components/contracts/contract-wizard.tsx`
+- `src/components/contracts/verify-layout.tsx`
+- `src/components/contracts/verify-panel.tsx`
+- `src/components/drive-integration-card.tsx`
+- `src/components/ds/date-field.tsx`
+- `src/components/ds/index.tsx`
+- `src/components/ext-insights.tsx`
+- `src/components/feature-marquee.tsx`
+- `src/components/feature-showcase.tsx`
+- `src/components/help/help-parts.tsx`
+- `src/components/home/feature-visual.tsx`
+- `src/components/home/landing-sections.tsx`
+- `src/components/home/premium-visuals.tsx`
+- `src/components/institutional/about-page.tsx`
+- `src/components/institutional/infrastructure-data.test.ts`
+- `src/components/institutional/infrastructure-data.ts`
+- `src/components/institutional/infrastructure.tsx`
+- `src/components/institutional/visuals.tsx`
+- `src/components/integrations-card.tsx`
+- `src/components/invoices/fiscal-onboarding.tsx`
+- `src/components/invoices/fiscal-service-dialog.tsx`
+- `src/components/invoices/issue-wizard.tsx`
+- `src/components/mfa-recovery-card.tsx`
+- `src/components/onboarding-gate.tsx`
+- `src/components/public-site.tsx`
+- `src/components/resource-page.tsx`
+- `src/lib/activation.functions.ts`
+- `src/lib/activation.server.ts`
+- `src/lib/admin-finance.functions.ts`
+- `src/lib/admin-inbox.functions.ts`
+- `src/lib/admin.functions.ts`
+- `src/lib/anticipation.server.ts`
+- `src/lib/asaas-invoices.server.ts`
+- `src/lib/asaas-onboarding.server.ts`
+- `src/lib/billing.server.ts`
+- `src/lib/brand-config.ts`
+- `src/lib/charges-core.server.ts`
+- `src/lib/checkout.functions.ts`
+- `src/lib/contract-docs.server.ts`
+- `src/lib/coproduction.server.ts`
+- `src/lib/coproductions.functions.ts`
+- `src/lib/deploy-config.ts`
+- `src/lib/dunning-rules.ts`
+- `src/lib/dunning.functions.ts`
+- `src/lib/email.server.ts`
+- `src/lib/ext-docs.ts`
+- `src/lib/ext-webhooks.functions.ts`
+- `src/lib/fee-math.ts`
+- `src/lib/finance.functions.ts`
+- `src/lib/financial-summary.ts`
+- `src/lib/gestao.functions.ts`
+- `src/lib/google-drive.functions.ts`
+- `src/lib/google-drive.server.ts`
+- `src/lib/help-calculators.ts`
+- `src/lib/help-center.functions.ts`
+- `src/lib/help-content.ts`
+- `src/lib/invoice-payloads.ts`
+- `src/lib/invoices.functions.ts`
+- `src/lib/limits.functions.ts`
+- `src/lib/mfa-recovery.functions.ts`
+- `src/lib/notify.server.ts`
+- `src/lib/onboarding-options.ts`
+- `src/lib/onboarding.functions.ts`
+- `src/lib/payment-attempts.server.ts`
+- `src/lib/pdf-logo.server.ts`
+- `src/lib/provider-fee-quote.test.ts`
+- `src/lib/provider-fee-quote.ts`
+- `src/lib/provider.functions.ts`
+- `src/lib/receipt.server.ts`
+- `src/lib/reconciliation-ai.server.ts`
+- `src/lib/reconciliation.functions.ts`
+- `src/lib/refunds.server.ts`
+- `src/lib/security-alerts.server.ts`
+- `src/lib/security-headers.ts`
+- `src/lib/seo.ts`
+- `src/lib/settlement-rules.ts`
+- `src/lib/tx-display.ts`
+- `src/lib/unit-economics.functions.ts`
+- `src/lib/unit-economics.ts`
+- `src/lib/wiize-integration.functions.ts`
+- `src/lib/wiize-pay-oauth.server.ts`
+- `src/lib/wiize-pay-oauth.test.ts`
+- `src/locales/en/fees.json`
+- `src/locales/en/footer.json`
+- `src/locales/en/navigation.json`
+- `src/locales/en/ui.json`
+- `src/locales/es/fees.json`
+- `src/locales/es/footer.json`
+- `src/locales/es/navigation.json`
+- `src/locales/es/ui.json`
+- `src/locales/pt-BR/fees.json`
+- `src/locales/pt-BR/footer.json`
+- `src/locales/pt-BR/navigation.json`
+- `src/locales/pt-BR/ui.json`
+- `src/routes/__root.tsx`
+- `src/routes/_authenticated/antecipacao.tsx`
+- `src/routes/_authenticated/ativacao.tsx`
+- `src/routes/_authenticated/checkout-personalizado.tsx`
+- `src/routes/_authenticated/clientes.tsx`
+- `src/routes/_authenticated/clientes_.$id.tsx`
+- `src/routes/_authenticated/cobrancas.tsx`
+- `src/routes/_authenticated/configuracoes.tsx`
+- `src/routes/_authenticated/contratos.tsx`
+- `src/routes/_authenticated/contratos_.$id.tsx`
+- `src/routes/_authenticated/coproducoes.tsx`
+- `src/routes/_authenticated/coproducoes_.$id.tsx`
+- `src/routes/_authenticated/cupons.tsx`
+- `src/routes/_authenticated/documentos.tsx`
+- `src/routes/_authenticated/equipe.tsx`
+- `src/routes/_authenticated/extrato.tsx`
+- `src/routes/_authenticated/financas.tsx`
+- `src/routes/_authenticated/financeiro.tsx`
+- `src/routes/_authenticated/integracao-externa.tsx`
+- `src/routes/_authenticated/integracoes.tsx`
+- `src/routes/_authenticated/lembrete-de-cobranca.tsx`
+- `src/routes/_authenticated/limites.tsx`
+- `src/routes/_authenticated/multas-e-encargos.tsx`
+- `src/routes/_authenticated/nimda.tsx`
+- `src/routes/_authenticated/notas-fiscais.$id.tsx`
+- `src/routes/_authenticated/notas-fiscais.configuracoes.tsx`
+- `src/routes/_authenticated/notas-fiscais.index.tsx`
+- `src/routes/_authenticated/painel.tsx`
+- `src/routes/_authenticated/perfil.tsx`
+- `src/routes/_authenticated/recebiveis.tsx`
+- `src/routes/_authenticated/seguranca.tsx`
+- `src/routes/_authenticated/servicos.tsx`
+- `src/routes/ajuda.$categoria.tsx`
+- `src/routes/ajuda.artigo.$slug.tsx`
+- `src/routes/ajuda.calculadoras.tsx`
+- `src/routes/ajuda.index.tsx`
+- `src/routes/api/public/cron/notifications.ts`
+- `src/routes/api/public/google-drive/callback.ts`
+- `src/routes/api/public/wiize/callback.ts`
+- `src/routes/assinar.$token.tsx`
+- `src/routes/ativacao-celular.$token.tsx`
+- `src/routes/auth.tsx`
+- `src/routes/autorizar.$token.tsx`
+- `src/routes/c.$token.tsx`
+- `src/routes/checkout-com-sua-marca.tsx`
+- `src/routes/checkout.$token.tsx`
+- `src/routes/cobrancas-e-pagamentos.tsx`
+- `src/routes/contratos-digitais.tsx`
+- `src/routes/convite.$token.tsx`
+- `src/routes/gestao-de-clientes.tsx`
+- `src/routes/gestao-financeira.tsx`
+- `src/routes/index.tsx`
+- `src/routes/integracao-crm-wiize.tsx`
+- `src/routes/lembretes-de-cobranca.tsx`
+- `src/routes/oauth.authorize.tsx`
+- `src/routes/pagar.$token.tsx`
+- `src/routes/perguntas-frequentes.tsx`
+- `src/routes/pix-automatico.tsx`
+- `src/routes/politica-de-cancelamento-e-reembolso.tsx`
+- `src/routes/politica-de-cookies.tsx`
+- `src/routes/politica-de-pagamentos.tsx`
+- `src/routes/politica-de-privacidade.tsx`
+- `src/routes/portal-do-cliente.tsx`
+- `src/routes/portal.$key.tsx`
+- `src/routes/prazos.tsx`
+- `src/routes/reset-password.tsx`
+- `src/routes/seguranca-e-confianca.tsx`
+- `src/routes/sobre.tsx`
+- `src/routes/suporte.tsx`
+- `src/routes/taxas.tsx`
+- `src/routes/termos-de-uso.tsx`
+- `src/routes/verificar.$code.tsx`
+- `src/routes/verificar.index.tsx`

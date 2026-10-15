@@ -1,9 +1,13 @@
 # Roadmap
 
-- [ ] Adequar identificação Asaas nos checkouts e rodapé institucional sem alterar operações financeiras.
-- [ ] Revisar privacidade, termos e cookies contra o playbook e implementação; documentar validações jurídicas e do Asaas.
-- [ ] Adicionar suporte financeiro à Central de Ajuda, preservando suporte WiizePay.
-- [ ] Validar selos, canais, telas e testes existentes; entregar relação completa dos arquivos e limitações.
+- [x] Substituir a marca visível por Wiize Recebe, preservando Wiize, domínios, rotas e identificadores técnicos; telas públicas e sessão conectada conferidas.
+
+- [x] Adequar identificação Asaas nos checkouts e rodapé institucional, prévia e portal sem alterar operações financeiras.
+- [x] Revisar privacidade, termos e cookies contra o playbook e implementação; relatório em docs/adequacao-baas-wiize-recebe.md.
+- [x] Adicionar suporte financeiro à Central de Ajuda, preservando suporte tecnológico Wiize Recebe.
+- [x] Validar selos, canais, telas e testes: 63 aprovados; compilação OK; falha institucional preexistente registrada no relatório.
+- [ ] Obter homologação formal da marca e apresentação pelo Asaas: depende de aprovação externa.
+- [ ] Validar cláusula financeira, dados jurídicos e inventário de privacidade: depende de jurídico/Asaas e dados oficiais da empresa.
 
 - [x] Ajustar os quatro ícones 3D de "Como funciona" para o mesmo tamanho: cada desenho é escalado pela própria área visível e por um peso óptico individual. Conferido em pixels reais a 1377px (71×65, 64×66, 91×62, 68×63) e a 393px, sem rolagem horizontal e com a compilação OK.
 

@@ -31,9 +31,9 @@ export const Route = createFileRoute("/_authenticated/notas-fiscais/")({
   }),
   head: () => ({
     meta: [
-      { title: "Notas Fiscais — WiizePay" },
+      { title: "Notas Fiscais — Wiize Recebe" },
       { name: "description", content: "Emita, acompanhe e gerencie suas notas fiscais de serviço." },
-      { property: "og:title", content: "Notas Fiscais — WiizePay" },
+      { property: "og:title", content: "Notas Fiscais — Wiize Recebe" },
       { property: "og:description", content: "Emita, acompanhe e gerencie suas notas fiscais de serviço." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -111,7 +111,7 @@ function NotasFiscais() {
     <div>
       <PageHeader
         title={ui("Notas Fiscais")}
-        description={`${ui("Emita notas de cobranças da WiizePay ou de serviços recebidos por fora.")} ${invoiceFee != null ? ui("Taxa de {{fee}} por nota autorizada, descontada do seu saldo.", { fee: formatBRL(invoiceFee) }) : ui("Taxa por nota autorizada, descontada do seu saldo.")}`}
+        description={`${ui("Emita notas de cobranças da Wiize Recebe ou de serviços recebidos por fora.")} ${invoiceFee != null ? ui("Taxa de {{fee}} por nota autorizada, descontada do seu saldo.", { fee: formatBRL(invoiceFee) }) : ui("Taxa por nota autorizada, descontada do seu saldo.")}`}
         action={<>
           <Button variant="outline" asChild><Link to="/notas-fiscais/configuracoes"><Settings2 className="mr-1.5 h-4 w-4" />Configurações fiscais</Link></Button>
           <Button onClick={() => openWizard()} disabled={overview.isLoading}><Plus className="mr-1.5 h-4 w-4" />Emitir nota</Button>

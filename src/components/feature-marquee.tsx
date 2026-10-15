@@ -57,7 +57,7 @@ export function EcosystemBadge() {
 
 export function FeatureMarquee() {
   return (
-    <section className="border-y border-border bg-surface py-10 sm:py-14" aria-label="Ecossistema WiizePay">
+    <section className="border-y border-border bg-surface py-10 sm:py-14" aria-label="Ecossistema Wiize Recebe">
       <Marquee pauseOnHover speed={30} className="mt-0">
         {items.map((item) => (
           <div key={item.label} className="flex h-12 w-40 shrink-0 items-center justify-center px-6 sm:w-56 sm:px-10">

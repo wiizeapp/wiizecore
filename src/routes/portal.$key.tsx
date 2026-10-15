@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brand } from "@/components/brand";
+import { FinancialIdentity } from "@/components/financial-provider";
 import { formatBRL, formatDate } from "@/lib/format";
 import { paymentMethodLabels } from "@/lib/labels";
 import { openFile } from "@/lib/contract-files-client";
@@ -18,9 +19,9 @@ export const Route = createFileRoute("/portal/$key")({
   loader: ({ params }) => getPortalInfo({ data: { key: params.key } }),
   head: () => ({
     meta: [
-      { title: "Portal do cliente · WiizePay" },
+      { title: "Portal do cliente · Wiize Recebe" },
       { name: "description", content: "Acesse seus recibos, contratos e documentos com segurança." },
-      { property: "og:title", content: "Portal do cliente · WiizePay" },
+      { property: "og:title", content: "Portal do cliente · Wiize Recebe" },
       { property: "og:description", content: "Recibos, contratos e documentos em um só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -76,7 +77,7 @@ function PortalPage() {
         )}
       </main>
       <footer className={`checkout-panel border-t border-border px-4 py-1.5 text-center text-[11px] leading-tight text-muted-foreground/70 sm:pb-2 ${token ? "pb-[4.75rem]" : "pb-2"}`}>
-        <span className="inline-flex items-center gap-1"><LockKeyhole className="size-2.5 shrink-0 text-primary/70" />Acesso protegido · Portal processado por <Brand className="ml-0.5 gap-1 align-middle [&>img]:size-3 [&>span]:text-[11px]" /></span>
+        <FinancialIdentity background={appearance.background} />
       </footer>
     </div>
   );

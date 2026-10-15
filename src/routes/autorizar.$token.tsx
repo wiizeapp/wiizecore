@@ -7,16 +7,17 @@ import { getPublicPixAuthorization } from "@/lib/pix-automatic.functions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Brand } from "@/components/brand";
+import { FinancialIdentity, FinancialSupport } from "@/components/financial-provider";
 import { formatBRL, formatDate } from "@/lib/format";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/autorizar/$token")({
   head: () => ({
     meta: [
-      { title: "Autorizar Pix Automático — WiizePay" },
+      { title: "Autorizar Pix Automático — Wiize Recebe" },
       { name: "description", content: "Autorize o Pix Automático no app do seu banco e pague suas cobranças recorrentes sem esforço." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Autorizar Pix Automático — WiizePay" },
+      { property: "og:title", content: "Autorizar Pix Automático — Wiize Recebe" },
       { property: "og:description", content: "Autorize uma vez no app do banco e as próximas cobranças são pagas automaticamente." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -91,6 +92,7 @@ function AuthorizePage() {
             ) : null}
           </div>
         ) : null}
+        <footer className="pt-4"><FinancialIdentity /><FinancialSupport compact /></footer>
       </div>
     </main>
   );

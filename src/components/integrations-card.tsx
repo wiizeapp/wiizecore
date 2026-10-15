@@ -30,7 +30,7 @@ export function IntegrationsCard() {
     <section className="surface-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[260px_1fr]">
       <div>
         <h2 className="font-display text-base font-semibold tracking-tight">Integrações</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Sistemas que você autorizou a usar sua conta WiizePay.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Sistemas que você autorizou a usar sua conta Wiize Recebe.</p>
       </div>
       <div className="min-w-0">
         <div className="rounded-xl border border-border p-4">
@@ -70,7 +70,7 @@ export function IntegrationsCard() {
               <p className="font-semibold text-foreground">A conexão é feita pelo Wiize</p>
               <ol className="mt-2 list-decimal space-y-1 pl-4 text-muted-foreground">
                 <li>Entre na sua conta do Wiize.</li>
-                <li>Vá em Integrações e clique em “Conectar WiizePay”.</li>
+                <li>Vá em Integrações e clique em “Conectar Wiize Recebe”.</li>
                 <li>Você volta para cá só para confirmar o acesso.</li>
               </ol>
             </div>

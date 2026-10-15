@@ -28,10 +28,10 @@ type ServiceType = "one_time" | "installment" | "recurring" | "flexible";
 export const Route = createFileRoute("/_authenticated/servicos")({
   head: () => ({
     meta: [
-      { title: "Serviços — WiizePay" },
-      { name: "description", content: "Cadastre serviços, recorrências e parcelamentos da sua empresa na WiizePay." },
-      { property: "og:title", content: "Serviços — WiizePay" },
-      { property: "og:description", content: "Cadastre serviços, recorrências e parcelamentos da sua empresa na WiizePay." },
+      { title: "Serviços — Wiize Recebe" },
+      { name: "description", content: "Cadastre serviços, recorrências e parcelamentos da sua empresa na Wiize Recebe." },
+      { property: "og:title", content: "Serviços — Wiize Recebe" },
+      { property: "og:description", content: "Cadastre serviços, recorrências e parcelamentos da sua empresa na Wiize Recebe." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

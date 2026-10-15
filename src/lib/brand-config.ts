@@ -1,7 +1,7 @@
 export const BRAND_CONFIG = {
   brandName: "Wiize",
-  productName: "WiizePay",
-  displayName: "WiizePay",
+  productName: "Wiize Recebe",
+  displayName: "Wiize Recebe",
   siteDomain: "wiize.com.br",
   contactEmail: "wiizepay@gmail.com",
   legal: {
@@ -16,7 +16,7 @@ export const BRAND_CONFIG = {
 
 export const LEGAL_VERSION = "1.1";
 export const LEGAL_PUBLISHED_AT = "25 de setembro de 2026";
-export const LEGAL_UPDATED_AT = "4 de outubro de 2026";
+export const LEGAL_UPDATED_AT = "15 de outubro de 2026";
 
 export function supportMailto(subject?: string) {
   const query = subject ? `?subject=${encodeURIComponent(subject)}` : "";

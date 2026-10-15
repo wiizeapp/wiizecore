@@ -5,13 +5,13 @@ const db = (admin: Admin) => admin as any;
 
 export type CoproducerInput = { name: string; email: string; type: "percent" | "fixed"; percent?: number | null | undefined; fixedAmount?: number | null | undefined; responsibility?: string | null | undefined };
 
-/** Encontra a empresa e a carteira aprovada de quem foi convidado. Só contas WiizePay ativas podem participar. */
+/** Encontra a empresa e a carteira aprovada de quem foi convidado. Só contas Wiize Recebe ativas podem participar. */
 export async function resolveCoproducer(admin: Admin, ownerTenantId: string, email: string) {
   const clean = email.trim().toLowerCase();
   const { data: profile } = await admin.from("profiles").select("id, full_name, email").ilike("email", clean).limit(1).maybeSingle();
-  if (!profile) throw new Error(`O e-mail ${clean} precisa estar associado a uma conta WiizePay para participar da coprodução.`);
+  if (!profile) throw new Error(`O e-mail ${clean} precisa estar associado a uma conta Wiize Recebe para participar da coprodução.`);
   const { data: member } = await admin.from("tenant_members").select("tenant_id, role").eq("user_id", profile.id).eq("status", "active").in("role", ["owner", "admin"]).limit(1).maybeSingle();
-  if (!member) throw new Error(`A conta ${clean} não administra uma empresa na WiizePay.`);
+  if (!member) throw new Error(`A conta ${clean} não administra uma empresa na Wiize Recebe.`);
   if (member.tenant_id === ownerTenantId) throw new Error("Você não pode convidar alguém da sua própria empresa como coprodutor.");
   const { data: approved } = await admin.rpc("can_receive_payments", { _tenant_id: member.tenant_id });
   const { data: conn } = await admin.from("provider_connections").select("wallet_id").eq("tenant_id", member.tenant_id).eq("provider", "asaas").eq("status", "connected").limit(1).maybeSingle();
@@ -72,7 +72,7 @@ async function activeParticipants(admin: Admin, chargeGroupId: string) {
   return { id: cp.id as string, parts: (parts ?? []) as { id: string; wallet_id: string; percentage: number; name: string }[] };
 }
 
-/** Divisão completa de uma parcela para o Asaas: taxa WiizePay + parte de cada coprodutor, calculada pelo líquido daquela parcela. */
+/** Divisão completa de uma parcela para o Asaas: taxa Wiize Recebe + parte de cada coprodutor, calculada pelo líquido daquela parcela. */
 export async function splitFor(admin: Admin, chargeGroupId: string, gross: number, platformFee: number) {
   const master = process.env["ASAAS_MASTER_WALLET_ID"];
   const split: { walletId: string; fixedValue: number }[] = [];
@@ -178,7 +178,7 @@ export async function refundSharesFor(admin: Admin, paymentId: string, refundAmo
 /**
  * Lê no Asaas o total já estornado de cada coprodutor (refundedSplits concluídos) e aplica só a diferença.
  * Avisos repetidos não estornam de novo. `creditOwner` devolve ao principal a parte paga pelos coprodutores
- * quando o reembolso foi pedido pela WiizePay (o principal reservou o valor cheio).
+ * quando o reembolso foi pedido pela Wiize Recebe (o principal reservou o valor cheio).
  */
 export async function syncRefundsFromProvider(admin: Admin, paymentId: string, creditOwner: boolean) {
   const { data: p } = await admin.from("payments").select("id, tenant_id, provider_payment_id").eq("id", paymentId).maybeSingle();

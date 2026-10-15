@@ -536,7 +536,7 @@ const cardSchema = z.object({
 });
 
 /**
- * Pagamento com cartão dentro do checkout da WiizePay.
+ * Pagamento com cartão dentro do checkout da Wiize Recebe.
  * Os dados do cartão são repassados direto ao processador e nunca são gravados nem registrados em log.
  */
 export const payCheckoutWithCard = createServerFn({ method: "POST" })

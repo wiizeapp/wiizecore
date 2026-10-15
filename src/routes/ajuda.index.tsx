@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { matchesSearch } from "@/components/ds/search-field";
 import { SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
+import { FinancialSupport } from "@/components/financial-provider";
 
 export const Route = createFileRoute("/ajuda/")({
-  head: () => ({ meta: [{ title: "Central de Ajuda | WiizePay" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da WiizePay." }] }),
+  head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Recebe" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }, { property: "og:title", content: "Central de Ajuda | Wiize Recebe" }, { property: "og:description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: HelpHome,
 });
 
@@ -31,7 +32,7 @@ function HelpHome() {
 
   return (
     <div>
-      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a WiizePay e consulte informações sobre taxas, pagamentos e recebimentos.")} />
+      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a Wiize Recebe e consulte informações sobre taxas, pagamentos e recebimentos.")} />
       <div className="mb-10">
         <div className="relative mx-auto max-w-2xl">
           <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -78,6 +79,7 @@ function HelpHome() {
           </Link>
         ))}
       </div>
+      <FinancialSupport />
       <SuggestCTA sourceLabel="Central de Ajuda" />
       {signed ? <SuggestionDialog open={open} onOpenChange={setOpen} defaultCategory="help_content" sourceLabel={`Busca: ${q}`} /> : null}
     </div>

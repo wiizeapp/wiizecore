@@ -14,10 +14,10 @@ import { resetPasswordWithRecoveryCode } from "@/lib/mfa-recovery.functions";
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
-      { title: "Redefinir senha — WiizePay" },
-      { name: "description", content: "Crie uma nova senha para sua conta WiizePay." },
-      { property: "og:title", content: "Redefinir senha — WiizePay" },
-      { property: "og:description", content: "Crie uma nova senha para sua conta WiizePay." },
+      { title: "Redefinir senha — Wiize Recebe" },
+      { name: "description", content: "Crie uma nova senha para sua conta Wiize Recebe." },
+      { property: "og:title", content: "Redefinir senha — Wiize Recebe" },
+      { property: "og:description", content: "Crie uma nova senha para sua conta Wiize Recebe." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

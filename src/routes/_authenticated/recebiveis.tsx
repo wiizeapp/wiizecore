@@ -22,9 +22,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/recebiveis")({
   head: () => ({
     meta: [
-      { title: "Recebíveis — WiizePay" },
+      { title: "Recebíveis — Wiize Recebe" },
       { name: "description", content: "Quem pagou, quem está em aberto e quem está inadimplente, com filtros e exportação para Excel." },
-      { property: "og:title", content: "Recebíveis — WiizePay" },
+      { property: "og:title", content: "Recebíveis — Wiize Recebe" },
       { property: "og:description", content: "Controle de pagos, em aberto e inadimplentes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -141,7 +141,7 @@ function Recebiveis() {
         money = ["Valor", "Taxa", "Líquido"];
       } else if (kind === "extrato") {
         const { data } = await supabase.from("transactions").select("occurred_at, kind, description, amount").eq("tenant_id", tenantId).order("occurred_at", { ascending: false }).limit(50000);
-        rows = (data ?? []).map((x) => ({ Data: brDate(x.occurred_at), Tipo: x.kind === "provider_fee" || x.kind === "platform_fee" ? "Taxa WiizePay" : x.kind, "Descrição": x.description ?? "", Valor: Number(x.amount) }));
+        rows = (data ?? []).map((x) => ({ Data: brDate(x.occurred_at), Tipo: x.kind === "provider_fee" || x.kind === "platform_fee" ? "Taxa Wiize Recebe" : x.kind, "Descrição": x.description ?? "", Valor: Number(x.amount) }));
         money = ["Valor"];
       } else {
         const all = (await fetchAll(() => build(SELECT))) as Row[];

@@ -22,10 +22,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/extrato")({
   head: () => ({
     meta: [
-      { title: "Extrato completo — WiizePay" },
-      { name: "description", content: "Todas as movimentações da sua conta WiizePay com filtros e exportação." },
-      { property: "og:title", content: "Extrato completo — WiizePay" },
-      { property: "og:description", content: "Movimentações da conta WiizePay com filtros e exportação para Excel." },
+      { title: "Extrato completo — Wiize Recebe" },
+      { name: "description", content: "Todas as movimentações da sua conta Wiize Recebe com filtros e exportação." },
+      { property: "og:title", content: "Extrato completo — Wiize Recebe" },
+      { property: "og:description", content: "Movimentações da conta Wiize Recebe com filtros e exportação para Excel." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/extrato")({
 type Period = "today" | "yesterday" | "month" | "30d" | "90d" | "custom";
 type Tx = { id: string; kind: string; description: string | null; amount: number | string; occurred_at: string; payment_id: string | null };
 const PAGE = 20;
-const KIND: Record<string, string> = { payment: "Recebimento", platform_fee: "Taxa WiizePay", provider_fee: "Taxa WiizePay", refund: "Reembolso", withdrawal: "Saque", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação" };
+const KIND: Record<string, string> = { payment: "Recebimento", platform_fee: "Taxa Wiize Recebe", provider_fee: "Taxa Wiize Recebe", refund: "Reembolso", withdrawal: "Saque", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação" };
 const TYPES: Record<string, string[] | null> = { all: null, in: ["payment", "anticipation"], fees: ["platform_fee", "provider_fee", "anticipation_fee"], refund: ["refund"], withdrawal: ["withdrawal"], adjustment: ["adjustment"] };
 const ds = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 function range(p: Period, c?: DateRange) {
@@ -130,7 +130,7 @@ function ExtratoPage() {
   const t = totals.data;
   return (
     <div>
-      <PageHeader title={ui("Extrato completo")} description="Todas as movimentações da sua conta WiizePay."
+      <PageHeader title={ui("Extrato completo")} description="Todas as movimentações da sua conta Wiize Recebe."
         action={<Button variant="outline" disabled={exporting || !tenantId} onClick={exportXlsx}><Download className="h-4 w-4" /> {exporting ? "Exportando..." : "Exportar Excel"}</Button>} />
       <div className="mb-4 grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1 sm:flex sm:w-fit sm:flex-wrap">
         {([["today", ui("Hoje")], ["yesterday", ui("Ontem")], ["month", "Mês"], ["30d", ui("Últimos 30 dias")], ["90d", ui("Últimos 90 dias")]] as const).map(([k, l]) => (

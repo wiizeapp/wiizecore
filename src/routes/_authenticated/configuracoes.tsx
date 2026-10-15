@@ -21,10 +21,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/configuracoes")({
   head: () => ({
     meta: [
-      { title: "Configurações — WiizePay" },
-      { name: "description", content: "Configure empresa, conta de pagamentos e regras financeiras da WiizePay." },
-      { property: "og:title", content: "Configurações — WiizePay" },
-      { property: "og:description", content: "Configure empresa, conta de pagamentos e regras financeiras da WiizePay." },
+      { title: "Configurações — Wiize Recebe" },
+      { name: "description", content: "Configure empresa, conta de pagamentos e regras financeiras da Wiize Recebe." },
+      { property: "og:title", content: "Configurações — Wiize Recebe" },
+      { property: "og:description", content: "Configure empresa, conta de pagamentos e regras financeiras da Wiize Recebe." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -201,7 +201,7 @@ function Configuracoes() {
 
       <section className="surface-panel grid gap-6 p-5 sm:p-6 lg:grid-cols-[260px_1fr]">
         <div>
-          <h2 className="font-display text-base font-semibold tracking-tight">Conta de pagamentos WiizePay</h2>
+          <h2 className="font-display text-base font-semibold tracking-tight">Conta de pagamentos Wiize Recebe</h2>
           <p className="mt-1 text-xs text-muted-foreground">Criamos sua conta de pagamentos. Você não precisa gerar nem informar uma chave própria.</p>
         </div>
         <div className="min-w-0">

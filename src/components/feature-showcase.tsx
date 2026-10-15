@@ -23,14 +23,14 @@ const splitPoints = [
 
 export function SplitShowcase() {
   return (
-    <section className="brand-cta flex min-h-screen w-full items-center" aria-label="Gestão financeira WiizePay">
+    <section className="brand-cta flex min-h-screen w-full items-center" aria-label="Gestão financeira Wiize Recebe">
       <div className="section-shell py-14 lg:py-20">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-12">
           <div className="relative min-w-0 overflow-hidden">
             <div className="showcase-green-glow pointer-events-none absolute inset-0" aria-hidden="true" />
             <img
               src={growthIllustration.url}
-              alt="Ilustração de crescimento de recebimentos WiizePay"
+              alt="Ilustração de crescimento de recebimentos Wiize Recebe"
               loading="lazy"
               width={1536}
               height={1024}

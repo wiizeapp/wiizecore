@@ -18,7 +18,7 @@ function PortalVisual() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => pageHead({ path: "/", title: "WiizePay | Plataforma de Pagamentos e Gestão Unificada", description: "Conheça a WiizePay, uma plataforma que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.", jsonLd: organizationJsonLd() }),
+  head: () => pageHead({ path: "/", title: "Wiize Recebe | Plataforma de Pagamentos e Gestão Unificada", description: "Conheça a Wiize Recebe, uma plataforma que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.", jsonLd: organizationJsonLd() }),
   component: Landing,
 });
 
@@ -36,7 +36,7 @@ const featureGroups: Array<{ icon: typeof Wallet; tag: string; title: string; vi
 ];
 
 const faqs = [
-  ["O que é a WiizePay?", "Uma plataforma para empresas de serviços organizarem clientes, serviços, cobranças, recebimentos, contratos, notas fiscais e o financeiro em um só lugar."],
+  ["O que é a Wiize Recebe?", "Uma plataforma para empresas de serviços organizarem clientes, serviços, cobranças, recebimentos, contratos, notas fiscais e o financeiro em um só lugar."],
   ["Quais formas de pagamento estão disponíveis?", "Pix, Pix Automático, boleto e cartão de crédito, conforme a configuração da sua conta."],
   ["Posso criar contratos e enviar para assinatura?", "Sim. Você cria o contrato, envia para assinatura eletrônica e acompanha quem já assinou."],
   ["Posso emitir nota fiscal?", "Sim, notas fiscais de serviço conforme a configuração fiscal da sua empresa."],
@@ -106,11 +106,11 @@ function Landing() {
 
         <section className="section-shell grid gap-12 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:py-20"><div><p className="section-kicker">{ui("Perguntas frequentes")}</p><h2 className="mt-3 text-3xl font-semibold sm:text-4xl">{ui("Informação clara")} <span className="hero-shine">{ui("antes de começar.")}</span></h2></div><Accordion type="single" collapsible>{faqs.map(([question = "",answer = ""], index) => <AccordionItem key={question} value={`faq-${index}`}><AccordionTrigger className="text-base">{ui(question)}</AccordionTrigger><AccordionContent className="pr-8 leading-6 text-muted-foreground">{ui(answer)}</AccordionContent></AccordionItem>)}</Accordion></section>
 
-        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizePay")}>
+        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a Wiize Recebe")}>
               <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
               <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
               <div className="mx-auto max-w-3xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a WiizePay")}</span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a Wiize Recebe")}</span>
                 <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
                 <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
                 <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
@@ -128,11 +128,11 @@ function ProductPreview() {
   const { t: ui } = useTranslation("ui");
   const bars = [38, 54, 46, 67, 58, 78, 70, 92, 76, 86, 73, 96];
   return (
-    <div className="home-dashboard-stage relative mt-8 w-full max-w-6xl flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro WiizePay")}>
+    <div className="home-dashboard-stage relative mt-8 w-full max-w-6xl flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Recebe")}>
       <div className="home-dashboard-window relative z-10 mx-auto w-[96%] overflow-hidden rounded-t-xl border-x border-t border-border bg-card text-left shadow-float sm:w-[88%] lg:w-[82%]">
         <div className="grid h-11 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-surface/70 px-3 sm:px-4">
           <div className="flex gap-1.5" aria-hidden="true"><span className="size-2 rounded-full bg-destructive/60" /><span className="size-2 rounded-full bg-warning/70" /><span className="size-2 rounded-full bg-primary/70" /></div>
-          <div className="flex min-w-0 items-center gap-2"><span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><LayoutDashboard className="size-3.5" /></span><span className="truncate text-[10px] font-semibold sm:text-xs">{ui("Painel WiizePay")}</span></div>
+          <div className="flex min-w-0 items-center gap-2"><span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><LayoutDashboard className="size-3.5" /></span><span className="truncate text-[10px] font-semibold sm:text-xs">{ui("Painel Wiize Recebe")}</span></div>
           <span className="hidden items-center gap-1.5 text-[9px] text-muted-foreground sm:flex"><span className="size-1.5 rounded-full bg-primary" />{ui("Atualizado agora")}</span>
         </div>
         <div className="grid min-h-[15rem] grid-cols-[3.25rem_minmax(0,1fr)] sm:min-h-[21rem] sm:grid-cols-[9.5rem_minmax(0,1fr)] lg:min-h-[24rem]">

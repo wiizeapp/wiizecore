@@ -24,7 +24,7 @@ export async function getTenantProvider(admin: AdminClient, tenantId: string) {
   };
 }
 
-/** Taxa WiizePay em centavos inteiros; fonte: configurações do banco, nunca o navegador. */
+/** Taxa Wiize Recebe em centavos inteiros; fonte: configurações do banco, nunca o navegador. */
 export async function computePlatformFee(
   admin: AdminClient,
   _tenantId: string,
@@ -368,7 +368,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
 }
 
 /**
- * O provedor desconta o custo dele da conta da empresa. Como esse custo é da WiizePay,
+ * O provedor desconta o custo dele da conta da empresa. Como esse custo é da Wiize Recebe,
  * devolvemos o mesmo valor da conta principal para a empresa. Uma única vez por pagamento.
  */
 export async function reimburseProviderFee(admin: AdminClient, paymentId: string) {
@@ -394,7 +394,7 @@ export async function reimburseProviderFee(admin: AdminClient, paymentId: string
   try {
     const env = (process.env["ASAAS_ENVIRONMENT"] === "production" ? "production" : "sandbox") as "sandbox" | "production";
     const master = new AsaasProvider(masterKey, env);
-    const t = await master.createTransfer({ value: fee, walletId: conn.wallet_id, description: "Reembolso custo de processamento WiizePay" });
+    const t = await master.createTransfer({ value: fee, walletId: conn.wallet_id, description: "Reembolso custo de processamento Wiize Recebe" });
     await admin.from("payments").update({ provider_fee_reimbursement_id: t.id, provider_fee_reimbursed_at: new Date().toISOString() }).eq("id", paymentId);
   } catch (e) {
     await admin.from("payments").update({ provider_fee_reimbursement_id: null }).eq("id", paymentId);
@@ -475,7 +475,7 @@ export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId:
   return { status: "applied" as const, providerStatus: String(remote.status) };
 }
 
-/** Conferência: compara valor bruto e taxa WiizePay com o registrado no provedor. */
+/** Conferência: compara valor bruto e taxa Wiize Recebe com o registrado no provedor. */
 export async function checkPaymentDivergence(admin: AdminClient, tenantId: string, paymentId: string, remote: ProviderPayment) {
   const { data: p } = await admin.from("payments").select("gross_amount, platform_fee_amount, provider_fee_covered_amount").eq("id", paymentId).maybeSingle();
   if (!p) return;

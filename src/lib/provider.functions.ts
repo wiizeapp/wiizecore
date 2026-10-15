@@ -42,7 +42,7 @@ export const getProviderConnection = createServerFn({ method: "GET" })
 
 const onboardingSchema = z.object({ financialPassword: z.string().min(1).max(200) });
 
-/** Cria a subconta da empresa a partir da conta principal WiizePay. A chave retornada pelo Asaas é cifrada imediatamente. */
+/** Cria a subconta da empresa a partir da conta principal Wiize Recebe. A chave retornada pelo Asaas é cifrada imediatamente. */
 export const createAsaasSubaccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => onboardingSchema.parse(input))
@@ -69,7 +69,7 @@ export const createAsaasSubaccount = createServerFn({ method: "POST" })
 
     const masterKey = process.env['ASAAS_MASTER_API_KEY'];
     const environment = (process.env['ASAAS_ENVIRONMENT'] === 'production' ? 'production' : 'sandbox') as 'sandbox' | 'production';
-    if (!masterKey) throw new Error("A conta principal da WiizePay ainda não foi configurada.");
+    if (!masterKey) throw new Error("A conta principal da Wiize Recebe ainda não foi configurada.");
     const { AsaasProvider } = await import("./asaas.server");
     const { encryptSecret } = await import("./crypto.server");
     const { onlyDigits } = await import("./format");

@@ -21,10 +21,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/limites")({
   head: () => ({
     meta: [
-      { title: "Limites de saque — WiizePay" },
+      { title: "Limites de saque — Wiize Recebe" },
       { name: "description", content: "Veja seu limite diário de saque Pix, saques do mês e peça aumento de limite." },
-      { property: "og:title", content: "Limites de saque — WiizePay" },
-      { property: "og:description", content: "Limite pessoal de saque Pix da sua conta WiizePay." },
+      { property: "og:title", content: "Limites de saque — Wiize Recebe" },
+      { property: "og:description", content: "Limite pessoal de saque Pix da sua conta Wiize Recebe." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -128,7 +128,7 @@ function RequestDialog({ open, onOpenChange, current, currentMonthly }: { open: 
           <div><Label>Novo limite diário de saque Pix (R$)</Label><Input inputMode="decimal" value={daily} onChange={(e) => setDaily(e.target.value)} /></div>
           <div><Label>Saques por mês</Label><Input inputMode="numeric" value={monthly} onChange={(e) => setMonthly(e.target.value)} /></div>
           <div><Label>Por que precisa de mais limite?</Label><Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ex.: meu faturamento mensal aumentou e preciso sacar valores maiores." /></div>
-          <p className="text-xs text-muted-foreground">O pedido é analisado pela equipe WiizePay junto ao banco parceiro. Assim que ele informar o prazo, você verá aqui a previsão de retorno.</p>
+          <p className="text-xs text-muted-foreground">O pedido é analisado pela equipe Wiize Recebe junto ao banco parceiro. Assim que ele informar o prazo, você verá aqui a previsão de retorno.</p>
           <Button className="w-full" onClick={() => m.mutate()} disabled={m.isPending}>{m.isPending ? "Enviando…" : "Enviar pedido"}</Button>
         </div>
       </DialogContent>

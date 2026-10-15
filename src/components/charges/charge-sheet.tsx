@@ -58,7 +58,7 @@ export function ChargeSheet({ group, onClose }: { group: SheetGroup | null; onCl
              </div>
              <dl className="mt-5 grid grid-cols-3 overflow-hidden rounded-lg border border-border text-sm">
                <div className="min-w-0 border-r border-border p-3"><dt className="text-xs text-muted-foreground">Cobrado</dt><dd className="numeric-tabular mt-1 truncate font-semibold">{formatBRL(gross)}</dd></div>
-               <div className="min-w-0 border-r border-border p-3"><dt className="text-xs text-muted-foreground">Taxa WiizePay</dt><dd className="numeric-tabular mt-1 truncate font-semibold">{formatBRL(fees)}</dd></div>
+               <div className="min-w-0 border-r border-border p-3"><dt className="text-xs text-muted-foreground">Taxa Wiize Recebe</dt><dd className="numeric-tabular mt-1 truncate font-semibold">{formatBRL(fees)}</dd></div>
                <div className="min-w-0 p-3"><dt className="text-xs text-muted-foreground">Líquido</dt><dd className="numeric-tabular mt-1 truncate font-semibold text-primary">{formatBRL(net)}</dd></div>
              </dl>
              <div className="mt-4"><ChargeLinkField chargeGroupId={group.id} /></div>
@@ -132,7 +132,7 @@ function PaymentRefundPanel({ paymentId }: { paymentId: string }) {
   const rows: [string, string][] = [
     ["Forma de pagamento", d.payment.method ? (paymentMethodLabels[d.payment.method as keyof typeof paymentMethodLabels] ?? "—") : "—"],
     ["Valor pago", formatBRL(d.payment.gross)],
-    ["Taxa WiizePay", `− ${formatBRL(d.payment.fee)}`],
+    ["Taxa Wiize Recebe", `− ${formatBRL(d.payment.fee)}`],
     ["Valor líquido", formatBRL(d.payment.net)],
     ["Já reembolsado", formatBRL(d.payment.refunded)],
     ["Disponível para reembolso", formatBRL(d.eligibleNet)],
@@ -215,7 +215,7 @@ function RefundDialog({ paymentId, ctx, onClose }: { paymentId: string; ctx: any
                 </button>
               ))}
             </div>
-            {mode === "gross" ? <p className="text-xs text-muted-foreground">A taxa WiizePay ({formatBRL(ctx.payment.fee)}) não é devolvida. A diferença sai do seu saldo.</p> : null}
+            {mode === "gross" ? <p className="text-xs text-muted-foreground">A taxa Wiize Recebe ({formatBRL(ctx.payment.fee)}) não é devolvida. A diferença sai do seu saldo.</p> : null}
             {ctx.policy.allow_partial ? (
               <div className="grid grid-cols-2 gap-3">
                 <div><Label>Tipo</Label>

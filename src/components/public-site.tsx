@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Palette, UserRoundCheck, BarChart3, BellRing, ChevronDown, FileSignature, Headphones, Link2, Menu, MessageCircle, RefreshCw, Users, Workflow } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { AsaasSeal } from "@/components/financial-provider";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
@@ -120,14 +121,15 @@ export function PublicFooter() {
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 py-12 sm:grid-cols-2 md:grid-cols-[1.3fr_1fr_1fr] lg:px-8">
         <div>
-          <Brand compact />
+          <Brand />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">{t("tagline")}</p>
           <a className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline" href={SUPPORT_URL} target="_blank" rel="noreferrer"><Headphones className="h-4 w-4" />{t("support")}</a>
+          <div className="mt-6"><AsaasSeal /></div>
         </div>
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/cobrancas-e-pagamentos" className="hover:text-foreground">Plataforma de pagamentos</Link><Link to="/gestao-financeira" className="hover:text-foreground">Gestão financeira</Link><Link to="/gestao-de-clientes" className="hover:text-foreground">Gestão de clientes</Link><Link to="/portal-do-cliente" className="hover:text-foreground">Central do cliente</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/sobre" className="hover:text-foreground">Sobre a WiizePay</Link><Link to="/perguntas-frequentes" className="hover:text-foreground">Perguntas frequentes</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link><Link to="/suporte" className="hover:text-foreground">{t("supportShort")}</Link><Link to="/auth" className="hover:text-foreground">Entrar</Link>
+            <Link to="/cobrancas-e-pagamentos" className="hover:text-foreground">Plataforma de pagamentos</Link><Link to="/gestao-financeira" className="hover:text-foreground">Gestão financeira</Link><Link to="/gestao-de-clientes" className="hover:text-foreground">Gestão de clientes</Link><Link to="/portal-do-cliente" className="hover:text-foreground">Central do cliente</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Recebe</Link><Link to="/perguntas-frequentes" className="hover:text-foreground">Perguntas frequentes</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link><Link to="/suporte" className="hover:text-foreground">{t("supportShort")}</Link><Link to="/auth" className="hover:text-foreground">Entrar</Link>
           </div>
         </div>
         <div>

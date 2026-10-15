@@ -563,7 +563,7 @@ function CustomersDemo() {
 
 function CrmDemo() {
   return (
-    <Window title="CRM Wiize + WiizePay" status="Sincronizado">
+    <Window title="CRM Wiize + Wiize Recebe" status="Sincronizado">
       <div className="flex h-full flex-col gap-3 p-3 sm:p-4">
         <div className="grid grid-cols-3 gap-2">
           {["Negociação", "Contrato", "Pagamento"].map((label, index) => (
@@ -580,7 +580,7 @@ function CrmDemo() {
             {[
               { icon: Workflow, label: "CRM Wiize" },
               { icon: FileSignature, label: "Contrato" },
-              { icon: Wallet, label: "WiizePay" },
+              { icon: Wallet, label: "Wiize Recebe" },
             ].map(({ icon: Icon, label }, index) => (
               <div
                 key={label}
@@ -1321,7 +1321,7 @@ function CheckoutBrandEditorDemo() {
                 Clean
               </span>
               <span className="rounded-md border border-border bg-surface px-2 py-2 text-center text-[9px] text-muted-foreground">
-                WiizePay
+                Wiize Recebe
               </span>
               <span className="rounded-md border border-border bg-foreground px-2 py-2 text-center text-[9px] text-background">
                 Escuro
@@ -1698,7 +1698,7 @@ function CrmPipelineDemo() {
             </div>
           ))}
         </div>
-        <SuccessBar label="Negócio ganho vira cobrança na WiizePay" />
+        <SuccessBar label="Negócio ganho vira cobrança na Wiize Recebe" />
       </div>
     </Window>
   );

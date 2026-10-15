@@ -1,9 +1,9 @@
 /**
  * Estimativa do custo do Asaas para UMA cobrança à vista, a partir das taxas da própria conta
  * (GET /myAccount/fees). Se a API informar um preço promocional ainda válido (Pix/boleto), usa esse
- * preço e a economia fica com a WiizePay. A promoção só vale se ainda estiver ativa com folga
+ * preço e a economia fica com a Wiize Recebe. A promoção só vale se ainda estiver ativa com folga
  * (Pix: 2 dias, boleto: 10 dias); se o Asaas acabar cobrando o preço cheio, a rotina de devolução
- * cobre a diferença — a empresa nunca paga mais do que a taxa WiizePay exibida.
+ * cobre a diferença — a empresa nunca paga mais do que a taxa Wiize Recebe exibida.
  * Retorna null quando não dá para estimar com segurança (aí vale o fluxo antigo, com devolução).
  */
 export type AsaasAccountFees = {
@@ -55,7 +55,7 @@ export function estimateProviderFeeCents(fees: AsaasAccountFees | null | undefin
   return cents != null && cents < amountCents ? cents : null;
 }
 
-/** Quanto do custo do Asaas sai da taxa WiizePay já na divisão (nunca mais que a própria taxa). */
+/** Quanto do custo do Asaas sai da taxa Wiize Recebe já na divisão (nunca mais que a própria taxa). */
 export function coveredProviderFeeCents(totalFeeCents: number, estimateCents: number | null) {
   if (estimateCents == null || totalFeeCents <= 0) return 0;
   return Math.min(totalFeeCents, estimateCents);
