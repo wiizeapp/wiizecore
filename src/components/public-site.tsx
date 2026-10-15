@@ -138,7 +138,7 @@ export function PublicFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-border"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-4 text-center text-xs text-muted-foreground sm:flex-row sm:text-left lg:px-8"><span>{t("rights")}</span><div className="flex items-center gap-6"><AsaasSeal /><LanguageSwitcher align="start" /></div></div></div>
+      <div className="border-t border-border"><div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-4 text-center text-xs text-muted-foreground sm:flex-row sm:text-left lg:px-8"><span>{t("rights")}</span><AsaasSeal /></div></div>
     </footer>
   );
 }

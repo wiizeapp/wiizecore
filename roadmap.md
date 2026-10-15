@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Simplificar rodapés e reduzir o selo oficial Asaas; informar arquivos desta alteração e relação completa da entrega anterior.
+- [x] Simplificar rodapés e reduzir selo oficial Asaas para 120×36; computador/celular sem rolagem lateral, sete testes aprovados; arquivos informados na entrega.
 
 - [x] Substituir a marca visível por Wiize Recebe, preservando Wiize, domínios, rotas e identificadores técnicos; telas públicas e sessão conectada conferidas.
 
