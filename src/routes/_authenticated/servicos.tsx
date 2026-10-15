@@ -446,7 +446,7 @@ function Servicos() {
       <Dialog open={Boolean(linkConfig)} onOpenChange={(v) => { if (!v) setLinkConfig(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle>{ui("Configurar link de checkout")}</DialogTitle></DialogHeader>
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (!linkConfig) return; toggleOpen.mutate({ serviceId: linkConfig.serviceId, active: true, amount: linkConfig.customAmount ? linkAmount : undefined, chargeType: linkType, frequency: linkFrequency, maxInstallments: Number(linkMax), newVersion: true }); }}>
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); if (!linkConfig) return; toggleOpen.mutate({ serviceId: linkConfig.serviceId, active: true, ...(linkConfig.customAmount ? { amount: linkAmount } : {}), chargeType: linkType, frequency: linkFrequency, maxInstallments: Number(linkMax), newVersion: true }); }}>
             <p className="font-medium">{linkConfig?.name}</p>
             <div className="space-y-2"><Label htmlFor="link-amount">{ui("Valor do link (R$)")}</Label><Input id="link-amount" inputMode="decimal" required value={linkAmount} disabled={!linkConfig?.customAmount} onChange={(e) => setLinkAmount(e.target.value)} /></div>
             {linkConfig?.flexible ? <div className="space-y-2"><Label>{ui("Forma de cobrança")}</Label><Select value={linkType} onValueChange={(v) => setLinkType(v as typeof linkType)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="one_time">{ui("Pagamento único")}</SelectItem><SelectItem value="installment">{ui("À vista ou parcelado")}</SelectItem><SelectItem value="recurring">{ui("Recorrente")}</SelectItem></SelectContent></Select></div> : null}
