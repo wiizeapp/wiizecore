@@ -497,14 +497,34 @@
   display: none;
 }
 
-.app-sidebar-nav::-webkit-scrollbar { width: 5px; }
+.app-sidebar-nav::-webkit-scrollbar { width: 6px; }
 .app-sidebar-nav::-webkit-scrollbar-track { background: transparent; }
 .app-sidebar-nav::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: color-mix(in oklab, var(--sidebar-foreground) 24%, transparent);
+  background: color-mix(in oklab, var(--sidebar-foreground) 16%, transparent);
+}
+.app-sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--sidebar-foreground) 34%, transparent);
 }
 .app-sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in oklab, var(--sidebar-foreground) 38%, transparent);
+  background: color-mix(in oklab, var(--sidebar-foreground) 50%, transparent);
+}
+
+/* Barra de rolagem geral: fina, arredondada e discreta. */
+html, body, * {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  background-color: color-mix(in oklab, var(--foreground) 22%, transparent);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--foreground) 40%, transparent);
 }
 
 .sidebar-nav-item {
