@@ -75,7 +75,7 @@ function Landing() {
                   <p className="mt-3 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
                   <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                     {group.points.map((point) => (
-                      <li key={point} className="flex items-start gap-3 rounded-lg border border-border bg-surface/60 p-3 text-sm"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />{ui(point)}</li>
+                      <li key={point} className="flex items-center justify-center rounded-lg border border-border bg-surface/60 p-3 text-center text-sm">{ui(point)}</li>
                     ))}
                   </ul>
                 </div>
