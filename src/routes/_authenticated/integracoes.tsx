@@ -11,7 +11,7 @@ import bling from "@/assets/integrations/bling.png";
 import omie from "@/assets/integrations/omie.png";
 
 export const Route = createFileRoute("/_authenticated/integracoes")({
-  head: () => ({ meta: [{ title: "Integrações — Wiize Recebe" }, { name: "description", content: "Conecte a Wiize Recebe a outros sistemas." }] }),
+  head: () => ({ meta: [{ title: "Integrações — Wiize Recebe" }, { name: "description", content: "Conecte a Wiize Recebe a outros sistemas." }, { property: "og:title", content: "Integrações — Wiize Recebe" }, { property: "og:description", content: "Conecte a Wiize Recebe a outros sistemas." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: Integracoes,
 });
 

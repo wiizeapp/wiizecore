@@ -16,7 +16,7 @@ import { ExtAiGuide, ExtDocs, ExtLogs, ExtOverview } from "@/components/ext-insi
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
-  head: () => ({ meta: [{ title: "Integração Externa — Wiize Recebe" }, { name: "description", content: "Conecte seu software à Wiize Recebe com chaves de API." }] }),
+  head: () => ({ meta: [{ title: "Integração Externa — Wiize Recebe" }, { name: "description", content: "Conecte seu software à Wiize Recebe com chaves de API." }, { property: "og:title", content: "Integração Externa — Wiize Recebe" }, { property: "og:description", content: "Conecte seu software à Wiize Recebe com chaves de API." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: Page,
 });
 

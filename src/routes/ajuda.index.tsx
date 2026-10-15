@@ -11,7 +11,7 @@ import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/he
 import { FinancialSupport } from "@/components/financial-provider";
 
 export const Route = createFileRoute("/ajuda/")({
-  head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Recebe" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }] }),
+  head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Recebe" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }, { property: "og:title", content: "Central de Ajuda | Wiize Recebe" }, { property: "og:description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Recebe." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: HelpHome,
 });
 
