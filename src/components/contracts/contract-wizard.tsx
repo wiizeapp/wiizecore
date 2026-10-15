@@ -207,7 +207,7 @@ export function ContractWizard({ open, onOpenChange, tenantId }: { open: boolean
                 {drive.isLoading ? <Loader2 className="h-6 w-6 animate-spin text-primary" /> : <CloudOff className="h-7 w-7 text-muted-foreground" />}
                 <div>
                   <p className="font-medium">Conecte o Google Drive para usar arquivos</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Os arquivos dos contratos ficam no Drive da sua empresa, numa pasta “WiizePay – Contratos”. Você também pode escrever o contrato aqui mesmo sem conectar.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Os arquivos dos contratos ficam no Drive da sua empresa, na pasta de contratos da integração. Você também pode escrever o contrato aqui mesmo sem conectar.</p>
                 </div>
                 {drive.data && !drive.data.configured ? (
                   <p className="text-xs text-warning">A conexão com o Google Drive está aguardando configuração da Wiize Recebe.</p>

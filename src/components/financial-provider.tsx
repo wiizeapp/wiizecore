@@ -4,7 +4,7 @@ import { contrastRatio } from "@/lib/checkout-appearance";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 
-export function AsaasSeal({ background }: { background?: string }) {
+export function AsaasSeal({ background }: { background?: string | undefined }) {
   const { t } = useTranslation("ui");
   const light = background ? contrastRatio(background, "#000000") >= contrastRatio(background, "#FFFFFF") : undefined;
   const image = (src: string, className: string) => <img src={src} alt={t("Serviços financeiros Asaas")} width={160} height={48} className={`h-12 w-40 max-w-full object-contain ${className}`} />;
@@ -13,7 +13,7 @@ export function AsaasSeal({ background }: { background?: string }) {
   </a>;
 }
 
-export function FinancialIdentity({ background }: { background?: string }) {
+export function FinancialIdentity({ background }: { background?: string | undefined }) {
   const { t } = useTranslation("ui");
   return <div className="flex flex-col items-center justify-center gap-3 text-center">
     <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3"><Brand /><AsaasSeal background={background} /></div>

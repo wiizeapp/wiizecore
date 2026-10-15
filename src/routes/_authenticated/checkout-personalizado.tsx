@@ -47,7 +47,7 @@ const COLOR_FIELDS: { key: "background" | "header" | "surface" | "button" | "but
 ];
 const ISSUE: Record<string, string> = { text: "Texto principal", mutedText: "Texto secundário", buttonText: "Texto do botão", background: "Fundo da página" };
 const THEME_NAMES = {
-  wiize: { name: "WiizePay", description: "Verde preciso e fundo suave" },
+  wiize: { name: "Wiize Recebe", description: "Verde preciso e fundo suave" },
   clean: { name: "Minimalista", description: "Branco e alto contraste" },
   dark: { name: "Escuro", description: "Elegante e confortável" },
 } as const;
