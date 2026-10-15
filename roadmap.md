@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Simplificar rodapés e reduzir o selo oficial Asaas; informar arquivos desta alteração e relação completa da entrega anterior.
+
 - [x] Substituir a marca visível por Wiize Recebe, preservando Wiize, domínios, rotas e identificadores técnicos; telas públicas e sessão conectada conferidas.
 
 - [x] Adequar identificação Asaas nos checkouts e rodapé institucional, prévia e portal sem alterar operações financeiras.

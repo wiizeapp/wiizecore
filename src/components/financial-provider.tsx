@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export function AsaasSeal({ background }: { background?: string | undefined }) {
   const { t } = useTranslation("ui");
   const light = background ? contrastRatio(background, "#000000") >= contrastRatio(background, "#FFFFFF") : undefined;
-  const image = (src: string, className: string) => <img src={src} alt={t("Serviços financeiros Asaas")} width={160} height={48} className={`h-12 w-40 max-w-full object-contain ${className}`} />;
+  const image = (src: string, className: string) => <img src={src} alt={t("Serviços financeiros Asaas")} width={120} height={36} className={`h-9 w-[120px] max-w-full object-contain ${className}`} />;
   return <a href={FINANCIAL_PROVIDER.site} target="_blank" rel="noopener noreferrer" className="inline-flex max-w-full shrink-0 items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
     {light === undefined ? <>{image(FINANCIAL_PROVIDER.seals.positive, "dark:hidden")}{image(FINANCIAL_PROVIDER.seals.white, "hidden dark:block")}</> : image(light ? FINANCIAL_PROVIDER.seals.positive : FINANCIAL_PROVIDER.seals.white, "")}
   </a>;
@@ -15,8 +15,8 @@ export function AsaasSeal({ background }: { background?: string | undefined }) {
 
 export function FinancialIdentity({ background }: { background?: string | undefined }) {
   const { t } = useTranslation("ui");
-  return <div className="flex flex-col items-center justify-center gap-3 text-center">
-    <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3"><Brand /><AsaasSeal background={background} /></div>
+  return <div className="flex flex-col items-center justify-center gap-2 text-center">
+    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3"><Brand size="sm" /><AsaasSeal background={background} /></div>
     <p className="text-xs leading-5 text-muted-foreground">{t("Plataforma Wiize Recebe. Serviços financeiros prestados pelo Asaas.")}</p>
   </div>;
 }
