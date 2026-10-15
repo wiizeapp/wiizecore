@@ -1,6 +1,6 @@
 /**
- * Exibição: junta "Taxa Wiize Recebe" (platform_fee) e "Custo da infraestrutura"
- * (provider_fee) do mesmo pagamento em uma única linha "Taxa Wiize Recebe".
+ * Exibição: junta "Taxa financeira" (platform_fee) e "Custo da infraestrutura"
+ * (provider_fee) do mesmo pagamento em uma única linha "Taxa financeira".
  * Só afeta o que o usuário vê; os registros no banco continuam separados
  * para auditoria.
  */

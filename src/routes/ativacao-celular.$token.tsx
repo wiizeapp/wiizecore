@@ -1,3 +1,4 @@
+import { SealFooter } from "@/components/financial-provider";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -99,5 +100,5 @@ function MobileActivationPage() {
       <div className="space-y-3"><h2 className="font-semibold">Documentos</h2><p className="text-sm text-muted-foreground">As fotos são verificadas e reduzidas antes do envio. Você também pode escolher um PDF. O comprovante de endereço é opcional.</p>{(["id_front", "id_back", "selfie", "address_proof", ...(personType === "company" ? ["company_doc", "legal_rep_doc"] : [])]).map((kind) => { const sent = query.data?.documents.some((document) => document.kind === kind); const optional = kind === "address_proof"; return <div key={kind} className={`flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between ${errors[kind] ? "border-destructive" : ""}`}><div><p className="text-sm font-medium">{DOC_LABEL[kind]} {!optional ? <span className="text-destructive">*</span> : null}</p><p className={`text-xs ${errors[kind] ? "text-destructive" : "text-muted-foreground"}`}>{sent ? "Enviado — envie novamente para substituir" : errors[kind] || (optional ? "Opcional" : "Obrigatório")}</p></div><ActivationDocumentUpload kind={kind} sent={!!sent} busy={busyDoc !== null} onUpload={(file) => onFile(kind, file)} /></div>; })}</div>
       <div className="flex flex-col gap-2 border-t pt-5 sm:flex-row sm:justify-end"><Button variant="outline" disabled={saveM.isPending} onClick={() => { if (validateAll()) saveM.mutate(); }}>Salvar progresso</Button><Button disabled={finishM.isPending} onClick={() => { if (validateAll()) finishM.mutate(); }}>{finishM.isPending ? <Loader2 className="size-4 animate-spin" /> : null}Concluir no celular</Button></div>
     </div>}
-  </section></div></main>;
+  </section><SealFooter className="mt-8" /></div></main>;
 }

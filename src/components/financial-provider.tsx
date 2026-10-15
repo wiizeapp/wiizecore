@@ -32,3 +32,7 @@ export function FinancialSupport({ compact = false }: { compact?: boolean }) {
     {!compact ? <p className="mt-4 text-xs text-muted-foreground">{t("Para acesso, configuração e uso da plataforma, fale com o suporte Wiize Recebe.")}</p> : null}
   </section>;
 }
+/** Rodapé discreto com o selo oficial, igual ao do site institucional. */
+export function SealFooter({ background, className = "" }: { background?: string | undefined; className?: string }) {
+  return <footer className={`flex justify-center border-t border-border px-4 py-3 ${className}`}><AsaasSeal background={background} /></footer>;
+}

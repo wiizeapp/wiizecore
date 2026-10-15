@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/extrato")({
 type Period = "today" | "yesterday" | "month" | "30d" | "90d" | "custom";
 type Tx = { id: string; kind: string; description: string | null; amount: number | string; occurred_at: string; payment_id: string | null };
 const PAGE = 20;
-const KIND: Record<string, string> = { payment: "Recebimento", platform_fee: "Taxa Wiize Recebe", provider_fee: "Taxa Wiize Recebe", refund: "Reembolso", withdrawal: "Saque", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação" };
+const KIND: Record<string, string> = { payment: "Recebimento", platform_fee: "Taxa financeira", provider_fee: "Taxa financeira", refund: "Reembolso", withdrawal: "Saque", adjustment: "Ajuste", anticipation: "Antecipação", anticipation_fee: "Taxa de antecipação" };
 const TYPES: Record<string, string[] | null> = { all: null, in: ["payment", "anticipation"], fees: ["platform_fee", "provider_fee", "anticipation_fee"], refund: ["refund"], withdrawal: ["withdrawal"], adjustment: ["adjustment"] };
 const ds = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 function range(p: Period, c?: DateRange) {
