@@ -8,7 +8,7 @@ import {
   BookOpen, CreditCard, FileSignature, FileText, HelpCircle, Lightbulb, Percent, QrCode, Receipt, Rocket, ShieldCheck, ThumbsDown, ThumbsUp, Wallet, Info, AlertTriangle,
 } from "lucide-react";
 import { listPublicFees } from "@/lib/fees.functions";
-import { rateArticle, submitSuggestion, SUGGESTION_CATEGORIES } from "@/lib/help-calculators-client";
+import { rateArticle, submitSuggestion, SUGGESTION_CATEGORIES } from "@/lib/help-center.functions";
 import { estimateAnticipation, estimateSaleFee, maxInstallments, parseMoney, type HelpMethod } from "@/lib/help-calculators";
 import type { RateRow } from "@/lib/fee-math";
 import { SETTLEMENT_RULES, settlementMethodOf, ANTICIPATION_ANALYSIS_DAYS } from "@/lib/settlement-rules";
