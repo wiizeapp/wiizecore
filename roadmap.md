@@ -1,5 +1,10 @@
 # Roadmap
 
+- [ ] Adequar identificação Asaas nos checkouts e rodapé institucional sem alterar operações financeiras.
+- [ ] Revisar privacidade, termos e cookies contra o playbook e implementação; documentar validações jurídicas e do Asaas.
+- [ ] Adicionar suporte financeiro à Central de Ajuda, preservando suporte WiizePay.
+- [ ] Validar selos, canais, telas e testes existentes; entregar relação completa dos arquivos e limitações.
+
 - [x] Ajustar os quatro ícones 3D de "Como funciona" para o mesmo tamanho: cada desenho é escalado pela própria área visível e por um peso óptico individual. Conferido em pixels reais a 1377px (71×65, 64×66, 91×62, 68×63) e a 393px, sem rolagem horizontal e com a compilação OK.
 
 - [x] Igualar a altura visível dos quatro ícones 3D de "Como funciona" e retirar o sombreado; retirar os ícones dos cartões flutuantes da jornada e aplicar a fonte cursiva legível nos títulos; centralizar os textos dos painéis de funcionalidades. Conferido a 393, 820 e 1280px, sem rolagem horizontal, sem cortes e com a compilação OK.
