@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CategoryIcon, HelpBreadcrumb, SuggestCTA } from "@/components/help/help-parts";
+import { HelpBreadcrumb, SuggestCTA } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/$categoria")({
@@ -36,7 +36,7 @@ function CategoryPage() {
         <div className="grid gap-3 md:grid-cols-2">
           {articles.map((a) => (
             <Link key={a.slug} to="/ajuda/artigo/$slug" params={{ slug: a.slug }} className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><CategoryIcon name={category.icon} className="size-4" /></span>
+              
               <span className="min-w-0"><span className="block font-semibold">{ui(a.title)}</span><span className="mt-1 block text-sm text-muted-foreground">{ui(a.summary)}</span>
                 <span className="mt-2 flex items-center gap-1 text-xs text-muted-foreground"><Clock className="size-3" aria-hidden="true" />{a.minutes} min{a.steps ? ` · ${ui("Passo a passo")}` : ""}</span></span>
             </Link>

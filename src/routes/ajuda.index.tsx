@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Calculator, Search, SearchX } from "lucide-react";
+import { ArrowRight, Search, SearchX } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { matchesSearch } from "@/components/ds/search-field";
-import { CategoryIcon, SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/help-parts";
+import { SuggestCTA, SuggestionDialog, useHasSession } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/")({
@@ -32,10 +32,10 @@ function HelpHome() {
   return (
     <div>
       <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a WiizePay e consulte informações sobre taxas, pagamentos e recebimentos.")} />
-      <div className="surface-panel mb-8 p-5 sm:p-6">
-        <div className="relative">
+      <div className="mb-10">
+        <div className="relative mx-auto max-w-2xl">
           <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={ui("Como podemos ajudar você?")} aria-label={ui("Como podemos ajudar você?")} className="h-12 pl-12 text-base" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={ui("Como podemos ajudar você?")} aria-label={ui("Como podemos ajudar você?")} className="h-12 rounded-full bg-card pl-12 text-base shadow-sm" />
         </div>
         {results ? (
           <div className="mt-4" aria-live="polite">
@@ -57,17 +57,15 @@ function HelpHome() {
       </div>
 
       <h2 className="mb-3 font-display text-lg font-semibold">{ui("Categorias")}</h2>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {HELP_CATEGORIES.map((c) => (
           <Link key={c.id} to="/ajuda/$categoria" params={{ categoria: c.id }} className="group flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><CategoryIcon name={c.icon} /></span>
-            <span className="min-w-0"><span className="block font-semibold">{ui(c.title)}</span><span className="mt-1 block text-sm text-muted-foreground">{ui(c.description)}</span>
+                        <span className="min-w-0"><span className="block font-semibold">{ui(c.title)}</span><span className="mt-1 block text-sm text-muted-foreground">{ui(c.description)}</span>
               <span className="mt-2 block text-xs text-muted-foreground">{c.id === "duvidas" ? `${HELP_FAQ.length} ${ui("perguntas")}` : `${countBy(c.id)} ${ui("artigos")}`}</span></span>
           </Link>
         ))}
         <Link to="/ajuda/calculadoras" className="group flex gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-5 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground"><Calculator className="size-5" aria-hidden="true" /></span>
-          <span><span className="block font-semibold">{ui("Calculadoras")}</span><span className="mt-1 block text-sm text-muted-foreground">{ui("Simule taxas, valor líquido e antecipação.")}</span></span>
+                    <span><span className="block font-semibold">{ui("Calculadoras")}</span><span className="mt-1 block text-sm text-muted-foreground">{ui("Simule taxas, valor líquido e antecipação.")}</span></span>
         </Link>
       </div>
 
