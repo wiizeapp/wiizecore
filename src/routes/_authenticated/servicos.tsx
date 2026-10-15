@@ -175,8 +175,8 @@ function Servicos() {
   };
   const toggleOpen = useMutation({
     mutationFn: (v: { serviceId: string; active: boolean }) => setOpenFn({ data: v }),
-    onSuccess: (r) => {
-      if (r.url) { void copyCheckoutLink(toggleOpen.variables?.serviceId ?? "", r.url); }
+    onSuccess: (r, variables) => {
+      if (r.url) { void copyCheckoutLink(variables.serviceId, r.url); }
       else toast.success(ui("Link de checkout desativado."));
       void openLinks.refetch();
     },
