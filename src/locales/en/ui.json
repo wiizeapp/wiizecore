@@ -5060,5 +5060,14 @@
   "Informações do cliente e do serviço": "Customer and service details",
   "Formalização da contratação": "Formalizing the agreement",
   "Checkout e confirmação": "Checkout and confirmation",
-  "Acesso à área do cliente": "Access to the customer area"
+  "Acesso à área do cliente": "Access to the customer area",
+  "Este link de checkout não está disponível.": "This checkout link is not available.",
+  "Seus dados": "Your details",
+  "Nome completo ou razão social": "Full name or company name",
+  "Avançar": "Continue",
+  "Encontramos uma cobrança em aberto para você.": "We found an open charge for you.",
+  "Continuar cobrança existente": "Continue existing charge",
+  "Cobrança automática a cada ciclo, sem parcelamento.": "Charged every cycle, no installments.",
+  "Uma cobrança nova é enviada a cada mês.": "A new charge is sent every month.",
+  "Ir para o pagamento": "Go to payment"
 }

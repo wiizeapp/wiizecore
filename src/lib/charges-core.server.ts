@@ -32,6 +32,8 @@ export type ChargeCoreInput = {
   linkMinutes?: number | undefined; collectCustomerData: boolean; feePassShare: number; customAmount?: number | null | undefined;
   dunningPlan?: "essential" | "smart" | "intensive" | null | undefined;
   installmentCount?: number | null | undefined;
+  /** Só o checkout aberto: serviço parcelado pago à vista. */
+  payInFull?: boolean | undefined;
   chargeType?: "one_time" | "installment" | "recurring" | null | undefined;
   frequency?: "weekly" | "biweekly" | "monthly" | "quarterly" | "semiannual" | "yearly" | null | undefined;
   coproducers?: import("./coproduction.server").CoproducerInput[] | null | undefined;
@@ -120,6 +122,8 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       else sv.installments = null;
       if (data.chargeType !== "recurring") sv.cycles = null;
     }
+    // Checkout aberto: serviço parcelado pago à vista vira cobrança única.
+    if (service.type === "installment" && data.payInFull) { const sv = service as { type: string; installments: number | null }; sv.type = "one_time"; sv.installments = null; }
     // Número de parcelas escolhido na cobrança (limitado a 2–21); sem escolha, vale o do serviço.
     if (service.type === "installment" && data.installmentCount) (service as { installments: number | null }).installments = Math.min(21, Math.max(2, Math.floor(data.installmentCount)));
     if (!customer.document) throw new Error("Cadastre o CPF/CNPJ do cliente antes de cobrar.");
