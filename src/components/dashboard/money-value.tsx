@@ -1,7 +1,14 @@
 /** Preserva o formatador da aplicação (idioma e privacidade), alterando só a tipografia. */
 export function MoneyValue({ value, accentCents = false }: { value: string; accentCents?: boolean }) {
-  const match = /^(.*?)([\d•][\d•.,\s]*?)([.,][\d•]{2})(.*)$/.exec(value);
-  if (!match) return <span>{value}</span>;
+  const match = /^([^\d•]*)([\d•][\d•.,\s]*)([.,][\d•]{2})([^\d•]*)$/.exec(value);
+  if (!match) {
+    const hidden = /^([^•]*?)(•+)\s*$/.exec(value);
+    if (hidden) return <span className="inline-flex max-w-full items-baseline whitespace-nowrap" aria-label={value}>
+      <span className="mr-1 text-[0.72em] font-medium text-muted-foreground" aria-hidden>{hidden[1].trim()}</span>
+      <span aria-hidden>{hidden[2]}</span>
+    </span>;
+    return <span>{value}</span>;
+  }
   return <span className="inline-flex max-w-full items-baseline whitespace-nowrap" aria-label={value}>
     <span className="mr-1 text-[0.72em] font-medium text-muted-foreground" aria-hidden>{match[1]}</span>
     <span aria-hidden>{match[2]}</span>

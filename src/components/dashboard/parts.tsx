@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowUpRight, Inbox } from "lucide-react";
 
-export function Panel({ title, subtitle, action, children, className = "" }: { title: ReactNode; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Panel({ title, subtitle, action, children, className = "" }: { title: ReactNode; subtitle?: string; action?: ReactNode; children?: ReactNode; className?: string }) {
   return (
     <section className={`surface-panel p-5 sm:p-6 ${className}`}>
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+      <div className={`flex flex-wrap items-start justify-between gap-3 ${children ? "mb-4" : ""}`}>
         <div className="min-w-0">
           <h2 className="font-display text-base font-semibold tracking-tight">{title}</h2>
           {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
