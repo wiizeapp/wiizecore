@@ -230,6 +230,7 @@ export async function issueInvoice(admin: AdminClient, input: IssueInput) {
   const client = await getFiscalClient(admin, input.tenantId);
   if (!client) throw new Error("Sua conta de recebimentos ainda não está conectada.");
   const fs = input.fiscalService;
+  if (!fs["municipal_service_code"]) throw new Error("Este serviço fiscal está sem código de serviço. Atualize-o em Notas fiscais → Configurações.");
   const { data: row, error } = await admin.from("invoices").insert({
     tenant_id: input.tenantId, customer_id: input.customerId, service_id: input.serviceId, fiscal_service_id: fs["id"],
     payment_id: input.paymentId, charge_group_id: input.chargeGroupId, origin: input.origin, status: "PENDING",

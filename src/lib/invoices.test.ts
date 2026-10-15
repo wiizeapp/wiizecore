@@ -82,10 +82,10 @@ describe("nota automática em recorrência", () => {
   it("na confirmação do pagamento emite só para cobranças pagas", () => {
     expect(buildSubscriptionInvoiceSettings(fs, { rule: "ON_PAYMENT_CONFIRMATION" })["receivedOnly"]).toBe(true);
   });
-  it("prefere o ID municipal quando existe", () => {
+  it("Portal Nacional: sempre envia o código, nunca o ID municipal", () => {
     const b = buildSubscriptionInvoiceSettings({ ...fs, municipal_service_id: "srv_9" }, { rule: "ON_NEXT_MONTH" });
-    expect(b["municipalServiceId"]).toBe("srv_9");
-    expect(b).not.toHaveProperty("municipalServiceCode");
+    expect(b["municipalServiceCode"]).toBe("01.07");
+    expect(b).not.toHaveProperty("municipalServiceId");
   });
   it("recusa serviço sem código", () => {
     expect(() => buildSubscriptionInvoiceSettings({ ...fs, municipal_service_code: null }, { rule: "ON_NEXT_MONTH" })).toThrow();
