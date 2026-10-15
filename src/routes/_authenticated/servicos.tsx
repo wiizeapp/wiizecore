@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { TableRowsSkeleton, TableStateRow, ErrorState, ListSkeleton } from "@/components/states";
+import { createFileRoute } from "@tanstack/react-router";
+import { TableRowsSkeleton, TableStateRow, ErrorState } from "@/components/states";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,7 +14,9 @@ import { DataPagination, paginate, SummaryStrip, StatusBadge, SearchField, match
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Archive, ArchiveRestore, Check, Copy, ExternalLink, Link2, Loader2, MoreHorizontal, Pencil, Power, Unlink } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -46,6 +48,7 @@ function Servicos() {
   const [q, setQ] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const [customAmount, setCustomAmount] = useState(false);
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const { data: workspace } = useWorkspace();
   const tenantId = workspace?.tenantId;
   const queryClient = useQueryClient();
@@ -68,10 +71,11 @@ function Servicos() {
     queryKey: ["services", tenantId],
     enabled: Boolean(tenantId),
     queryFn: async () => {
+      if (!tenantId) throw new Error("Empresa não encontrada.");
       const { data, error } = await supabase
         .from("services")
         .select("id, name, type, amount, frequency, installments, cycles, active, due_days, custom_amount, flexible_type, archived_at")
-        .eq("tenant_id", tenantId!)
+        .eq("tenant_id", tenantId)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -84,10 +88,11 @@ function Servicos() {
     queryKey: ["services-custom-avg", tenantId, customIds.join(",")],
     enabled: Boolean(tenantId) && customIds.length > 0,
     queryFn: async () => {
+      if (!tenantId) throw new Error("Empresa não encontrada.");
       const { data, error } = await supabase
         .from("payments")
         .select("service_id, gross_amount, created_at")
-        .eq("tenant_id", tenantId!)
+        .eq("tenant_id", tenantId)
         .in("service_id", customIds)
         .not("status", "in", "(cancelled,failed)")
         .order("created_at", { ascending: false })
@@ -110,6 +115,7 @@ function Servicos() {
 
   const createService = useMutation({
     mutationFn: async () => {
+      if (!tenantId) throw new Error("Empresa não encontrada.");
       const amount = customAmount ? 0 : Number(form.amount.replace(",", "."));
       if (!customAmount && (!Number.isFinite(amount) || amount <= 0)) throw new Error("Informe um valor válido.");
       const flexible = type === "flexible";
@@ -118,7 +124,7 @@ function Servicos() {
         throw new Error("Parcelamento exige pelo menos 2 parcelas.");
       }
       const { error } = await supabase.from("services").insert({
-        tenant_id: tenantId!,
+        tenant_id: tenantId,
         name: form.name.trim(),
         description: form.description.trim() || null,
         type: flexible ? "one_time" : type,
@@ -146,7 +152,8 @@ function Servicos() {
 
   const updateService = useMutation({
     mutationFn: async (v: { id: string; patch: { active?: boolean; archived_at?: string | null } }) => {
-      const { error } = await supabase.from("services").update(v.patch).eq("id", v.id).eq("tenant_id", tenantId!);
+      if (!tenantId) throw new Error("Empresa não encontrada.");
+      const { error } = await supabase.from("services").update(v.patch).eq("id", v.id).eq("tenant_id", tenantId);
       if (error) throw new Error("Não foi possível atualizar o serviço.");
     },
     onSuccess: () => { toast.success("Serviço atualizado."); void queryClient.invalidateQueries({ queryKey: ["services", tenantId] }); },
@@ -156,11 +163,21 @@ function Servicos() {
   const fetchOpen = useServerFn(listServiceCheckoutLinks);
   const setOpenFn = useServerFn(setServiceCheckoutLink);
   const openLinks = useQuery({ queryKey: ["service-open-links", tenantId], enabled: Boolean(tenantId), queryFn: () => fetchOpen() });
+  const copyCheckoutLink = async (serviceId: string, url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(serviceId);
+      toast.success(ui("Link de checkout copiado."));
+      setTimeout(() => setCopiedLink((current) => current === serviceId ? null : current), 1800);
+    } catch {
+      window.prompt(ui("Copie o link de checkout:"), url);
+    }
+  };
   const toggleOpen = useMutation({
     mutationFn: (v: { serviceId: string; active: boolean }) => setOpenFn({ data: v }),
     onSuccess: (r) => {
-      if (r.url) { void navigator.clipboard.writeText(r.url).catch(() => {}); toast.success("Link de checkout criado e copiado."); }
-      else toast.success("Link de checkout desativado.");
+      if (r.url) { void copyCheckoutLink(toggleOpen.variables?.serviceId ?? "", r.url); }
+      else toast.success(ui("Link de checkout desativado."));
       void openLinks.refetch();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -312,6 +329,7 @@ function Servicos() {
         ]}
       />
 
+      <TooltipProvider delayDuration={200}>
       <div className="surface-panel overflow-hidden overflow-x-auto">
         <div className="border-b border-border px-5 py-3"><SearchField value={q} onChange={(v) => { setQ(v); setPage(0); }} placeholder="Pesquisar por nome ou valor" /></div>
         <div className="flex justify-end border-b border-border px-5 py-2"><Button size="sm" variant="ghost" onClick={() => { setShowArchived((v) => !v); setPage(0); }}>{showArchived ? "Ver serviços" : "Ver arquivados"}</Button></div>
@@ -324,16 +342,21 @@ function Servicos() {
               <TableHead>Detalhes</TableHead>
               <TableHead>Situação</TableHead>
               <TableHead>Configuração fiscal</TableHead>
+              <TableHead>{ui("Link de checkout")}</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRowsSkeleton cols={7} />
+              <TableRowsSkeleton cols={8} />
             ) : isError ? (
-              <TableStateRow cols={7}><ErrorState onRetry={() => refetch()} /></TableStateRow>
+              <TableStateRow cols={8}><ErrorState onRetry={() => refetch()} /></TableStateRow>
             ) : filteredServices.length > 0 ? (
-               paginate(filteredServices, page, 10).map((service) => (
+                paginate(filteredServices, page, 10).map((service) => {
+                  const ol = openLinks.data?.find((l) => l.serviceId === service.id && l.active);
+                  const canHaveLink = !service.archived_at && service.active && !service.custom_amount && !service.flexible_type;
+                  const linkPending = toggleOpen.isPending && toggleOpen.variables?.serviceId === service.id;
+                  return (
                 <TableRow key={service.id}>
                   <TableCell className="font-medium">{service.name}</TableCell>
                   <TableCell>{service.flexible_type ? "Personalizada" : serviceTypeLabels[service.type]}</TableCell>
@@ -356,39 +379,49 @@ function Servicos() {
                     {(() => {
                       const fsv = fiscal.data?.services.find((f) => f.active && f.service_id === service.id);
                       return (
-                        <div className="flex items-center gap-2">
-                          {fsv ? <span className="text-xs"><span className="block font-medium">{fsv.name}</span><span className="text-muted-foreground">{fsv.municipal_service_code ?? "Serviço municipal"}</span></span> : <StatusBadge>Sem serviço fiscal</StatusBadge>}
-                          <Button size="sm" variant="ghost" onClick={() => setFiscalEdit({ serviceId: service.id, row: fsv ?? null })}>{fsv ? "Editar" : "Associar"}</Button>
-                        </div>
+                         <Tooltip>
+                           <TooltipTrigger asChild>
+                             <Button size="sm" variant="ghost" className="group h-auto min-h-8 max-w-48 gap-1.5 px-2 text-left text-xs font-normal text-muted-foreground hover:text-foreground" aria-label={ui(fsv ? "Editar configuração fiscal" : "Configurar serviço fiscal")} onClick={() => setFiscalEdit({ serviceId: service.id, row: fsv ?? null })}>
+                               {fsv ? <span className="min-w-0"><span className="block truncate font-medium text-foreground">{fsv.name}</span><span className="block truncate text-muted-foreground">{fsv.municipal_service_code ?? ui("Serviço municipal")}</span></span> : <StatusBadge>{ui("Sem serviço fiscal")}</StatusBadge>}
+                               <Pencil className="size-3.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+                             </Button>
+                           </TooltipTrigger>
+                           <TooltipContent>{ui(fsv ? "Editar configuração fiscal" : "Configurar serviço fiscal")}</TooltipContent>
+                         </Tooltip>
                       );
                     })()}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-right">
-                    {!service.archived_at && service.active && !service.custom_amount && !service.flexible_type ? (() => {
-                      const ol = openLinks.data?.find((l) => l.serviceId === service.id && l.active);
-                      return ol?.url ? (
-                        <>
-                          <Button size="sm" variant="ghost" onClick={() => { void navigator.clipboard.writeText(ol.url!); toast.success("Link de checkout copiado."); }}>Copiar link de checkout</Button>
-                          <Button size="sm" variant="ghost" disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: false })}>Desativar link</Button>
-                        </>
-                      ) : (
-                        <Button size="sm" variant="ghost" disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}>Criar link de checkout</Button>
-                      );
-                    })() : null}
-                    {service.archived_at ? (
-                      <Button size="sm" variant="ghost" disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: null } })}>Restaurar</Button>
-                    ) : (
-                      <>
-                        <Button size="sm" variant="ghost" disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { active: !service.active } })}>{service.active ? "Desativar" : "Ativar"}</Button>
-                        {!service.active ? <Button size="sm" variant="ghost" disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: new Date().toISOString() } })}>Arquivar</Button> : null}
-                      </>
-                    )}
+                   <TableCell className="whitespace-nowrap">
+                     {canHaveLink ? <div className="flex h-8 items-center gap-1">
+                       {openLinks.isLoading ? <Loader2 className="size-4 animate-spin text-muted-foreground" /> : ol?.url ? <>
+                         <Button size="sm" variant="outline" className="h-8 shrink-0 gap-2 rounded-lg border-border bg-muted/40 pl-2.5 pr-1 font-medium text-muted-foreground shadow-none hover:translate-y-0 hover:border-primary/40 hover:text-foreground hover:shadow-none" onClick={() => { if (ol.url) void copyCheckoutLink(service.id, ol.url); }} aria-label={ui("Copiar link de checkout")}>
+                           <Link2 className="size-3.5" /><span>{ui("Copiar link")}</span>
+                           <span className="grid size-6 place-items-center rounded-md bg-background text-foreground shadow-sm">{copiedLink === service.id ? <Check className="size-3.5 text-primary" /> : <Copy className="size-3.5" />}</span>
+                         </Button>
+                         <Tooltip><TooltipTrigger asChild><Button size="icon" variant="ghost" className="size-8 text-muted-foreground" asChild aria-label={ui("Abrir checkout")}><a href={ol.url} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-3.5" /></a></Button></TooltipTrigger><TooltipContent>{ui("Abrir checkout")}</TooltipContent></Tooltip>
+                       </> : <Button size="sm" variant="outline" className="h-8 gap-2 border-dashed text-muted-foreground shadow-none" disabled={linkPending || openLinks.isError} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}>{linkPending ? <Loader2 className="size-3.5 animate-spin" /> : <Link2 className="size-3.5" />}{ui("Criar link")}</Button>}
+                     </div> : <span className="text-muted-foreground">—</span>}
+                   </TableCell>
+                   <TableCell className="whitespace-nowrap text-right">
+                     <DropdownMenu>
+                       <DropdownMenuTrigger asChild><Button size="icon" variant="ghost" className="size-8 text-muted-foreground" aria-label={ui("Ações")}><MoreHorizontal className="size-4" /></Button></DropdownMenuTrigger>
+                       <DropdownMenuContent align="end" className="w-52">
+                         {canHaveLink && !openLinks.isLoading && !openLinks.isError ? <>
+                           {ol?.url ? <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: false })}><Unlink className="size-4" />{ui("Desativar link de checkout")}</DropdownMenuItem> : <DropdownMenuItem disabled={toggleOpen.isPending} onClick={() => toggleOpen.mutate({ serviceId: service.id, active: true })}><Link2 className="size-4" />{ui("Criar link de checkout")}</DropdownMenuItem>}
+                           <DropdownMenuSeparator />
+                         </> : null}
+                         {service.archived_at ? <DropdownMenuItem disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: null } })}><ArchiveRestore className="size-4" />{ui("Restaurar")}</DropdownMenuItem> : <>
+                           <DropdownMenuItem disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { active: !service.active } })}><Power className="size-4" />{ui(service.active ? "Desativar" : "Ativar")}</DropdownMenuItem>
+                           {!service.active ? <DropdownMenuItem disabled={updateService.isPending} onClick={() => updateService.mutate({ id: service.id, patch: { archived_at: new Date().toISOString() } })}><Archive className="size-4" />{ui("Arquivar")}</DropdownMenuItem> : null}
+                         </>}
+                       </DropdownMenuContent>
+                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))
+               ); })
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
+                 <TableCell colSpan={8} className="py-10 text-center text-sm text-muted-foreground">
                   {showArchived ? "Nenhum serviço arquivado." : "Nenhum serviço cadastrado. Cadastre seus serviços para cobrar mais rápido."}
                 </TableCell>
               </TableRow>
@@ -397,6 +430,7 @@ function Servicos() {
         </Table>
         <DataPagination page={page} pageSize={10} total={filteredServices.length} onPageChange={setPage} />
       </div>
+      </TooltipProvider>
       {fiscalEdit ? <FiscalServiceDialog row={fiscalEdit.row} presetServiceId={fiscalEdit.serviceId} portal={String(fiscal.data?.settings?.portal ?? "municipal")} codeHelp={fiscal.data?.options?.municipalServiceCodeHelp}
         onClose={() => setFiscalEdit(null)} onSaved={() => void queryClient.invalidateQueries({ queryKey: ["fiscal-overview"] })} /> : null}
     </div>
