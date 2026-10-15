@@ -7,15 +7,17 @@ export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
   beforeLoad: async ({ location }) => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) {
+    // Sessão local (rápida); o servidor valida o acesso em cada operação.
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
+    if (!user) {
       if (location.pathname === "/nimda") throw notFound();
       throw redirect({ to: "/auth" });
     }
     // 2FA ativo: nada abre antes de confirmar o código do autenticador.
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (aal?.nextLevel === "aal2" && aal.currentLevel !== "aal2") throw redirect({ to: "/auth" });
-    return { user: data.user };
+    return { user };
   },
   component: () => (
     <OnboardingGate>
