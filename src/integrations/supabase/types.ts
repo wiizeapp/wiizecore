@@ -5483,6 +5483,7 @@ export type Database = {
           active: boolean
           created_at: string
           created_by: string | null
+          current_version_id: string | null
           id: string
           service_id: string
           tenant_id: string
@@ -5494,6 +5495,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           created_by?: string | null
+          current_version_id?: string | null
           id?: string
           service_id: string
           tenant_id: string
@@ -5505,6 +5507,7 @@ export type Database = {
           active?: boolean
           created_at?: string
           created_by?: string | null
+          current_version_id?: string | null
           id?: string
           service_id?: string
           tenant_id?: string
@@ -5513,6 +5516,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "service_checkout_links_current_version_id_fkey"
+            columns: ["current_version_id"]
+            isOneToOne: false
+            referencedRelation: "service_checkout_versions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_checkout_links_service_id_fkey"
             columns: ["service_id"]
@@ -5541,6 +5551,7 @@ export type Database = {
           session_hash: string
           tenant_id: string
           updated_at: string
+          version_id: string | null
         }
         Insert: {
           charge_group_id?: string | null
@@ -5553,6 +5564,7 @@ export type Database = {
           session_hash: string
           tenant_id: string
           updated_at?: string
+          version_id?: string | null
         }
         Update: {
           charge_group_id?: string | null
@@ -5565,6 +5577,7 @@ export type Database = {
           session_hash?: string
           tenant_id?: string
           updated_at?: string
+          version_id?: string | null
         }
         Relationships: [
           {
@@ -5583,6 +5596,95 @@ export type Database = {
           },
           {
             foreignKeyName: "service_checkout_sessions_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_checkout_sessions_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "service_checkout_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_checkout_versions: {
+        Row: {
+          accepted_methods: string[]
+          amount: number
+          charge_type: string
+          created_at: string
+          created_by: string
+          cycles: number | null
+          description: string | null
+          due_days: number
+          frequency: string | null
+          id: string
+          link_id: string
+          max_installments: number
+          service_id: string
+          service_name: string
+          tenant_id: string
+          token_ciphertext: string
+          token_hash: string
+        }
+        Insert: {
+          accepted_methods: string[]
+          amount: number
+          charge_type: string
+          created_at?: string
+          created_by: string
+          cycles?: number | null
+          description?: string | null
+          due_days?: number
+          frequency?: string | null
+          id?: string
+          link_id: string
+          max_installments?: number
+          service_id: string
+          service_name: string
+          tenant_id: string
+          token_ciphertext: string
+          token_hash: string
+        }
+        Update: {
+          accepted_methods?: string[]
+          amount?: number
+          charge_type?: string
+          created_at?: string
+          created_by?: string
+          cycles?: number | null
+          description?: string | null
+          due_days?: number
+          frequency?: string | null
+          id?: string
+          link_id?: string
+          max_installments?: number
+          service_id?: string
+          service_name?: string
+          tenant_id?: string
+          token_ciphertext?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_checkout_versions_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "service_checkout_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_checkout_versions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_checkout_versions_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
