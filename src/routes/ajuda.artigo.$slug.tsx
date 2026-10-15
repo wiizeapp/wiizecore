@@ -6,7 +6,7 @@ import { AnticipationCalculator, ArticleFeedback, Callout, FeeCalculator, FeeTab
 import { articleBySlug, categoryById } from "@/lib/help-content";
 import { formatDate } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/ajuda/artigo/$slug")({
+export const Route = createFileRoute("/ajuda/artigo/$slug")({
   loader: ({ params }) => { const a = articleBySlug(params.slug); if (!a) throw notFound(); return { article: a, category: categoryById(a.category)! }; },
   head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.article.title ?? "Artigo"} | Central de Ajuda WiizePay` }, { name: "description", content: loaderData?.article.summary ?? "" }] }),
   component: ArticlePage,

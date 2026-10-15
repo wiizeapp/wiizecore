@@ -9,7 +9,7 @@ import { matchesSearch } from "@/components/ds/search-field";
 import { CategoryIcon, SuggestCTA, SuggestionDialog } from "@/components/help/help-parts";
 import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
-export const Route = createFileRoute("/_authenticated/ajuda/")({
+export const Route = createFileRoute("/ajuda/")({
   head: () => ({ meta: [{ title: "Central de Ajuda | WiizePay" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da WiizePay." }] }),
   component: HelpHome,
 });
