@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Substituir agora a marca visível WiizePay por Wiize Recebe em toda a plataforma, preservando Wiize, domínios, rotas e identificadores técnicos.
+
 - [ ] Adequar identificação Asaas nos checkouts e rodapé institucional sem alterar operações financeiras.
 - [ ] Revisar privacidade, termos e cookies contra o playbook e implementação; documentar validações jurídicas e do Asaas.
 - [ ] Adicionar suporte financeiro à Central de Ajuda, preservando suporte WiizePay.
