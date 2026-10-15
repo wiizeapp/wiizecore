@@ -17,6 +17,7 @@ import {
   Receipt,
   LayoutDashboard,
   LogOut,
+  TriangleAlert,
   Menu,
   Package,
   Plus,
@@ -337,11 +338,17 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
             {workspace ? (
-              <Badge className="max-w-full truncate" variant={workspace.providerStatus === "connected" ? "default" : "secondary"}>
-                {workspace.providerStatus === "connected"
-                  ? ui(workspace.providerEnvironment === "production" ? "Pagamentos ativos" : "Pagamentos em teste")
-                  : ui("Pagamentos não conectados")}
-              </Badge>
+              workspace.providerStatus === "connected" ? (
+                <Badge className="max-w-full truncate" variant="default">
+                  {ui(workspace.providerEnvironment === "production" ? "Pagamentos ativos" : "Pagamentos em teste")}
+                </Badge>
+              ) : (
+                <Link to="/ativacao" className="flex min-w-0 items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium transition-colors hover:bg-primary/15" title={ui("Ative sua conta para começar a receber pagamentos.")}>
+                  <TriangleAlert className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+                  <span className="truncate">{ui("Pagamentos não conectados")}</span>
+                  <span className="hidden shrink-0 font-semibold text-primary sm:inline">· {ui("Ativar conta")} →</span>
+                </Link>
+              )
             ) : null}
           </div>
           <div className="flex shrink-0 items-center justify-end gap-3">
