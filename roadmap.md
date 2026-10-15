@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Trocar toda a marca visível para Wiize Core, incluindo abertura, descrições, rodapés, páginas internas e traduções; preservar integrações e informar os arquivos alterados.
+
 - [x] Corrigir link de serviço: empresa fixa valor antes de enviar, cliente escolhe pagamento; condições versionadas, cópia/abertura conferidas em sessão conectada, quatro testes aprovados e compilação OK, sem emitir cobrança ou movimentar dinheiro.
 - [ ] Validar pagamento completo pelo link de serviço: depende da aprovação da conta de recebimento pelo provedor; ativação pendente exibida sem contornar a proteção.
 
