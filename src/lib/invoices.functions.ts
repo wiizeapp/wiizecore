@@ -147,9 +147,6 @@ export const saveFiscalSettings = createServerFn({ method: "POST" })
     put("specialTaxRegime", data.specialTaxRegime);
     put("serviceListItem", data.serviceListItem);
     put("nbsCode", data.nbsCode);
-    put("rpsSerie", data.rpsSerie);
-    put("rpsNumber", data.rpsNumber);
-    put("loteNumber", data.loteNumber);
     put("nationalPortalTaxCalculationRegime", data.nationalRegime);
     put("username", data.username);
     put("password", data.password);
