@@ -515,7 +515,24 @@
 
 /* A trilha opaca acompanha o tema; transparência na raiz expõe o canvas branco. */
 html {
+  --page-scrollbar-track: var(--background);
+  --page-scrollbar-thumb: color-mix(in oklab, var(--foreground) 35%, var(--background));
   background-color: var(--background);
+}
+/* O site público pode ser escuro mesmo com preferência clara no aparelho. */
+html:not(.dark):has(.dark.min-h-screen) {
+  --page-scrollbar-track: oklch(0.17 0.014 165);
+  --page-scrollbar-thumb: oklch(0.45 0.011 164);
+  background-color: var(--page-scrollbar-track);
+}
+html {
+  scrollbar-color: var(--page-scrollbar-thumb) var(--page-scrollbar-track);
+}
+html::-webkit-scrollbar-track,
+html::-webkit-scrollbar-corner { background: var(--page-scrollbar-track); }
+html::-webkit-scrollbar-thumb {
+  background-color: var(--page-scrollbar-thumb);
+  border-color: var(--page-scrollbar-track);
 }
 * {
   scrollbar-width: thin;
