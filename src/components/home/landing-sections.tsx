@@ -1,8 +1,8 @@
 import type { CSSProperties, ReactNode } from "react";
-import howClientes from "@/assets/how-clientes.png.asset.json";
-import howCobranca from "@/assets/how-cobranca.png.asset.json";
-import howEnvio from "@/assets/how-envio.png.asset.json";
-import howRecebimento from "@/assets/how-recebimento.png.asset.json";
+import howClientes from "@/assets/how-clientes.png";
+import howCobranca from "@/assets/how-cobranca.png";
+import howEnvio from "@/assets/how-envio.png";
+import howRecebimento from "@/assets/how-recebimento.png";
 import { ArrowDown, ArrowRight, BellRing, CalendarClock, Check, CheckCircle2, CircleDollarSign, Clock3, CreditCard, FileSignature, FileText, Landmark, Lock, PenLine, QrCode, Receipt, Repeat, Users, Wallet, Briefcase, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
@@ -140,10 +140,10 @@ export function HowItWorksSection() {
   // every icon is scaled to the same visible area, and the weight compensates the
   // drawings that are naturally lighter or denser than the others.
   const steps: Array<[string, string, string, string, string, number, number, number, number, number]> = [
-    ["01", howClientes.url, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 208, 189, 1.004],
-    ["02", howCobranca.url, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 232, 239, 0.961],
-    ["03", howEnvio.url, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 326, 224, 1.108],
-    ["04", howRecebimento.url, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 286, 264, 0.959],
+    ["01", howClientes, "Cadastre cliente e serviço", "Informe quem vai pagar e o que você vende. CPF/CNPJ pode ficar para depois: ele é pedido na hora do pagamento.", "~ 1 min", 360, 237, 208, 189, 1.004],
+    ["02", howCobranca, "Gere a cobrança com contrato", "Defina valor, vencimento, Pix, boleto ou cartão, parcelas, multa e lembretes. Se houver contrato, o cliente assina antes de pagar.", "Link único", 360, 333, 232, 239, 0.961],
+    ["03", howEnvio, "Envie um link permanente", "Mande por WhatsApp ou e-mail. Os lembretes avisam antes e depois do vencimento, sem você precisar cobrar.", "Automático", 360, 233, 326, 224, 1.108],
+    ["04", howRecebimento, "Receba e veja o saldo", "A confirmação do pagamento atualiza a cobrança, o cliente, o saldo e o financeiro, com a data real de liberação.", "Em tempo real", 360, 280, 286, 264, 0.959],
   ];
   return (
     <section className="border-y border-border bg-surface">
