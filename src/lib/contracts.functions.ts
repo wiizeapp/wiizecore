@@ -207,7 +207,17 @@ export const createContract = createServerFn({ method: "POST" })
       metadata: { version: 1, content_hash: hash },
     });
 
-    return { contractId: contract.id, version: 1, contentHash: hash };
+    // Envio automático do convite de assinatura (falha aqui nunca impede a criação do contrato).
+    let autoSent = false;
+    if (data.customerId) {
+      try {
+        const { issueContractLink } = await import("./contract-links.functions");
+        await issueContractLink(supabaseAdmin, membership.tenant_id, contract.id, context.userId, "invite");
+        autoSent = true;
+      } catch { /* contrato ainda não está pronto para envio (ex.: rascunho incompleto) */ }
+    }
+
+    return { contractId: contract.id, version: 1, contentHash: hash, autoSent };
   });
 
 /** Salva uma nova versão do texto. Versões anteriores permanecem intactas. */

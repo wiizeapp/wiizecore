@@ -41,6 +41,26 @@ async function run(request: Request) {
       email: { subject: "Contrato aguardando assinatura" },
     });
   }
+  // Lembretes de assinatura pela vigência: 1 dia antes (só se houve prazo) e no dia do início.
+  {
+    const { issueContractLink } = await import("@/lib/contract-links.functions");
+    const today = new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10); // horário de Brasília
+    const tomorrow = new Date(Date.parse(today) + 86400000).toISOString().slice(0, 10);
+    for (const [stage, date] of [["day_before", tomorrow], ["start_day", today]] as const) {
+      const { data: rows } = await admin.from("contracts")
+        .select("id, tenant_id, created_at, customer_id")
+        .eq("status", "awaiting_customer").eq("starts_on", date).is("archived_at", null)
+        .not("customer_id", "is", null).limit(500);
+      for (const c of rows ?? []) {
+        // Criado no próprio dia anterior ou depois: não há prazo para o aviso de véspera.
+        if (stage === "day_before" && String(c.created_at).slice(0, 10) >= tomorrow) continue;
+        const { data: dup } = await admin.from("email_outbox" as never).select("id")
+          .eq("dedupe_key", `contract.reminder_${stage}:${c.id}`).maybeSingle();
+        if (dup) continue;
+        try { await issueContractLink(admin, c.tenant_id, c.id, null, stage); sent++; } catch { /* ignora contrato não pronto */ }
+      }
+    }
+  }
   // Lembrete diário enquanto a ativação tiver pendência há mais de 24 horas.
   const dayKey = new Date().toISOString().slice(0, 10);
   const { data: pendingActs } = await admin.from("payment_activations").select("tenant_id, review_message")

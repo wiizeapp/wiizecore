@@ -31,63 +31,85 @@ export const createContractLink = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const membership = await memberTenant(context.supabase, context.userId, ["owner", "admin", "finance"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { randomToken, tokenFingerprint } = await import("./crypto.server");
-
-    const { data: contract } = await supabaseAdmin
-      .from("contracts")
-      .select("id, status, title, customers(name, email)")
-      .eq("id", data.contractId)
-      .eq("tenant_id", membership.tenant_id)
-      .maybeSingle();
-    if (!contract) throw new Error("Contrato não encontrado.");
-    if (["signed", "cancelled", "expired"].includes(contract.status)) {
-      throw new Error("Este contrato não aceita mais assinaturas.");
-    }
-    await (await import("./contract-docs.server")).assertReadyToSend(supabaseAdmin, contract.id);
-
-    const token = randomToken(24);
-    const expiresAt = new Date(Date.now() + LINK_TTL_DAYS * 24 * 60 * 60 * 1000);
-    const { error } = await supabaseAdmin.from("contract_links").insert({
-      tenant_id: membership.tenant_id,
-      contract_id: contract.id,
-      token_hash: tokenFingerprint(token),
-      expires_at: expiresAt.toISOString(),
-      created_by: context.userId,
-    });
-    if (error) throw new Error("Não foi possível gerar o link.");
-
-    await supabaseAdmin
-      .from("contracts")
-      .update({ status: "awaiting_customer", updated_at: new Date().toISOString() })
-      .eq("id", contract.id)
-      .eq("status", "draft");
-
-    await contractEvent(supabaseAdmin, membership.tenant_id, contract.id, "link_created", null, { expires_at: expiresAt.toISOString() });
-    await logAudit(supabaseAdmin, {
-      tenantId: membership.tenant_id,
-      userId: context.userId,
-      action: "contract.link_created",
-      resource: "contracts",
-      resourceId: contract.id,
-      metadata: { expires_at: expiresAt.toISOString() },
-    });
-
-    {
-      const cust = contract.customers as { name?: string | null; email?: string | null } | null;
-      if (cust?.email) {
-        const { emailPerson, tenantName } = await import("./notify.server");
-        const company = await tenantName(supabaseAdmin, membership.tenant_id);
-        await emailPerson(supabaseAdmin, {
-          tenantId: membership.tenant_id, kind: "contract.customer_invite", dedupeKey: `contract.customer_invite:${contract.id}:${tokenFingerprint(token).slice(0, 16)}`,
-          email: { to: cust.email, subject: `${company} enviou um contrato para você assinar`, title: "Contrato aguardando sua assinatura",
-            intro: `Olá, ${cust.name ?? ""}. ${company} enviou o contrato abaixo para sua assinatura digital.`,
-            lines: [{ label: "Contrato", value: contract.title ?? "Contrato" }], cta: { label: "Revisar e assinar", url: `/c/${token}` },
-            footnote: `O link é pessoal e vale até ${expiresAt.toLocaleDateString("pt-BR")}.` },
-        });
-      }
-    }
-    return { token, expiresAt: expiresAt.toISOString() };
+    return issueContractLink(supabaseAdmin, membership.tenant_id, data.contractId, context.userId);
   });
+
+type ReminderStage = "invite" | "day_before" | "start_day";
+
+/**
+ * Gera um link novo de assinatura e envia o e-mail ao contratante.
+ * Usado no envio manual, no envio automático ao criar o contrato e nos lembretes de vigência.
+ * Só para uso no servidor, depois de verificar quem está pedindo.
+ */
+export async function issueContractLink(
+  supabaseAdmin: any,
+  tenantId: string,
+  contractId: string,
+  userId: string | null,
+  stage: ReminderStage = "invite",
+) {
+  const { randomToken, tokenFingerprint } = await import("./crypto.server");
+  const { data: contract } = await supabaseAdmin
+    .from("contracts")
+    .select("id, status, title, starts_on, customers(name, email)")
+    .eq("id", contractId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+  if (!contract) throw new Error("Contrato não encontrado.");
+  if (["signed", "cancelled", "expired"].includes(contract.status)) {
+    throw new Error("Este contrato não aceita mais assinaturas.");
+  }
+  await (await import("./contract-docs.server")).assertReadyToSend(supabaseAdmin, contract.id);
+
+  const token = randomToken(24);
+  const expiresAt = new Date(Date.now() + LINK_TTL_DAYS * 24 * 60 * 60 * 1000);
+  const { error } = await supabaseAdmin.from("contract_links").insert({
+    tenant_id: tenantId,
+    contract_id: contract.id,
+    token_hash: tokenFingerprint(token),
+    expires_at: expiresAt.toISOString(),
+    created_by: userId,
+  });
+  if (error) throw new Error("Não foi possível gerar o link.");
+
+  await supabaseAdmin
+    .from("contracts")
+    .update({ status: "awaiting_customer", updated_at: new Date().toISOString() })
+    .eq("id", contract.id)
+    .eq("status", "draft");
+
+  await contractEvent(supabaseAdmin, tenantId, contract.id, stage === "invite" ? "link_created" : `reminder_${stage}`, null, { expires_at: expiresAt.toISOString() });
+  await logAudit(supabaseAdmin, {
+    tenantId,
+    userId,
+    action: stage === "invite" ? "contract.link_created" : `contract.reminder_${stage}`,
+    resource: "contracts",
+    resourceId: contract.id,
+    metadata: { expires_at: expiresAt.toISOString() },
+  });
+
+  const cust = contract.customers as { name?: string | null; email?: string | null } | null;
+  if (cust?.email) {
+    const { emailPerson, tenantName } = await import("./notify.server");
+    const company = await tenantName(supabaseAdmin, tenantId);
+    const title = contract.title ?? "Contrato";
+    const copy = {
+      invite: { subject: `${company} enviou um contrato para você assinar`, title: "Contrato aguardando sua assinatura", intro: `Olá, ${cust.name ?? ""}. ${company} enviou o contrato abaixo para sua assinatura digital.` },
+      day_before: { subject: `Lembrete: seu contrato com ${company} começa amanhã`, title: "Falta só a sua assinatura", intro: `Olá, ${cust.name ?? ""}. O contrato abaixo começa amanhã e ainda aguarda sua assinatura. Leva menos de um minuto.` },
+      start_day: { subject: `Seu contrato com ${company} começa hoje`, title: "Contrato começa hoje", intro: `Olá, ${cust.name ?? ""}. O contrato abaixo começa hoje e ainda está sem sua assinatura. Assine pelo botão abaixo.` },
+    }[stage];
+    const dedupeKey = stage === "invite"
+      ? `contract.customer_invite:${contract.id}:${tokenFingerprint(token).slice(0, 16)}`
+      : `contract.reminder_${stage}:${contract.id}`;
+    await emailPerson(supabaseAdmin, {
+      tenantId, kind: stage === "invite" ? "contract.customer_invite" : `contract.reminder_${stage}`, dedupeKey,
+      email: { to: cust.email, subject: copy.subject, title: copy.title, intro: copy.intro,
+        lines: [{ label: "Contrato", value: title }], cta: { label: "Revisar e assinar", url: `/c/${token}` },
+        footnote: `O link é pessoal e vale até ${expiresAt.toLocaleDateString("pt-BR")}.` },
+    });
+  }
+  return { token, expiresAt: expiresAt.toISOString() };
+}
 
 /** Revoga todos os links ativos de um contrato. */
 export const revokeContractLinks = createServerFn({ method: "POST" })
