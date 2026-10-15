@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Refinar tabela de serviços: configuração fiscal pelo status, links compactos como cobranças e menu de ações; verificar com sessão conectada e listar arquivos.
+- [x] Refinar tabela de serviços: configuração fiscal pelo status, links compactos como cobranças e menu de ações; sessão conectada, abertura fiscal e cópia de link existente conferidas, três testes aprovados e compilação OK; sem operações financeiras.
 
 - [x] Simplificar rodapés e reduzir selo oficial Asaas para 120×36; computador/celular sem rolagem lateral, sete testes aprovados; arquivos informados na entrega.
 
