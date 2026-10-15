@@ -40,3 +40,4 @@
 
 - Read subdirectories' scoped `AGENTS.md` before edits.
 - Public illustration and attribution rules live in `src/components/AGENTS.md`. Why: scoped ownership.
+- Open service checkout (`/checkout/$token`, `src/lib/service-checkout.functions.ts`): buyer data creates/reuses the customer by CPF/CNPJ, method/installment rules live in `service-checkout-rules.ts`, the charge is created only via `createChargeCore` then the buyer continues in `/pagar`. Why: price always comes from the saved service.
