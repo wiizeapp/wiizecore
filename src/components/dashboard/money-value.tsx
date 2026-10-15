@@ -4,7 +4,7 @@ export function MoneyValue({ value, accentCents = false }: { value: string; acce
   if (!match) {
     const hidden = /^([^•]*?)(•+)\s*$/.exec(value);
     if (hidden) return <span className="inline-flex max-w-full items-baseline whitespace-nowrap" aria-label={value}>
-      <span className="mr-1 text-[0.72em] font-medium text-muted-foreground" aria-hidden>{hidden[1].trim()}</span>
+      <span className="mr-1 text-[0.72em] font-medium text-muted-foreground" aria-hidden>{(hidden[1] ?? "").trim()}</span>
       <span aria-hidden>{hidden[2]}</span>
     </span>;
     return <span>{value}</span>;
