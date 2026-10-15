@@ -33,7 +33,7 @@ function translateVisiblePage() {
   if (language === DEFAULT_LANG && !everTranslated) return;
   if (language !== DEFAULT_LANG) everTranslated = true;
   const translate = (value: string) => {
-    if (language === DEFAULT_LANG || value === "Wiize" || value === "Recebe") return value;
+    if (language === DEFAULT_LANG || value === "Wiize" || value === "Core") return value;
     // Busca direta no dicionário: textos com ":" ou "." quebravam a busca padrão.
     const dict = (i18n.store.data[language]?.["ui"] ?? {}) as Record<string, string>;
     const key = value.replace(/\s+/g, " ");
@@ -170,12 +170,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wiize Recebe" },
+      { title: "Wiize Core" },
       { name: "description", content: "Pagamentos e gestão financeira para prestadores de serviços." },
-      { property: "og:title", content: "Wiize Recebe" },
+      { property: "og:title", content: "Wiize Core" },
       { property: "og:description", content: "Pagamentos e gestão financeira para prestadores de serviços." },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Wiize Recebe" },
+      { property: "og:site_name", content: "Wiize Core" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

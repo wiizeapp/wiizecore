@@ -21,10 +21,10 @@ export const Route = createFileRoute("/oauth/authorize")({
   }),
   head: () => ({
     meta: [
-      { title: "Autorizar conexão — Wiize Recebe" },
-      { name: "description", content: "Autorize um aplicativo a criar cobranças na sua conta Wiize Recebe." },
-      { property: "og:title", content: "Autorizar conexão — Wiize Recebe" },
-      { property: "og:description", content: "Tela segura de autorização da Wiize Recebe." },
+      { title: "Autorizar conexão — Wiize Core" },
+      { name: "description", content: "Autorize um aplicativo a criar cobranças na sua conta Wiize Core." },
+      { property: "og:title", content: "Autorizar conexão — Wiize Core" },
+      { property: "og:description", content: "Tela segura de autorização da Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -80,8 +80,8 @@ function AuthorizePage() {
   return (
     <Shell>
       <div>
-        <h1 className="font-display text-xl font-semibold">Conectar {d.clientName} à Wiize Recebe</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Isso permite que {d.clientName} use a Wiize Recebe em nome da empresa <b>{d.tenantName}</b>.</p>
+        <h1 className="font-display text-xl font-semibold">Conectar {d.clientName} à Wiize Core</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Isso permite que {d.clientName} use a Wiize Core em nome da empresa <b>{d.tenantName}</b>.</p>
       </div>
       <div className="rounded-lg border border-border bg-card p-4 text-sm">
         <p className="text-xs uppercase text-muted-foreground">Conta</p>
@@ -93,7 +93,7 @@ function AuthorizePage() {
       <ul className="space-y-2 text-sm">
         {d.scopes?.map((sc) => <li key={sc} className="flex gap-2"><ShieldCheck className="size-4 shrink-0 text-primary" />{sc}</li>)}
       </ul>
-      <p className="text-xs text-muted-foreground">Isso não ignora as permissões nem as regras de segurança da Wiize Recebe. Você pode desconectar quando quiser.</p>
+      <p className="text-xs text-muted-foreground">Isso não ignora as permissões nem as regras de segurança da Wiize Core. Você pode desconectar quando quiser.</p>
       {d.canApprove ? (
         <div className="flex gap-2">
           <Button className="flex-1" disabled={busy} onClick={() => act(true)}>Autorizar</Button>

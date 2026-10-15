@@ -14,10 +14,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/autorizar/$token")({
   head: () => ({
     meta: [
-      { title: "Autorizar Pix Automático — Wiize Recebe" },
+      { title: "Autorizar Pix Automático — Wiize Core" },
       { name: "description", content: "Autorize o Pix Automático no app do seu banco e pague suas cobranças recorrentes sem esforço." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Autorizar Pix Automático — Wiize Recebe" },
+      { property: "og:title", content: "Autorizar Pix Automático — Wiize Core" },
       { property: "og:description", content: "Autorize uma vez no app do banco e as próximas cobranças são pagas automaticamente." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

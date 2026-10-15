@@ -37,10 +37,10 @@ export const Route = createFileRoute("/_authenticated/painel")({
   }),
   head: () => ({
     meta: [
-      { title: "Dashboard — Wiize Recebe" },
-      { name: "description", content: "Centro de comando financeiro e comercial da sua empresa na Wiize Recebe." },
-      { property: "og:title", content: "Dashboard — Wiize Recebe" },
-      { property: "og:description", content: "Centro de comando financeiro e comercial da sua empresa na Wiize Recebe." },
+      { title: "Dashboard — Wiize Core" },
+      { name: "description", content: "Centro de comando financeiro e comercial da sua empresa na Wiize Core." },
+      { property: "og:title", content: "Dashboard — Wiize Core" },
+      { property: "og:description", content: "Centro de comando financeiro e comercial da sua empresa na Wiize Core." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -372,7 +372,7 @@ function Dashboard() {
       </section>
 
       {showJourney && (
-         <Panel title={<span className="flex items-center gap-2"><JourneyIcon className="h-4 w-4 text-primary" />{ui("Sua jornada no Wiize Recebe")}</span>} subtitle={ui("Complete as etapas para aproveitar todo o potencial da Wiize Recebe.")}
+         <Panel title={<span className="flex items-center gap-2"><JourneyIcon className="h-4 w-4 text-primary" />{ui("Sua jornada no Wiize Core")}</span>} subtitle={ui("Complete as etapas para aproveitar todo o potencial da Wiize Core.")}
            action={<div className="flex shrink-0 items-center gap-2"><span className="numeric-tabular text-xs font-semibold text-primary">{ui("{{done}} de {{total}} etapas", { done: doneCount, total: journey.length })}</span><Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={toggleJourney} aria-expanded={journeyOpen} aria-controls="dashboard-journey" aria-label={ui(journeyOpen ? "Fechar jornada" : "Abrir jornada")}>{journeyOpen ? <ChevronUp /> : <ChevronDown />}</Button></div>}>
           {journeyOpen && <><div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${(doneCount / journey.length) * 100}%` }} /></div>
           <ol id="dashboard-journey" className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">{journey.map((j) => { const isNext = j === next; return <li key={j.label}><Link to={j.to} className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors ${isNext ? "bg-primary/10 font-semibold" : "hover:bg-muted"} ${j.done ? "text-muted-foreground" : ""}`}><span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${j.done ? "border-primary bg-primary text-primary-foreground" : isNext ? "border-primary" : "border-border"}`}>{j.done && <Check className="h-3 w-3" />}</span><span className={j.done ? "line-through decoration-muted-foreground/40" : ""}>{j.label}</span>{isNext && <ArrowRight className="ml-auto h-3.5 w-3.5 text-primary" />}</Link></li>; })}</ol></>}

@@ -16,7 +16,7 @@ type Pending = Options & { resolve: (v: boolean) => void };
 
 let open: ((p: Pending) => void) | null = null;
 
-/** Confirmação própria da Wiize Recebe (substitui a caixa padrão do navegador). */
+/** Confirmação própria da Wiize Core (substitui a caixa padrão do navegador). */
 export function confirmAction(options: Options): Promise<boolean> {
   return new Promise((resolve) => {
     if (!open) return resolve(false);

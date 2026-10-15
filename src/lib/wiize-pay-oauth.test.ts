@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { pkceMatches, signWebhook, sha256hex } from "./wiize-pay-oauth.server";
 
-describe("Wiize Recebe OAuth", () => {
+describe("Wiize Core OAuth", () => {
   it("aceita PKCE S256 correto e rejeita errado", () => {
     const v = "a".repeat(64);
     const c = createHash("sha256").update(v).digest("base64url");

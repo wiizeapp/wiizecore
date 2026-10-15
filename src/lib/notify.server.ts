@@ -30,7 +30,7 @@ export async function notifyTenant(admin: Admin, input: {
       const to = await tenantManagerEmails(admin, input.tenantId);
       await sendEmail(admin, {
         tenantId: input.tenantId, kind: input.kind, dedupeKey: input.dedupeKey,
-        email: { title: input.title, intro: input.body, ...(input.link ? { cta: { label: "Abrir na Wiize Recebe", url: input.link } } : {}), ...input.email, to },
+        email: { title: input.title, intro: input.body, ...(input.link ? { cta: { label: "Abrir na Wiize Core", url: input.link } } : {}), ...input.email, to },
       });
     }
   } catch (e) {
@@ -38,7 +38,7 @@ export async function notifyTenant(admin: Admin, input: {
   }
 }
 
-/** Aviso para a equipe interna da Wiize Recebe (painel administrativo). */
+/** Aviso para a equipe interna da Wiize Core (painel administrativo). */
 export async function notifyPlatform(admin: Admin, input: {
   tenantId: string | null; kind: string; title: string; body: string; link?: string;
   email?: { subject: string; dedupeKey: string; lines?: { label: string; value: string }[] };
@@ -74,5 +74,5 @@ export async function emailPerson(admin: Admin, input: { tenantId: string; kind:
 
 export async function tenantName(admin: Admin, tenantId: string) {
   const { data } = await admin.from("tenants").select("name").eq("id", tenantId).maybeSingle();
-  return data?.name ?? "Wiize Recebe";
+  return data?.name ?? "Wiize Core";
 }

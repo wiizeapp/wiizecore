@@ -36,7 +36,7 @@ export function MfaRecoveryCard() {
     return (
       <section className="surface-panel p-5 text-sm">
         <p className="font-medium">Pedido de recuperação em análise</p>
-        <p className="mt-1 text-muted-foreground">Enviado em {formatDate(req.created_at)}. A equipe Wiize Recebe vai avisar você por aqui.</p>
+        <p className="mt-1 text-muted-foreground">Enviado em {formatDate(req.created_at)}. A equipe Wiize Core vai avisar você por aqui.</p>
       </section>
     );
   }
@@ -47,7 +47,7 @@ export function MfaRecoveryCard() {
         <KeyRound className="mt-0.5 h-5 w-5 text-primary" />
         <div className="min-w-0 flex-1">
           <h2 className="font-display text-base font-semibold tracking-tight">Não tenho acesso ao meu autenticador</h2>
-          <p className="mt-1 text-sm text-muted-foreground">O código reserva pode confirmar uma troca de senha ou a desativação do 2FA. Se também perdeu esse código, peça uma análise da equipe Wiize Recebe.</p>
+          <p className="mt-1 text-sm text-muted-foreground">O código reserva pode confirmar uma troca de senha ou a desativação do 2FA. Se também perdeu esse código, peça uma análise da equipe Wiize Core.</p>
           {!open ? (
             <Button className="mt-4" variant="outline" size="sm" onClick={() => setOpen(true)}>Recuperar acesso</Button>
           ) : (

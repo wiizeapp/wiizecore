@@ -18,11 +18,11 @@ describe("custo do Asaas pela API", () => {
     expect(estimateProviderFeeCents(null, "pix", 10000)).toBeNull();
     expect(estimateProviderFeeCents(fees, null, 10000)).toBeNull();
   });
-  it("divisão: Wiize Recebe recebe só a diferença", () => {
+  it("divisão: Wiize Core recebe só a diferença", () => {
     const covered = coveredProviderFeeCents(629, 348);
     expect(629 - covered).toBe(281);
   });
-  it("taxa Wiize Recebe menor que o custo (promoção) → cobre só até a taxa e devolve o resto", () => {
+  it("taxa Wiize Core menor que o custo (promoção) → cobre só até a taxa e devolve o resto", () => {
     const covered = coveredProviderFeeCents(249, 199 + 100);
     expect(covered).toBe(249);
     expect(reimbursementCents(299, covered)).toBe(50);
@@ -37,7 +37,7 @@ describe("promoção do Asaas informada pela API", () => {
     bankSlip: { defaultValue: 1.99, discountValue: 0.99, expirationDate: "2027-01-07" },
     pix: { type: "FIXED", fixedFeeValue: 1.99, fixedFeeValueWithDiscount: 0.99, discountExpiration: "2027-01-07" },
   } };
-  it("durante a promoção usa 0,99 (diferença fica com a Wiize Recebe)", () => {
+  it("durante a promoção usa 0,99 (diferença fica com a Wiize Core)", () => {
     expect(estimateProviderFeeCents(promo, "pix", 10000, now)).toBe(99);
     expect(estimateProviderFeeCents(promo, "boleto", 10000, now)).toBe(99);
     expect(249 - coveredProviderFeeCents(249, 99)).toBe(150);

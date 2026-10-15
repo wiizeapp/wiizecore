@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Clear rates and full control — Wiize Recebe",
-    "description": "See what it costs to get paid by Pix, boleto and card with Wiize Recebe, and how billing, invoices, contracts, clients and financial management come together in one place. No monthly fee and no hidden costs."
+    "title": "Clear rates and full control — Wiize Core",
+    "description": "See what it costs to get paid by Pix, boleto and card with Wiize Core, and how billing, invoices, contracts, clients and financial management come together in one place. No monthly fee and no hidden costs."
   },
   "hero": {
     "eyebrow": "Pricing",
@@ -84,7 +84,7 @@
     "totalCustomer": "Total paid by customer",
     "installmentsEst": "{{n}} estimated installments",
     "installmentsOf": "{{n}}x of {{v}}",
-    "fee": "Wiize Recebe fee",
+    "fee": "Wiize Core fee",
     "calculating": "Calculating…",
     "net": "Net amount",
     "disclaimer": "Estimate based on current rules. The final amount is confirmed when the charge is created.",
@@ -126,7 +126,7 @@
   "dunning": {
     "eyebrow": "Payment reminders",
     "title": "Get paid without turning collection into work.",
-    "subtitle": "Wiize Recebe follows every due date and keeps your customer informed through the right channels. Fewer delays, fewer repetitive conversations and more time to grow.",
+    "subtitle": "Wiize Core follows every due date and keeps your customer informed through the right channels. Fewer delays, fewer repetitive conversations and more time to grow.",
     "per": "per charge",
     "popular": "Most popular",
     "cta": "I want better collections",

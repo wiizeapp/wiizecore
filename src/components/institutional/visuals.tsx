@@ -12,7 +12,7 @@ const modules = [
 
 export function OperationDiagram({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation('ui');
-  return <div className={`institution-operation ${compact ? 'is-compact' : ''}`} role="img" aria-label={t('Clientes, contratos, cobranças e documentos conectados pela Wiize Recebe')}>
+  return <div className={`institution-operation ${compact ? 'is-compact' : ''}`} role="img" aria-label={t('Clientes, contratos, cobranças e documentos conectados pela Wiize Core')}>
     <div className="institution-operation-label"><span className="institution-status-dot" />{t('Uma operação conectada')}</div>
     <div className="institution-module-grid">{modules.map(({ icon: Icon, name, detail }, i) => <div className="institution-module" key={name}><span className="institution-module-index">0{i + 1}</span><Icon className="size-5 text-primary" /><strong>{t(name)}</strong>{!compact && <p>{t(detail)}</p>}</div>)}</div>
     <div className="institution-connection" aria-hidden="true"><span /><span /><span /><span /><i /></div>
@@ -32,7 +32,7 @@ export function FragmentationDiagram() {
 export function OperationDashboard() {
   const { t } = useTranslation('ui');
   return <figure className="institution-dashboard payment-dashboard">
-    <div className="institution-dashboard-toolbar"><div className="institution-window-dots" aria-hidden="true"><i /><i /><i /></div><span><LockKeyhole className="size-3" />Wiize Recebe</span><Bell className="size-3.5 text-muted-foreground" /></div>
+    <div className="institution-dashboard-toolbar"><div className="institution-window-dots" aria-hidden="true"><i /><i /><i /></div><span><LockKeyhole className="size-3" />Wiize Core</span><Bell className="size-3.5 text-muted-foreground" /></div>
     <div className="institution-dashboard-layout"><aside className="institution-dashboard-sidebar"><Brand size="sm" /><div className="institution-dashboard-nav is-active"><LayoutDashboard className="size-4" /><span>{t('Visão geral')}</span></div>{modules.map(({ icon: Icon, name }) => <div className="institution-dashboard-nav" key={name}><Icon className="size-4" /><span>{t(name)}</span></div>)}<div className="institution-dashboard-security"><LockKeyhole className="size-3.5 text-primary" /><span>{t('Acesso seguro')}</span></div></aside>
       <div className="institution-dashboard-content"><header><div><p>{t('Visão geral')}</p><h3>{t('Uma operação conectada')}</h3></div><span className="institution-dashboard-avatar">WP</span></header><div className="institution-dashboard-summary">{modules.slice(0, 3).map(({ icon: Icon, name }, i) => <div key={name}><Icon className="size-4" /><span>{t(name)}</span><div className="institution-mini-trend" aria-hidden="true">{Array.from({ length: 8 }, (_, j) => <i key={j} className={`institution-mini-bar-${(j + i) % 4}`} />)}</div></div>)}</div><OperationDiagram /><p className="institution-dashboard-caption">{t('Representação ilustrativa do produto')}</p></div>
     </div>

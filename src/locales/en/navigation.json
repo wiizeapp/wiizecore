@@ -5,10 +5,10 @@
   "security": "Security",
   "access": "Access platform",
   "openMenu": "Open menu",
-  "menuTitle": "Wiize Recebe menu",
+  "menuTitle": "Wiize Core menu",
   "mainNav": "Main navigation",
   "mobileNav": "Mobile navigation",
-  "home": "Wiize Recebe — home",
+  "home": "Wiize Core — home",
   "items": {
     "charges": [
       "Charges and payments",

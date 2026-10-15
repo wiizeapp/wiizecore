@@ -46,7 +46,7 @@ const daysBetween = (a: string, b: string) => Math.max(0, Math.ceil((new Date(`$
 
 /**
  * Antecipação estimada por recebível: taxa mensal proporcional aos dias que faltam
- * (mesma metodologia comercial da Wiize Recebe: valor × taxa mensal × dias / 30).
+ * (mesma metodologia comercial da Wiize Core: valor × taxa mensal × dias / 30).
  */
 export function estimateAnticipation(input: {
   rows: RateRow[]; method: "boleto" | "credit_card"; gross: number; installments: number;

@@ -36,7 +36,7 @@ export function CoproductionCard({ enabled, onEnabled, list, onChange, total, in
                 <Button type="button" size="icon" variant="ghost" aria-label={ui("Remover")} onClick={() => onChange(list.filter((_, j) => j !== i))}><Trash2 className="size-4" /></Button></div>
               <div className="grid gap-2 sm:grid-cols-2">
                 <div><Label className="text-xs">{ui("Nome")}</Label><Input value={c.name} onChange={(e) => set(i, { name: e.target.value })} /></div>
-                <div><Label className="text-xs">{ui("E-mail da conta Wiize Recebe")}</Label><Input type="email" value={c.email} onChange={(e) => set(i, { email: e.target.value })} /></div>
+                <div><Label className="text-xs">{ui("E-mail da conta Wiize Core")}</Label><Input type="email" value={c.email} onChange={(e) => set(i, { email: e.target.value })} /></div>
                 <div><Label className="text-xs">{ui("Participação")}</Label>
                   <div className="flex gap-2">
                     <select className="h-9 rounded-md border border-input bg-background px-2 text-sm" value={c.type} onChange={(e) => set(i, { type: e.target.value as "percent" | "fixed", value: "" })}>

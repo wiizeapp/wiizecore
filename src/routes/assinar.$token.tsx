@@ -19,9 +19,9 @@ const ROLE: Record<string, string> = { witness: "testemunha", signer: "signatár
 export const Route = createFileRoute("/assinar/$token")({
   head: () => ({
     meta: [
-      { title: "Assinar contrato — Wiize Recebe" },
+      { title: "Assinar contrato — Wiize Core" },
       { name: "description", content: "Leia e assine eletronicamente o contrato enviado para você." },
-      { property: "og:title", content: "Assinar contrato — Wiize Recebe" },
+      { property: "og:title", content: "Assinar contrato — Wiize Core" },
       { property: "og:description", content: "Leia e assine eletronicamente o contrato enviado para você." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -61,7 +61,7 @@ function AssinarPage() {
   return (
     <main className="min-h-screen bg-background px-3 py-6 text-foreground sm:px-4 sm:py-10">
       <div className="mx-auto max-w-2xl space-y-5">
-        <p className="text-sm font-semibold text-primary">Wiize Recebe · Assinatura eletrônica</p>
+        <p className="text-sm font-semibold text-primary">Wiize Core · Assinatura eletrônica</p>
         {q.isLoading ? <div className="skeleton-shimmer h-40 rounded-xl" /> : q.isError ? (
           <div className="surface-panel p-6 text-sm">{(q.error as Error).message}</div>
         ) : q.data ? (

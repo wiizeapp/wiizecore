@@ -64,7 +64,7 @@ export const PERMISSIONS_POLICY = [
   "browsing-topics=()", "fullscreen=(self)", "clipboard-write=(self)", "publickey-credentials-get=(self)",
 ].join(", ");
 
-/** Janelas da Wiize Recebe mostradas dentro do Wiize CRM. */
+/** Janelas da Wiize Core mostradas dentro do Wiize CRM. */
 export const isEmbedPath = (pathname: string) => pathname === "/embed" || pathname.startsWith("/embed/");
 
 export function applySecurityHeaders(h: Headers, ctx: { pathname: string; host: string; supabaseUrl?: string | undefined; dev: boolean; embedOrigins?: readonly string[] }) {
