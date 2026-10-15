@@ -120,9 +120,9 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       const { data: link } = await admin.from("service_checkout_links").select("active").eq("id", v.link_id).eq("tenant_id", tenantId).maybeSingle();
       if (!link?.active) throw new Error("Link desativado.");
       const { isValidChoice } = await import("./service-checkout-rules");
-      const methods = v.accepted_methods.filter((m) => service.accepted_methods.includes(m as never));
+      const methods = v.accepted_methods;
       if (!isValidChoice(v.charge_type as "one_time" | "installment" | "recurring", methods, data.method, data.installmentCount ?? 1, v.max_installments)) throw new Error("Forma de pagamento indisponível para este serviço.");
-      Object.assign(service, { amount: v.amount, type: v.charge_type, custom_amount: false, flexible_type: false, frequency: v.frequency, cycles: v.cycles, due_days: v.due_days });
+      Object.assign(service, { name: v.service_name, description: v.description, amount: v.amount, type: v.charge_type, accepted_methods: methods, custom_amount: false, flexible_type: false, frequency: v.frequency, cycles: v.cycles, due_days: v.due_days });
     }
     // Serviço com forma personalizada: o tipo vem desta cobrança.
     if ((service as { flexible_type?: boolean }).flexible_type) {

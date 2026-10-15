@@ -168,6 +168,8 @@ function Servicos() {
   const configureLink = (service: NonNullable<typeof services>[number], existing = false) => {
     setLinkAmount(service.custom_amount ? "" : String(service.amount));
     setLinkType(service.flexible_type ? "installment" : service.type);
+    setLinkFrequency(service.frequency ?? "monthly");
+    setLinkMax("21");
     setLinkConfig({ serviceId: service.id, name: service.name, customAmount: service.custom_amount, flexible: service.flexible_type, existing });
   };
   const fetchOpen = useServerFn(listServiceCheckoutLinks);

@@ -5,7 +5,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /**
  * Checkout aberto por serviço: um link fixo onde quem paga informa os próprios dados,
  * escolhe a forma de pagamento e segue para o checkout normal (/pagar). Valor e tipo
- * vêm SEMPRE do serviço salvo; cliente e cobrança são criados no servidor.
+ * vêm SEMPRE da versão emitida pela empresa; cliente e cobrança são criados no servidor.
  */
 const tokenSchema = z.string().min(20).max(100).regex(/^[A-Za-z0-9_-]+$/);
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
@@ -106,10 +106,10 @@ async function resolveOpenLink(db: Admin, token: string) {
   if (!version) return null;
   const { data: link } = await db.from("service_checkout_links").select("id, tenant_id, service_id, active, created_by").eq("id", version.link_id).eq("tenant_id", version.tenant_id).maybeSingle();
   if (!link || !link.active) return null;
-  const { data: svc } = await db.from("services").select("id, active, archived_at, accepted_methods").eq("id", link.service_id).eq("tenant_id", link.tenant_id).maybeSingle();
+  const { data: svc } = await db.from("services").select("id, active, archived_at").eq("id", link.service_id).eq("tenant_id", link.tenant_id).maybeSingle();
   if (!svc || !svc.active || svc.archived_at) return null;
   const { data: tenant } = await db.from("tenants").select("name").eq("id", link.tenant_id).maybeSingle();
-  return { link, version, svc: { ...svc, name: version.service_name, description: version.description, type: version.charge_type, amount: version.amount, frequency: version.frequency, accepted_methods: version.accepted_methods.filter((m) => svc.accepted_methods.includes(m as never)) }, tenantName: tenant?.name ?? "" };
+  return { link, version, svc: { ...svc, name: version.service_name, description: version.description, type: version.charge_type, amount: version.amount, frequency: version.frequency, accepted_methods: version.accepted_methods }, tenantName: tenant?.name ?? "" };
 }
 
 export const getServiceCheckout = createServerFn({ method: "GET" })
@@ -175,7 +175,8 @@ export const startServiceCheckout = createServerFn({ method: "POST" })
 
     const { randomToken, tokenFingerprint } = await import("./crypto.server");
     const session = randomToken(24);
-    await db.from("service_checkout_sessions").insert({ tenant_id: tenantId, link_id: r.link.id, customer_id: customerId, version_id: r.version.id, session_hash: tokenFingerprint(session) });
+    const { error: sessionError } = await db.from("service_checkout_sessions").insert({ tenant_id: tenantId, link_id: r.link.id, customer_id: customerId, version_id: r.version.id, session_hash: tokenFingerprint(session) });
+    if (sessionError) throw new Error("Não foi possível registrar seus dados.");
     const { logAudit } = await import("./audit.server");
     await logAudit(db, { tenantId, userId: null, action: "service_checkout.customer_identified", resource: "customers", metadata: { service_id: r.svc.id, customer_id: customerId } });
     return { session, resumeUrl };
@@ -189,6 +190,7 @@ export const chooseServiceCheckoutMethod = createServerFn({ method: "POST" })
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
     const r = await resolveOpenLink(db, data.token);
     if (!r) throw new Error("Este link não está disponível.");
+    await (await import("./activation.server")).assertCanReceivePayments(db, r.link.tenant_id);
     const { tokenFingerprint } = await import("./crypto.server");
     const { data: s } = await db.from("service_checkout_sessions").select("id, customer_id, created_at").eq("session_hash", tokenFingerprint(data.session)).eq("link_id", r.link.id).eq("version_id", r.version.id).maybeSingle();
     if (!s || Date.now() - new Date(s.created_at).getTime() > 2 * 3600_000) throw new Error("Sessão expirada. Informe seus dados novamente.");
