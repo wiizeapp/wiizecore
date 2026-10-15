@@ -287,8 +287,7 @@ function Dashboard() {
   const upcomingRows = paginate(s.upcoming, upcomingPage, 4);
 
   const alerts: { text: string; to: AppPath }[] = [];
-  if (extras.data && !activated) alerts.push({ text: ui("Ative sua conta para começar a receber pagamentos."), to: "/ativacao" });
-  else if (!mockup && extras.data && activated && workspace && !workspace.hasFinancialPassword)
+  if (!mockup && extras.data && activated && workspace && !workspace.hasFinancialPassword)
     alerts.push({ text: ui("Crie sua senha financeira para proteger saques e operações sensíveis."), to: "/seguranca" });
   if (s.overdue.length) alerts.push({ text: ui(s.overdue.length === 1 ? "{{count}} cobrança vencida aguardando pagamento." : "{{count}} cobranças vencidas aguardando pagamento.", { count: s.overdue.length }), to: "/cobrancas" });
 
@@ -371,24 +370,6 @@ function Dashboard() {
         <CompactStat icon={UserPlus} label={ui("Novos clientes no período")} value={payments.isError ? "—" : hidden ? "••••" : String(s.newCustomers)} loading={loading} />
         <CompactStat icon={RotateCcw} label={ui("Reembolsos no período")} value={refunds.isError ? "—" : mask(cents((refunds.data ?? []).reduce((total, row) => total + toCents(row.refund_amount), 0)))} loading={refunds.isPending} />
       </section>
-
-      {/* Ações rápidas */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {([
-          ["/cobrancas", ui("Criar cobrança"), Plus],
-           ["/clientes", ui("Novo cliente"), UserPlus],
-           ["/contratos", ui("Novo contrato"), FileSignature],
-           ["/financeiro", ui("Sacar"), Wallet],
-        ] as const).map(([to, label, Icon]) => (
-          <Link key={label} to={to} {...(to === "/cobrancas" ? { search: { nova: true } } : {})}
-            className="group flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-3 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-primary/40">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <Icon className="h-4 w-4" />
-            </span>
-            {label}
-          </Link>
-        ))}
-      </div>
 
       {showJourney && (
          <Panel title={<span className="flex items-center gap-2"><JourneyIcon className="h-4 w-4 text-primary" />{ui("Sua jornada no WiizePay")}</span>} subtitle={ui("Complete as etapas para aproveitar todo o potencial da WiizePay.")}
