@@ -12,7 +12,10 @@ if (typeof window !== "undefined") {
     sessionStorage.setItem(KEY, String(Date.now()));
     window.location.reload();
   };
-  window.addEventListener("vite:preloadError", (e) => { e.preventDefault(); reloadOnce(); });
+  // Não cancelar o evento: o Vite deve rejeitar a importação que falhou.
+  // preventDefault() transforma a falha em undefined e quebra lazyRouteComponent
+  // ao ler "component", principalmente quando o limite de recarga é atingido.
+  window.addEventListener("vite:preloadError", () => { reloadOnce(); });
   window.addEventListener("unhandledrejection", (e) => {
     const msg = String((e.reason as Error)?.message ?? e.reason ?? "");
     if (/Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/i.test(msg)) reloadOnce();
