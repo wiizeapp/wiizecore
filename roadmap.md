@@ -121,3 +121,4 @@
 
 - [x] Abertura no celular: aproximar o título da seção seguinte da linha divisória (topo 48px só abaixo de 1024px) e devolver à seção "Da primeira cobrança..." o espaçamento original de 80px. Conferido a 390px e 1280px, sem corte seco, compilação OK.
 - [x] Inverter a ordem das seções "Da primeira cobrança ao dinheiro na conta em 4 passos." e "Tudo o que você precisa para administrar seus recebimentos.", e deixar a segunda com a mesma cor de fundo da seção "Da contratação às próximas cobranças, tudo conectado."; ordem e cores conferidas no navegador, compilação OK.
+- 2026-10-16: Espaçamento superior da seção "Da primeira cobrança..." reduzido (pt-14/lg:pt-20); sombra do painel do hero aliviada e degradê de corte mais alto e gradual (home-dashboard-fade 6rem, 3 estágios).
