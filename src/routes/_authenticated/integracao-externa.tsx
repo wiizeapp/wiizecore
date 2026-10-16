@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +14,7 @@ import { ExtWebhooksPanel } from "@/components/ext-webhooks-panel";
 import { ExtAiGuide, ExtLogs, ExtOverview } from "@/components/ext-insights";
 import { AiPromptCards, ApiReference, ChargesTab, EnvBadge, GettingStarted, RequestLogs, ServicesTab } from "@/components/developer/portal-parts";
 import { useDevEnv } from "@/lib/dev-environment";
-import { BookOpen, Boxes, CreditCard, FileCode2, KeyRound, Repeat, ScrollText, ShoppingCart, Users, Webhook, FlaskConical } from "lucide-react";
+import { BookOpen, CreditCard, FileCode2, KeyRound, Repeat, ScrollText, ShoppingCart, Users, Webhook, FlaskConical } from "lucide-react";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
