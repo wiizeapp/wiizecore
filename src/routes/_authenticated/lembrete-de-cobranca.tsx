@@ -1,10 +1,10 @@
 import { PartnerNotice } from "@/components/partner-notice";
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { BellRing, CheckCircle2, Clock3, Info, Lock, Mail, MessageCircle, MessageSquare, Phone, AlertTriangle, Pause, Play, ShieldCheck, Sparkles, X } from "lucide-react";
+import { BellRing, CheckCircle2, Clock3, Info, Lock, Mail, MessageCircle, MessageSquare, Phone, AlertTriangle, Palette, Pause, Play, ShieldCheck, Sparkles, X } from "lucide-react";
 import { PageHeader, StatusBadge, SummaryStrip } from "@/components/ds";
 import { ErrorState, ListSkeleton } from "@/components/states";
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatBRL, formatDate } from "@/lib/format";
 import { getDunning, listDunningTargets, saveDunning, setDunningOverride } from "@/lib/dunning.functions";
-import { BEFORE_OFFSETS, CHANNELS, PLAN_CHANNELS, PLAN_ORDER, minPlanFor, type DunningChannel, type DunningPlanCode, type DunningStepKey, type DunningSteps } from "@/lib/dunning-rules";
+import { BEFORE_OFFSETS, CHANNELS, PLAN_CHANNELS, PLAN_ORDER, type DunningChannel, type DunningPlanCode, type DunningStepKey, type DunningSteps } from "@/lib/dunning-rules";
 
 export const Route = createFileRoute("/_authenticated/lembrete-de-cobranca")({
   head: () => ({
     meta: [
-      { title: "Lembretes de cobrança — Wiize Core" },
+      { title: "Lembrete inteligente — Wiize Core" },
       { name: "description", content: "Configure avisos automáticos por WhatsApp, SMS, e-mail e ligação para suas cobranças." },
-      { property: "og:title", content: "Lembretes de cobrança — Wiize Core" },
+      { property: "og:title", content: "Lembrete inteligente — Wiize Core" },
       { property: "og:description", content: "Avisos automáticos das suas cobranças." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -54,6 +54,13 @@ const ALERT: Record<string, string> = {
   insufficient: "Não há saldo suficiente para processar novas comunicações.",
 };
 
+const STEP_KEYS: DunningStepKey[] = ["created", "before", "due", "overdue", "overdue_repeat", "received"];
+/** Tipo de lembrete de um momento: o maior plano cujos canais estão todos ligados. */
+function stepType(list: DunningChannel[]): DunningPlanCode | "off" {
+  if (!list.length) return "off";
+  return [...PLAN_ORDER].reverse().find((p) => PLAN_CHANNELS[p].every((c) => list.includes(c))) ?? "essential";
+}
+
 function Regua() {
   const qc = useQueryClient();
   const fetchData = useServerFn(getDunning);
@@ -63,6 +70,7 @@ function Regua() {
   const [steps, setSteps] = useState<DunningSteps | null>(null);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [financialPassword, setFinancialPassword] = useState("");
+  const [editStep, setEditStep] = useState<DunningStepKey | null>(null);
   const [pendingState, setPendingState] = useState<{ enabled: boolean; paused: boolean } | null>(null);
   useEffect(() => { if (data) { setPlan(data.config.plan); setSteps(data.config.steps); } }, [data]);
 
@@ -73,19 +81,18 @@ function Regua() {
   });
 
   if (isError) return <ErrorState onRetry={() => refetch()} />;
-  if (isLoading || !data || !steps) return <div className="space-y-6"><PageHeader title="Lembretes de cobrança" /><ListSkeleton rows={4} /></div>;
+  if (isLoading || !data || !steps) return <div className="space-y-6"><PageHeader title="Lembrete inteligente" /><ListSkeleton rows={4} /></div>;
   const cfg = data.config;
   const price = data.plans.find((p: { code: string; price: number }) => p.code === plan)?.price ?? 0;
 
-  const toggle = (k: DunningStepKey, c: DunningChannel) => setSteps((s) => s && ({ ...s, [k]: s[k].includes(c) ? s[k].filter((x) => x !== c) : [...s[k], c] }));
+  const setStepType = (k: DunningStepKey, v: DunningPlanCode | "off") => setSteps((s) => s && ({ ...s, [k]: v === "off" ? [] : [...PLAN_CHANNELS[v]] }));
   const changePlan = (p: DunningPlanCode) => {
     setPlan(p);
+    // Ao escolher o lembrete, todos os momentos passam a usar os canais dele (dá para baixar por momento depois).
     setSteps((s) => {
       if (!s) return s;
       const next = { ...s };
-      for (const key of ["created", "before", "due", "overdue", "overdue_repeat", "received"] as DunningStepKey[]) {
-        next[key] = s[key].filter((channel) => PLAN_CHANNELS[p].includes(channel));
-      }
+      for (const key of STEP_KEYS) next[key] = s[key].length === 0 ? [] : [...PLAN_CHANNELS[p]];
       return next;
     });
   };
@@ -120,7 +127,7 @@ function Regua() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Lembretes de cobrança"
+        title="Lembrete inteligente"
         description="Acompanhe vencimentos automaticamente e reduza atrasos sem gastar seu tempo cobrando cliente por cliente."
         action={data.canManage ? (
           cfg.enabled ? (
@@ -185,18 +192,25 @@ function Regua() {
           {stepRows.map((r) => (
             <div key={r.key} className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-center gap-3"><p className="min-w-44 font-medium">{r.label}</p>{r.hint}</div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Select value={stepType(steps[r.key])} onValueChange={(v) => setStepType(r.key, v as DunningPlanCode | "off")} disabled={!data.canManage}>
+                  <SelectTrigger className="h-8 w-48"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="off">Sem aviso</SelectItem>
+                    {PLAN_ORDER.filter((p) => PLAN_ORDER.indexOf(p) <= PLAN_ORDER.indexOf(plan)).map((p) => <SelectItem key={p} value={p}>{PLAN_NAMES[p]}</SelectItem>)}
+                  </SelectContent>
+                </Select>
                 {CHANNELS.map((c) => {
-                  const allowed = PLAN_CHANNELS[plan].includes(c);
+                  const on = steps[r.key].includes(c);
                   const Icon = CH[c].icon;
                   return (
-                    <label key={c} title={allowed ? undefined : `Disponível na ${PLAN_NAMES[minPlanFor(c)]}.`}
-                      className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${allowed ? "" : "opacity-50"}`}>
-                      {allowed ? <Icon className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}{CH[c].label}
-                      <Switch checked={allowed && steps[r.key].includes(c)} disabled={!allowed || !data.canManage} onCheckedChange={() => toggle(r.key, c)} />
-                    </label>
+                    <span key={c} title="Definido pelo tipo de lembrete escolhido." className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${on ? "border-primary/30 bg-primary/5" : "opacity-45"}`}>
+                      {on ? <Icon className="h-3.5 w-3.5 text-primary" /> : <Lock className="h-3.5 w-3.5" />}{CH[c].label}
+                      <Switch checked={on} disabled aria-readonly />
+                    </span>
                   );
                 })}
+                <Button size="sm" variant="ghost" onClick={() => setEditStep(r.key)}><Palette className="h-3.5 w-3.5" />Editar aparência</Button>
               </div>
             </div>
           ))}
@@ -228,6 +242,17 @@ function Regua() {
           </div>
         )}
       </section>
+      <Dialog open={editStep !== null} onOpenChange={(v) => !v && setEditStep(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Aparência do aviso</DialogTitle><DialogDescription>{stepRows.find((r) => r.key === editStep)?.label}</DialogDescription></DialogHeader>
+          <div className="overflow-hidden rounded-xl border">
+            <div className="flex items-center gap-2 bg-primary px-4 py-3 text-primary-foreground"><span className="grid size-7 place-items-center rounded-md bg-primary-foreground/20 text-xs font-bold">LOGO</span><span className="text-sm font-semibold">Sua empresa</span></div>
+            <div className="space-y-2 p-4 text-sm text-muted-foreground"><p>Olá, cliente. Este é um lembrete da sua cobrança.</p><div className="h-2 w-3/4 rounded bg-muted" /><div className="h-2 w-1/2 rounded bg-muted" /><span className="mt-2 inline-block rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Pagar agora</span></div>
+          </div>
+          <div className="flex gap-2 rounded-lg border bg-muted/40 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0" /><p>A logo e as cores vêm da Aparência do checkout. O texto das mensagens é o padrão do Asaas, que é quem entrega os avisos.</p></div>
+          <DialogFooter><Button variant="outline" onClick={() => setEditStep(null)}>Fechar</Button><Button asChild><Link to="/checkout-personalizado"><Palette className="h-4 w-4" />Mudar logo e cores</Link></Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle>Confirmar mudança de plano</DialogTitle><DialogDescription>Essa alteração muda o valor descontado em cada nova parcela ou ciclo. Informe sua senha financeira para continuar.</DialogDescription></DialogHeader>

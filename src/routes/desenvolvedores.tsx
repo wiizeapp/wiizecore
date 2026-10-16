@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { ArrowRight, BookOpen, Copy, FileText, KeyRound, ShieldCheck, Webhook } from "lucide-react";
+import { ArrowRight, BookOpen, Copy, FileText, KeyRound, Rocket, ShieldCheck, Sparkles, Webhook } from "lucide-react";
 import { PublicPage } from "@/components/public-site";
 import { Button } from "@/components/ui/button";
 import { AiGuideCard } from "@/components/developer/ai-guide-card";
@@ -44,15 +44,39 @@ function Block({ b }: { b: DocBlock }) {
   );
 }
 
+const GROUP_ORDER = ["Começo", "Segurança", "Implementação", "Webhooks", "Testes", "Referência"];
+const SECTIONS = [...DOC_SECTIONS].sort((x, y) => GROUP_ORDER.indexOf(x.group) - GROUP_ORDER.indexOf(y.group));
+const QUICK = [
+  { id: "inicio-rapido", label: "Início rápido", icon: Rocket },
+  { id: "checkout", label: "Criar checkout", icon: KeyRound },
+  { id: "webhooks", label: "Webhooks", icon: Webhook },
+  { id: "guia-ia", label: "Guia para IA", icon: Sparkles },
+];
+
 function DocsPage() {
   const { t } = useTranslation("ui");
-  const groups = [...new Set(DOC_SECTIONS.map((s) => s.group))];
-  const [active, setActive] = useState(DOC_SECTIONS[0]!.id);
+  const groups = GROUP_ORDER.filter((g) => SECTIONS.some((s) => s.group === g));
+  const [active, setActive] = useState(SECTIONS[0]!.id);
+  const navRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    const obs = new IntersectionObserver((es) => { const v = es.find((e) => e.isIntersecting); if (v) setActive(v.target.id); }, { rootMargin: "-20% 0px -70% 0px" });
-    DOC_SECTIONS.forEach((s) => { const el = document.getElementById(s.id); if (el) obs.observe(el); });
-    return () => obs.disconnect();
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      let current = SECTIONS[0]!.id;
+      for (const s of SECTIONS) { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= 140) current = s.id; }
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = SECTIONS[SECTIONS.length - 1]!.id;
+      setActive(current);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
+  useEffect(() => {
+    const nav = navRef.current; const link = nav?.querySelector<HTMLElement>(`[data-doc="${active}"]`);
+    if (nav && link) { const top = link.offsetTop - nav.clientHeight / 2; nav.scrollTo({ top, behavior: "smooth" }); }
+  }, [active]);
+  const activeGroup = SECTIONS.find((s) => s.id === active)?.group;
 
   return (
     <PublicPage>
@@ -79,13 +103,20 @@ function DocsPage() {
 
         <div className="section-shell grid gap-8 py-10 lg:grid-cols-[16rem_minmax(0,1fr)] lg:py-14">
           <aside className="hidden lg:block">
-            <nav aria-label={t("Índice")} className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-lg border border-border bg-card p-4 shadow-card">
+            <nav ref={navRef} aria-label={t("Índice")} className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg border border-border bg-card p-4 shadow-card">
+              <p className="px-3 text-xs font-bold uppercase text-muted-foreground">{t("Acessos rápidos")}</p>
+              <div className="mt-2 grid grid-cols-2 gap-1.5">
+                {QUICK.map((q) => (
+                  <a key={q.id} href={`#${q.id}`} className="flex flex-col gap-1 rounded-md border border-border p-2 text-xs font-medium transition-colors hover:border-primary/40 hover:bg-accent"><q.icon className="size-3.5 text-primary" />{t(q.label)}</a>
+                ))}
+              </div>
+              <div className="my-4 h-px bg-border" />
               {groups.map((g) => (
                 <div key={g} className="mb-4 last:mb-0">
-                  <p className="px-3 text-xs font-bold uppercase text-muted-foreground">{t(g)}</p>
-                  <div className="mt-2 grid gap-0.5">
-                    {DOC_SECTIONS.filter((s) => s.group === g).map((s) => (
-                      <a key={s.id} href={`#${s.id}`} className={`rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${active === s.id ? "bg-accent font-medium text-accent-foreground" : "text-muted-foreground"}`}>{t(s.title)}</a>
+                  <p className={`px-3 text-xs font-bold uppercase ${activeGroup === g ? "text-primary" : "text-muted-foreground"}`}>{t(g)}</p>
+                  <div className="mt-1.5 grid gap-0.5 border-l border-border pl-1 ml-3">
+                    {SECTIONS.filter((s) => s.group === g).map((s) => (
+                      <a key={s.id} data-doc={s.id} href={`#${s.id}`} aria-current={active === s.id ? "location" : undefined} className={`-ml-[5px] border-l-2 px-3 py-1.5 text-sm transition-colors hover:text-foreground ${active === s.id ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground"}`}>{t(s.title)}</a>
                     ))}
                   </div>
                 </div>
@@ -93,8 +124,8 @@ function DocsPage() {
             </nav>
           </aside>
           <article className="min-w-0 space-y-5">
-            <AiGuideCard />
-            {DOC_SECTIONS.map((s) => (
+            <div id="guia-ia" className="scroll-mt-24"><AiGuideCard /></div>
+            {SECTIONS.map((s) => (
               <section id={s.id} key={s.id} className="scroll-mt-24 rounded-lg border border-border bg-card p-5 shadow-card sm:p-7">
                 <p className="text-xs font-bold uppercase text-primary">{t(s.group)}</p>
                 <h2 className="mt-1 text-xl font-semibold">{t(s.title)}</h2>

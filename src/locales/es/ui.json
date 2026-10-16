@@ -5443,5 +5443,22 @@
   "Criar chave": "Crear clave",
   "Entendo que esta chave cria cobranças reais.": "Entiendo que esta clave crea cobros reales.",
   "A chave atual para de funcionar na hora.": "La clave actual deja de funcionar de inmediato.",
-  "Revogar chave?": "¿Revocar clave?"
+  "Revogar chave?": "¿Revocar clave?",
+  "Acessos rápidos": "Accesos rápidos",
+  "Início rápido": "Inicio rápido",
+  "Implementação": "Implementación",
+  "Testes": "Pruebas",
+  "Referência": "Referencia",
+  "Clique em uma chave para ver as configurações.": "Haz clic en una clave para ver su configuración.",
+  "Endereços que recebem os avisos de pagamento do seu sistema.": "Direcciones que reciben los avisos de pago de tu sistema.",
+  "Chave": "Clave",
+  "Crie uma chave primeiro para cadastrar webhooks.": "Crea una clave primero para registrar webhooks.",
+  "Chave revogada.": "Clave revocada.",
+  "Chave de Produção": "Clave de Producción",
+  "Chave de Teste": "Clave de Prueba",
+  "Selecionar tudo": "Seleccionar todo",
+  "Escrita": "Escritura",
+  "endereço(s)": "dirección(es)",
+  "Informe a senha financeira para revogar.": "Ingresa tu contraseña financiera para revocar.",
+  "Lembrete inteligente": "Recordatorio inteligente"
 }

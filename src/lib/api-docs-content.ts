@@ -2,8 +2,8 @@ import { DEPLOY_CONFIG } from "./deploy-config";
 import { EXT_API_BASE, EXT_DOCS_SNIPPETS, EXT_ENDPOINTS, EXT_EVENT_NAMES } from "./ext-docs";
 
 /** Fonte única da documentação pública da API (página /desenvolvedores, llms-api.txt e prompt para IA). */
-export const DOCS_URL = `${DEPLOY_CONFIG.publicSiteUrl}/desenvolvedores`;
-export const LLMS_API_URL = `${DEPLOY_CONFIG.publicSiteUrl}/llms-api.txt`;
+export const DOCS_URL = `${DEPLOY_CONFIG.apiSiteUrl}/desenvolvedores`;
+export const LLMS_API_URL = `${DEPLOY_CONFIG.apiSiteUrl}/llms-api.txt`;
 
 export type DocBlock =
   | { kind: "p"; text: string }
@@ -45,7 +45,7 @@ export const DOC_SECTIONS: DocSection[] = [
     ] },
     { kind: "p", text: "As chaves são separadas: uma chave de teste nunca vê dados de produção e vice-versa. Comece sempre pelo ambiente de testes." },
   ] },
-  { id: "autenticacao", group: "Fundamentos", title: "Autenticação", blocks: [
+  { id: "autenticacao", group: "Segurança", title: "Autenticação", blocks: [
     { kind: "p", text: "Envie a chave secreta no cabeçalho Authorization de todas as chamadas." },
     { kind: "code", code: "Authorization: Bearer sk_test_SUA_CHAVE" },
     { kind: "list", items: [
@@ -56,7 +56,7 @@ export const DOC_SECTIONS: DocSection[] = [
       "Nenhuma chave dá acesso a saldo, saques, contas bancárias ou configurações da empresa.",
     ] },
   ] },
-  { id: "permissoes", group: "Fundamentos", title: "Permissões (escopos)", blocks: [
+  { id: "permissoes", group: "Segurança", title: "Permissões (escopos)", blocks: [
     { kind: "table", head: ["Escopo", "Permite"], rows: [
       ["services:read", "Listar serviços"], ["customers:read", "Consultar clientes"], ["customers:write", "Cadastrar clientes"],
       ["charges:read", "Consultar cobranças"], ["charges:write", "Criar cobranças"], ["subscriptions:read", "Consultar assinaturas"],
@@ -64,7 +64,7 @@ export const DOC_SECTIONS: DocSection[] = [
     ] },
     { kind: "p", text: "Chamada sem o escopo necessário recebe 403 insufficient_scope." },
   ] },
-  { id: "idempotencia", group: "Fundamentos", title: "Idempotência", blocks: [
+  { id: "idempotencia", group: "Segurança", title: "Idempotência", blocks: [
     { kind: "p", text: "Operações que criam ou alteram algo exigem (ou aceitam) o cabeçalho Idempotency-Key. Ele evita cobranças duplicadas se a sua requisição for repetida por falha de rede." },
     { kind: "list", items: [
       "Formato: 8 a 128 caracteres [A-Za-z0-9_.:-]. Use algo estável, como pedido-123.",
@@ -73,17 +73,17 @@ export const DOC_SECTIONS: DocSection[] = [
       "Requisição igual ainda em andamento: 409 idempotency_in_progress (tente de novo em instantes).",
     ] },
   ] },
-  { id: "erros", group: "Fundamentos", title: "Erros e limites", blocks: [
+  { id: "erros", group: "Referência", title: "Erros e limites", blocks: [
     { kind: "code", code: EXT_DOCS_SNIPPETS.errors },
     { kind: "code", label: "Exemplo de erro", code: `{\n  "error": "insufficient_scope",\n  "error_detail": { "code": "insufficient_scope", "request_id": "req_..." },\n  "request_id": "req_..."\n}` },
     { kind: "p", text: "Toda resposta traz request_id e o cabeçalho X-Request-Id. Informe esse código ao suporte para diagnóstico. Ao receber 429, aguarde 60 segundos." },
   ] },
-  { id: "servicos", group: "Endpoints", title: "Serviços", blocks: [
+  { id: "servicos", group: "Implementação", title: "Serviços", blocks: [
     { kind: "p", text: `GET /services — ${ep("/services", "GET").summary}` },
     { kind: "p", text: "Só serviços com valor fixo maior que zero e com forma de pagamento podem ser usados no checkout (checkout_supported: true). O preço sempre vem do serviço; a API não aceita valor enviado pelo seu sistema." },
     { kind: "code", code: `{\n  "object": "list",\n  "data": [{\n    "id": "uuid", "object": "service", "name": "Plano Pro", "description": null,\n    "amount": "99.90", "currency": "BRL", "charge_type": "recurring", "frequency": "monthly",\n    "max_installments": null, "payment_methods": ["pix","boleto","credit_card"],\n    "checkout_supported": true, "updated_at": "..."\n  }]\n}` },
   ] },
-  { id: "checkout", group: "Endpoints", title: "Criar checkout", blocks: [
+  { id: "checkout", group: "Implementação", title: "Criar checkout", blocks: [
     { kind: "p", text: `POST /checkout-sessions — ${ep("/checkout-sessions", "POST").summary}` },
     { kind: "table", head: ["Campo", "Obrigatório", "Descrição"], rows: [
       ["service_id", "Sim", "UUID do serviço"],
@@ -100,7 +100,7 @@ export const DOC_SECTIONS: DocSection[] = [
     { kind: "code", label: "Resposta 201", code: EXT_DOCS_SNIPPETS.response },
     { kind: "note", text: "Voltar pela success_url NÃO confirma o pagamento. Libere acesso somente pelo webhook payment.confirmed ou consultando a cobrança." },
   ] },
-  { id: "cobrancas", group: "Endpoints", title: "Cobranças", blocks: [
+  { id: "cobrancas", group: "Implementação", title: "Cobranças", blocks: [
     { kind: "p", text: `GET /charges — ${ep("/charges", "GET").summary}` },
     { kind: "code", code: `GET ${EXT_API_BASE}/charges?status=paid&limit=20\nGET ${EXT_API_BASE}/charges?external_customer_id=cli_42\nGET ${EXT_API_BASE}/charges?created_before=2026-10-01T00:00:00Z` },
     { kind: "p", text: `GET /charges/{id} — ${ep("/charges/{id}", "GET").summary}` },
@@ -111,14 +111,14 @@ export const DOC_SECTIONS: DocSection[] = [
       ["cancelled", "Cancelado"], ["refunded", "Estornado"],
     ] },
   ] },
-  { id: "assinaturas", group: "Endpoints", title: "Assinaturas", blocks: [
+  { id: "assinaturas", group: "Implementação", title: "Assinaturas", blocks: [
     { kind: "p", text: "Serviços do tipo recorrente geram uma assinatura no primeiro checkout. As próximas cobranças são criadas automaticamente." },
     { kind: "p", text: `GET /subscriptions/{id} — ${ep("/subscriptions/{id}", "GET").summary}` },
     { kind: "p", text: `POST /subscriptions/{id}/cancel — ${ep("/subscriptions/{id}/cancel", "POST").summary}` },
     { kind: "code", code: `curl -X POST ${EXT_API_BASE}/subscriptions/SUB_ID/cancel \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Idempotency-Key: cancelar-sub-42"` },
     { kind: "p", text: "Status possíveis: pending, active, overdue, cancelled." },
   ] },
-  { id: "clientes", group: "Endpoints", title: "Clientes", blocks: [
+  { id: "clientes", group: "Implementação", title: "Clientes", blocks: [
     { kind: "p", text: `GET /customers/{external_customer_id} — ${ep("/customers/{external_customer_id}", "GET").summary}` },
     { kind: "p", text: "O cliente é criado (ou reaproveitado pelo CPF/CNPJ) automaticamente no checkout. portal_url leva à Central do cliente, onde ele vê cobranças, recibos e documentos entrando com e-mail e CPF/CNPJ." },
   ] },
@@ -143,11 +143,11 @@ export const DOC_SECTIONS: DocSection[] = [
     { kind: "p", text: "Cada aviso traz o cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo, \"t.corpo_bruto\"). Rejeite se a diferença de tempo passar de 5 minutos." },
     { kind: "code", label: "Node.js", code: EXT_DOCS_SNIPPETS.verify },
   ] },
-  { id: "testes", group: "Guias", title: "Testes (sandbox)", blocks: [
+  { id: "testes", group: "Testes", title: "Testes (sandbox)", blocks: [
     { kind: "p", text: "Com uma chave sk_test_, o checkout abre uma página de teste. Ali, ou em API e desenvolvedores → Testes, você simula pagamento, vencimento, recusa, estorno, renovação e cancelamento. Os mesmos webhooks são enviados, com livemode: false." },
     { kind: "note", text: "Nada no ambiente de testes movimenta dinheiro, emite nota fiscal ou aparece no seu financeiro." },
   ] },
-  { id: "producao", group: "Guias", title: "Ir para produção", blocks: [
+  { id: "producao", group: "Testes", title: "Ir para produção", blocks: [
     { kind: "list", items: [
       "Conta de pagamentos ativada na Wiize Core.",
       "Chave sk_live_ criada e guardada no servidor de produção.",
@@ -156,7 +156,7 @@ export const DOC_SECTIONS: DocSection[] = [
       "Rotina que consulta GET /charges/{id} para pedidos pendentes há muito tempo.",
     ] },
   ] },
-  { id: "seguranca", group: "Guias", title: "Boas práticas de segurança", blocks: [
+  { id: "seguranca", group: "Segurança", title: "Boas práticas de segurança", blocks: [
     { kind: "list", items: [
       "Nunca registre em log a chave secreta, o segredo do webhook, CPF/CNPJ completo ou dados de cartão.",
       "Guarde valores como decimal (ex.: \"99.90\"), nunca como número de ponto flutuante.",
@@ -164,7 +164,7 @@ export const DOC_SECTIONS: DocSection[] = [
       "Use uma chave por sistema, com somente as permissões necessárias.",
     ] },
   ] },
-  { id: "ia", group: "Guias", title: "Integração com IA e llms.txt", blocks: [
+  { id: "ia", group: "Referência", title: "Integração com IA e llms.txt", blocks: [
     { kind: "p", text: `Copie o guia pronto no topo desta página e cole na sua ferramenta de programação com IA. A versão para máquinas desta documentação fica em ${LLMS_API_URL}.` },
   ] },
 ];
