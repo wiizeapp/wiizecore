@@ -56,7 +56,7 @@ function ResourcesMenu() {
       <Button variant="ghost" size="sm" className="gap-1.5 text-sm font-medium" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{t("resources")} <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} /></Button>
       {/* Ponte invisível entre o botão e o painel para o mouse não "cair" no vão. */}
       {open ? <div className="absolute left-0 top-full h-12 w-full" aria-hidden="true" /> : null}
-      <div className={`fixed left-1/2 top-[72px] w-[calc(min(80rem,100vw)_-_2.5rem)] -translate-x-1/2 pt-3 transition-opacity duration-200 sm:top-[76px] lg:top-[88px] lg:w-[calc(min(80rem,100vw)_-_4rem)] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
+      <div className={`fixed left-1/2 top-[62px] w-[calc(min(80rem,100vw)_-_2.5rem)] -translate-x-1/2 pt-3 transition-opacity duration-200 sm:top-[64px] lg:top-[72px] lg:w-[calc(min(80rem,100vw)_-_4rem)] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
         <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-popover p-5 text-popover-foreground shadow-float">
           {resourceLinks.map((item) => <Link key={item.to} to={item.to} preload="intent" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1} className="group/item flex min-w-0 gap-3 rounded-md p-3 transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"><span className="grid size-9 shrink-0 place-items-center rounded-md bg-surface text-primary transition-colors group-hover/item:bg-primary group-hover/item:text-primary-foreground"><item.icon className="size-4" /></span><span className="min-w-0"><span className="block text-sm font-semibold text-foreground">{res(item.key)[0]}</span><span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{res(item.key)[1]}</span></span></Link>)}
         </div>
@@ -95,8 +95,8 @@ function MobileMenu() {
 export function PublicHeader() {
   const { t } = useNavLabels();
   return (
-    <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-3 sm:pt-4 lg:px-8">
-      <div className="grid h-[3.75rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-2.5 shadow-float backdrop-blur-xl sm:gap-3 sm:px-3.5 lg:h-[4.5rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-5">
+    <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-2.5 sm:pt-3 lg:px-8">
+      <div className="grid h-[3.25rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-2 shadow-float backdrop-blur-xl sm:gap-3 sm:px-3 lg:h-[3.75rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-4">
         <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" className="max-[380px]:gap-1.5 max-[380px]:[&_img]:size-7 max-[380px]:[&>span]:text-lg" /></Link>
         <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
           <ResourcesMenu />
