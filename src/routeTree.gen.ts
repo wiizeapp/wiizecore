@@ -100,9 +100,11 @@ import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/publi
 import { Route as ApiPublicWiizeCallbackRouteImport } from './routes/api/public/wiize/callback'
 import { Route as ApiPublicWiizeDeliverRouteImport } from './routes/api/public/wiize/deliver'
 import { Route as ApiPublicWiizeWebhookRouteImport } from './routes/api/public/wiize/webhook'
+import { Route as ApiPublicV1ExtChargesRouteImport } from './routes/api/public/v1/ext/charges'
 import { Route as ApiPublicV1ExtCheckoutSessionsRouteImport } from './routes/api/public/v1/ext/checkout-sessions'
 import { Route as ApiPublicV1ExtServicesRouteImport } from './routes/api/public/v1/ext/services'
 import { Route as ApiPublicV1ExtChargesIdRouteImport } from './routes/api/public/v1/ext/charges.$id'
+import { Route as ApiPublicV1ExtCustomersExternalIdRouteImport } from './routes/api/public/v1/ext/customers.$externalId'
 import { Route as ApiPublicV1ExtSubscriptionsIdRouteImport } from './routes/api/public/v1/ext/subscriptions.$id'
 import { Route as ApiPublicV1ExtSubscriptionsIdCancelRouteImport } from './routes/api/public/v1/ext/subscriptions.$id.cancel'
 
@@ -578,6 +580,11 @@ const ApiPublicWiizeWebhookRoute = ApiPublicWiizeWebhookRouteImport.update({
   path: '/api/public/wiize/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1ExtChargesRoute = ApiPublicV1ExtChargesRouteImport.update({
+  id: '/api/public/v1/ext/charges',
+  path: '/api/public/v1/ext/charges',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1ExtCheckoutSessionsRoute =
   ApiPublicV1ExtCheckoutSessionsRouteImport.update({
     id: '/api/public/v1/ext/checkout-sessions',
@@ -590,10 +597,16 @@ const ApiPublicV1ExtServicesRoute = ApiPublicV1ExtServicesRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicV1ExtChargesIdRoute = ApiPublicV1ExtChargesIdRouteImport.update({
-  id: '/api/public/v1/ext/charges/$id',
-  path: '/api/public/v1/ext/charges/$id',
-  getParentRoute: () => rootRouteImport,
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiPublicV1ExtChargesRoute,
 } as any)
+const ApiPublicV1ExtCustomersExternalIdRoute =
+  ApiPublicV1ExtCustomersExternalIdRouteImport.update({
+    id: '/api/public/v1/ext/customers/$externalId',
+    path: '/api/public/v1/ext/customers/$externalId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicV1ExtSubscriptionsIdRoute =
   ApiPublicV1ExtSubscriptionsIdRouteImport.update({
     id: '/api/public/v1/ext/subscriptions/$id',
@@ -698,9 +711,11 @@ export interface FileRoutesByFullPath {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/charges': typeof ApiPublicV1ExtChargesRouteWithChildren
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
   '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
   '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/customers/$externalId': typeof ApiPublicV1ExtCustomersExternalIdRoute
   '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
   '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
@@ -794,9 +809,11 @@ export interface FileRoutesByTo {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/charges': typeof ApiPublicV1ExtChargesRouteWithChildren
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
   '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
   '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/customers/$externalId': typeof ApiPublicV1ExtCustomersExternalIdRoute
   '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
   '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
@@ -893,9 +910,11 @@ export interface FileRoutesById {
   '/api/public/wiize/callback': typeof ApiPublicWiizeCallbackRoute
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
+  '/api/public/v1/ext/charges': typeof ApiPublicV1ExtChargesRouteWithChildren
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
   '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
   '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/customers/$externalId': typeof ApiPublicV1ExtCustomersExternalIdRoute
   '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
   '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
@@ -992,9 +1011,11 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/charges'
     | '/api/public/v1/ext/checkout-sessions'
     | '/api/public/v1/ext/services'
     | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/customers/$externalId'
     | '/api/public/v1/ext/subscriptions/$id'
     | '/api/public/v1/ext/subscriptions/$id/cancel'
   fileRoutesByTo: FileRoutesByTo
@@ -1088,9 +1109,11 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/charges'
     | '/api/public/v1/ext/checkout-sessions'
     | '/api/public/v1/ext/services'
     | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/customers/$externalId'
     | '/api/public/v1/ext/subscriptions/$id'
     | '/api/public/v1/ext/subscriptions/$id/cancel'
   id:
@@ -1186,9 +1209,11 @@ export interface FileRouteTypes {
     | '/api/public/wiize/callback'
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
+    | '/api/public/v1/ext/charges'
     | '/api/public/v1/ext/checkout-sessions'
     | '/api/public/v1/ext/services'
     | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/customers/$externalId'
     | '/api/public/v1/ext/subscriptions/$id'
     | '/api/public/v1/ext/subscriptions/$id/cancel'
   fileRoutesById: FileRoutesById
@@ -1250,9 +1275,10 @@ export interface RootRouteChildren {
   ApiPublicWiizeCallbackRoute: typeof ApiPublicWiizeCallbackRoute
   ApiPublicWiizeDeliverRoute: typeof ApiPublicWiizeDeliverRoute
   ApiPublicWiizeWebhookRoute: typeof ApiPublicWiizeWebhookRoute
+  ApiPublicV1ExtChargesRoute: typeof ApiPublicV1ExtChargesRouteWithChildren
   ApiPublicV1ExtCheckoutSessionsRoute: typeof ApiPublicV1ExtCheckoutSessionsRoute
   ApiPublicV1ExtServicesRoute: typeof ApiPublicV1ExtServicesRoute
-  ApiPublicV1ExtChargesIdRoute: typeof ApiPublicV1ExtChargesIdRoute
+  ApiPublicV1ExtCustomersExternalIdRoute: typeof ApiPublicV1ExtCustomersExternalIdRoute
   ApiPublicV1ExtSubscriptionsIdRoute: typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
 }
 
@@ -1895,6 +1921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWiizeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/ext/charges': {
+      id: '/api/public/v1/ext/charges'
+      path: '/api/public/v1/ext/charges'
+      fullPath: '/api/public/v1/ext/charges'
+      preLoaderRoute: typeof ApiPublicV1ExtChargesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/ext/checkout-sessions': {
       id: '/api/public/v1/ext/checkout-sessions'
       path: '/api/public/v1/ext/checkout-sessions'
@@ -1911,9 +1944,16 @@ declare module '@tanstack/react-router' {
     }
     '/api/public/v1/ext/charges/$id': {
       id: '/api/public/v1/ext/charges/$id'
-      path: '/api/public/v1/ext/charges/$id'
+      path: '/$id'
       fullPath: '/api/public/v1/ext/charges/$id'
       preLoaderRoute: typeof ApiPublicV1ExtChargesIdRouteImport
+      parentRoute: typeof ApiPublicV1ExtChargesRoute
+    }
+    '/api/public/v1/ext/customers/$externalId': {
+      id: '/api/public/v1/ext/customers/$externalId'
+      path: '/api/public/v1/ext/customers/$externalId'
+      fullPath: '/api/public/v1/ext/customers/$externalId'
+      preLoaderRoute: typeof ApiPublicV1ExtCustomersExternalIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/v1/ext/subscriptions/$id': {
@@ -2022,6 +2062,19 @@ const AjudaRouteChildren: AjudaRouteChildren = {
 
 const AjudaRouteWithChildren = AjudaRoute._addFileChildren(AjudaRouteChildren)
 
+interface ApiPublicV1ExtChargesRouteChildren {
+  ApiPublicV1ExtChargesIdRoute: typeof ApiPublicV1ExtChargesIdRoute
+}
+
+const ApiPublicV1ExtChargesRouteChildren: ApiPublicV1ExtChargesRouteChildren = {
+  ApiPublicV1ExtChargesIdRoute: ApiPublicV1ExtChargesIdRoute,
+}
+
+const ApiPublicV1ExtChargesRouteWithChildren =
+  ApiPublicV1ExtChargesRoute._addFileChildren(
+    ApiPublicV1ExtChargesRouteChildren,
+  )
+
 interface ApiPublicV1ExtSubscriptionsIdRouteChildren {
   ApiPublicV1ExtSubscriptionsIdCancelRoute: typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
@@ -2094,9 +2147,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWiizeCallbackRoute: ApiPublicWiizeCallbackRoute,
   ApiPublicWiizeDeliverRoute: ApiPublicWiizeDeliverRoute,
   ApiPublicWiizeWebhookRoute: ApiPublicWiizeWebhookRoute,
+  ApiPublicV1ExtChargesRoute: ApiPublicV1ExtChargesRouteWithChildren,
   ApiPublicV1ExtCheckoutSessionsRoute: ApiPublicV1ExtCheckoutSessionsRoute,
   ApiPublicV1ExtServicesRoute: ApiPublicV1ExtServicesRoute,
-  ApiPublicV1ExtChargesIdRoute: ApiPublicV1ExtChargesIdRoute,
+  ApiPublicV1ExtCustomersExternalIdRoute:
+    ApiPublicV1ExtCustomersExternalIdRoute,
   ApiPublicV1ExtSubscriptionsIdRoute:
     ApiPublicV1ExtSubscriptionsIdRouteWithChildren,
 }

@@ -14,6 +14,8 @@ export const Route = createFileRoute("/api/public/v1/ext/subscriptions/$id/cance
           const read = await import("@/lib/ext-read.server");
           const { db, tenantId, requestId: rid } = ctx;
           if (!read.isUuid(params.id)) return extError(rid, "not_found", 404);
+          const { withIdempotency } = await import("@/lib/ext-idempotency.server");
+          return withIdempotency(ctx, request, "subscription.cancel", { id: params.id }, async () => {
 
           if (ctx.environment === "test") {
             const { data: r } = await db.from("ext_sandbox_charges").select("*").eq("id", params.id).eq("tenant_id", tenantId).eq("integration_id", ctx.integrationId).eq("charge_type", "recurring").maybeSingle();
@@ -49,6 +51,7 @@ export const Route = createFileRoute("/api/public/v1/ext/subscriptions/$id/cance
           await enqueueExtChargeEvent(db, tenantId, before.charge_id, "cancelled");
           const after = await read.liveSubscriptionView(ctx, params.id);
           return extJson(rid, { ...(after ?? before), cancellation: "cancelled", request_id: rid });
+          });
         }, 30);
       },
     },

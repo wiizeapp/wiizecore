@@ -5372,5 +5372,9 @@
   "Webhooks": "Webhooks",
   "Cobrança de teste não encontrada.": "Cobro de prueba no encontrado.",
   "A cobrança mudou ao mesmo tempo. Atualize e tente de novo.": "El cobro cambió al mismo tiempo. Actualiza e inténtalo de nuevo.",
-  "Esta simulação não é possível no estado atual.": "Esta simulación no es posible en el estado actual."
+  "Esta simulação não é possível no estado atual.": "Esta simulación no es posible en el estado actual.",
+  "Lista cobranças da integração (filtros: external_customer_id, status, limit até 50, created_before para paginar).": "Lista los cobros de la integración (filtros: external_customer_id, status, limit hasta 50, created_before para paginar).",
+  "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Aceita Idempotency-Key; repetir devolve o mesmo resultado.": "Termina los próximos ciclos. Los ciclos pagados no se reembolsan. Acepta Idempotency-Key; repetir devuelve el mismo resultado.",
+  "Vínculo do cliente pelo seu ID externo, último charge_id e link da central do cliente.": "Vínculo del cliente por tu ID externo, último charge_id y enlace del portal del cliente.",
+  "Lista os serviços ativos (preço, tipo, periodicidade, formas de pagamento e checkout_supported).": "Lista los servicios activos (precio, tipo, periodicidad, formas de pago y checkout_supported)."
 }
