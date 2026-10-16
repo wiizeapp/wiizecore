@@ -1,13 +1,13 @@
 import { pageHead, organizationJsonLd } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Briefcase, CircleDollarSign, FileText, Palette, Receipt, Repeat, CheckCircle2, CreditCard, FileSignature, Landmark, LayoutDashboard, Link2, QrCode, ShieldCheck, Users, UserRoundCheck, Wallet } from "lucide-react";
+import { ArrowRight, Briefcase, FileText, Palette, Receipt, Repeat, FileSignature, Link2, QrCode, ShieldCheck, Users, UserRoundCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PublicPage } from "@/components/public-site";
 import type { ReactNode } from "react";
 import { FeatureVisual, type FeatureVisualKind } from "@/components/home/feature-visual";
 import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } from "@/components/home/landing-sections";
-import { formatBRL } from "@/lib/format";
+import heroDashboard from "@/assets/hero-dashboard.png.asset.json";
 import { ChargesPremium, ClientsPremium, ServicesPremium, CheckoutPremium, InvoicesPremium, PortalPremium } from "@/components/home/premium-visuals";
 import { useTranslation } from "react-i18next";
 import { AuthoritySection } from "@/components/institutional/infrastructure";
@@ -125,72 +125,21 @@ function Landing() {
 
 function ProductPreview() {
   const { t: ui } = useTranslation("ui");
-  const bars = [38, 54, 46, 67, 58, 78, 70, 92, 76, 86, 73, 96];
   return (
     <div className="home-dashboard-stage relative mt-8 w-full max-w-6xl flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
-      <div className="home-dashboard-window relative z-10 mx-auto w-[96%] overflow-hidden rounded-t-xl border-x border-t border-border bg-card text-left shadow-float sm:w-[88%] lg:w-[82%]">
-        <div className="grid h-11 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-surface/70 px-3 sm:px-4">
-          <div className="flex gap-1.5" aria-hidden="true"><span className="size-2 rounded-full bg-destructive/60" /><span className="size-2 rounded-full bg-warning/70" /><span className="size-2 rounded-full bg-primary/70" /></div>
-          <div className="flex min-w-0 items-center gap-2"><span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground"><LayoutDashboard className="size-3.5" /></span><span className="truncate text-[10px] font-semibold sm:text-xs">{ui("Painel Wiize Core")}</span></div>
-          <span className="hidden items-center gap-1.5 text-[9px] text-muted-foreground sm:flex"><span className="size-1.5 rounded-full bg-primary" />{ui("Atualizado agora")}</span>
-        </div>
-        <div className="grid min-h-[15rem] grid-cols-[3.25rem_minmax(0,1fr)] sm:min-h-[21rem] sm:grid-cols-[9.5rem_minmax(0,1fr)] lg:min-h-[24rem]">
-          <aside className="border-r border-border bg-surface/45 p-2.5 sm:p-3.5" aria-label={ui("Menu ilustrativo do painel")}>
-            <div className="mb-5 flex items-center gap-2 px-1"><span className="grid size-7 shrink-0 place-items-center rounded-md bg-primary font-display text-[9px] font-bold text-primary-foreground">WP</span><span className="hidden text-[11px] font-semibold sm:block">{ui("Minha empresa")}</span></div>
-            <div className="grid gap-1.5">
-              <DashboardNav icon={LayoutDashboard} label="Visão geral" active />
-              <DashboardNav icon={Link2} label="Cobranças" />
-              <DashboardNav icon={Users} label="Clientes" />
-              <DashboardNav icon={FileSignature} label="Contratos" />
-              <DashboardNav icon={Wallet} label="Financeiro" />
-            </div>
-          </aside>
-          <div className="min-w-0 bg-background/35 p-2.5 pb-8 sm:p-4 lg:p-5">
-            <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4"><div><p className="text-[9px] text-muted-foreground sm:text-[10px]">{ui("Visão geral")}</p><p className="text-xs font-semibold sm:text-sm">{ui("Olá, sua operação está em dia.")}</p></div><span className="hidden rounded-md border border-border bg-card px-2.5 py-1.5 text-[9px] text-muted-foreground sm:block">{ui("Últimos 30 dias")}</span></div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-              <DashboardMetric label="Disponível para saque" value={formatBRL(12500)} icon={Wallet} featured />
-              <DashboardMetric label="A receber" value={formatBRL(7800)} icon={BarChart3} />
-              <DashboardMetric label="Recebido no mês" value={formatBRL(24320)} icon={CheckCircle2} className="col-span-2 sm:col-span-1" />
-            </div>
-            <div className="mt-2 grid gap-2 sm:mt-3 sm:grid-cols-[1.25fr_0.9fr] sm:gap-3">
-              <div className="hidden rounded-lg border border-border bg-card p-3 sm:block sm:p-4">
-                <div className="flex items-center justify-between"><div><p className="text-[10px] font-semibold">{ui("Movimentações")}</p><p className="text-[9px] text-muted-foreground">{ui("Recebimentos confirmados")}</p></div><span className="text-[9px] font-semibold text-primary">+18,4%</span></div>
-                <div className="dashboard-chart relative mt-4 flex h-24 items-end gap-1.5 sm:h-28 sm:gap-2" aria-hidden="true">{bars.map((height, index) => <span key={index} className="dashboard-chart-bar flex-1 rounded-t-sm" style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }} />)}</div>
-                <div className="mt-2 hidden grid-cols-6 text-center text-[8px] text-muted-foreground sm:grid"><span>{ui("Abr")}</span><span>{ui("Mai")}</span><span>{ui("Jun")}</span><span>{ui("Jul")}</span><span>{ui("Ago")}</span><span>{ui("Set")}</span></div>
-              </div>
-              <div className="hidden rounded-lg border border-border bg-card p-3 sm:block sm:p-4">
-                <div className="flex items-center justify-between"><p className="text-[10px] font-semibold">{ui("Últimas cobranças")}</p><span className="text-[9px] text-primary">{ui("Ver todas")}</span></div>
-                <div className="mt-3 grid gap-2">
-                  <PaymentRow icon={QrCode} label="Pix · Empresa Horizonte" value={formatBRL(2500)} detail="Pago agora" delay="0ms" />
-                  <PaymentRow icon={CreditCard} label="Cartão · Atlas Consultoria" value={formatBRL(1850)} detail="Aprovado hoje" delay="140ms" />
-                  <PaymentRow icon={Landmark} label="Boleto · Nexo Digital" value={formatBRL(920)} detail="Compensado hoje" delay="280ms" />
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 flex items-center justify-between rounded-md border border-primary/25 bg-accent px-3 py-2 sm:hidden"><span className="text-[9px] font-semibold text-primary">{ui("24 cobranças pagas")}</span><CheckCircle2 className="size-3.5 text-primary" /></div>
-          </div>
-        </div>
+      <div className="home-dashboard-window relative z-10 mx-auto h-full w-[96%] overflow-hidden rounded-t-xl border-x border-t border-border bg-card text-left shadow-float sm:w-[88%] lg:w-[82%]">
+        <img
+          src={heroDashboard.url}
+          alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
+          className="h-full w-full object-cover object-top"
+          loading="eager"
+        />
         <div className="home-dashboard-fade" aria-hidden="true" />
       </div>
       <div className="payment-float payment-float-left absolute bottom-10 left-[-1%] z-20 hidden items-center gap-3 rounded-lg border border-border bg-card/90 p-3 text-left shadow-float backdrop-blur-xl md:flex">
-        <span className="grid size-8 place-items-center rounded-md bg-accent text-primary"><QrCode className="size-4" /></span><div><p className="text-[10px] text-muted-foreground">{ui("Pagamento recebido")}</p><p className="numeric-tabular text-sm font-semibold text-primary">+ {formatBRL(2500)}</p></div>
+        <span className="grid size-8 place-items-center rounded-md bg-accent text-primary"><QrCode className="size-4" /></span><div><p className="text-[10px] text-muted-foreground">{ui("Pagamento recebido")}</p><p className="numeric-tabular text-sm font-semibold text-primary">+ R$ 2.500,00</p></div>
       </div>
       <div className="payment-float payment-float-right absolute right-0 top-8 z-20 hidden items-center gap-2 rounded-lg border border-border bg-card/90 px-3 py-2 text-xs font-medium shadow-float backdrop-blur-xl sm:flex"><ShieldCheck className="size-4 text-primary" />{ui("Operação protegida")}</div>
     </div>
   );
-}
-
-function DashboardNav({ icon: Icon, label, active = false }: { icon: typeof Wallet; label: string; active?: boolean }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className={`flex min-h-8 items-center gap-2 rounded-md px-2 text-[10px] font-medium ${active ? "bg-accent text-primary" : "text-muted-foreground"}`}><Icon className="size-3.5 shrink-0" /><span className="hidden truncate sm:block">{ui(label)}</span></div>;
-}
-
-function DashboardMetric({ label, value, icon: Icon, featured = false, className = "" }: { label: string; value: string; icon: typeof Wallet; featured?: boolean; className?: string }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className={`${className} rounded-lg border p-2.5 sm:p-3 ${featured ? "balance-hero border-primary/30" : "border-border bg-card"}`}><div className="flex items-start justify-between gap-2"><div className="min-w-0"><p className={`truncate text-[8px] sm:text-[9px] ${featured ? "opacity-75" : "text-muted-foreground"}`}>{ui(label)}</p><p className="numeric-tabular mt-1 truncate text-xs font-semibold sm:text-base">{value}</p></div><Icon className={`size-3.5 shrink-0 ${featured ? "opacity-80" : "text-primary"}`} /></div></div>;
-}
-
-function PaymentRow({ icon: Icon, label, value, detail, delay }: { icon: typeof QrCode; label: string; value: string; detail: string; delay: string }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className="payment-row flex items-center gap-2 rounded-md border border-border bg-surface/50 p-2" style={{ animationDelay: delay }}><span className="grid size-7 shrink-0 place-items-center rounded-md bg-accent text-primary"><Icon className="size-3.5" /></span><div className="min-w-0 flex-1"><p className="truncate text-[9px] font-medium">{ui(label)}</p><p className="truncate text-[8px] text-muted-foreground">{ui(detail)}</p></div><div className="text-right"><p className="numeric-tabular text-[9px] font-semibold text-primary">{value}</p><CheckCircle2 className="ml-auto mt-0.5 size-3 text-primary" /></div></div>;
 }

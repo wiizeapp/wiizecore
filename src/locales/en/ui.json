@@ -5205,5 +5205,6 @@
   "Escolha a nova data de vencimento. O cliente paga pelo mesmo link, sem multa nem juros anteriores.": "Choose the new due date. The customer pays through the same link, without previous fines or interest.",
   "Novo vencimento": "New due date",
   "Ela para de somar juros e o link deixa de aceitar pagamento. O contrato continua valendo e você pode ativá-la novamente depois.": "It stops accruing interest and the link no longer accepts payment. The contract remains valid and you can reactivate it later.",
-  "Cobrança cancelada por falta de pagamento": "Charge cancelled for non-payment"
+  "Cobrança cancelada por falta de pagamento": "Charge cancelled for non-payment",
+  "Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos": "Wiize Core financial dashboard with balance, indicators and receipts chart"
 }
