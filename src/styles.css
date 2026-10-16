@@ -981,15 +981,8 @@ html::-webkit-scrollbar-thumb {
 
 /* Painel denso do Hero principal, encaixado e emergindo da borda inferior. */
 @utility home-dashboard-stage {
-  height: 17.5rem;
-
-  @media (min-width: 40rem) {
-    height: 18rem;
-  }
-
-  @media (min-width: 64rem) {
-    height: 20.5rem;
-  }
+  /* A altura vem da janela (corte por proporção), não de valor fixo. */
+  min-height: 0;
 }
 
 @keyframes home-dashboard-enter {
@@ -1007,9 +1000,15 @@ html::-webkit-scrollbar-thumb {
   /* Sombra bem mais leve que a padrão: presença sem bloco preto embaixo. */
   box-shadow: 0 14px 36px -24px oklch(0 0 0 / 34%);
 
+  /* Corte da base: mostra só a metade de cima do dashboard (as duas fileiras
+     de indicadores), terminando logo abaixo da segunda fileira. */
+  @media (min-width: 40rem) {
+    aspect-ratio: 4.2;
+  }
+
   /* No celular, a janela é mais curta; o degradê abaixo dissolve a borda inferior. */
   @media (max-width: 39.9375rem) {
-    max-height: 13.5rem;
+    max-height: 8.75rem;
   }
 }
 
