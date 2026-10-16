@@ -70,9 +70,9 @@ function Landing() {
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
                 <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-center lg:px-9 lg:py-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
-                  <span className="h-1 w-10 rounded-full bg-primary" aria-hidden="true" />
-                  <h3 className="mt-5 text-2xl font-semibold leading-tight tracking-tight sm:text-[2rem]">{ui(group.title)}</h3>
-                  <p className="mt-3 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
+                  <h3 className="text-2xl font-semibold leading-tight tracking-tight sm:text-[2rem]">{ui(group.title)}</h3>
+                  <span className="mt-4 h-1 w-10 rounded-full bg-primary" aria-hidden="true" />
+                  <p className="mt-4 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
                   <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                     {group.points.map((point) => (
                       <li key={point} className="flex items-center justify-center rounded-lg border border-border bg-surface/60 p-3 text-center text-sm">{ui(point)}</li>
