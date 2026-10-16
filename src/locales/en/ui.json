@@ -5347,5 +5347,13 @@
   "Lista cobranças da integração (filtros: external_customer_id, status, limit até 50, created_before para paginar).": "Lists the integration's charges (filters: external_customer_id, status, limit up to 50, created_before to paginate).",
   "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Aceita Idempotency-Key; repetir devolve o mesmo resultado.": "Ends upcoming cycles. Paid cycles are not refunded. Accepts Idempotency-Key; repeating returns the same result.",
   "Vínculo do cliente pelo seu ID externo, último charge_id e link da central do cliente.": "Customer link by your external ID, latest charge_id and customer portal link.",
-  "Lista os serviços ativos (preço, tipo, periodicidade, formas de pagamento e checkout_supported).": "Lists active services (price, type, frequency, payment methods and checkout_supported)."
+  "Lista os serviços ativos (preço, tipo, periodicidade, formas de pagamento e checkout_supported).": "Lists active services (price, type, frequency, payment methods and checkout_supported).",
+  "Integrações gerais": "General integrations",
+  "API e desenvolvedores": "API & developers",
+  "Obrigatória para gerar chaves. A chave completa aparece uma única vez.": "Required to generate keys. The full key is shown only once.",
+  "Digite sua senha financeira para gerar a nova chave": "Enter your financial password to generate the new key",
+  "Ambiente de testes": "Test environment",
+  "Para usar o ambiente de testes, conclua a ativação de pagamentos: preencha todos os dados e envie as fotos dos documentos. A análise é feita pelo provedor e costuma ser rápida.": "To use the test environment, complete payment activation: fill in all details and upload document photos. The provider reviews it, usually quickly.",
+  "Continuar em Produção": "Stay in Production",
+  "Ir para ativação": "Go to activation"
 }

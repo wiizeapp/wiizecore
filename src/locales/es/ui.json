@@ -5376,5 +5376,13 @@
   "Lista cobranças da integração (filtros: external_customer_id, status, limit até 50, created_before para paginar).": "Lista los cobros de la integración (filtros: external_customer_id, status, limit hasta 50, created_before para paginar).",
   "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Aceita Idempotency-Key; repetir devolve o mesmo resultado.": "Termina los próximos ciclos. Los ciclos pagados no se reembolsan. Acepta Idempotency-Key; repetir devuelve el mismo resultado.",
   "Vínculo do cliente pelo seu ID externo, último charge_id e link da central do cliente.": "Vínculo del cliente por tu ID externo, último charge_id y enlace del portal del cliente.",
-  "Lista os serviços ativos (preço, tipo, periodicidade, formas de pagamento e checkout_supported).": "Lista los servicios activos (precio, tipo, periodicidad, formas de pago y checkout_supported)."
+  "Lista os serviços ativos (preço, tipo, periodicidade, formas de pagamento e checkout_supported).": "Lista los servicios activos (precio, tipo, periodicidad, formas de pago y checkout_supported).",
+  "Integrações gerais": "Integraciones generales",
+  "API e desenvolvedores": "API y desarrolladores",
+  "Obrigatória para gerar chaves. A chave completa aparece uma única vez.": "Obligatoria para generar claves. La clave completa se muestra una sola vez.",
+  "Digite sua senha financeira para gerar a nova chave": "Ingresa tu contraseña financiera para generar la nueva clave",
+  "Ambiente de testes": "Entorno de pruebas",
+  "Para usar o ambiente de testes, conclua a ativação de pagamentos: preencha todos os dados e envie as fotos dos documentos. A análise é feita pelo provedor e costuma ser rápida.": "Para usar el entorno de pruebas, completa la activación de pagos: llena todos los datos y envía las fotos de los documentos. El proveedor hace el análisis, normalmente rápido.",
+  "Continuar em Produção": "Seguir en Producción",
+  "Ir para ativação": "Ir a la activación"
 }

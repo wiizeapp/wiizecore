@@ -44,6 +44,7 @@ function Page() {
   const setStatus = useServerFn(setExtIntegrationStatus);
   const q = useQuery({ queryKey: ["ext-integrations"], queryFn: () => list() });
   const [name, setName] = useState("");
+  const [finPass, setFinPass] = useState("");
   const env = useDevEnv();
   const [tab, setTab] = useState("overview");
   const [scopes, setScopes] = useState<string[]>(["services:read", "customers:write", "charges:write", "charges:read", "checkout_sessions:write"]);
@@ -52,11 +53,11 @@ function Page() {
   const onErr = (e: unknown) => toast.error(e instanceof Error ? e.message : t("Algo deu errado."));
 
   const createM = useMutation({
-    mutationFn: async () => { await step2fa(t); return create({ data: { name, environment: env, scopes } }); },
-    onSuccess: (r) => { setRevealed(r); setName(""); void refresh(); }, onError: onErr,
+    mutationFn: async () => { await step2fa(t); return create({ data: { name, environment: env, scopes, financialPassword: finPass } }); },
+    onSuccess: (r) => { setRevealed(r); setName(""); setFinPass(""); void refresh(); }, onError: onErr,
   });
   const rotateM = useMutation({
-    mutationFn: async (id: string) => { if (!window.confirm(t("A chave atual para de funcionar na hora. Continuar?"))) throw new Error(t("Cancelado.")); await step2fa(t); return rotate({ data: { id } }); },
+    mutationFn: async (id: string) => { if (!window.confirm(t("A chave atual para de funcionar na hora. Continuar?"))) throw new Error(t("Cancelado.")); const pw = window.prompt(t("Digite sua senha financeira para gerar a nova chave")) ?? ""; if (!pw) throw new Error(t("Cancelado.")); await step2fa(t); return rotate({ data: { id, financialPassword: pw } }); },
     onSuccess: (r) => { setRevealed(r); void refresh(); }, onError: onErr,
   });
   const statusM = useMutation({
@@ -184,7 +185,12 @@ function Page() {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">{t("Nenhuma chave dá acesso a saldo, saques, contas bancárias ou configurações da empresa.")}</p>
-              <Button onClick={() => { if (env === "live" && !window.confirm(t("Criar uma chave de PRODUÇÃO? Ela processa cobranças reais."))) return; createM.mutate(); }} disabled={createM.isPending || name.trim().length < 2 || !scopes.length}>{createM.isPending ? t("Criando…") : t("Criar integração")}</Button>
+              <div className="max-w-xs space-y-1">
+                <label htmlFor="ext-fin-pass" className="text-xs font-medium">{t("Senha financeira")}</label>
+                <Input id="ext-fin-pass" type="password" autoComplete="off" value={finPass} onChange={(e) => setFinPass(e.target.value)} maxLength={128} />
+                <p className="text-[11px] text-muted-foreground">{t("Obrigatória para gerar chaves. A chave completa aparece uma única vez.")}</p>
+              </div>
+              <Button onClick={() => { if (env === "live" && !window.confirm(t("Criar uma chave de PRODUÇÃO? Ela processa cobranças reais."))) return; createM.mutate(); }} disabled={createM.isPending || name.trim().length < 2 || !scopes.length || !finPass}>{createM.isPending ? t("Criando…") : t("Criar integração")}</Button>
             </section>
           )}
 

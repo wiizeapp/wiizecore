@@ -1,5 +1,5 @@
 import { getSecurityStatus } from "@/lib/security.functions";
-import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake } from "lucide-react";
+import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake, KeyRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getMyAccess, trackActivity } from "@/lib/team.functions";
 import { PAGE_PERMISSION } from "@/lib/permissions";
@@ -46,7 +46,7 @@ import { EnvironmentSwitch } from "@/components/environment-switch";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
-type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/documentos" | "/cupons" | "/coproducoes" | "/ajuda";
+type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/integracao-externa" | "/documentos" | "/cupons" | "/coproducoes" | "/ajuda";
 
 const operationItems = [
   { to: "/clientes", label: "Clientes", icon: Users },
@@ -82,7 +82,10 @@ const groupedItems = [
     { to: "/ativacao", label: "Ativar pagamentos", icon: BadgeCheck },
     { to: "/seguranca", label: "Segurança", icon: ShieldCheck },
     { to: "/equipe", label: "Equipe e permissões", icon: UsersRound },
-    { to: "/integracoes", label: "Integrações", icon: Plug },
+  ] },
+  { id: "integracoes", label: "Integrações", icon: Plug, children: [
+    { to: "/integracoes", label: "Integrações gerais", icon: Plug },
+    { to: "/integracao-externa", label: "API e desenvolvedores", icon: KeyRound },
   ] },
 ] satisfies Array<{ id: string; label: string; icon: typeof Wallet; children: Array<{ to: AppPath; label: string; icon: typeof Wallet }> }>;
 
@@ -100,7 +103,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => {
     if (["/financeiro", "/extrato", "/limites", "/antecipacao", "/multas-e-encargos"].some((path) => pathname.startsWith(path))) return ["financeiro"];
     if (["/cobrancas", "/lembrete-de-cobranca", "/cupons", "/coproducoes"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
-    if (["/configuracoes", "/checkout-personalizado", "/ativacao", "/seguranca", "/equipe", "/integracoes"].some((path) => pathname.startsWith(path))) return ["configuracoes"];
+    if (["/configuracoes", "/checkout-personalizado", "/ativacao", "/seguranca", "/equipe"].some((path) => pathname.startsWith(path))) return ["configuracoes"];
+    if (["/integracoes", "/integracao-externa"].some((path) => pathname.startsWith(path))) return ["integracoes"];
     return [];
   });
   const register = useServerFn(registerSession);
