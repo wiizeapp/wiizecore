@@ -15,7 +15,7 @@ export const Route = createFileRoute("/desenvolvedores")({
   component: DocsPage,
 });
 
-function CodeBlock({ code, label }: { code: string; label?: string }) {
+function CodeBlock({ code, label }: { code: string; label?: string | undefined }) {
   const { t } = useTranslation("ui");
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-background">
