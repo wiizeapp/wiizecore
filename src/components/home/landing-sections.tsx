@@ -148,7 +148,7 @@ export function HowItWorksSection() {
   ];
   return (
     <section className="border-y border-border bg-surface">
-      <div className="section-shell py-20 lg:py-28">
+      <div className="section-shell pb-20 pt-14 lg:pb-28 lg:pt-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="section-kicker">{ui("Como funciona")}</p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine">{ui("em 4 passos.")}</span></h2>

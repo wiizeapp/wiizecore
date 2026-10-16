@@ -1027,16 +1027,22 @@ html::-webkit-scrollbar-thumb {
   z-index: 30;
   /* Encostado na linha de corte da seção, não na base da janela. */
   inset: auto 0 -2rem;
-  height: 4rem;
+  /* Faixa mais alta e gradual: o painel some devagar, sem bloco escuro. */
+  height: 6rem;
 
   @media (max-width: 39.9375rem) {
-    height: 2.5rem;
+    height: 3.5rem;
   }
   pointer-events: none;
-  /* Só a última faixa some de vez: o resto da imagem segue visível e desfocado. */
-  background: linear-gradient(to top, var(--background) 22%, transparent);
-  backdrop-filter: blur(2.5px);
-  mask-image: linear-gradient(to top, black 18%, transparent 100%);
+  /* Degrade em três estágios: dissolve primeiro e só clareia de vez no fim. */
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--background) 78%, transparent),
+    color-mix(in oklab, var(--background) 28%, transparent) 55%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(to top, black, transparent 96%);
 }
 
 /* Faixa da seção "Tudo o que você precisa...": mesma cor de fundo da seção
