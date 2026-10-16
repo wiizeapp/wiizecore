@@ -1,6 +1,6 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BadgeCheck, CalendarClock, CheckCircle2, Clock3, Landmark, Send, ShieldCheck, Wallet } from "lucide-react";
+import { ArrowRight, BadgeCheck, CheckCircle2, Clock3, Landmark, Send, ShieldCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ANTICIPATION_ANALYSIS_DAYS, SETTLEMENT_RULES } from "@/lib/settlement-rules";
 import { PublicPage } from "@/components/public-site";
