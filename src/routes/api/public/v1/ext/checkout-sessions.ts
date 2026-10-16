@@ -32,7 +32,10 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
           const { data: conn } = await db.from("provider_connections").select("environment").eq("tenant_id", tenantId).eq("provider", "asaas").eq("status", "connected").order("updated_at", { ascending: false }).limit(1).maybeSingle();
           const simulated = ctx.environment === "test" && conn?.environment !== "sandbox";
 
-          const { data: service } = await db.from("services").select("id, name, amount, type, frequency, accepted_methods").eq("id", body.service_id).eq("tenant_id", tenantId).eq("active", true).maybeSingle();
+          const { data: service } = await db.from("services").select("id, name, amount, type, frequency, accepted_methods, custom_amount").eq("id", body.service_id).eq("tenant_id", tenantId).eq("active", true).maybeSingle();
+
+          // Valor livre ou zerado: o preço precisa ser definido pela empresa, nunca pelo sistema integrado.
+          if (service && (service.custom_amount || Number(service.amount) <= 0)) return fail("service_not_supported", 422);
 
           // ---------- Simulador de testes: tabela própria, nunca toca cobranças reais ----------
           if (simulated) {
