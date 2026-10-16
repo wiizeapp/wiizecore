@@ -133,9 +133,9 @@ function Regua() {
       />
 
       <PartnerNotice storageKey="dunning-asaas" title="Como funcionam os lembretes">
-        <p>Os avisos de cobrança chegam aos seus clientes em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
-        <p>Nessa parceria, o Asaas cuida da entrega das mensagens de lembrete: o e-mail, o SMS e o WhatsApp que avisam antes do vencimento, no dia e depois de atrasado.</p>
-        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na Wiize Core. Em alguns avisos, o Asaas aparece identificado como remetente da mensagem.</p>
+        <p>Os avisos de cobrança são enviados aos seus clientes pelo <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
+        <p>Você define as regras aqui na Wiize Core e nós repassamos ao Asaas, que entrega o e-mail, o SMS e o WhatsApp antes do vencimento, no dia e depois do atraso.</p>
+        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na Wiize Core. Em alguns avisos, o Asaas aparece como remetente da mensagem.</p>
       </PartnerNotice>
 
       {data.level !== "normal" ? (
