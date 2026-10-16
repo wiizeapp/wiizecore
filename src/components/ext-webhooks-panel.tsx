@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Copy, Pause, Play, Plus, RefreshCw, Send, Trash2, Webhook } from "lucide-react";
+import { Copy, Pause, Play, Plus, RefreshCw, Send, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDateTime } from "@/lib/format";
@@ -46,7 +46,7 @@ export function ExtWebhooksPanel({ integrationId, canManage }: { integrationId: 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <p className="flex items-center gap-2 text-sm font-semibold"><Webhook className="size-4 text-primary" />Webhooks</p>
+        <p className="text-xs text-muted-foreground">{(d?.endpoints ?? []).length} {t("endereço(s)")}</p>
         {canManage && <Button size="sm" variant="outline" onClick={() => setAction({ kind: "create" })}><Plus className="size-4" />{t("Adicionar endereço")}</Button>}
       </div>
 
