@@ -90,7 +90,7 @@ async function run(request: Request) {
     const { data: stale } = await admin.from("payments")
       .select("id, tenant_id, customer_id, charge_group_id, provider_payment_id, gross_amount, due_on, original_due_on, created_at, customers(name)")
       .in("status", ["overdue", "awaiting_payment"]).is("provider_installment_id", null).is("subscription_id", null)
-      .lte("due_on", limitDay).limit(200);
+      .or(`original_due_on.lte.${limitDay},and(original_due_on.is.null,due_on.lte.${limitDay})`).limit(200);
     for (const p of stale ?? []) {
       if (!p.customer_id) continue;
       const dueOn = (p.original_due_on as string | null) ?? p.due_on;
