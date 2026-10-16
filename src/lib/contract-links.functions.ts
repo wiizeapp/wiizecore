@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { logAudit, consumeRateLimit, requestInfo } from "./audit.server";
 import { contractEvent } from "./contracts.functions";
 
 const LINK_TTL_DAYS = 7;
@@ -79,7 +78,7 @@ export async function issueContractLink(
     .eq("status", "draft");
 
   await contractEvent(supabaseAdmin, tenantId, contract.id, stage === "invite" ? "link_created" : `reminder_${stage}`, null, { expires_at: expiresAt.toISOString() });
-  await logAudit(supabaseAdmin, {
+  await (await import("./audit.server")).logAudit(supabaseAdmin, {
     tenantId,
     userId,
     action: stage === "invite" ? "contract.link_created" : `contract.reminder_${stage}`,
@@ -130,7 +129,7 @@ export const revokeContractLinks = createServerFn({ method: "POST" })
       .is("revoked_at", null);
 
     await contractEvent(supabaseAdmin, membership.tenant_id, data.contractId, "links_revoked", null);
-    await logAudit(supabaseAdmin, {
+    await (await import("./audit.server")).logAudit(supabaseAdmin, {
       tenantId: membership.tenant_id,
       userId: context.userId,
       action: "contract.links_revoked",
@@ -152,7 +151,7 @@ async function resolvePublicLink(token: string): Promise<{ link: PublicLink } | 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { tokenFingerprint } = await import("./crypto.server");
 
-  const rate = await consumeRateLimit(supabaseAdmin, {
+  const rate = await (await import("./audit.server")).consumeRateLimit(supabaseAdmin, {
     scope: "contract_link",
     identifier: tokenFingerprint(token).slice(0, 24),
     maxAttempts: 30,
@@ -275,7 +274,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
     const customer = contract.customers as { document?: string | null } | null;
     const registered = (customer?.document ?? "").replace(/\D/g, "");
     if (registered && registered !== data.signerDocument) {
-      await logAudit(supabaseAdmin, {
+      await (await import("./audit.server")).logAudit(supabaseAdmin, {
         tenantId: link.tenant_id,
         action: "contract.sign_customer",
         resource: "contracts",
@@ -296,7 +295,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
 
     const { parseSignatureInput, signatureColumns } = await import("./contract-docs.server");
     const sigCols = signatureColumns(parseSignatureInput(data.signature));
-    const { ip, userAgent } = requestInfo();
+    const { ip, userAgent } = (await import("./audit.server")).requestInfo();
     const { error } = await supabaseAdmin.from("contract_signatures").upsert(
       {
         tenant_id: link.tenant_id,
@@ -320,7 +319,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
     await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "signed_customer", data.signerName, {}, ip);
     if (fullySigned) await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "completed", null);
     await (await import("./contract-docs.server")).notifyContractSigned(supabaseAdmin, link.tenant_id, contract.id, data.signerName, fullySigned);
-    await logAudit(supabaseAdmin, {
+    await (await import("./audit.server")).logAudit(supabaseAdmin, {
       tenantId: link.tenant_id,
       action: "contract.signed_by_customer",
       resource: "contracts",
