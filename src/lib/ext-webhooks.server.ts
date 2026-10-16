@@ -21,7 +21,9 @@ async function chargePayload(db: Db, tenantId: string, chargeGroupId: string) {
   };
 }
 
-export async function fanOut(db: Db, tenantId: string, integrationId: string, chargeGroupId: string | null, type: ExtEvent, data: unknown, livemode = true): Promise<string | null> {
+export async function fanOut(db: Db, tenantId: string, integrationId: string, chargeGroupId: string | null, type: ExtEvent, data: unknown): Promise<string | null> {
+  const { data: integ } = await db.from("ext_integrations").select("environment").eq("id", integrationId).maybeSingle();
+  const livemode = integ?.environment === "live";
   const { data: eps } = await db.from("ext_webhook_endpoints").select("id, events").eq("integration_id", integrationId).eq("tenant_id", tenantId).eq("status", "active");
   const targets = (eps ?? []).filter((e) => e.events.includes(type));
   if (!targets.length) return null;
