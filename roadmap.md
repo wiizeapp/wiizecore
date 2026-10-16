@@ -118,3 +118,5 @@
 - [x] Abertura: painel 8px mais alto, moldura cinza suave de 10px em volta da imagem e faixa própria para a seção "Tudo o que você precisa..." (filete, tom mais claro e sombra), com a base do painel dissolvida antes da linha de corte. Conferido a 1280px e 390px, sem e-mail visível, sem rolagem horizontal, compilação OK.
 
 - [x] Abertura: encurtar o vão escuro sob o painel (desfoque de 64px, imagem visível até perto da linha) e pintar a faixa "Tudo o que você precisa..." com a mesma cor da faixa "Da primeira cobrança ao dinheiro na conta" (ambas 0.21 0.018 165). Conferido a 1280px e 390px, sem corte seco, sem rolagem horizontal, compilação OK.
+
+- [x] Abertura no celular: aproximar o título da seção seguinte da linha divisória (topo 48px só abaixo de 1024px) e devolver à seção "Da primeira cobrança..." o espaçamento original de 80px. Conferido a 390px e 1280px, sem corte seco, compilação OK.
