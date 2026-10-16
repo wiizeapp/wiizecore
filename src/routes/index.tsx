@@ -136,10 +136,10 @@ function ProductPreview() {
         />
         <div className="home-dashboard-fade" aria-hidden="true" />
       </div>
-      <div className="payment-float payment-float-left absolute bottom-10 left-[-1%] z-20 hidden items-center gap-3 rounded-lg border border-border bg-card/90 p-3 text-left shadow-float backdrop-blur-xl md:flex">
+      <div className="payment-float payment-float-left absolute bottom-12 left-4 z-40 lg:left-6 hidden items-center gap-3 rounded-lg border border-border bg-card/90 p-3 text-left shadow-float backdrop-blur-xl md:flex">
         <span className="grid size-8 place-items-center rounded-md bg-accent text-primary"><QrCode className="size-4" /></span><div><p className="text-[10px] text-muted-foreground">{ui("Pagamento recebido")}</p><p className="numeric-tabular text-sm font-semibold text-primary">+ R$ 2.500,00</p></div>
       </div>
-      <div className="payment-float payment-float-right absolute right-0 top-8 z-20 hidden items-center gap-2 rounded-lg border border-border bg-card/90 px-3 py-2 text-xs font-medium shadow-float backdrop-blur-xl sm:flex"><ShieldCheck className="size-4 text-primary" />{ui("Operação protegida")}</div>
+      <div className="payment-float payment-float-right absolute right-4 top-10 z-40 lg:right-6 hidden items-center gap-2 rounded-lg border border-border bg-card/90 px-3 py-2 text-xs font-medium shadow-float backdrop-blur-xl sm:flex"><ShieldCheck className="size-4 text-primary" />{ui("Operação protegida")}</div>
     </div>
   );
 }
