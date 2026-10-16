@@ -1004,6 +1004,9 @@ html::-webkit-scrollbar-thumb {
   border: 10px solid color-mix(in oklab, var(--border) 75%, var(--background));
   border-bottom: none;
 
+  /* Sombra bem mais leve que a padrão: presença sem bloco preto embaixo. */
+  box-shadow: 0 14px 36px -24px oklch(0 0 0 / 34%);
+
   /* No celular, a janela é mais curta; o degradê abaixo dissolve a borda inferior. */
   @media (max-width: 39.9375rem) {
     max-height: 15.5rem;
