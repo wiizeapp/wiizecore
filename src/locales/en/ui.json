@@ -5414,5 +5414,22 @@
   "Criar chave": "Create key",
   "Entendo que esta chave cria cobranças reais.": "I understand this key creates real charges.",
   "A chave atual para de funcionar na hora.": "The current key stops working immediately.",
-  "Revogar chave?": "Revoke key?"
+  "Revogar chave?": "Revoke key?",
+  "Acessos rápidos": "Quick access",
+  "Início rápido": "Quick start",
+  "Implementação": "Implementation",
+  "Testes": "Testing",
+  "Referência": "Reference",
+  "Clique em uma chave para ver as configurações.": "Click a key to see its settings.",
+  "Endereços que recebem os avisos de pagamento do seu sistema.": "Addresses that receive your system's payment notifications.",
+  "Chave": "Key",
+  "Crie uma chave primeiro para cadastrar webhooks.": "Create a key first to add webhooks.",
+  "Chave revogada.": "Key revoked.",
+  "Chave de Produção": "Production key",
+  "Chave de Teste": "Test key",
+  "Selecionar tudo": "Select all",
+  "Escrita": "Write",
+  "endereço(s)": "address(es)",
+  "Informe a senha financeira para revogar.": "Enter your financial password to revoke.",
+  "Lembrete inteligente": "Smart reminder"
 }
