@@ -1,13 +1,13 @@
 import { pageHead, organizationJsonLd } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BarChart3, Briefcase, CircleDollarSign, FileText, Palette, Receipt, Repeat, CheckCircle2, CreditCard, FileSignature, Landmark, LayoutDashboard, Link2, QrCode, ShieldCheck, Users, UserRoundCheck, Wallet } from "lucide-react";
+import { ArrowRight, Briefcase, FileText, Palette, Receipt, Repeat, FileSignature, Link2, QrCode, ShieldCheck, Users, UserRoundCheck, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PublicPage } from "@/components/public-site";
 import type { ReactNode } from "react";
 import { FeatureVisual, type FeatureVisualKind } from "@/components/home/feature-visual";
 import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } from "@/components/home/landing-sections";
-import { formatBRL } from "@/lib/format";
+import heroDashboard from "@/assets/hero-dashboard.png.asset.json";
 import { ChargesPremium, ClientsPremium, ServicesPremium, CheckoutPremium, InvoicesPremium, PortalPremium } from "@/components/home/premium-visuals";
 import { useTranslation } from "react-i18next";
 import { AuthoritySection } from "@/components/institutional/infrastructure";
