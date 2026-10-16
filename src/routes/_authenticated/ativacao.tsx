@@ -49,7 +49,7 @@ function AtivacaoPage() {
   const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
   return (
     <div>
-      <PartnerNotice storageKey="activation-asaas" title="Como funciona a análise da sua conta">
+      <PartnerNotice storageKey="activation-asaas-v2" title="Como funciona a análise da sua conta">
         <p>A abertura da sua conta de pagamentos é feita pelo <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
         <p>Você envia seus dados e documentos aqui na Wiize Core. Nós organizamos e encaminhamos tudo ao Asaas, que faz a análise e a aprovação da conta e nos devolve o resultado.</p>
         <p>Você acompanha cada etapa nesta tela e avisaremos assim que houver uma resposta.</p>
