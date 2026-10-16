@@ -131,7 +131,7 @@ function ProductPreview() {
         <img
           src={heroDashboard.url}
           alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
-          className="h-full w-full object-cover object-top"
+          className="home-dashboard-img h-full w-full object-cover object-top"
           loading="eager"
         />
       </div>

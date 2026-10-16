@@ -980,8 +980,17 @@ html::-webkit-scrollbar-thumb {
 }
 
 /* Painel denso do Hero principal, encaixado e emergindo da borda inferior. */
+/* Celular: zoom leve ancorado à esquerda (sidebar + painel). O e-mail já foi cortado da imagem. */
+@utility home-dashboard-img {
+  @media (max-width: 39.99rem) {
+    width: 165%;
+    max-width: none;
+    object-position: left top;
+  }
+}
+
 @utility home-dashboard-stage {
-  height: 16.5rem;
+  height: 19.5rem;
 
   @media (min-width: 40rem) {
     height: 20rem;
