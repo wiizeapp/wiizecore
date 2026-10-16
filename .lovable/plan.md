@@ -1,35 +1,33 @@
-# Cobrança atrasada: juros diários, aviso, cancelamento automático e reativação
+# Integrações e API separadas por ambiente
 
-## Como vai funcionar (exemplo: R$ 300, vence dia 5, multa 2%, juros 3% ao mês)
-- **Dia 6 em diante:** o link mostra o valor atualizado. A multa de 2% (R$ 6,00) entra uma única vez, porque é assim que a lei permite. Os juros de 3% ao mês são divididos por 30 e somados a cada dia: R$ 0,30 por dia.
-- **Dia 10:** R$ 300 + R$ 6,00 + R$ 1,50 (5 dias) = **R$ 307,50**. O link mostra o valor original, a multa, os juros e o total. O valor é calculado de novo sempre que o link abre.
-- Ao pagar, o valor cobrado é o total atualizado do dia. O cálculo é feito no servidor e o cliente não consegue alterar esse valor.
-- Os percentuais usados são os que a empresa definiu em "Multas e encargos". Se ela não definiu nada, vale o padrão atual.
+## 1. Menu "Integrações" no menu lateral
+Menu que abre com dois itens:
+- **Integrações gerais**: a página de integrações que já existe (Wiize, Drive etc.), sem mudanças.
+- **API e Desenvolvedores**: uma página com abas:
+  - **Chaves de API**: gerar, ver prefixo, revogar. Para gerar uma chave é preciso digitar a **senha financeira** (conferida no servidor). A chave completa aparece uma única vez; depois fica guardada só de forma protegida (hash).
+  - **Webhooks**: cadastrar o endereço (só HTTPS), segredo de assinatura criptografado, enviar evento de teste, ver histórico de entregas.
+  - **Documentação**: a documentação que já existe.
+  - **Guia para IAs**: os textos prontos para Lovable, Codex, Claude, Cursor, Base44 e outros, com botão de copiar.
+- **Produção e Teste separados**: cada aba mostra só os itens do ambiente escolhido. Chave e webhook de teste nunca funcionam em produção, e o contrário também. O servidor confere o tipo da chave em cada chamada. O que aparece na tela serve só para orientar e não dá permissão para nada.
 
-## Avisos para a empresa
-- Na lista de cobranças, a cobrança atrasada aparece como **"Atrasada há X dias"**, com o total atualizado.
-- Um aviso no sininho e no e-mail, uma vez, no primeiro dia de atraso.
-- Botão **"Cancelar cobrança"** direto na cobrança atrasada, com confirmação.
+## 2. Produção como padrão e aviso ao mudar para Teste
+- Ao entrar, o ambiente é sempre **Produção**.
+- Ao mudar para **Teste**, aparece um aviso explicando que, para usar o ambiente de testes, é preciso concluir a ativação de pagamentos: preencher todos os dados e enviar as fotos dos documentos. Tem um botão "Ir para ativação".
+- Um ajuste no texto: quem aprova é o Asaas. Não vamos escrever "aceito automaticamente". Vamos escrever "a análise é feita pelo provedor e costuma ser rápida". Assim o texto não promete algo que a plataforma não controla.
 
-## Primeira cobrança: cancelamento automático em 30 dias
-- Vale só para a primeira cobrança de um cliente. Se ela ficar 30 dias vencida sem pagamento, a rotina diária a cancela no provedor e no sistema.
-- A cobrança fica com a situação **"Cancelada"**. O link para de aceitar pagamento e mostra "Esta cobrança não está mais disponível".
-- O contrato assinado, o cliente e o resto do sistema continuam iguais.
-- A empresa recebe um aviso de que a cobrança foi cancelada.
-
-## Ativar novamente
-- Ao passar o mouse (ou tocar) em "Cancelada", aparece **"Ativar novamente"**.
-- A empresa escolhe uma nova data de vencimento. O sistema cria uma nova tentativa de pagamento para a **mesma cobrança e o mesmo link**, sem multa nem juros antigos. O cliente usa o mesmo link de antes.
-- Só funciona se a cobrança não tiver sido paga. Tudo fica registrado no histórico da cobrança.
-
-## Pontos para confirmar
-- A multa entra uma vez só e os juros entram por dia. Está certo assim?
-- O cancelamento automático em 30 dias vale só para a primeira cobrança. As demais ficam abertas até a empresa cancelar.
+## 3. Como separar teste e produção no seu projeto de produção (resposta)
+- No projeto de produção (Vercel), crie **dois conjuntos de credenciais do Asaas**:
+  - `ASAAS_API_KEY` + `ASAAS_WEBHOOK_TOKEN`: conta real (produção).
+  - `ASAAS_SANDBOX_API_KEY` + `ASAAS_SANDBOX_WEBHOOK_TOKEN`: conta sandbox do Asaas.
+- O servidor escolhe qual credencial usar pelo **tipo da chave da API** (`sk_live_` usa produção, `sk_test_` usa sandbox). O botão da tela não decide isso.
+- No painel do Asaas sandbox, aponte o webhook para o mesmo endereço do site, com o token sandbox. O sistema identifica de qual ambiente veio cada aviso e o registra separado.
+- Antes de ligar isso em produção, vou conferir no código como o Asaas está configurado hoje. Se alguma variável nova for necessária, ela entra na lista de mudanças para a Vercel. Nada de produção muda sem essa comparação.
 
 ## Detalhes técnicos
-- Regras puras: `src/lib/late-charges.ts`, com a nova função `shouldAutoCancelFirstCharge(dueOn, today, isFirst)` e testes.
-- Valor atualizado: conferir que `checkout.$token`, `c.$token` e `pagar.$token` usam `computeLateCharges` vindo do servidor. O pagamento atrasado cria uma nova linha em `payment_attempts` com o total atualizado (fluxo atual em `payment-attempts.server.ts`, ordem criar → cancelar → ativar).
-- Cancelar e reativar: novas funções em `charge-attempts.functions.ts`, com `requireModulePerm`, auditoria e chave de idempotência. A reativação usa `payment-attempts.server.ts` com o novo vencimento. Webhooks de tentativas antigas continuam descartados.
-- Rotina diária: `src/routes/api/public/cron/notifications.ts`. Ela avisa o primeiro dia de atraso (deduplicado em `email_outbox`) e cancela a primeira cobrança com 30 dias de atraso, via provedor e depois webhook ou espelho do status. A "primeira cobrança" é a mais antiga daquele cliente, ainda sem nenhum pagamento confirmado.
-- Telas: `src/routes/_authenticated/cobrancas.tsx` e `charge-sheet.tsx` (selo de atraso, botão cancelar, hover "Ativar novamente" com seletor de data). Traduções EN/ES.
-- Sem tabela nova. Se faltar um campo para guardar o motivo do cancelamento, entra uma coluna opcional.
+- Nova rota `/_authenticated/integracoes/api` (abas). O item do menu fica em `app-shell.tsx` como grupo que abre e fecha.
+- Server fn `createExtApiKey` exige senha financeira (reaproveita a verificação já existente), permissão de admin da empresa e auditoria.
+- Webhooks: tabela de endpoints por empresa + ambiente. O segredo fica criptografado no servidor. As entregas usam a fila que já existe (`enqueueWiizeSaleEvent`) e são filtradas por ambiente.
+- Ambiente padrão "production" em `dev-environment.ts`; modal na troca para teste.
+- Resolver de credencial Asaas por ambiente em um único helper do servidor.
+- Traduções PT/EN/ES; testes: senha financeira obrigatória, chave de teste recusada em produção, padrão = produção.
+- No final: lista de arquivos criados e editados, sem repetir os das entregas anteriores.
