@@ -8,6 +8,8 @@ export const DEPLOY_CONFIG = {
   /** Endereço estável usado quando o pedido vem do preview/localhost (avisos do Asaas). */
   stableFallbackUrl:
     "https://project--8edc01d5-8e9e-4cd9-bcf6-085c3e825be4-dev.lovable.app",
+  /** Endereço público da API e da documentação para desenvolvedores. */
+  apiSiteUrl: "https://wiizecore.com",
   /** Endereço que recebe avisos enviados ao Wiize CRM. */
   wiizeWebhookUrl:
     "https://wgokhkawjdxsmvfuhazb.supabase.co/functions/v1/wiize-pay-webhook",
