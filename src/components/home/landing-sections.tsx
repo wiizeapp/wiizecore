@@ -96,7 +96,7 @@ export function OperationFlow() {
   ];
   return (
     <div className="operation-flow-band">
-    <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
+    <section id="plataforma" className="section-shell scroll-mt-24 pb-20 pt-12 lg:py-28">
       <SectionIntro center title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
         <div className="feature-visual feature-visual-1 relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
