@@ -1000,6 +1000,10 @@ html::-webkit-scrollbar-thumb {
 @utility home-dashboard-window {
   animation: home-dashboard-enter 720ms 120ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 
+  /* Borda cinza suave para separar o painel do fundo, discreta nos dois temas. */
+  border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+  border-bottom: none;
+
   /* No celular, a janela é mais curta; o degradê abaixo dissolve a borda inferior. */
   @media (max-width: 39.9375rem) {
     max-height: 19rem;
