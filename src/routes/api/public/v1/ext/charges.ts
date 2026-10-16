@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/public/v1/ext/charges")({
             if (f.created_before) q = q.lt("created_at", f.created_before);
             const { data: rows } = await q;
             const { data: conn } = await db.from("provider_connections").select("environment").eq("tenant_id", ctx.tenantId).eq("provider", "asaas").eq("status", "connected").limit(1).maybeSingle();
-            if (conn?.environment !== "sandbox" || (rows ?? []).length) {
+            if (conn?.environment !== "sandbox") {
               const { sandboxChargeView } = await import("@/lib/ext-sandbox.server");
               const base = (await import("@/lib/billing.server")).publicBaseUrl(null);
               const list = (rows ?? []).slice(0, f.limit);

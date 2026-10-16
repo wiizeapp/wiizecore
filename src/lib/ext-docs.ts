@@ -61,11 +61,11 @@ export function verifyWiizePay(secret: string, header: string, rawBody: string) 
   return a.length === b.length && timingSafeEqual(a, b);
 }
 // Responda 2xx rápido. Guarde event.id e ignore repetidos.`,
-  errors: `400 idempotency_key_required | invalid_json
+  errors: `400 idempotency_key_required | invalid_idempotency_key | invalid_json
 401 invalid_api_key    403 insufficient_scope
 404 service_not_found | not_found
-409 account_not_ready | environment_mismatch | idempotency_key_reused | invalid_transition | conflict
-413 payload_too_large  422 invalid_body | payment_method_not_allowed
+409 account_not_ready | environment_mismatch | idempotency_key_reused | idempotency_in_progress | invalid_transition | conflict
+413 payload_too_large  422 invalid_body | invalid_query | payment_method_not_allowed
 429 rate_limited (60/min no checkout, 120/min nas consultas)   500 internal_error   502 provider_unavailable
 Formato: { "error": "codigo", "error_detail": { "code", "request_id" }, "request_id" } + cabeçalho X-Request-Id`,
 };
@@ -115,9 +115,11 @@ Nunca registre em log a chave secreta, o segredo do webhook ou CPF completo.`;
 export const EXT_ENDPOINTS = [
   { method: "POST", path: "/checkout-sessions", scopes: ["checkout_sessions:write", "charges:write"], summary: "Cria cliente (ou reaproveita), cobrança e link do checkout hospedado. Exige Idempotency-Key." },
   { method: "GET", path: "/services", scopes: ["services:read"], summary: "Lista os serviços ativos (preço, tipo, periodicidade e formas de pagamento)." },
+  { method: "GET", path: "/charges", scopes: ["charges:read"], summary: "Lista cobranças da integração (filtros: external_customer_id, status, limit até 50, created_before para paginar)." },
   { method: "GET", path: "/charges/{id}", scopes: ["charges:read"], summary: "Consulta a cobrança (id = charge_id): status, parcelas, checkout_url, portal_url e receipt_url." },
   { method: "GET", path: "/subscriptions/{id}", scopes: ["subscriptions:read"], summary: "Consulta a assinatura: status, periodicidade, ciclos pagos e histórico." },
-  { method: "POST", path: "/subscriptions/{id}/cancel", scopes: ["subscriptions:write"], summary: "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Repetir devolve o mesmo resultado." },
+  { method: "POST", path: "/subscriptions/{id}/cancel", scopes: ["subscriptions:write"], summary: "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Aceita Idempotency-Key; repetir devolve o mesmo resultado." },
+  { method: "GET", path: "/customers/{external_customer_id}", scopes: ["customers:read"], summary: "Vínculo do cliente pelo seu ID externo, último charge_id e link da central do cliente." },
 ] as const;
 
 export const AI_TOOLS = [
