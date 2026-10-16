@@ -78,6 +78,7 @@ import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
 import { Route as OauthAuthorizeRouteImport } from './routes/oauth.authorize'
 import { Route as PagarTokenRouteImport } from './routes/pagar.$token'
 import { Route as PortalKeyRouteImport } from './routes/portal.$key'
+import { Route as TesteCheckoutTokenRouteImport } from './routes/teste-checkout.$token'
 import { Route as VerificarIndexRouteImport } from './routes/verificar.index'
 import { Route as VerificarCodeRouteImport } from './routes/verificar.$code'
 import { Route as AuthenticatedClientesIdRouteImport } from './routes/_authenticated/clientes_.$id'
@@ -458,6 +459,11 @@ const PortalKeyRoute = PortalKeyRouteImport.update({
   path: '/portal/$key',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TesteCheckoutTokenRoute = TesteCheckoutTokenRouteImport.update({
+  id: '/teste-checkout/$token',
+  path: '/teste-checkout/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerificarIndexRoute = VerificarIndexRouteImport.update({
   id: '/verificar/',
   path: '/verificar/',
@@ -669,6 +675,7 @@ export interface FileRoutesByFullPath {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda/': typeof AjudaIndexRoute
   '/verificar/': typeof VerificarIndexRoute
@@ -764,6 +771,7 @@ export interface FileRoutesByTo {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda': typeof AjudaIndexRoute
   '/verificar': typeof VerificarIndexRoute
@@ -862,6 +870,7 @@ export interface FileRoutesById {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda/': typeof AjudaIndexRoute
   '/verificar/': typeof VerificarIndexRoute
@@ -960,6 +969,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda/'
     | '/verificar/'
@@ -1055,6 +1065,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda'
     | '/verificar'
@@ -1152,6 +1163,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda/'
     | '/verificar/'
@@ -1223,6 +1235,7 @@ export interface RootRouteChildren {
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
   PagarTokenRoute: typeof PagarTokenRoute
   PortalKeyRoute: typeof PortalKeyRoute
+  TesteCheckoutTokenRoute: typeof TesteCheckoutTokenRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
@@ -1728,6 +1741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teste-checkout/$token': {
+      id: '/teste-checkout/$token'
+      path: '/teste-checkout/$token'
+      fullPath: '/teste-checkout/$token'
+      preLoaderRoute: typeof TesteCheckoutTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verificar/': {
       id: '/verificar/'
       path: '/verificar'
@@ -2059,6 +2079,7 @@ const rootRouteChildren: RootRouteChildren = {
   OauthAuthorizeRoute: OauthAuthorizeRoute,
   PagarTokenRoute: PagarTokenRoute,
   PortalKeyRoute: PortalKeyRoute,
+  TesteCheckoutTokenRoute: TesteCheckoutTokenRoute,
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
