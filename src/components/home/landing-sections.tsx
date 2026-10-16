@@ -102,8 +102,7 @@ export function OperationFlow() {
           <div className="feature-visual-grid absolute inset-0 -z-10" aria-hidden="true" />
           <div className="feature-visual-glow absolute inset-0 -z-10" aria-hidden="true" />
           <div className="pointer-events-none absolute inset-x-0 top-0 -z-[5] h-44 bg-gradient-to-b from-background/90 via-background/60 to-transparent backdrop-blur-[2px]" aria-hidden="true" />
-          <p className="section-kicker">{ui("Fluxo conectado")}</p>
-          <h3 className="mt-3 text-2xl font-semibold leading-tight">{ui("Cada etapa alimenta a próxima.")}</h3>
+                    <h3 className="mt-3 text-2xl font-semibold leading-tight">{ui("Cada etapa alimenta a próxima.")}</h3>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{ui("Sem planilhas paralelas: o pagamento recebido atualiza o cliente, o saldo e o financeiro.")}</p>
           <ol className="mt-8 space-y-3" style={{ perspective: "800px" }}>
             {flow.map((step, i) => (
@@ -538,8 +537,7 @@ export function AudienceSection() {
   return (
     <section id="depoimentos" data-reveal="none" className="relative w-full overflow-hidden py-16 md:py-24">
       <div className="section-shell relative mb-12 text-center">
-        <p className="section-kicker">{ui("Depoimentos")}</p>
-        <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("O que nossos")} <span className="hero-shine">{ui("clientes dizem")}</span></h2>
+                <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("O que nossos")} <span className="hero-shine">{ui("clientes dizem")}</span></h2>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{ui("Veja como empresas de serviços estão cobrando, recebendo e organizando o financeiro com a Wiize Core.")}</p>
       </div>
       <div className="tm-mask-x relative flex flex-col gap-4 md:gap-6" role="region" aria-label={ui("Depoimentos de clientes")}>
