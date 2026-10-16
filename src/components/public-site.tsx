@@ -5,7 +5,6 @@ import { Brand } from "@/components/brand";
 import { AsaasSeal } from "@/components/financial-provider";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher, useLanguageBootstrap } from "@/components/language-switcher";
 
@@ -144,11 +143,10 @@ export function PublicFooter() {
 }
 
 export function PublicPage({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  useLanguageBootstrap();
+    useLanguageBootstrap();
   useRevealOnScroll();
   const { t } = useTranslation("footer");
-  return <div className={`${loading || !user ? "dark" : ""} min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
+  return <div className={`dark min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
 /** Revela seções e cartões após o hero, sem animar o conteúdo interno. */
 function useRevealOnScroll() {

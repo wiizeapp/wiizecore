@@ -65,7 +65,7 @@ function Landing() {
         <ComparisonSection />
 
         <section data-reveal="features" className="section-shell py-20 lg:py-28" aria-label={ui("Funcionalidades")}>
-          <div className="mx-auto max-w-2xl text-center"><p className="section-kicker">{ui("Funcionalidades")}</p><h2 className="mt-2 text-3xl font-semibold sm:text-5xl">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
+          <div className="mx-auto max-w-2xl text-center"><h2 className=" text-3xl font-semibold sm:text-5xl">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
           <div className="mt-14 space-y-14 lg:space-y-20">
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
