@@ -143,18 +143,3 @@ function ProductPreview() {
     </div>
   );
 }
-
-function DashboardNav({ icon: Icon, label, active = false }: { icon: typeof Wallet; label: string; active?: boolean }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className={`flex min-h-8 items-center gap-2 rounded-md px-2 text-[10px] font-medium ${active ? "bg-accent text-primary" : "text-muted-foreground"}`}><Icon className="size-3.5 shrink-0" /><span className="hidden truncate sm:block">{ui(label)}</span></div>;
-}
-
-function DashboardMetric({ label, value, icon: Icon, featured = false, className = "" }: { label: string; value: string; icon: typeof Wallet; featured?: boolean; className?: string }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className={`${className} rounded-lg border p-2.5 sm:p-3 ${featured ? "balance-hero border-primary/30" : "border-border bg-card"}`}><div className="flex items-start justify-between gap-2"><div className="min-w-0"><p className={`truncate text-[8px] sm:text-[9px] ${featured ? "opacity-75" : "text-muted-foreground"}`}>{ui(label)}</p><p className="numeric-tabular mt-1 truncate text-xs font-semibold sm:text-base">{value}</p></div><Icon className={`size-3.5 shrink-0 ${featured ? "opacity-80" : "text-primary"}`} /></div></div>;
-}
-
-function PaymentRow({ icon: Icon, label, value, detail, delay }: { icon: typeof QrCode; label: string; value: string; detail: string; delay: string }) {
-  const { t: ui } = useTranslation("ui");
-  return <div className="payment-row flex items-center gap-2 rounded-md border border-border bg-surface/50 p-2" style={{ animationDelay: delay }}><span className="grid size-7 shrink-0 place-items-center rounded-md bg-accent text-primary"><Icon className="size-3.5" /></span><div className="min-w-0 flex-1"><p className="truncate text-[9px] font-medium">{ui(label)}</p><p className="truncate text-[8px] text-muted-foreground">{ui(detail)}</p></div><div className="text-right"><p className="numeric-tabular text-[9px] font-semibold text-primary">{value}</p><CheckCircle2 className="ml-auto mt-0.5 size-3 text-primary" /></div></div>;
-}
