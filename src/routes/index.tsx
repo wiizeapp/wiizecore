@@ -70,8 +70,7 @@ function Landing() {
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">
                 <div className={`flex min-w-0 flex-col justify-center px-5 py-5 sm:px-8 sm:py-5 lg:justify-center lg:px-9 lg:py-11 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
-                  <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-primary-foreground"><span className="size-1.5 rounded-full bg-primary-foreground" />{ui(group.tag)}</span>
-                  <h3 className="mt-4 text-2xl font-semibold sm:text-3xl">{ui(group.title)}</h3>
+                  <h3 className="text-2xl font-semibold sm:text-3xl">{ui(group.title)}</h3>
                   <p className="mt-3 text-base leading-7 text-muted-foreground">{ui(group.description)}</p>
                   <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                     {group.points.map((point) => (
@@ -110,8 +109,7 @@ function Landing() {
               <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
               <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
               <div className="mx-auto max-w-3xl">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase text-primary"><span className="size-1.5 rounded-full bg-primary" />{ui("Comece com a Wiize Core")}</span>
-                <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
+                <h2 className="text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
                 <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
                 <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
                   <Link to="/auth" search={{ modo: "criar" }}>{ui("Vai, clica nesse botão\n")} <ArrowRight className="h-4 w-4" /></Link>
