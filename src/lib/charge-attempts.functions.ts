@@ -71,3 +71,27 @@ export const providerSwitchMethod = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+/** Ativa de novo uma cobrança cancelada, com nova data, no mesmo link e na mesma cobrança. */
+export const reactivateCharge = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({ paymentId: z.string().uuid(), dueOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const ctx = context as Ctx;
+    const m = await membership(ctx);
+    if (!["owner", "admin", "finance"].includes(m.role)) throw new Error("Somente dono, administrador ou financeiro pode ativar novamente.");
+    const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+    const { switchPaymentAttempt, loadPayment } = await import("./payment-attempts.server");
+    const p = await loadPayment(admin, m.tenant_id, data.paymentId);
+    if (!p) throw new Error("Cobrança não encontrada.");
+    await switchPaymentAttempt(admin, {
+      tenantId: m.tenant_id, paymentId: p.id, method: (p.method ?? "pix") as "pix" | "boleto" | "credit_card",
+      reason: "reactivation", actor: "provider", userId: ctx.userId, idempotencyKey: "reactivate",
+      keySuffix: `react${data.dueOn.replace(/-/g, "")}`, reactivateDueOn: data.dueOn,
+    });
+    const { enqueueWiizeSaleEvent } = await import("./wiize-sale-sync.server");
+    await enqueueWiizeSaleEvent(admin, m.tenant_id, p.charge_group_id, "updated");
+    return { ok: true };
+  });

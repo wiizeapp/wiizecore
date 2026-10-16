@@ -79,7 +79,48 @@ async function run(request: Request) {
     .eq("status", "paid").is("provider_fee_reimbursement_id", null).gt("provider_fee_amount", 0).limit(200);
   let retried = 0;
   for (const p of pendingFees ?? []) { await reimburseProviderFee(admin, p.id); retried++; }
-  return Response.json({ ok: true, reminders: sent, feeRetries: retried });
+  // Primeira cobrança do cliente com 30 dias de atraso: cancelada automaticamente (contrato segue valendo).
+  let autoCancelled = 0;
+  {
+    const { shouldAutoCancelFirstCharge, todaySaoPaulo, FIRST_CHARGE_AUTO_CANCEL_DAYS } = await import("@/lib/late-charges");
+    const { logChargeEvent } = await import("@/lib/payment-attempts.server");
+    const { getTenantProvider } = await import("@/lib/billing.server");
+    const today = todaySaoPaulo();
+    const limitDay = new Date(Date.parse(`${today}T00:00:00Z`) - FIRST_CHARGE_AUTO_CANCEL_DAYS * 86400000).toISOString().slice(0, 10);
+    const { data: stale } = await admin.from("payments")
+      .select("id, tenant_id, customer_id, charge_group_id, provider_payment_id, gross_amount, due_on, original_due_on, created_at, customers(name)")
+      .in("status", ["overdue", "awaiting_payment"]).is("provider_installment_id", null).is("subscription_id", null)
+      .or(`original_due_on.lte.${limitDay},and(original_due_on.is.null,due_on.lte.${limitDay})`).limit(200);
+    for (const p of stale ?? []) {
+      if (!p.customer_id) continue;
+      const dueOn = (p.original_due_on as string | null) ?? p.due_on;
+      const { count: paidCount } = await admin.from("payments").select("id", { count: "exact", head: true })
+        .eq("tenant_id", p.tenant_id).eq("customer_id", p.customer_id).in("status", ["paid", "refunded"]);
+      const { count: olderCount } = await admin.from("payments").select("id", { count: "exact", head: true })
+        .eq("tenant_id", p.tenant_id).eq("customer_id", p.customer_id).lt("created_at", p.created_at).neq("id", p.id);
+      if (!shouldAutoCancelFirstCharge(dueOn, today, (paidCount ?? 0) === 0 && (olderCount ?? 0) === 0)) continue;
+      try {
+        const conn = await getTenantProvider(admin, p.tenant_id);
+        if (conn && p.provider_payment_id) await conn.provider.cancelPayment(p.provider_payment_id);
+      } catch {
+        continue; // tenta de novo amanhã; nunca marca cancelada sem cancelar no provedor
+      }
+      const { data: upd } = await admin.from("payments").update({ status: "cancelled", updated_at: new Date().toISOString() })
+        .eq("id", p.id).eq("tenant_id", p.tenant_id).in("status", ["overdue", "awaiting_payment"]).select("id");
+      if (!upd?.length) continue;
+      autoCancelled++;
+      await logChargeEvent(admin, { tenantId: p.tenant_id, paymentId: p.id, type: "auto_cancelled", actor: "system", metadata: { days: FIRST_CHARGE_AUTO_CANCEL_DAYS, dueOn } });
+      const c = p.customers as { name?: string | null } | null;
+      await notifyTenant(admin, {
+        tenantId: p.tenant_id, kind: "payment.auto_cancelled", dedupeKey: `payment.auto_cancelled:${p.id}:${dueOn}`, link: "/cobrancas",
+        title: "Cobrança cancelada por falta de pagamento",
+        body: `A primeira cobrança de ${c?.name ?? "cliente"} (${brl(p.gross_amount)}) ficou 30 dias sem pagamento e foi cancelada. O contrato continua valendo. Para cobrar de novo, use "Ativar novamente" na cobrança.`,
+        email: { subject: `Cobrança cancelada — ${c?.name ?? "cliente"}` },
+      });
+    }
+  }
+
+  return Response.json({ ok: true, reminders: sent, feeRetries: retried, autoCancelled });
 }
 
 export const Route = createFileRoute("/api/public/cron/notifications")({

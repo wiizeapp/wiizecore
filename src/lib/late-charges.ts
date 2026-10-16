@@ -29,3 +29,11 @@ export function computeLateCharges(i: LateChargeInput) {
 export function todaySaoPaulo(now = Date.now()) {
   return new Date(now - 3 * 3600 * 1000).toISOString().slice(0, 10);
 }
+
+/** Dias sem pagamento após o vencimento para a primeira cobrança ser cancelada sozinha. */
+export const FIRST_CHARGE_AUTO_CANCEL_DAYS = 30;
+
+/** A primeira cobrança de um cliente é cancelada automaticamente após 30 dias de atraso. */
+export function shouldAutoCancelFirstCharge(dueOn: string, today: string, isFirstCharge: boolean) {
+  return isFirstCharge && daysLate(dueOn, today) >= FIRST_CHARGE_AUTO_CANCEL_DAYS;
+}

@@ -162,7 +162,7 @@ function Checkout() {
           {shown ? (
             <div className="mt-8 border-t border-border pt-7">
               <p className="text-sm text-muted-foreground">{shown.installmentCount ? `${ui("Parcela")} ${shown.installmentNumber} ${ui("de")} ${shown.installmentCount}` : ui("Valor a pagar")}</p>
-              <p className="numeric-tabular mt-1 font-display text-5xl font-bold tracking-tight sm:text-6xl">{formatBRL(shown.amount)}</p>
+              <p className="numeric-tabular mt-1 font-display text-5xl font-bold tracking-tight sm:text-6xl">{formatBRL(late && shown === current ? late.total : shown.amount)}</p>
               <div className="mt-7 flex items-start gap-3 rounded-xl border border-border bg-card p-4">
                 <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><CalendarDays className="size-4" /></span>
                 <div><p className="text-sm"><span>{ui("Vencimento em")} <b className="font-semibold">{longDate(shown.dueOn)}</b></span>{shown.status === "overdue" ? <span className="ml-2 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">{ui("vencida")}</span> : null}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{lateText(shown.finePercent, shown.interestPercent, ui)}</p></div>
@@ -282,7 +282,7 @@ function Checkout() {
               <div><h3 className="font-display text-xl font-semibold">{resolvedMethod === "pix" ? ui("Pague com Pix") : resolvedMethod === "boleto" ? ui("Pague com boleto") : ui("Dados do cartão")}</h3><p className="text-sm text-muted-foreground">{resolvedMethod === "credit_card" ? ui("Preencha os dados abaixo para finalizar") : ui("Use os dados abaixo para concluir o pagamento")}</p></div>
             </div>
             {resolvedMethod === "credit_card" ? (
-              <CardPaymentForm token={token} paymentId={current.id} amount={current.amount} disabled={false} onDone={() => void refetch()} />
+              <CardPaymentForm token={token} paymentId={current.id} amount={late ? late.total : current.amount} disabled={false} onDone={() => void refetch()} />
             ) : null}
             {resolvedMethod === "pix" || resolvedMethod === "boleto" ? (
               <div className="space-y-5">

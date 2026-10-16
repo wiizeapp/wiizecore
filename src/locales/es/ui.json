@@ -5224,5 +5224,15 @@
   "Os arquivos dos contratos ficam no Drive da sua empresa, na pasta de contratos da integração. Você também pode escrever o contrato aqui mesmo sem conectar.": "Los contratos se guardan en el Drive de tu empresa, en la carpeta de contratos de la integración. También puedes escribir el contrato aquí sin conectar.",
   "Os arquivos dos contratos (original, assinado e comprovante) ficam no Drive da sua empresa, na pasta de contratos da integração. A Wiize Core só acessa os arquivos que ela mesma cria.": "Los contratos (original, firmado y comprobante) se guardan en el Drive de tu empresa, en la carpeta de contratos de la integración. Wiize Core solo accede a los archivos que crea.",
   "Serviços financeiros": "Servicios financieros",
-  "Como funciona a análise da sua conta": "Cómo funciona el análisis de tu cuenta"
+  "Como funciona a análise da sua conta": "Cómo funciona el análisis de tu cuenta",
+  "Atrasada há": "Vencida hace",
+  "dia": "día",
+  "Ativar novamente": "Reactivar",
+  "Cobrança ativada novamente. O link é o mesmo.": "Cobro reactivado. El enlace es el mismo.",
+  "Não foi possível ativar agora.": "No fue posible reactivar ahora.",
+  "Ativar cobrança novamente": "Reactivar cobro",
+  "Escolha a nova data de vencimento. O cliente paga pelo mesmo link, sem multa nem juros anteriores.": "Elige la nueva fecha de vencimiento. El cliente paga por el mismo enlace, sin multas ni intereses anteriores.",
+  "Novo vencimento": "Nuevo vencimiento",
+  "Ela para de somar juros e o link deixa de aceitar pagamento. O contrato continua valendo e você pode ativá-la novamente depois.": "Deja de sumar intereses y el enlace deja de aceptar pagos. El contrato sigue vigente y puedes reactivarlo después.",
+  "Cobrança cancelada por falta de pagamento": "Cobro cancelado por falta de pago"
 }

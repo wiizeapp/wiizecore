@@ -112,9 +112,9 @@ export async function activeCouponDiscount(admin: Admin, paymentId: string) {
 
 export async function switchPaymentAttempt(
   admin: Admin,
-  input: { tenantId: string; paymentId: string; method: SwitchMethod; reason: "method_change" | "regularization" | "coupon"; actor: Actor; userId?: string | null; idempotencyKey: string; keySuffix?: string },
+  input: { tenantId: string; paymentId: string; method: SwitchMethod; reason: "method_change" | "regularization" | "coupon" | "reactivation"; actor: Actor; userId?: string | null; idempotencyKey: string; keySuffix?: string; reactivateDueOn?: string },
 ) {
-  const p = await loadPayment(admin, input.tenantId, input.paymentId);
+  let p = await loadPayment(admin, input.tenantId, input.paymentId);
   if (!p) throw new Error("Cobrança não encontrada.");
 
   // Chave derivada do estado atual: duplo clique, duas abas ou nova tentativa após demora
@@ -124,7 +124,12 @@ export async function switchPaymentAttempt(
   const { data: same } = await admin.from("payment_attempts").select("id, status").eq("payment_id", p.id).eq("idempotency_key", input.idempotencyKey).maybeSingle();
   if (same && same.status !== "failed") return { attemptId: same.id, reused: true };
 
-  if (!canSwitch(p)) throw new Error("Esta cobrança não permite trocar a forma de pagamento.");
+  const reactivating = input.reason === "reactivation";
+  if (reactivating) {
+    if (p.status !== "cancelled" || p.provider_installment_id || p.subscription_id || !p.provider_payment_id || !input.reactivateDueOn) throw new Error("Esta cobrança não pode ser ativada novamente.");
+    if (input.reactivateDueOn < todaySaoPaulo()) throw new Error("Escolha uma data de hoje em diante.");
+    p = { ...p, original_due_on: input.reactivateDueOn, due_on: input.reactivateDueOn };
+  } else if (!canSwitch(p)) throw new Error("Esta cobrança não permite trocar a forma de pagamento.");
   if (!(await allowedMethods(admin, p)).includes(input.method)) throw new Error("Forma de pagamento indisponível para esta cobrança.");
   const raw = quote(p);
   const coupon = await activeCouponDiscount(admin, p.id);
@@ -134,7 +139,7 @@ export async function switchPaymentAttempt(
 
   const { data: last } = await admin.from("payment_attempts").select("attempt_number").eq("payment_id", p.id).order("attempt_number", { ascending: false }).limit(1).maybeSingle();
   const number = (last?.attempt_number ?? 0) + 1;
-  const reason = input.reason === "coupon" ? "coupon" : q.days > 0 ? "regularization" : input.reason;
+  const reason = reactivating ? "retry" : input.reason === "coupon" ? "coupon" : q.days > 0 ? "regularization" : (input.reason as "method_change" | "regularization");
   const today = todaySaoPaulo();
   const dueOn = (p.original_due_on ?? p.due_on) < today ? today : p.original_due_on ?? p.due_on;
 
@@ -209,7 +214,9 @@ export async function switchPaymentAttempt(
   }
 
   try {
-    await conn.provider.cancelPayment(p.provider_payment_id!);
+    // Na reativação a tentativa anterior já foi cancelada no provedor.
+    if (reactivating) await conn.provider.cancelPayment(p.provider_payment_id!).catch(() => undefined);
+    else await conn.provider.cancelPayment(p.provider_payment_id!);
   } catch {
     await conn.provider.cancelPayment(created.id).catch(() => undefined);
     return fail("Não foi possível substituir a forma de pagamento agora. Tente novamente.");
@@ -240,15 +247,16 @@ export async function switchPaymentAttempt(
     current_attempt_id: pending.id,
     original_amount: p.original_amount ?? p.gross_amount,
     original_due_on: p.original_due_on ?? p.due_on,
+    ...(reactivating ? { original_amount: q.base } : {}),
     updated_at: new Date().toISOString(),
   }).eq("id", p.id).eq("tenant_id", p.tenant_id);
 
   // O link continua o mesmo; se tinha expirado, ganha 3 dias para concluir o pagamento.
-  const soon = new Date(Date.now() + 3 * 86_400_000).toISOString();
+  const soon = new Date(Math.max(Date.now(), Date.parse(`${dueOn}T23:59:59-03:00`)) + 3 * 86_400_000).toISOString();
   await admin.from("payment_links").update({ expires_at: soon }).eq("tenant_id", p.tenant_id).eq("charge_group_id", p.charge_group_id).lt("expires_at", soon).is("revoked_at", null);
 
   await logChargeEvent(admin, {
-    tenantId: p.tenant_id, paymentId: p.id, type: reason === "regularization" ? "regularized" : reason === "coupon" ? "coupon_updated" : "method_changed",
+    tenantId: p.tenant_id, paymentId: p.id, type: reactivating ? "reactivated" : reason === "regularization" ? "regularized" : reason === "coupon" ? "coupon_updated" : "method_changed",
     actor: input.actor, userId: input.userId ?? null,
     metadata: { from: p.method, to: input.method, attempt: number, total: q.total, fine: q.fine, interest: q.interest, days: q.days, discount: coupon?.discount ?? 0 },
   });
@@ -264,4 +272,25 @@ export async function switchPaymentAttempt(
 export async function isSupersededProviderPayment(admin: Admin, providerPaymentId: string) {
   const { data } = await admin.from("payment_attempts").select("status, tenant_id").eq("provider_payment_id", providerPaymentId).maybeSingle();
   return data && ["superseded", "failed", "cancelled"].includes(data.status) ? data : null;
+}
+
+/**
+ * Cobrança vencida: antes de mostrar Pix/boleto ou cobrar no cartão, garante que o valor
+ * no provedor é o total atualizado do dia (multa + juros pelas regras gravadas na cobrança).
+ * Uma nova tentativa por dia no máximo; parcelados/recorrentes seguem o cálculo do provedor.
+ */
+export async function ensureLateValueToday(admin: Admin, tenantId: string, paymentId: string, method: SwitchMethod) {
+  const p = await loadPayment(admin, tenantId, paymentId);
+  if (!p || !canSwitch(p)) return false;
+  const raw = quote(p);
+  if (raw.days <= 0) return false;
+  const coupon = await activeCouponDiscount(admin, p.id);
+  const { applyDiscount } = await import("./coupon-math");
+  const total = coupon ? applyDiscount(raw.total, coupon.discount) : raw.total;
+  if (Math.abs(Number(p.gross_amount) - total) < 0.005 && p.due_on >= todaySaoPaulo()) return false;
+  await switchPaymentAttempt(admin, {
+    tenantId, paymentId, method, reason: "regularization", actor: "customer",
+    idempotencyKey: "late", keySuffix: `late${todaySaoPaulo().replace(/-/g, "")}`,
+  });
+  return true;
 }

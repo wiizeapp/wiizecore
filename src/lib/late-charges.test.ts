@@ -20,3 +20,15 @@ describe("encargos por atraso", () => {
     expect(daysLate("2026-10-05", "2026-10-01")).toBe(0);
   });
 });
+
+import { shouldAutoCancelFirstCharge } from "./late-charges";
+describe("cancelamento automático da primeira cobrança", () => {
+  it("cancela só a primeira cobrança com 30 dias ou mais de atraso", () => {
+    expect(shouldAutoCancelFirstCharge("2026-01-05", "2026-02-04", true)).toBe(true);
+    expect(shouldAutoCancelFirstCharge("2026-01-05", "2026-02-03", true)).toBe(false);
+    expect(shouldAutoCancelFirstCharge("2026-01-05", "2026-03-01", false)).toBe(false);
+  });
+  it("R$ 300 com multa 2% e juros 3% ao mês, 5 dias de atraso", () => {
+    expect(computeLateCharges({ amount: 300, finePercent: 2, interestPercentMonthly: 3, dueOn: "2026-01-05", today: "2026-01-10" }).total).toBe(307.5);
+  });
+});
