@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Separar Marca e Checkout na aparência; prévia dos lembretes com logo/cor salvas e padrão Wiize; conferir navegação e persistência.
+- [x] Separar Marca e Checkout na aparência; prévia dos lembretes lê logo/cor salvas com alternativa padrão Wiize; abas, salvamento/releitura da cor e link para Marca conferidos na conta conectada, cor original restaurada, 17 testes aprovados. Upload de nova logo não exercitado nesta conferência.
 - [ ] Aplicar marca nos e-mails Asaas: depende de confirmação de endpoint oficialmente suportado; não confundir com personalização da fatura.
 
 - [x] Developer Portal para SaaS: seletor Sandbox/Produção no menu, prompts para 6 ferramentas, primeiros passos com progresso real, simulador de testes isolado, consultas de cobrança/assinatura, cancelamento de assinatura, lista de serviços, registros de chamadas e envio automático da fila de avisos a cada minuto; 28 testes da integração aprovados.

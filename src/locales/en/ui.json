@@ -5431,5 +5431,15 @@
   "Escrita": "Write",
   "endereço(s)": "address(es)",
   "Informe a senha financeira para revogar.": "Enter your financial password to revoke.",
-  "Lembrete inteligente": "Smart reminder"
+  "Lembrete inteligente": "Smart reminder",
+  "Marca": "Brand",
+  "Cor principal da marca": "Primary brand color",
+  "Sua marca e seu checkout, organizados em um só lugar.": "Your brand and checkout, organized in one place.",
+  "Sua logo e cor principal identificam sua empresa no checkout e na prévia dos avisos.": "Your logo and primary color identify your company in checkout and notification previews.",
+  "A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.": "The primary color also applies to checkout buttons. Other details are in the Checkout tab.",
+  "E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.": "Emails sent by Asaas retain the provider's appearance. Saving here does not change their branding.",
+  "Cores do checkout": "Checkout colors",
+  "Prévia da marca no checkout": "Checkout brand preview",
+  "Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.": "This preview uses your brand saved in Wiize Core. Notifications sent by Asaas retain the provider's appearance and text.",
+  "Editar marca": "Edit brand"
 }

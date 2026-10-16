@@ -5460,5 +5460,15 @@
   "Escrita": "Escritura",
   "endereço(s)": "dirección(es)",
   "Informe a senha financeira para revogar.": "Ingresa tu contraseña financiera para revocar.",
-  "Lembrete inteligente": "Recordatorio inteligente"
+  "Lembrete inteligente": "Recordatorio inteligente",
+  "Marca": "Marca",
+  "Cor principal da marca": "Color principal de la marca",
+  "Sua marca e seu checkout, organizados em um só lugar.": "Tu marca y tu checkout, organizados en un solo lugar.",
+  "Sua logo e cor principal identificam sua empresa no checkout e na prévia dos avisos.": "Tu logo y color principal identifican tu empresa en el checkout y en la vista previa de los avisos.",
+  "A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.": "El color principal también se aplica a los botones del checkout. Los demás detalles están en la pestaña Checkout.",
+  "E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.": "Los correos enviados por Asaas mantienen la apariencia del proveedor. Guardar aquí no modifica su marca.",
+  "Cores do checkout": "Colores del checkout",
+  "Prévia da marca no checkout": "Vista previa de la marca en el checkout",
+  "Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.": "Esta vista previa usa tu marca guardada en Wiize Core. Los avisos enviados por Asaas mantienen la apariencia y los textos del proveedor.",
+  "Editar marca": "Editar marca"
 }
