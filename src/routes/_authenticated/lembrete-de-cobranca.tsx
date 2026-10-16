@@ -8,7 +8,6 @@ import { BellRing, CheckCircle2, Clock3, Info, Lock, Mail, MessageCircle, Messag
 import { PageHeader, StatusBadge, SummaryStrip } from "@/components/ds";
 import { ErrorState, ListSkeleton } from "@/components/states";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -109,13 +108,13 @@ function Regua() {
 
   const stepRows: { key: DunningStepKey; label: string; hint?: React.ReactNode }[] = [
     { key: "created", label: "Cobrança criada" },
-    { key: "before", label: "Antes do vencimento", hint: (<div className="flex flex-wrap gap-2">
+    { key: "before", label: "Antes do vencimento", hint: (<div className="flex gap-1.5">
       <Select value={String(steps.beforeOffsets[0] ?? steps.beforeOffset)} onValueChange={(v) => setBeforeOffset(0, v)} disabled={!data.canManage}>
-        <SelectTrigger className="h-8 w-40"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="h-8 w-[7.5rem] text-xs"><SelectValue /></SelectTrigger>
         <SelectContent>{BEFORE_OFFSETS.map((d) => <SelectItem key={d} value={String(d)}>{d} {d === 1 ? "dia antes" : "dias antes"}</SelectItem>)}</SelectContent>
       </Select>
       <Select value={steps.beforeOffsets[1] == null ? "none" : String(steps.beforeOffsets[1])} onValueChange={(v) => setBeforeOffset(1, v)} disabled={!data.canManage}>
-        <SelectTrigger className="h-8 w-44"><SelectValue placeholder="Segundo aviso" /></SelectTrigger>
+        <SelectTrigger className="h-8 w-[7.5rem] text-xs"><SelectValue placeholder="Segundo aviso" /></SelectTrigger>
         <SelectContent><SelectItem value="none">Sem segundo aviso</SelectItem>{BEFORE_OFFSETS.filter((d) => d !== steps.beforeOffsets[0]).map((d) => <SelectItem key={d} value={String(d)}>{d} {d === 1 ? "dia antes" : "dias antes"}</SelectItem>)}</SelectContent>
       </Select></div>) },
     { key: "due", label: "No dia do vencimento" },
@@ -190,28 +189,28 @@ function Regua() {
         </div>
         <div className="mt-4 divide-y">
           {stepRows.map((r) => (
-            <div key={r.key} className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-center gap-3"><p className="min-w-44 font-medium">{r.label}</p>{r.hint}</div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Select value={stepType(steps[r.key])} onValueChange={(v) => setStepType(r.key, v as DunningPlanCode | "off")} disabled={!data.canManage}>
-                  <SelectTrigger className="h-8 w-48"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="off">Sem aviso</SelectItem>
-                    {PLAN_ORDER.filter((p) => PLAN_ORDER.indexOf(p) <= PLAN_ORDER.indexOf(plan)).map((p) => <SelectItem key={p} value={p}>{PLAN_NAMES[p]}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+            <div key={r.key} className="grid grid-cols-1 items-center gap-2 py-2.5 lg:grid-cols-[10rem_15.5rem_10.5rem_minmax(0,1fr)_auto] lg:gap-3">
+              <p className="text-sm font-medium">{r.label}</p>
+              <div className="min-w-0">{r.hint ?? <span className="hidden text-xs text-muted-foreground lg:inline">—</span>}</div>
+              <Select value={stepType(steps[r.key])} onValueChange={(v) => setStepType(r.key, v as DunningPlanCode | "off")} disabled={!data.canManage}>
+                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="off">Sem aviso</SelectItem>
+                  {PLAN_ORDER.filter((p) => PLAN_ORDER.indexOf(p) <= PLAN_ORDER.indexOf(plan)).map((p) => <SelectItem key={p} value={p}>{PLAN_NAMES[p]}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <div className="flex min-w-0 flex-wrap gap-1" aria-label="Canais definidos pelo tipo de lembrete">
                 {CHANNELS.map((c) => {
                   const on = steps[r.key].includes(c);
-                  const Icon = CH[c].icon;
+                  const Icon = on ? CH[c].icon : Lock;
                   return (
-                    <span key={c} title="Definido pelo tipo de lembrete escolhido." className={`flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm ${on ? "border-primary/30 bg-primary/5" : "opacity-45"}`}>
-                      {on ? <Icon className="h-3.5 w-3.5 text-primary" /> : <Lock className="h-3.5 w-3.5" />}{CH[c].label}
-                      <Switch checked={on} disabled aria-readonly />
+                    <span key={c} title={on ? `${CH[c].label} ligado` : `${CH[c].label} desligado`} className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${on ? "border-primary/40 bg-primary/10 font-medium text-primary" : "border-border text-muted-foreground opacity-50"}`}>
+                      <Icon className="h-3 w-3 shrink-0" />{CH[c].label}
                     </span>
                   );
                 })}
-                <Button size="sm" variant="ghost" onClick={() => setEditStep(r.key)}><Palette className="h-3.5 w-3.5" />Editar aparência</Button>
               </div>
+              <Button size="icon" variant="ghost" className="size-8 justify-self-start lg:justify-self-end" title="Editar aparência" aria-label="Editar aparência" onClick={() => setEditStep(r.key)}><Palette className="h-4 w-4" /></Button>
             </div>
           ))}
         </div>
