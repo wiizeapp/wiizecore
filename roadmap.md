@@ -114,3 +114,5 @@
 - [x] Alinhar as caixas de taxa 0% às demais e dividir o aviso da promoção: um em cada card (Pix e Boleto), em largura interna total e alinhados na base.
 - [x] Cobrança atrasada: juros diários com taxas salvas na cobrança, aviso, cancelar, auto-cancelar 1ª cobrança em 30d, reativar
 - [x] Painel da abertura: descer mais ~44px, retirar os dois cartões flutuantes e apagar a linha dura da base; conferir corte suave, sem e-mail, em 1329px e 390px
+
+- [x] Abertura: painel 8px mais alto, moldura cinza suave de 10px em volta da imagem e faixa própria para a seção "Tudo o que você precisa..." (filete, tom mais claro e sombra), com a base do painel dissolvida antes da linha de corte. Conferido a 1280px e 390px, sem e-mail visível, sem rolagem horizontal, compilação OK.
