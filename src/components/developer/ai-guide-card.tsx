@@ -17,15 +17,15 @@ const LOGOS = [lovable, openai, claude, cursor, gemini, base44, replit];
 /** Logos sobrepostos em zigue-zague: cada um invade levemente o de baixo. */
 function LogoStack() {
   return (
-    <div className="relative h-36 w-40 shrink-0" aria-hidden>
+    <div className="relative h-44 w-36 shrink-0" aria-hidden>
       {LOGOS.map((l, i) => (
         <img
           key={l.url}
           src={l.url}
           alt=""
           loading="lazy"
-          className="absolute size-12 rounded-2xl border-2 border-card bg-card object-cover shadow-card"
-          style={{ top: i * 13, left: i % 2 === 0 ? 8 : 72, zIndex: LOGOS.length - i, transform: `rotate(${i % 2 === 0 ? -6 : 6}deg)` }}
+          className="absolute size-14 rounded-2xl border-2 border-card bg-card object-cover shadow-card"
+          style={{ top: i * 18, left: i % 2 === 0 ? 0 : 64, zIndex: LOGOS.length - i, transform: `rotate(${i % 2 === 0 ? -6 : 6}deg)` }}
         />
       ))}
     </div>

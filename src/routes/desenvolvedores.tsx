@@ -30,15 +30,15 @@ function CodeBlock({ code, label }: { code: string; label?: string | undefined }
 
 function Block({ b }: { b: DocBlock }) {
   const { t } = useTranslation("ui");
-  if (b.kind === "p") return <p>{t(b.text)}</p>;
-  if (b.kind === "note") return <div className="rounded-md border-l-4 border-primary bg-surface p-4 font-medium text-foreground">{t(b.text)}</div>;
-  if (b.kind === "list") return <ul className="grid gap-2">{b.items.map((i) => <li key={i} className="grid grid-cols-[auto_1fr] gap-3"><ArrowRight className="mt-1.5 size-3.5 text-primary" /><span>{t(i)}</span></li>)}</ul>;
+  if (b.kind === "p") return <p>{b.text}</p>;
+  if (b.kind === "note") return <div className="rounded-md border-l-4 border-primary bg-surface p-4 font-medium text-foreground">{b.text}</div>;
+  if (b.kind === "list") return <ul className="grid gap-2">{b.items.map((i) => <li key={i} className="grid grid-cols-[auto_1fr] gap-3"><ArrowRight className="mt-1.5 size-3.5 text-primary" /><span>{i}</span></li>)}</ul>;
   if (b.kind === "code") return <CodeBlock code={b.code} label={b.label} />;
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full text-left text-xs">
         <thead className="bg-muted/50 text-foreground"><tr>{b.head.map((h) => <th key={h} className="p-2.5 font-semibold">{t(h)}</th>)}</tr></thead>
-        <tbody>{b.rows.map((r) => <tr key={r.join()} className="border-t border-border">{r.map((c, i) => <td key={i} className={i === 0 ? "p-2.5 font-mono text-foreground" : "p-2.5"}>{t(c)}</td>)}</tr>)}</tbody>
+        <tbody>{b.rows.map((r) => <tr key={r.join()} className="border-t border-border">{r.map((c, i) => <td key={i} className={i === 0 ? "p-2.5 font-mono text-foreground" : "p-2.5"}>{c}</td>)}</tr>)}</tbody>
       </table>
     </div>
   );
