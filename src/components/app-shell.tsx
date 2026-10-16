@@ -311,7 +311,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{user?.email ?? ""}</p>
             </div>
           </Link>
-          <div className="sidebar-theme flex flex-wrap items-center gap-1.5"><ThemeToggle /><EnvironmentSwitch /></div>
+          <div className="sidebar-theme flex flex-nowrap items-center gap-1.5"><ThemeToggle /><EnvironmentSwitch /></div>
           <Link to="/ajuda" className={`${navLinkClass(pathname.startsWith("/ajuda"))} sidebar-help`} title={!sidebarExpanded ? ui("Central de Ajuda") : undefined}>
             <span className="sidebar-icon-slot"><BookOpen className="sidebar-animated-icon" strokeWidth={1.8} /></span>
             <span className="sidebar-item-label">{ui("Central de Ajuda")}</span>

@@ -30,12 +30,12 @@ export function EnvironmentSwitch() {
             title={`${t(o.title)} — ${t(o.label)}`}
             onClick={() => choose(o.value)}
             className={cn(
-              "inline-flex h-7 items-center gap-1 rounded-[5px] px-2 text-[11px] font-medium text-muted-foreground transition-colors hover:text-sidebar-accent-foreground",
+              "inline-flex h-7 items-center gap-1 whitespace-nowrap rounded-[5px] px-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-sidebar-accent-foreground",
               active && "border border-sidebar-border bg-background text-foreground shadow-sm",
             )}
           >
             <o.icon className={cn("size-3.5", active && o.value === "test" && "text-warning", active && o.value === "live" && "text-primary")} strokeWidth={1.8} />
-            {o.value === "test" ? t("Sandbox") : t("Produção")}
+            {o.value === "test" ? t("Teste") : t("Prod.")}
           </button>
         );
       })}
