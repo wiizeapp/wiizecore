@@ -3,6 +3,8 @@ import { z } from "zod";
 /** Aparência do checkout: só cores, textos curtos e logo. Nunca HTML ou código. */
 export type CheckoutAppearance = {
   theme: "wiize" | "clean" | "dark";
+  /** Cor principal da marca, independente das demais cores do checkout. */
+  brandColor: string;
   /** Fundo de toda a página do checkout (área atrás dos cartões). */
   background: string;
   /** Faixa do topo com a logo. */
@@ -34,6 +36,7 @@ export const THEMES: Record<CheckoutAppearance["theme"], Pick<CheckoutAppearance
 
 export const DEFAULT_APPEARANCE: CheckoutAppearance = {
   theme: "wiize",
+  brandColor: THEMES.wiize.button,
   ...THEMES.wiize,
   logoUrl: null,
   logoPath: null,
@@ -52,6 +55,7 @@ const safeText = (max: number) =>
 
 export const appearanceSchema = z.object({
   theme: z.enum(["wiize", "clean", "dark"]),
+  brandColor: hex.default(THEMES.wiize.button),
   background: hex,
   header: hex,
   surface: hex,
@@ -75,10 +79,17 @@ export const appearanceSchema = z.object({
 export function normalizeAppearance(raw: unknown): CheckoutAppearance {
   const source = (raw && typeof raw === "object" ? raw : {}) as Partial<CheckoutAppearance>;
   const merged = { ...DEFAULT_APPEARANCE, ...source };
+  if (!source.brandColor) merged.brandColor = source.button ?? DEFAULT_APPEARANCE.brandColor;
   // Versões salvas antes da cor do cabeçalho existir continuam com o topo igual às superfícies.
   if (!source.header) merged.header = merged.surface;
   const parsed = appearanceSchema.safeParse(merged);
   return parsed.success ? parsed.data : DEFAULT_APPEARANCE;
+}
+
+/** A cor principal também orienta os botões do checkout, com texto legível. */
+export function withBrandColor(appearance: CheckoutAppearance, color: string): CheckoutAppearance {
+  const brandColor = hex.parse(color).toUpperCase();
+  return { ...appearance, brandColor, button: brandColor, buttonText: readableOn(brandColor) };
 }
 
 function luminance(color: string) {

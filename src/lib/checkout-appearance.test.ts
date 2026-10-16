@@ -1,7 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { contrastIssues, contrastRatio, DEFAULT_APPEARANCE, headerTextColors, normalizeAppearance, THEMES } from "./checkout-appearance";
+import { contrastIssues, contrastRatio, DEFAULT_APPEARANCE, headerTextColors, normalizeAppearance, THEMES, withBrandColor } from "./checkout-appearance";
 
 describe("aparência do checkout", () => {
+  it("usa a cor padrão Wiize quando nenhuma marca foi salva", () => {
+    expect(normalizeAppearance({}).brandColor).toBe("#087A45");
+    expect(normalizeAppearance({}).logoPath).toBeNull();
+  });
+  it("preserva a cor anterior como marca nas versões antigas", () => {
+    expect(normalizeAppearance({ button: "#123456" }).brandColor).toBe("#123456");
+  });
+  it("salva a cor da marca separada do fundo e aplica aos botões", () => {
+    const changed = withBrandColor(DEFAULT_APPEARANCE, "#FFCC00");
+    expect(normalizeAppearance(changed).brandColor).toBe("#FFCC00");
+    expect(changed.button).toBe("#FFCC00");
+    expect(changed.header).toBe("#FFFFFF");
+    expect(contrastRatio(changed.button, changed.buttonText)).toBeGreaterThanOrEqual(4.5);
+  });
   it("temas prontos são legíveis", () => {
     for (const t of Object.values(THEMES)) expect(contrastIssues(t)).toEqual([]);
   });
