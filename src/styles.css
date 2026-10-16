@@ -1004,6 +1004,9 @@ html::-webkit-scrollbar-thumb {
   border: 10px solid color-mix(in oklab, var(--border) 75%, var(--background));
   border-bottom: none;
 
+  /* Sombra bem mais leve que a padrão: presença sem bloco preto embaixo. */
+  box-shadow: 0 14px 36px -24px oklch(0 0 0 / 34%);
+
   /* No celular, a janela é mais curta; o degradê abaixo dissolve a borda inferior. */
   @media (max-width: 39.9375rem) {
     max-height: 15.5rem;
@@ -1027,16 +1030,22 @@ html::-webkit-scrollbar-thumb {
   z-index: 30;
   /* Encostado na linha de corte da seção, não na base da janela. */
   inset: auto 0 -2rem;
-  height: 4rem;
+  /* Faixa mais alta e gradual: o painel some devagar, sem bloco escuro. */
+  height: 6rem;
 
   @media (max-width: 39.9375rem) {
-    height: 2.5rem;
+    height: 3.5rem;
   }
   pointer-events: none;
-  /* Só a última faixa some de vez: o resto da imagem segue visível e desfocado. */
-  background: linear-gradient(to top, var(--background) 22%, transparent);
-  backdrop-filter: blur(2.5px);
-  mask-image: linear-gradient(to top, black 18%, transparent 100%);
+  /* Degrade em três estágios: dissolve primeiro e só clareia de vez no fim. */
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--background) 78%, transparent),
+    color-mix(in oklab, var(--background) 28%, transparent) 55%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(to top, black, transparent 96%);
 }
 
 /* Faixa da seção "Tudo o que você precisa...": mesma cor de fundo da seção
