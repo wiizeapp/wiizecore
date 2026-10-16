@@ -2472,6 +2472,63 @@ export type Database = {
           },
         ]
       }
+      ext_idempotency_keys: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          integration_id: string
+          operation: string
+          request_hash: string
+          response_body: Json | null
+          response_status: number | null
+          state: string
+          tenant_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          integration_id: string
+          operation: string
+          request_hash: string
+          response_body?: Json | null
+          response_status?: number | null
+          state?: string
+          tenant_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          integration_id?: string
+          operation?: string
+          request_hash?: string
+          response_body?: Json | null
+          response_status?: number | null
+          state?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_idempotency_keys_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_idempotency_keys_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ext_integrations: {
         Row: {
           created_at: string
