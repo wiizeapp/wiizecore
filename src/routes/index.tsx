@@ -59,8 +59,8 @@ function Landing() {
           </div>
         </section>
 
-        <OperationFlow />
         <HowItWorksSection />
+        <OperationFlow />
         <ConnectedJourneySection />
         <ComparisonSection />
 

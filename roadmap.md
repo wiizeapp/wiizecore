@@ -120,3 +120,4 @@
 - [x] Abertura: encurtar o vão escuro sob o painel (desfoque de 64px, imagem visível até perto da linha) e pintar a faixa "Tudo o que você precisa..." com a mesma cor da faixa "Da primeira cobrança ao dinheiro na conta" (ambas 0.21 0.018 165). Conferido a 1280px e 390px, sem corte seco, sem rolagem horizontal, compilação OK.
 
 - [x] Abertura no celular: aproximar o título da seção seguinte da linha divisória (topo 48px só abaixo de 1024px) e devolver à seção "Da primeira cobrança..." o espaçamento original de 80px. Conferido a 390px e 1280px, sem corte seco, compilação OK.
+- [x] Inverter a ordem das seções "Da primeira cobrança ao dinheiro na conta em 4 passos." e "Tudo o que você precisa para administrar seus recebimentos.", e deixar a segunda com a mesma cor de fundo da seção "Da contratação às próximas cobranças, tudo conectado."; ordem e cores conferidas no navegador, compilação OK.
