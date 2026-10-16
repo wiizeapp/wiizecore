@@ -1038,12 +1038,14 @@ html::-webkit-scrollbar-thumb {
   mask-image: linear-gradient(to top, black 0%, transparent 100%);
 }
 
-/* Faixa própria da seção "Tudo o que você precisa...": filete e tom levemente
-   diferentes da abertura, para as duas não se misturarem. */
+/* Faixa própria da seção "Tudo o que você precisa...": filete, sombra suave e tom
+   mais alto que a abertura, para as duas não se misturarem. */
 @utility operation-flow-band {
-  border-top: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
-  background-color: color-mix(in oklab, var(--surface) 60%, var(--background));
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--background) 75%, transparent);
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--background) 55%, transparent),
+    0 -14px 28px -14px color-mix(in oklab, var(--foreground) 30%, transparent);
 }
 
 @keyframes feature-demo-enter {
