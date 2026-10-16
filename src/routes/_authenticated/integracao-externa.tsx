@@ -12,11 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateTime } from "@/lib/format";
 import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { ExtWebhooksPanel } from "@/components/ext-webhooks-panel";
-import { ExtAiGuide, ExtDocs, ExtLogs, ExtOverview } from "@/components/ext-insights";
+import { ExtAiGuide, ExtLogs, ExtOverview } from "@/components/ext-insights";
+import { AiPromptCards, ApiReference, ChargesTab, EnvBadge, GettingStarted, RequestLogs, ServicesTab } from "@/components/developer/portal-parts";
+import { useDevEnv } from "@/lib/dev-environment";
+import { BookOpen, Boxes, CreditCard, FileCode2, KeyRound, Repeat, ScrollText, ShoppingCart, Users, Webhook, FlaskConical } from "lucide-react";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
-  head: () => ({ meta: [{ title: "Integração Externa — Wiize Core" }, { name: "description", content: "Conecte seu software à Wiize Core com chaves de API." }, { property: "og:title", content: "Integração Externa — Wiize Core" }, { property: "og:description", content: "Conecte seu software à Wiize Core com chaves de API." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "Developer Portal — Wiize Core" }, { name: "description", content: "API de billing da Wiize Core: checkout, cobranças, assinaturas, webhooks e sandbox." }, { property: "og:title", content: "Developer Portal — Wiize Core" }, { property: "og:description", content: "API de billing da Wiize Core: checkout, cobranças, assinaturas, webhooks e sandbox." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: Page,
 });
 
@@ -42,7 +45,8 @@ function Page() {
   const setStatus = useServerFn(setExtIntegrationStatus);
   const q = useQuery({ queryKey: ["ext-integrations"], queryFn: () => list() });
   const [name, setName] = useState("");
-  const [env, setEnv] = useState<"test" | "live">("test");
+  const env = useDevEnv();
+  const [tab, setTab] = useState("overview");
   const [scopes, setScopes] = useState<string[]>(["services:read", "customers:write", "charges:write", "charges:read", "checkout_sessions:write"]);
   const [revealed, setRevealed] = useState<{ secret: string; publicKey: string } | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ["ext-integrations"] });
@@ -65,12 +69,42 @@ function Page() {
   });
 
   const copy = (v: string) => { void navigator.clipboard.writeText(v); toast.success(t("Copiado.")); };
-  const items = q.data?.integrations ?? [];
+  const allItems = q.data?.integrations ?? [];
+  const items = allItems.filter((i) => i.environment === env);
+  const activeKeys = items.filter((i) => i.status === "active" && i.key).length;
+  const go = (v: string) => { setTab(v); if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const QUICK: { tab: string; label: string; icon: typeof KeyRound }[] = [
+    { tab: "keys", label: "API e chaves", icon: KeyRound }, { tab: "docs", label: "Documentação", icon: BookOpen },
+    { tab: "webhooks", label: "Webhooks", icon: Webhook }, { tab: "services", label: "Checkout", icon: ShoppingCart },
+    { tab: "services", label: "Clientes", icon: Users }, { tab: "charges", label: "Cobranças", icon: CreditCard },
+    { tab: "subscriptions", label: "Assinaturas", icon: Repeat }, { tab: "sandbox", label: "Sandbox", icon: FlaskConical },
+    { tab: "logs", label: "Logs e eventos", icon: ScrollText }, { tab: "start", label: "Exemplos de código", icon: FileCode2 },
+  ];
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t("Integração Externa")} description={t("Conecte seu próprio software ou SaaS à Wiize Core para criar cobranças e receber avisos de pagamento.")} />
       <Link to="/integracoes" className="text-xs text-muted-foreground hover:text-foreground">← {t("Integrações")}</Link>
+      <section className="surface-panel space-y-4 p-6">
+        <div className="flex flex-wrap items-center gap-2"><EnvBadge env={env} /><span className="text-xs text-muted-foreground">{t("Troque o ambiente no menu lateral.")}</span></div>
+        <div className="max-w-3xl space-y-2">
+          <h1 className="font-display text-2xl font-semibold tracking-tight">{t("Conecte sua aplicação à WiizeCore.")}</h1>
+          <p className="text-sm text-muted-foreground">{t("Pagamentos, cobranças e assinaturas integrados ao seu SaaS. Utilize nossa API para automatizar o faturamento, acompanhar transações e sincronizar o acesso dos seus clientes.")}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={() => go("start")}>{t("Começar integração")}</Button>
+          <Button variant="outline" onClick={() => go("docs")}>{t("Ver documentação")}</Button>
+          <Button variant="ghost" onClick={() => go("webhooks")}>{t("Webhooks e eventos")}</Button>
+          <span className="text-xs text-muted-foreground">{t("Chaves ativas neste ambiente")}: {q.isLoading ? "…" : activeKeys}</span>
+        </div>
+      </section>
+      <AiPromptCards env={env} />
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {QUICK.map((c) => (
+          <button key={c.label} type="button" onClick={() => go(c.tab)} className="surface-panel flex items-center gap-2 p-3 text-left text-sm transition-colors hover:border-primary/40">
+            <c.icon className="size-4 text-primary" strokeWidth={1.8} />{t(c.label)}
+          </button>
+        ))}
+      </div>
 
       {revealed && (
         <section className="surface-panel space-y-3 border-primary/40 p-5">
@@ -82,30 +116,47 @@ function Page() {
         </section>
       )}
 
-      <Tabs defaultValue="overview">
-        <TabsList className="flex-wrap">
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="overview">{t("Visão geral")}</TabsTrigger>
-          <TabsTrigger value="credentials">{t("Credenciais")}</TabsTrigger>
-          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-          <TabsTrigger value="logs">{t("Registros")}</TabsTrigger>
+          <TabsTrigger value="start">{t("Primeiros passos")}</TabsTrigger>
+          <TabsTrigger value="keys">{t("Chaves de API")}</TabsTrigger>
           <TabsTrigger value="docs">{t("Documentação")}</TabsTrigger>
-          <TabsTrigger value="ai">{t("Guia com IA")}</TabsTrigger>
+          <TabsTrigger value="services">{t("Serviços e checkout")}</TabsTrigger>
+          <TabsTrigger value="charges">{t("Cobranças")}</TabsTrigger>
+          <TabsTrigger value="subscriptions">{t("Assinaturas")}</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+          <TabsTrigger value="sandbox">Sandbox</TabsTrigger>
+          <TabsTrigger value="logs">{t("Logs e diagnóstico")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <ExtOverview />
+          {env === "live" ? <ExtOverview /> : <p className="surface-panel p-4 text-xs text-muted-foreground">{t("Os números financeiros aparecem somente no ambiente de Produção.")}</p>}
           <div className="surface-panel space-y-3 p-5 text-sm">
-          <p>{t("Com a Integração Externa, o seu sistema pede à Wiize Core para criar clientes e cobranças, e a Wiize Core avisa o seu sistema quando o pagamento acontece.")}</p>
-          <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-            <li>{t("Chave pública: pode aparecer no site do seu sistema.")}</li>
-            <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
-            <li>{t("Chaves de teste só funcionam no ambiente de testes; chaves de produção, só com dinheiro real.")}</li>
-          </ul>
+            <p>{t("Com a Integração Externa, o seu sistema pede à Wiize Core para criar clientes e cobranças, e a Wiize Core avisa o seu sistema quando o pagamento acontece.")}</p>
+            <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
+              <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
+              <li>{t("Chaves de teste só funcionam no ambiente de testes; chaves de produção, só com dinheiro real.")}</li>
+              <li>{t("A senha financeira nunca é usada pela API nem compartilhada com o sistema integrado.")}</li>
+              <li>{t("Sem monitoramento público de disponibilidade por enquanto: acompanhe suas chamadas em Logs e diagnóstico.")}</li>
+            </ul>
           </div>
+          <ExtAiGuide />
         </TabsContent>
-        <TabsContent value="logs"><ExtLogs /></TabsContent>
-        <TabsContent value="docs"><ExtDocs /></TabsContent>
-        <TabsContent value="ai"><ExtAiGuide /></TabsContent>
+        <TabsContent value="start"><GettingStarted env={env} onGo={go} /></TabsContent>
+        <TabsContent value="docs"><ApiReference /></TabsContent>
+        <TabsContent value="services"><ServicesTab /></TabsContent>
+        <TabsContent value="charges"><ChargesTab env={env} /></TabsContent>
+        <TabsContent value="subscriptions"><ChargesTab env={env} recurringOnly simulate={env === "test"} /></TabsContent>
+        <TabsContent value="sandbox">
+          {env === "test" ? <ChargesTab env="test" simulate /> : <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Mude para Sandbox no menu lateral para simular pagamentos de teste.")}</p>}
+        </TabsContent>
+        <TabsContent value="logs" className="space-y-4">
+          <h3 className="text-sm font-semibold">{t("Chamadas à API")}</h3>
+          <RequestLogs env={env} />
+          <h3 className="text-sm font-semibold">{t("Entregas de webhooks")}</h3>
+          <ExtLogs />
+        </TabsContent>
 
         <TabsContent value="webhooks" className="space-y-4">
           <p className="text-xs text-muted-foreground">{t("A Wiize Core avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
@@ -117,17 +168,13 @@ function Page() {
           ))}
         </TabsContent>
 
-        <TabsContent value="credentials" className="space-y-4">
+        <TabsContent value="keys" className="space-y-4">
           {q.data?.canManage && (
             <section className="surface-panel space-y-4 p-5">
               <h2 className="font-display text-base font-semibold">{t("Nova integração")}</h2>
               <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Nome do seu sistema")} maxLength={80} />
-                <div className="flex gap-2">
-                  {(["test", "live"] as const).map((e) => (
-                    <Button key={e} type="button" size="sm" variant={env === e ? "default" : "outline"} onClick={() => setEnv(e)}>{e === "test" ? t("Teste") : t("Produção")}</Button>
-                  ))}
-                </div>
+<EnvBadge env={env} />
               </div>
               <div className="flex flex-wrap gap-2">
                 {(q.data.allScopes ?? []).map((s) => (
@@ -138,7 +185,7 @@ function Page() {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">{t("Nenhuma chave dá acesso a saldo, saques, contas bancárias ou configurações da empresa.")}</p>
-              <Button onClick={() => createM.mutate()} disabled={createM.isPending || name.trim().length < 2 || !scopes.length}>{createM.isPending ? t("Criando…") : t("Criar integração")}</Button>
+              <Button onClick={() => { if (env === "live" && !window.confirm(t("Criar uma chave de PRODUÇÃO? Ela processa cobranças reais."))) return; createM.mutate(); }} disabled={createM.isPending || name.trim().length < 2 || !scopes.length}>{createM.isPending ? t("Criando…") : t("Criar integração")}</Button>
             </section>
           )}
 
