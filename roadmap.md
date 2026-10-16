@@ -124,3 +124,5 @@
 - 2026-10-16: Espaçamento superior da seção "Da primeira cobrança..." reduzido (pt-14/lg:pt-20); sombra do painel do hero aliviada e degradê de corte mais alto e gradual (home-dashboard-fade 6rem, 3 estágios).
 
 - [x] Reduzir o espaçamento interno da barra superior pública (altura 84→72 px no computador, 72→60 px no celular) e o recorte do menu "Recursos"; computador e celular conferidos, sem texto apertado e sem sobreposição do painel, compilação OK.
+
+- [x] Barra superior mais compacta ainda: altura 72→60 px no computador e 60→52 px no celular, laterais e topo do cabeçalho mais justos; menu "Recursos" reposicionado e conferido no navegador sem sobreposição, compilação OK.
