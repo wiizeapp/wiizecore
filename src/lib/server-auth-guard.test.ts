@@ -18,6 +18,8 @@ const PUBLIC_ALLOWED: Record<string, string[]> = {
   "portal.functions.ts": ["*"],
   // Celular: protegido por link de uso único + código, sessão curta.
   "activation-handoff.functions.ts": ["verifyActivationHandoff", "getMobileActivation", "saveMobileActivation", "uploadMobileActivationDocument", "finishActivationHandoff"],
+  // Checkout de teste: protegido pelo código sbx_ do link; só lê/altera registros do simulador.
+  "ext-portal.functions.ts": ["getSandboxCheckout", "paySandboxCheckout"],
   // Janelas embutidas da Wiize: protegidas por passe de uso único + sessão curta de 30 min.
 };
 
