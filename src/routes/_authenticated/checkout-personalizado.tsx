@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -12,6 +12,8 @@ import {
 import { PageHeader } from "@/components/app-shell";
 import { ErrorState, ListSkeleton } from "@/components/states";
 import { Button } from "@/components/ui/button";
+import { Brand } from "@/components/brand";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,14 +22,14 @@ import { FinancialIdentity } from "@/components/financial-provider";
 import {
   discardCheckoutLogo, getCheckoutAppearance, importCheckoutLogo, saveCheckoutAppearance, uploadCheckoutLogo,
 } from "@/lib/checkout-appearance.functions";
-import { contrastIssues, DEFAULT_APPEARANCE, headerTextColors, readableOn, THEMES, type CheckoutAppearance } from "@/lib/checkout-appearance";
+import { contrastIssues, DEFAULT_APPEARANCE, headerTextColors, readableOn, THEMES, withBrandColor, type CheckoutAppearance } from "@/lib/checkout-appearance";
 
 export const Route = createFileRoute("/_authenticated/checkout-personalizado")({
   head: () => ({
     meta: [
-      { title: "Aparência do checkout — Wiize Core" },
-      { name: "description", content: "Personalize logo, cores e textos do checkout dos seus clientes." },
-      { property: "og:title", content: "Aparência do checkout — Wiize Core" },
+      { title: "Marca e Checkout — Wiize Core" },
+      { name: "description", content: "Configure sua marca e personalize o checkout dos seus clientes." },
+      { property: "og:title", content: "Marca e Checkout — Wiize Core" },
       { property: "og:description", content: "Logo, cores e textos do seu checkout." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -101,6 +103,9 @@ async function optimizeLogo(file: File) {
 function Page() {
   const { t: ui } = useTranslation("ui");
   const qc = useQueryClient();
+  const location = useLocation();
+  const [section, setSection] = useState("marca");
+  useEffect(() => { setSection(location.hash === "checkout" ? "checkout" : "marca"); }, [location.hash]);
   const fetchFn = useServerFn(getCheckoutAppearance);
   const saveFn = useServerFn(saveCheckoutAppearance);
   const uploadFn = useServerFn(uploadCheckoutLogo);
@@ -160,11 +165,12 @@ function Page() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Aparência do checkout" description="Crie uma experiência de pagamento coerente com a sua marca e transmita confiança em cada detalhe." />
+      <PageHeader title={ui("Aparência")} description={ui("Sua marca e seu checkout, organizados em um só lugar.")} />
+      <Tabs value={section} onValueChange={setSection}><TabsList aria-label={ui("Aparência")}><TabsTrigger value="marca"><Building2 className="mr-2 size-4" />{ui("Marca")}</TabsTrigger><TabsTrigger value="checkout"><CreditCard className="mr-2 size-4" />{ui("Checkout")}</TabsTrigger></TabsList></Tabs>
       {disabled ? <p className="rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">Somente dono ou administrador pode alterar a aparência.</p> : null}
       <div className="grid items-start gap-6 2xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]">
         <fieldset disabled={disabled} className="space-y-5">
-          <EditorSection icon={Sparkles} title="Estilo do checkout" description="Comece com um tema e refine os detalhes.">
+          <div hidden={section !== "checkout"}><EditorSection icon={Sparkles} title="Estilo do checkout" description="Comece com um tema e refine os detalhes.">
             <div className="grid gap-2 sm:grid-cols-3">
               {(Object.keys(THEMES) as (keyof typeof THEMES)[]).map((theme) => {
                 const selected = a.theme === theme;
@@ -180,9 +186,10 @@ function Page() {
             </div>
           </EditorSection>
 
-          <EditorSection icon={Building2} title="Sua marca" description="Use uma imagem nítida, preferencialmente com fundo transparente.">
+          </div>
+          <div hidden={section !== "marca"}><EditorSection icon={Building2} title={ui("Marca")} description={ui("Sua logo e cor principal identificam sua empresa no checkout e na prévia dos avisos.")}>
             <div className="flex min-h-28 items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 p-4">
-              {a.logoUrl ? <img src={a.logoUrl} alt="Logo da empresa" className="max-h-20 max-w-[280px] object-contain" /> : <div className="text-center text-muted-foreground"><ImageUp className="mx-auto size-6" /><p className="mt-2 text-xs">Sua logo aparecerá aqui</p></div>}
+              {a.logoUrl ? <img src={a.logoUrl} alt="Logo da empresa" className="max-h-20 max-w-[280px] object-contain" /> : <Brand />}
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
               <Button asChild variant="outline" className="h-10"><label className="cursor-pointer"><UploadCloud className="size-4" />{upload.isPending ? "Otimizando…" : "Enviar imagem"}<input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) upload.mutate(file); event.target.value = ""; }} /></label></Button>
@@ -200,7 +207,13 @@ function Page() {
             </div>
           </EditorSection>
 
-          <EditorSection icon={Palette} title="Paleta da marca" description="Clique em qualquer faixa para escolher a cor.">
+          <div className="mt-4 space-y-3">
+            <Label htmlFor="brand-color">{ui("Cor principal da marca")}</Label>
+            <div className="flex items-center gap-3"><input id="brand-color" type="color" value={a.brandColor} onChange={(event) => setA((previous) => withBrandColor(previous, event.target.value))} className="h-10 w-14 cursor-pointer rounded border border-border" /><span className="font-mono text-sm">{a.brandColor}</span></div>
+            <p className="text-xs leading-5 text-muted-foreground">{ui("A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.")}</p>
+            <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">{ui("E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.")}</p>
+          </div></div>
+          <div hidden={section !== "checkout"} className="space-y-5"><EditorSection icon={Palette} title={ui("Cores do checkout")} description="Clique em qualquer faixa para escolher a cor.">
             <div className="grid gap-3 sm:grid-cols-2">
               {COLOR_FIELDS.map((field) => (
                 <label key={field.key} className="group relative min-h-24 cursor-pointer overflow-hidden rounded-lg border border-border p-3 transition-colors hover:border-primary/60" style={{ background: a[field.key] }}>
@@ -221,16 +234,16 @@ function Page() {
             <div className="grid gap-3 sm:grid-cols-2"><Field label="E-mail de suporte" value={a.supportEmail} max={120} placeholder="contato@suaempresa.com.br" onChange={(value) => set("supportEmail", value)} /><Field label="Telefone" value={a.supportPhone} max={20} placeholder="(11) 99999-9999" onChange={(value) => set("supportPhone", value)} /></div>
           </EditorSection>
 
-        </fieldset>
+        </div></fieldset>
 
         <div className="space-y-4 2xl:sticky 2xl:top-6">
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="flex items-center gap-2"><h2 className="font-semibold">Prévia do checkout real</h2><span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">Simulação</span></div><p className="text-xs text-muted-foreground">Simula a aparência do checkout real. Nenhuma cobrança ou pagamento é criado.</p></div><div className="flex gap-1 rounded-lg border border-border bg-muted/30 p-1"><Button size="sm" variant={device === "desktop" ? "default" : "ghost"} onClick={() => setDevice("desktop")}><Monitor className="size-4" />Computador</Button><Button size="sm" variant={device === "mobile" ? "default" : "ghost"} onClick={() => setDevice("mobile")}><Smartphone className="size-4" />Celular</Button></div></div>
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="flex items-center gap-2"><h2 className="font-semibold">{section === "marca" ? ui("Prévia da marca no checkout") : "Prévia do checkout real"}</h2><span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">Simulação</span></div><p className="text-xs text-muted-foreground">Simula a aparência do checkout real. Nenhuma cobrança ou pagamento é criado.</p></div><div className="flex gap-1 rounded-lg border border-border bg-muted/30 p-1"><Button size="sm" variant={device === "desktop" ? "default" : "ghost"} onClick={() => setDevice("desktop")}><Monitor className="size-4" />Computador</Button><Button size="sm" variant={device === "mobile" ? "default" : "ghost"} onClick={() => setDevice("mobile")}><Smartphone className="size-4" />Celular</Button></div></div>
           <Preview a={a} device={device} company={data.companyName} />
           <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{ui("Versão atual")}: {data.version || ui("padrão")}. {ui("A nova aparência vale para as cobranças criadas depois de salvar. Cobranças já criadas mantêm a aparência da época em que foram geradas.")}</p>
             <div className="flex shrink-0 flex-wrap gap-2">
-              <Button variant="outline" onClick={() => setA(DEFAULT_APPEARANCE)}><RotateCcw className="size-4" />Restaurar padrão</Button>
-              <Button onClick={() => save.mutate()} disabled={save.isPending || issues.length > 0}>{save.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}Salvar aparência</Button>
+              <Button variant="outline" disabled={disabled || save.isPending || busyLogo} onClick={() => setA(DEFAULT_APPEARANCE)}><RotateCcw className="size-4" />Restaurar padrão</Button>
+              <Button onClick={() => save.mutate()} disabled={disabled || save.isPending || busyLogo || issues.length > 0}>{save.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}Salvar aparência</Button>
             </div>
           </div>
         </div>

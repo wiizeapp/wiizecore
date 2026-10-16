@@ -1,3 +1,7 @@
+import { useTranslation } from "react-i18next";
+import { Brand } from "@/components/brand";
+import { getCheckoutAppearance } from "@/lib/checkout-appearance.functions";
+import { DEFAULT_APPEARANCE, readableOn } from "@/lib/checkout-appearance";
 import { PartnerNotice } from "@/components/partner-notice";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -61,6 +65,8 @@ function stepType(list: DunningChannel[]): DunningPlanCode | "off" {
 }
 
 function Regua() {
+  const { t: ui } = useTranslation("ui");
+  const fetchAppearance = useServerFn(getCheckoutAppearance);
   const qc = useQueryClient();
   const fetchData = useServerFn(getDunning);
   const save = useServerFn(saveDunning);
@@ -70,6 +76,8 @@ function Regua() {
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [financialPassword, setFinancialPassword] = useState("");
   const [editStep, setEditStep] = useState<DunningStepKey | null>(null);
+  const appearanceQuery = useQuery({ queryKey: ["checkout-appearance"], queryFn: () => fetchAppearance(), enabled: editStep !== null });
+  const appearance = appearanceQuery.data?.appearance ?? DEFAULT_APPEARANCE;
   const [pendingState, setPendingState] = useState<{ enabled: boolean; paused: boolean } | null>(null);
   useEffect(() => { if (data) { setPlan(data.config.plan); setSteps(data.config.steps); } }, [data]);
 
@@ -244,12 +252,15 @@ function Regua() {
       <Dialog open={editStep !== null} onOpenChange={(v) => !v && setEditStep(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader><DialogTitle>Aparência do aviso</DialogTitle><DialogDescription>{stepRows.find((r) => r.key === editStep)?.label}</DialogDescription></DialogHeader>
-          <div className="overflow-hidden rounded-xl border">
-            <div className="flex items-center gap-2 bg-primary px-4 py-3 text-primary-foreground"><span className="grid size-7 place-items-center rounded-md bg-primary-foreground/20 text-xs font-bold">LOGO</span><span className="text-sm font-semibold">Sua empresa</span></div>
-            <div className="space-y-2 p-4 text-sm text-muted-foreground"><p>Olá, cliente. Este é um lembrete da sua cobrança.</p><div className="h-2 w-3/4 rounded bg-muted" /><div className="h-2 w-1/2 rounded bg-muted" /><span className="mt-2 inline-block rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">Pagar agora</span></div>
-          </div>
-          <div className="flex gap-2 rounded-lg border bg-muted/40 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0" /><p>A logo e as cores vêm da Aparência do checkout. O texto das mensagens é o padrão do Asaas, que é quem entrega os avisos.</p></div>
-          <DialogFooter><Button variant="outline" onClick={() => setEditStep(null)}>Fechar</Button><Button asChild><Link to="/checkout-personalizado"><Palette className="h-4 w-4" />Mudar logo e cores</Link></Button></DialogFooter>
+          {appearanceQuery.isPending ? <ListSkeleton rows={2} /> : appearanceQuery.isError ? <ErrorState onRetry={() => void appearanceQuery.refetch()} /> : <div className="overflow-hidden rounded-lg border" data-testid="reminder-brand-preview">
+            <div className="flex min-h-16 items-center gap-3 px-4 py-3" style={{ background: appearance.brandColor, color: readableOn(appearance.brandColor) }}>
+              {appearance.logoUrl ? <img src={appearance.logoUrl} alt={ui("Logo da empresa")} className="h-10 max-w-32 object-contain" /> : <Brand size="sm" color={readableOn(appearance.brandColor)} accentColor={readableOn(appearance.brandColor)} />}
+              {appearance.logoUrl ? <span className="text-sm font-semibold">{appearanceQuery.data?.companyName}</span> : null}
+            </div>
+            <div className="space-y-2 p-4 text-sm text-muted-foreground"><p>Olá, cliente. Este é um lembrete da sua cobrança.</p><div className="h-2 w-3/4 rounded bg-muted" /><div className="h-2 w-1/2 rounded bg-muted" /><span className="mt-2 inline-block rounded-md px-3 py-1.5 text-xs font-medium" style={{ background: appearance.brandColor, color: readableOn(appearance.brandColor) }}>Pagar agora</span></div>
+          </div>}
+          <div className="flex gap-2 rounded-lg border bg-muted/40 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0" /><p>{ui("Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.")}</p></div>
+          <DialogFooter><Button variant="outline" onClick={() => setEditStep(null)}>Fechar</Button><Button asChild><Link to="/checkout-personalizado" hash="marca"><Palette className="h-4 w-4" />{ui("Editar marca")}</Link></Button></DialogFooter>
         </DialogContent>
       </Dialog>
       <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}>
