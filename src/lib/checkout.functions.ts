@@ -438,6 +438,13 @@ export const getPaymentInstructions = createServerFn({ method: "POST" })
     if (!conn) throw new Error("Pagamento temporariamente indisponível.");
     if (!(await (await import("./activation.server")).canReceivePayments(admin, link.tenant_id))) throw new Error("Pagamento temporariamente indisponível.");
 
+    // Em atraso: atualiza o valor do dia (multa + juros) antes de gerar o Pix/boleto.
+    const { ensureLateValueToday } = await import("./payment-attempts.server");
+    if (await ensureLateValueToday(admin, link.tenant_id, payment.id, data.kind)) {
+      const { data: fresh } = await admin.from("payments").select("provider_payment_id").eq("id", payment.id).eq("tenant_id", link.tenant_id).maybeSingle();
+      if (fresh?.provider_payment_id) payment.provider_payment_id = fresh.provider_payment_id;
+    }
+
     if (data.kind === "pix") {
       const pix = await conn.provider.getPixQrCode(payment.provider_payment_id);
       return { kind: "pix" as const, image: pix.encodedImage, code: pix.payload, expiresAt: pix.expirationDate ?? null };
@@ -578,6 +585,12 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     const conn = await getTenantProvider(admin, link.tenant_id);
     if (!conn) throw new Error("Pagamento temporariamente indisponível.");
     if (!(await (await import("./activation.server")).canReceivePayments(admin, link.tenant_id))) throw new Error("Pagamento temporariamente indisponível.");
+
+    const { ensureLateValueToday } = await import("./payment-attempts.server");
+    if (await ensureLateValueToday(admin, link.tenant_id, payment.id, "credit_card")) {
+      const { data: fresh } = await admin.from("payments").select("provider_payment_id").eq("id", payment.id).eq("tenant_id", link.tenant_id).maybeSingle();
+      if (fresh?.provider_payment_id) payment.provider_payment_id = fresh.provider_payment_id;
+    }
 
     let status = "PENDING";
     try {
