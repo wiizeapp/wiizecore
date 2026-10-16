@@ -212,7 +212,6 @@ function Regua() {
               </div>
               <Button size="icon" variant="ghost" className="size-8 justify-self-start lg:justify-self-end" title="Editar aparência" aria-label="Editar aparência" onClick={() => setEditStep(r.key)}><Palette className="h-4 w-4" /></Button>
             </div>
-            </div>
           ))}
         </div>
         <div className="mt-4 grid gap-3 rounded-xl border bg-muted/30 p-4 text-xs leading-5 text-muted-foreground sm:grid-cols-2"><p className="flex gap-2"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />{formatBRL(price)} por aviso ligado, descontado do saldo quando a cobrança é criada. Cada parcela e cada novo ciclo recorrente são cobrados separadamente.</p><p className="flex gap-2"><Clock3 className="mt-0.5 size-4 shrink-0 text-primary" />Você pode usar até dois avisos antes do vencimento quando essas posições estiverem disponíveis nas notificações da conta conectada.</p></div>
