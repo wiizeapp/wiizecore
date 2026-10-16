@@ -95,6 +95,7 @@ export function OperationFlow() {
     { icon: FileText, title: "Notas fiscais", text: "Emissão a partir da cobrança, conforme sua configuração fiscal." },
   ];
   return (
+    <div className="operation-flow-band">
     <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
       <SectionIntro center title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
@@ -129,6 +130,7 @@ export function OperationFlow() {
         ))}
       </div>
     </section>
+    </div>
   );
 }
 
