@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { validCnpj, validCpf } from "./doc-validation";
+import { isSafeReturnUrl } from "./ext-sandbox";
 
 /** Corpo aceito em POST /api/public/v1/ext/checkout-sessions. Preço e tipo vêm sempre do serviço. */
 export const extCheckoutBody = z.object({
@@ -7,8 +8,8 @@ export const extCheckoutBody = z.object({
   payment_method: z.enum(["pix", "boleto", "credit_card"]).optional(),
   installments: z.number().int().min(2).max(21).optional(),
   external_subscription_id: z.string().trim().min(1).max(128).optional(),
-  success_url: z.string().url().startsWith("https://").max(500).optional(),
-  cancel_url: z.string().url().startsWith("https://").max(500).optional(),
+  success_url: z.string().url().startsWith("https://").max(500).refine(isSafeReturnUrl, "unsafe_url").optional(),
+  cancel_url: z.string().url().startsWith("https://").max(500).refine(isSafeReturnUrl, "unsafe_url").optional(),
   customer: z.object({
     name: z.string().trim().min(2).max(120),
     document: z.string().transform((v) => v.replace(/\D/g, "")).refine((d) => (d.length === 11 && validCpf(d)) || (d.length === 14 && validCnpj(d)), "invalid_document"),
