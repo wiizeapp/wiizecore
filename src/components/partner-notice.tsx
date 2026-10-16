@@ -22,7 +22,11 @@ export function PartnerNotice({ storageKey, title, children }: { storageKey: str
   const [open, setOpen] = useState(false);
   const key = `wiize:notice:${storageKey}`;
   useEffect(() => {
-    try { if (!localStorage.getItem(key)) { localStorage.setItem(key, "1"); setOpen(true); } } catch { /* ignore */ }
+    try {
+      // "?aviso=1" no endereço mostra o aviso de novo (útil para prints).
+      const force = new URLSearchParams(window.location.search).get("aviso") === "1";
+      if (force || !localStorage.getItem(key)) { localStorage.setItem(key, "1"); setOpen(true); }
+    } catch { /* ignore */ }
   }, [key]);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
