@@ -168,7 +168,7 @@ function Page() {
       <PageHeader title={ui("Aparência")} description={ui("Sua marca e seu checkout, organizados em um só lugar.")} />
       <Tabs value={section} onValueChange={setSection}><TabsList aria-label={ui("Aparência")}><TabsTrigger value="marca"><Building2 className="mr-2 size-4" />{ui("Marca")}</TabsTrigger><TabsTrigger value="checkout"><CreditCard className="mr-2 size-4" />{ui("Checkout")}</TabsTrigger></TabsList></Tabs>
       {disabled ? <p className="rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">Somente dono ou administrador pode alterar a aparência.</p> : null}
-      <div className="grid items-start gap-6 2xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]">
+      <div className={`grid items-start gap-6 ${section === "checkout" ? "2xl:grid-cols-[minmax(0,460px)_minmax(0,1fr)]" : "mx-auto w-full max-w-3xl"}`}>
         <fieldset disabled={disabled} className="space-y-5">
           <div hidden={section !== "checkout"}><EditorSection icon={Sparkles} title="Estilo do checkout" description="Comece com um tema e refine os detalhes.">
             <div className="grid gap-2 sm:grid-cols-3">
@@ -205,14 +205,21 @@ function Page() {
                 <Button key={value} type="button" size="sm" variant={a.logoMode === value ? "default" : "outline"} onClick={() => set("logoMode", value)}>{label}</Button>
               ))}
             </div>
-          </EditorSection>
-
-          <div className="mt-4 space-y-3">
-            <Label htmlFor="brand-color">{ui("Cor principal da marca")}</Label>
-            <div className="flex items-center gap-3"><input id="brand-color" type="color" value={a.brandColor} onChange={(event) => setA((previous) => withBrandColor(previous, event.target.value))} className="h-10 w-14 cursor-pointer rounded border border-border" /><span className="font-mono text-sm">{a.brandColor}</span></div>
-            <p className="text-xs leading-5 text-muted-foreground">{ui("A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.")}</p>
-            <p className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">{ui("E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.")}</p>
-          </div></div>
+            <div className="space-y-4 border-t border-border pt-5">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex min-w-0 flex-1 items-start gap-3">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><Palette className="size-4" /></span>
+                  <div className="space-y-1"><Label htmlFor="brand-color" className="text-sm font-semibold">{ui("Cor principal da marca")}</Label><p className="max-w-md text-xs leading-5 text-muted-foreground">{ui("A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.")}</p></div>
+                </div>
+                <label className="relative flex h-12 shrink-0 cursor-pointer items-center gap-3 overflow-hidden rounded-lg border border-border bg-background px-3 transition-colors hover:border-primary focus-within:ring-2 focus-within:ring-ring">
+                  <span className="size-7 rounded-md border border-border" style={{ background: a.brandColor }} />
+                  <span className="font-mono text-sm uppercase">{a.brandColor}</span>
+                  <input id="brand-color" type="color" value={a.brandColor} onChange={(event) => setA((previous) => withBrandColor(previous, event.target.value))} className="absolute inset-0 size-full cursor-pointer opacity-0" />
+                </label>
+              </div>
+              <p className="text-xs leading-5 text-muted-foreground">{ui("E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.")}</p>
+            </div>
+          </EditorSection></div>
           <div hidden={section !== "checkout"} className="space-y-5"><EditorSection icon={Palette} title={ui("Cores do checkout")} description="Clique em qualquer faixa para escolher a cor.">
             <div className="grid gap-3 sm:grid-cols-2">
               {COLOR_FIELDS.map((field) => (
@@ -236,9 +243,12 @@ function Page() {
 
         </div></fieldset>
 
-        <div className="space-y-4 2xl:sticky 2xl:top-6">
-          <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="flex items-center gap-2"><h2 className="font-semibold">{section === "marca" ? ui("Prévia da marca no checkout") : "Prévia do checkout real"}</h2><span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">Simulação</span></div><p className="text-xs text-muted-foreground">Simula a aparência do checkout real. Nenhuma cobrança ou pagamento é criado.</p></div><div className="flex gap-1 rounded-lg border border-border bg-muted/30 p-1"><Button size="sm" variant={device === "desktop" ? "default" : "ghost"} onClick={() => setDevice("desktop")}><Monitor className="size-4" />Computador</Button><Button size="sm" variant={device === "mobile" ? "default" : "ghost"} onClick={() => setDevice("mobile")}><Smartphone className="size-4" />Celular</Button></div></div>
+        {section === "checkout" ? <div className="space-y-4 2xl:sticky 2xl:top-6">
+          <div className="flex flex-wrap items-center justify-between gap-3"><div><div className="flex items-center gap-2"><h2 className="font-semibold">Prévia do checkout real</h2><span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">Simulação</span></div><p className="text-xs text-muted-foreground">Simula a aparência do checkout real. Nenhuma cobrança ou pagamento é criado.</p></div><div className="flex gap-1 rounded-lg border border-border bg-muted/30 p-1"><Button size="sm" variant={device === "desktop" ? "default" : "ghost"} onClick={() => setDevice("desktop")}><Monitor className="size-4" />Computador</Button><Button size="sm" variant={device === "mobile" ? "default" : "ghost"} onClick={() => setDevice("mobile")}><Smartphone className="size-4" />Celular</Button></div></div>
           <Preview a={a} device={device} company={data.companyName} />
+        </div> : null}
+      </div>
+      <div className={section === "marca" ? "mx-auto w-full max-w-3xl" : ""}>
           <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{ui("Versão atual")}: {data.version || ui("padrão")}. {ui("A nova aparência vale para as cobranças criadas depois de salvar. Cobranças já criadas mantêm a aparência da época em que foram geradas.")}</p>
             <div className="flex shrink-0 flex-wrap gap-2">
@@ -246,7 +256,6 @@ function Page() {
               <Button onClick={() => save.mutate()} disabled={disabled || save.isPending || busyLogo || issues.length > 0}>{save.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}Salvar aparência</Button>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
