@@ -49,7 +49,7 @@ function Landing() {
     <PublicPage>
       <main>
         <section className="hero-payment relative overflow-hidden">
-          <div className="section-shell relative z-10 flex flex-col items-center pb-5 pt-10 text-center sm:pt-12 lg:pt-14">
+          <div className="section-shell relative z-10 flex flex-col items-center pb-10 pt-10 text-center sm:pt-12 lg:pt-14">
             <div>
               <h1 className="hero-title mx-auto mt-7 max-w-4xl text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold leading-[1.08]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
               <p className="mx-auto mt-5 max-w-xl text-balance text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.")}</p>
@@ -127,7 +127,7 @@ function ProductPreview() {
   const { t: ui } = useTranslation("ui");
   return (
     <div className="home-dashboard-stage relative mt-8 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
-      <div className="home-dashboard-window relative z-10 mx-auto h-full w-full overflow-hidden rounded-t-xl bg-card text-left shadow-float">
+      <div className="home-dashboard-window relative z-10 mx-auto h-full w-full overflow-hidden rounded-t-2xl bg-card text-left shadow-float">
         <img
           src={heroDashboard.url}
           alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
