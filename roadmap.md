@@ -113,3 +113,4 @@
 - [x] Segurança V4–V6: endereço fixo dos avisos, portal com código por e-mail, tipos de arquivo limitados.
 - [x] Alinhar as caixas de taxa 0% às demais e dividir o aviso da promoção: um em cada card (Pix e Boleto), em largura interna total e alinhados na base.
 - [x] Cobrança atrasada: juros diários com taxas salvas na cobrança, aviso, cancelar, auto-cancelar 1ª cobrança em 30d, reativar
+- [x] Painel da abertura: descer mais ~44px, retirar os dois cartões flutuantes e apagar a linha dura da base; conferir corte suave, sem e-mail, em 1329px e 390px
