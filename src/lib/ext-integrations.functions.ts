@@ -101,9 +101,13 @@ export const rotateExtKey = createServerFn({ method: "POST" })
 
 export const setExtIntegrationStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["active", "suspended", "revoked"]) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["active", "suspended", "revoked"]), financialPassword: z.string().min(1).max(128).optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);
+    if (data.status === "revoked") {
+      if (!data.financialPassword) throw new Error("Informe a senha financeira para revogar.");
+      await requireFinancialPassword(context.userId, data.financialPassword, "ext_api_key.revoke");
+    }
     const it = await ownIntegration(access.tenantId, data.id);
     if (it.status === "revoked") throw new Error("Uma integração revogada não pode ser reativada.");
     const d = await db();
