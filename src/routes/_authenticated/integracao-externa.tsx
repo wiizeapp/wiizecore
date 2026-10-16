@@ -220,9 +220,9 @@ function Page() {
                 <div><p className="mb-2 text-xs font-medium text-muted-foreground">{t("Permissões")}</p><div className="flex flex-wrap gap-1.5">{opened.scopes.map((s) => <span key={s} className="rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[11px]">{t(SCOPE_LABEL[s] ?? s)}</span>)}</div></div>
                 {canManage && (
                   <div className="grid gap-2 border-t border-border pt-4 sm:grid-cols-3">
-                    <Button variant="outline" onClick={() => setAction({ kind: "rotate", id: opened.id })}><RefreshCw className="size-4" />{t("Nova chave")}</Button>
+                    <Button variant="outline" onClick={() => { setAction({ kind: "rotate", id: opened.id }); setOpenId(null); }}><RefreshCw className="size-4" />{t("Nova chave")}</Button>
                     <Button variant="outline" onClick={() => void toggleStatus(opened.id, opened.status === "active" ? "suspended" : "active")}>{opened.status === "active" ? <Pause className="size-4" /> : <Play className="size-4" />}{opened.status === "active" ? t("Suspender") : t("Reativar")}</Button>
-                    <Button variant="outline" className="text-destructive" onClick={() => setAction({ kind: "revoke", id: opened.id })}><Trash2 className="size-4" />{t("Revogar")}</Button>
+                    <Button variant="outline" className="text-destructive" onClick={() => { setAction({ kind: "revoke", id: opened.id }); setOpenId(null); }}><Trash2 className="size-4" />{t("Revogar")}</Button>
                   </div>
                 )}
               </div>
