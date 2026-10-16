@@ -174,7 +174,7 @@ WEBHOOKS
 - Cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo whsec_, "<t>.<corpo bruto>"). Compare em tempo constante; rejeite se |agora − t| > 300 s.
 - Corpo: { id, object:"event", type, livemode, created, data: { charge_id, checkout_session_id, service_id, charge_type, external_customer_id, external_subscription_id, payments[] } }
 - Eventos: ${EXT_EVENT_NAMES.join(", ")}.
-- Idempotência: grave event.id numa tabela com chave única e ignore repetidos. Responda 2xx em até 10 s e processe depois.
+- Idempotência: grave event.id numa tabela com chave única e ignore repetidos. Responda 2xx rapidamente (o tempo limite é configurado no endpoint) e processe depois.
 - Eventos podem chegar fora de ordem ou repetidos: em caso de dúvida consulte GET /charges/{charge_id}.
 - Falhas recebem novas tentativas com espera crescente (até 12).
 
