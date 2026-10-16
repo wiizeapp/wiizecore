@@ -19,12 +19,14 @@ import { Route as CobrancasEPagamentosRouteImport } from './routes/cobrancas-e-p
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as ContratosDigitaisRouteImport } from './routes/contratos-digitais'
 import { Route as CriarContaRouteImport } from './routes/criar-conta'
+import { Route as DesenvolvedoresRouteImport } from './routes/desenvolvedores'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as GestaoDeClientesRouteImport } from './routes/gestao-de-clientes'
 import { Route as GestaoDeCobrancasRouteImport } from './routes/gestao-de-cobrancas'
 import { Route as GestaoFinanceiraRouteImport } from './routes/gestao-financeira'
 import { Route as IntegracaoCrmWiizeRouteImport } from './routes/integracao-crm-wiize'
 import { Route as LembretesDeCobrancaRouteImport } from './routes/lembretes-de-cobranca'
+import { Route as LlmsApiDottxtRouteImport } from './routes/llms-api[.]txt'
 import { Route as PerguntasFrequentesRouteImport } from './routes/perguntas-frequentes'
 import { Route as PixAutomaticoRouteImport } from './routes/pix-automatico'
 import { Route as PlataformaDePagamentosRouteImport } from './routes/plataforma-de-pagamentos'
@@ -157,6 +159,11 @@ const CriarContaRoute = CriarContaRouteImport.update({
   path: '/criar-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DesenvolvedoresRoute = DesenvolvedoresRouteImport.update({
+  id: '/desenvolvedores',
+  path: '/desenvolvedores',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
@@ -185,6 +192,11 @@ const IntegracaoCrmWiizeRoute = IntegracaoCrmWiizeRouteImport.update({
 const LembretesDeCobrancaRoute = LembretesDeCobrancaRouteImport.update({
   id: '/lembretes-de-cobranca',
   path: '/lembretes-de-cobranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsApiDottxtRoute = LlmsApiDottxtRouteImport.update({
+  id: '/llms-api.txt',
+  path: '/llms-api.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerguntasFrequentesRoute = PerguntasFrequentesRouteImport.update({
@@ -630,12 +642,14 @@ export interface FileRoutesByFullPath {
   '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
   '/criar-conta': typeof CriarContaRoute
+  '/desenvolvedores': typeof DesenvolvedoresRoute
   '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
   '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/llms-api.txt': typeof LlmsApiDottxtRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
@@ -728,12 +742,14 @@ export interface FileRoutesByTo {
   '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
   '/criar-conta': typeof CriarContaRoute
+  '/desenvolvedores': typeof DesenvolvedoresRoute
   '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
   '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/llms-api.txt': typeof LlmsApiDottxtRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
@@ -829,12 +845,14 @@ export interface FileRoutesById {
   '/contato': typeof ContatoRoute
   '/contratos-digitais': typeof ContratosDigitaisRoute
   '/criar-conta': typeof CriarContaRoute
+  '/desenvolvedores': typeof DesenvolvedoresRoute
   '/entrar': typeof EntrarRoute
   '/gestao-de-clientes': typeof GestaoDeClientesRoute
   '/gestao-de-cobrancas': typeof GestaoDeCobrancasRoute
   '/gestao-financeira': typeof GestaoFinanceiraRoute
   '/integracao-crm-wiize': typeof IntegracaoCrmWiizeRoute
   '/lembretes-de-cobranca': typeof LembretesDeCobrancaRoute
+  '/llms-api.txt': typeof LlmsApiDottxtRoute
   '/perguntas-frequentes': typeof PerguntasFrequentesRoute
   '/pix-automatico': typeof PixAutomaticoRoute
   '/plataforma-de-pagamentos': typeof PlataformaDePagamentosRoute
@@ -930,12 +948,14 @@ export interface FileRouteTypes {
     | '/contato'
     | '/contratos-digitais'
     | '/criar-conta'
+    | '/desenvolvedores'
     | '/entrar'
     | '/gestao-de-clientes'
     | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/llms-api.txt'
     | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
@@ -1028,12 +1048,14 @@ export interface FileRouteTypes {
     | '/contato'
     | '/contratos-digitais'
     | '/criar-conta'
+    | '/desenvolvedores'
     | '/entrar'
     | '/gestao-de-clientes'
     | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/llms-api.txt'
     | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
@@ -1128,12 +1150,14 @@ export interface FileRouteTypes {
     | '/contato'
     | '/contratos-digitais'
     | '/criar-conta'
+    | '/desenvolvedores'
     | '/entrar'
     | '/gestao-de-clientes'
     | '/gestao-de-cobrancas'
     | '/gestao-financeira'
     | '/integracao-crm-wiize'
     | '/lembretes-de-cobranca'
+    | '/llms-api.txt'
     | '/perguntas-frequentes'
     | '/pix-automatico'
     | '/plataforma-de-pagamentos'
@@ -1229,12 +1253,14 @@ export interface RootRouteChildren {
   ContatoRoute: typeof ContatoRoute
   ContratosDigitaisRoute: typeof ContratosDigitaisRoute
   CriarContaRoute: typeof CriarContaRoute
+  DesenvolvedoresRoute: typeof DesenvolvedoresRoute
   EntrarRoute: typeof EntrarRoute
   GestaoDeClientesRoute: typeof GestaoDeClientesRoute
   GestaoDeCobrancasRoute: typeof GestaoDeCobrancasRoute
   GestaoFinanceiraRoute: typeof GestaoFinanceiraRoute
   IntegracaoCrmWiizeRoute: typeof IntegracaoCrmWiizeRoute
   LembretesDeCobrancaRoute: typeof LembretesDeCobrancaRoute
+  LlmsApiDottxtRoute: typeof LlmsApiDottxtRoute
   PerguntasFrequentesRoute: typeof PerguntasFrequentesRoute
   PixAutomaticoRoute: typeof PixAutomaticoRoute
   PlataformaDePagamentosRoute: typeof PlataformaDePagamentosRoute
@@ -1354,6 +1380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CriarContaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/desenvolvedores': {
+      id: '/desenvolvedores'
+      path: '/desenvolvedores'
+      fullPath: '/desenvolvedores'
+      preLoaderRoute: typeof DesenvolvedoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/entrar': {
       id: '/entrar'
       path: '/entrar'
@@ -1394,6 +1427,13 @@ declare module '@tanstack/react-router' {
       path: '/lembretes-de-cobranca'
       fullPath: '/lembretes-de-cobranca'
       preLoaderRoute: typeof LembretesDeCobrancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms-api.txt': {
+      id: '/llms-api.txt'
+      path: '/llms-api.txt'
+      fullPath: '/llms-api.txt'
+      preLoaderRoute: typeof LlmsApiDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perguntas-frequentes': {
@@ -2101,12 +2141,14 @@ const rootRouteChildren: RootRouteChildren = {
   ContatoRoute: ContatoRoute,
   ContratosDigitaisRoute: ContratosDigitaisRoute,
   CriarContaRoute: CriarContaRoute,
+  DesenvolvedoresRoute: DesenvolvedoresRoute,
   EntrarRoute: EntrarRoute,
   GestaoDeClientesRoute: GestaoDeClientesRoute,
   GestaoDeCobrancasRoute: GestaoDeCobrancasRoute,
   GestaoFinanceiraRoute: GestaoFinanceiraRoute,
   IntegracaoCrmWiizeRoute: IntegracaoCrmWiizeRoute,
   LembretesDeCobrancaRoute: LembretesDeCobrancaRoute,
+  LlmsApiDottxtRoute: LlmsApiDottxtRoute,
   PerguntasFrequentesRoute: PerguntasFrequentesRoute,
   PixAutomaticoRoute: PixAutomaticoRoute,
   PlataformaDePagamentosRoute: PlataformaDePagamentosRoute,

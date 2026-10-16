@@ -14,6 +14,12 @@ async function manager(userId: string, claims: unknown) {
   return a;
 }
 
+/** Criar endereço ou trocar segredo exige a senha financeira (conferida no servidor). */
+async function financialPassword(userId: string, password: string, purpose: string) {
+  const { assertFinancialPassword } = await import("./finance.server");
+  await assertFinancialPassword(await db(), userId, password, purpose);
+}
+
 /** Bloqueia endereços internos (proteção contra uso do servidor para acessar redes privadas). */
 export function isSafeWebhookUrl(raw: string) {
   let u: URL;
@@ -47,9 +53,10 @@ export const listExtWebhooks = createServerFn({ method: "GET" })
 
 export const createExtWebhook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ integrationId: z.string().uuid(), url: z.string().max(500), events: z.array(z.string()).max(30) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ integrationId: z.string().uuid(), url: z.string().max(500), events: z.array(z.string()).max(30), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);
+    await financialPassword(context.userId, data.financialPassword, "ext_webhook.create");
     if (!isSafeWebhookUrl(data.url)) throw new Error("Use um endereço https público (sem IP ou rede interna).");
     const events = sanitizeEvents(data.events);
     if (!events.length) throw new Error("Escolha ao menos um evento.");
@@ -69,9 +76,10 @@ async function ownEndpoint(tenantId: string, id: string) {
 }
 
 export const rotateExtWebhookSecret = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth]).inputValidator(epInput)
+  .middleware([requireSupabaseAuth]).inputValidator((d: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);
+    await financialPassword(context.userId, data.financialPassword, "ext_webhook.rotate");
     await ownEndpoint(a.tenantId, data.id);
     const s = await newSecret();
     await (await db()).from("ext_webhook_endpoints").update({ secret_enc: s.enc, updated_at: new Date().toISOString() }).eq("id", data.id);
