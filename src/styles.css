@@ -1039,11 +1039,11 @@ html::-webkit-scrollbar-thumb {
   mask-image: linear-gradient(to top, black 18%, transparent 100%);
 }
 
-/* Faixa da seção "Tudo o que você precisa...": mesma cor da seção "Da primeira
-   cobrança ao dinheiro na conta", separada da abertura por um filete fino. */
+/* Faixa da seção "Tudo o que você precisa...": mesma cor de fundo da seção
+   "Da contratação às próximas cobranças", separada da seção anterior por um filete fino. */
 @utility operation-flow-band {
   border-top: 1px solid var(--border);
-  background-color: var(--surface);
+  background-color: var(--background);
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--background) 45%, transparent);
 }
 
