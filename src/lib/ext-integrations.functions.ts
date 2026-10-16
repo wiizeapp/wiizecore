@@ -18,6 +18,12 @@ async function requireManager(userId: string, claims: unknown) {
   return access;
 }
 
+/** Gerar ou trocar chave exige a senha financeira de quem está pedindo (conferida no servidor). */
+async function requireFinancialPassword(userId: string, password: string, purpose: string) {
+  const { assertFinancialPassword } = await import("./finance.server");
+  await assertFinancialPassword(await db(), userId, password, purpose);
+}
+
 async function issueKey(integrationId: string, tenantId: string, env: string, userId: string) {
   const { randomToken, tokenFingerprint } = await import("./crypto.server");
   const secret = `sk_${env}_${randomToken(32)}`;
@@ -57,9 +63,10 @@ export const listExtIntegrations = createServerFn({ method: "GET" })
 
 export const createExtIntegration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ name: z.string().trim().min(2).max(80), environment: z.enum(["test", "live"]), scopes: z.array(z.string()).max(20) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ name: z.string().trim().min(2).max(80), environment: z.enum(["test", "live"]), scopes: z.array(z.string()).max(20), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);
+    await requireFinancialPassword(context.userId, data.financialPassword, "ext_api_key.create");
     const scopes = sanitizeScopes(data.scopes);
     if (!scopes.length) throw new Error("Escolha ao menos uma permissão.");
     const { data: row, error } = await (await db()).from("ext_integrations").insert({ tenant_id: access.tenantId, name: data.name, environment: data.environment, scopes, created_by: context.userId }).select("id").single();
@@ -79,9 +86,10 @@ async function ownIntegration(tenantId: string, id: string) {
 
 export const rotateExtKey = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(idInput)
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);
+    await requireFinancialPassword(context.userId, data.financialPassword, "ext_api_key.rotate");
     const it = await ownIntegration(access.tenantId, data.id);
     if (it.status === "revoked") throw new Error("Integração revogada.");
     const now = new Date().toISOString();

@@ -2,14 +2,14 @@ import { useSyncExternalStore } from "react";
 
 /**
  * Preferência VISUAL de ambiente da área de desenvolvedores (teste ou produção).
- * Não dá nem tira permissão: quem decide o ambiente de cada chamada é a chave no servidor.
+ * Padrão: Produção. Não dá nem tira permissão: quem decide o ambiente de cada chamada é a chave no servidor.
  */
 export type DevEnv = "test" | "live";
 const KEY = "wiize-dev-env";
 const listeners = new Set<() => void>();
 
 function read(): DevEnv {
-  try { return window.localStorage.getItem(KEY) === "live" ? "live" : "test"; } catch { return "test"; }
+  try { return window.localStorage.getItem(KEY) === "test" ? "test" : "live"; } catch { return "live"; }
 }
 export function setDevEnv(env: DevEnv) {
   try { window.localStorage.setItem(KEY, env); } catch { /* sem armazenamento: fica só nesta tela */ }
@@ -22,5 +22,5 @@ function subscribe(l: () => void) {
   return () => { listeners.delete(l); window.removeEventListener("storage", onStorage); };
 }
 export function useDevEnv(): DevEnv {
-  return useSyncExternalStore(subscribe, read, () => "test");
+  return useSyncExternalStore(subscribe, read, () => "live");
 }
