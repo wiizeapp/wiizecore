@@ -218,6 +218,7 @@ export function ComparisonSection() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a Wiize Core")}</p>
                 <p className="mt-0.5 font-display text-sm font-semibold sm:text-base">Wiize <span className="text-primary">Core</span></p>
               </div>
+              <span className="ml-auto hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary lg:block">{ui("Tudo no mesmo fluxo")}</span>
             </div>
           </div>
           {rows.map(([label, off, on]) => (
