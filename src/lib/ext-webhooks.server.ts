@@ -21,17 +21,20 @@ async function chargePayload(db: Db, tenantId: string, chargeGroupId: string) {
   };
 }
 
-async function fanOut(db: Db, tenantId: string, integrationId: string, chargeGroupId: string | null, type: ExtEvent, data: unknown) {
+export async function fanOut(db: Db, tenantId: string, integrationId: string, chargeGroupId: string | null, type: ExtEvent, data: unknown): Promise<string | null> {
+  const { data: integ } = await db.from("ext_integrations").select("environment").eq("id", integrationId).maybeSingle();
+  const livemode = integ?.environment === "live";
   const { data: eps } = await db.from("ext_webhook_endpoints").select("id, events").eq("integration_id", integrationId).eq("tenant_id", tenantId).eq("status", "active");
   const targets = (eps ?? []).filter((e) => e.events.includes(type));
-  if (!targets.length) return;
+  if (!targets.length) return null;
   // Mesmo estado = mesmo evento: reprocessamentos não duplicam.
   const eventId = `evt_${createHash("sha256").update(`${integrationId}:${type}:${JSON.stringify(data)}`).digest("hex").slice(0, 32)}`;
-  const body = { id: eventId, object: "event", type, created: Math.floor(Date.now() / 1000), data };
+  const body = { id: eventId, object: "event", type, livemode, created: Math.floor(Date.now() / 1000), data };
   await db.from("ext_webhook_deliveries").upsert(
     targets.map((t) => ({ tenant_id: tenantId, endpoint_id: t.id, event_id: eventId, type, charge_group_id: chargeGroupId, body: body as never })),
     { onConflict: "endpoint_id,event_id", ignoreDuplicates: true },
   );
+  return eventId;
 }
 
 /** Enfileira o aviso para o SaaS. Nunca lança erro: não pode afetar a operação financeira. */

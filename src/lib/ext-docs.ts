@@ -62,10 +62,12 @@ export function verifyWiizePay(secret: string, header: string, rawBody: string) 
 }
 // Responda 2xx rápido. Guarde event.id e ignore repetidos.`,
   errors: `400 idempotency_key_required | invalid_json
-401 invalid_key        403 insufficient_scope
-404 service_not_found  409 account_not_ready | environment_mismatch | idempotency_key_reused
+401 invalid_api_key    403 insufficient_scope
+404 service_not_found | not_found
+409 account_not_ready | environment_mismatch | idempotency_key_reused | invalid_transition | conflict
 413 payload_too_large  422 invalid_body | payment_method_not_allowed
-429 rate_limited (60 por minuto)   502 provider_unavailable`,
+429 rate_limited (60/min no checkout, 120/min nas consultas)   500 internal_error   502 provider_unavailable
+Formato: { "error": "codigo", "error_detail": { "code", "request_id" }, "request_id" } + cabeçalho X-Request-Id`,
 };
 
 export type AiPromptInput = { saas: string; language: string; database: string; hosting: string; services: string; methods: string };
@@ -107,4 +109,88 @@ Entregue:
 3. Endpoint de webhook com verificação de assinatura e idempotência.
 4. Atualização de status do pedido por evento e testes da verificação de assinatura.
 Nunca registre em log a chave secreta, o segredo do webhook ou CPF completo.`;
+}
+
+/** Endpoints realmente implementados (fonte única para documentação e prompts). */
+export const EXT_ENDPOINTS = [
+  { method: "POST", path: "/checkout-sessions", scopes: ["checkout_sessions:write", "charges:write"], summary: "Cria cliente (ou reaproveita), cobrança e link do checkout hospedado. Exige Idempotency-Key." },
+  { method: "GET", path: "/services", scopes: ["services:read"], summary: "Lista os serviços ativos (preço, tipo, periodicidade e formas de pagamento)." },
+  { method: "GET", path: "/charges/{id}", scopes: ["charges:read"], summary: "Consulta a cobrança (id = charge_id): status, parcelas, checkout_url, portal_url e receipt_url." },
+  { method: "GET", path: "/subscriptions/{id}", scopes: ["subscriptions:read"], summary: "Consulta a assinatura: status, periodicidade, ciclos pagos e histórico." },
+  { method: "POST", path: "/subscriptions/{id}/cancel", scopes: ["subscriptions:write"], summary: "Encerra os próximos ciclos. Ciclos já pagos não são estornados. Repetir devolve o mesmo resultado." },
+] as const;
+
+export const AI_TOOLS = [
+  { id: "lovable", name: "Lovable", hint: "Cole no chat do seu projeto. Guarde a chave em Secrets e use funções de servidor." },
+  { id: "codex", name: "OpenAI Codex", hint: "Use como tarefa no repositório. Ele lê o código antes de alterar." },
+  { id: "claude", name: "Claude", hint: "Funciona no Claude Code ou em projetos com o repositório anexado." },
+  { id: "base44", name: "Base44", hint: "Use as funções de backend da Base44 para guardar a chave e receber avisos." },
+  { id: "cursor", name: "Cursor", hint: "Cole no modo Agent com o projeto aberto." },
+  { id: "other", name: "Outros agentes", hint: "Prompt neutro para qualquer agente de código." },
+] as const;
+export type AiToolId = (typeof AI_TOOLS)[number]["id"];
+
+const TOOL_NOTES: Record<AiToolId, string> = {
+  lovable: "Ferramenta: Lovable. Guarde WIIZE_SECRET_KEY e WIIZE_WEBHOOK_SECRET como secrets do projeto. Chame a API só em funções/rotas de servidor; o webhook deve ser uma rota pública de servidor que lê o corpo bruto.",
+  codex: "Ferramenta: OpenAI Codex. Antes de editar, leia a estrutura do repositório e descreva o plano. Use variáveis de ambiente do servidor e rode os testes ao final.",
+  claude: "Ferramenta: Claude. Explore o repositório primeiro, proponha o plano, implemente em passos pequenos e rode os testes após cada passo.",
+  base44: "Ferramenta: Base44. Use funções de backend para chamar a API e para receber o webhook; nunca chame a API pelo navegador. Guarde a chave nos secrets do app.",
+  cursor: "Ferramenta: Cursor (modo Agent). Leia os arquivos relevantes antes de alterar, use variáveis de ambiente do servidor e rode os testes ao final.",
+  other: "Siga as convenções do projeto existente.",
+};
+
+/** Prompt completo e seguro para a ferramenta escolhida. Nunca inclui chaves reais. */
+export function buildToolPrompt(tool: AiToolId, env: "test" | "live" = "test") {
+  const prefix = env === "live" ? "sk_live_" : "sk_test_";
+  return `Integre este projeto à API de billing da Wiize Core (checkout hospedado, cobranças, assinaturas e webhooks).
+${TOOL_NOTES[tool]}
+
+REGRAS
+1. Examine a arquitetura existente (autenticação, modelos de dados, rotas de servidor) antes de programar. Não reconstrua o login nem duplique modelos.
+2. Crie um adaptador único (ex.: wiize-client) para todas as chamadas. Não existe SDK oficial: use HTTP com fetch.
+3. A chave secreta (${prefix}...) fica SOMENTE no servidor, em variável de ambiente WIIZE_SECRET_KEY. Nunca no navegador, no repositório ou em logs.
+4. Comece pelo ambiente de testes (chave sk_test_). Só use sk_live_ após validação explícita do responsável.
+5. Use somente os endpoints listados abaixo. Não invente endpoints ou campos.
+
+API
+Base: ${EXT_API_BASE}
+Cabeçalho: Authorization: Bearer <WIIZE_SECRET_KEY>
+${EXT_ENDPOINTS.map((e) => `- ${e.method} ${e.path} (escopos: ${e.scopes.join(", ")}) — ${e.summary}`).join("\n")}
+
+POST /checkout-sessions
+Cabeçalhos: Idempotency-Key (8–128 caracteres [A-Za-z0-9_.:-], estável por pedido), Content-Type: application/json
+Corpo: { service_id (uuid), payment_method? ("pix"|"boleto"|"credit_card"), installments? (2–21),
+  external_subscription_id?, success_url? (https, domínio público), cancel_url? (https),
+  customer: { name, document (CPF/CNPJ válido), email?, phone?, external_customer_id? } }
+Não envie valor: o preço vem do serviço cadastrado na Wiize Core.
+Resposta: { id, object:"checkout_session", livemode, sandbox?, charge_id, status, url, expires_at, external_customer_id, external_subscription_id, request_id }
+Redirecione o comprador para "url". Mesma Idempotency-Key + mesmo corpo = mesma sessão; corpo diferente = 409.
+
+Erros:
+${EXT_DOCS_SNIPPETS.errors}
+
+WEBHOOKS
+- Endpoint HTTPS no servidor que lê o corpo BRUTO.
+- Cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo whsec_, "<t>.<corpo bruto>"). Compare em tempo constante; rejeite se |agora − t| > 300 s.
+- Corpo: { id, object:"event", type, livemode, created, data: { charge_id, checkout_session_id, service_id, charge_type, external_customer_id, external_subscription_id, payments[] } }
+- Eventos: ${EXT_EVENT_NAMES.join(", ")}.
+- Idempotência: grave event.id numa tabela com chave única e ignore repetidos. Responda 2xx rapidamente (o tempo limite é configurado no endpoint) e processe depois.
+- Eventos podem chegar fora de ordem ou repetidos: em caso de dúvida consulte GET /charges/{charge_id}.
+- Falhas recebem novas tentativas com espera crescente (até 12).
+
+REGRAS DE NEGÓCIO
+- Libere acesso só com payment.confirmed ou subscription.renewed (ou status "paid" na consulta). O retorno via success_url NÃO confirma pagamento.
+- payment.overdue / subscription.overdue: aplique sua regra de carência ou suspensão.
+- payment.cancelled / subscription.cancelled / payment.refunded: revogue ou ajuste o acesso conforme sua regra.
+- Para cancelar uma assinatura, chame POST /subscriptions/{id}/cancel.
+
+ENTREGUE
+1. Tabela com: usuário/cliente (external_customer_id estável), checkout_session_id, charge_id, subscription_id, status, checkout_url, portal_url, valores em decimal (nunca float).
+2. Tabela de eventos processados (event.id único).
+3. Função de criar checkout com Idempotency-Key estável e redirecionamento.
+4. Rota de webhook com verificação de assinatura, idempotência e atualização de acesso.
+5. Rotina de conciliação que consulta GET /charges/{id} para pendentes.
+6. Testes automatizados: assinatura válida, inválida, expirada, evento duplicado e liberação/suspensão de acesso.
+7. Roteiro de validação no ambiente de testes antes de produção.
+Nunca registre em log a chave secreta, o segredo do webhook, CPF/CNPJ completo ou dados de cartão.`;
 }

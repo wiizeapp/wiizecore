@@ -78,6 +78,7 @@ import { Route as ConviteTokenRouteImport } from './routes/convite.$token'
 import { Route as OauthAuthorizeRouteImport } from './routes/oauth.authorize'
 import { Route as PagarTokenRouteImport } from './routes/pagar.$token'
 import { Route as PortalKeyRouteImport } from './routes/portal.$key'
+import { Route as TesteCheckoutTokenRouteImport } from './routes/teste-checkout.$token'
 import { Route as VerificarIndexRouteImport } from './routes/verificar.index'
 import { Route as VerificarCodeRouteImport } from './routes/verificar.$code'
 import { Route as AuthenticatedClientesIdRouteImport } from './routes/_authenticated/clientes_.$id'
@@ -100,6 +101,10 @@ import { Route as ApiPublicWiizeCallbackRouteImport } from './routes/api/public/
 import { Route as ApiPublicWiizeDeliverRouteImport } from './routes/api/public/wiize/deliver'
 import { Route as ApiPublicWiizeWebhookRouteImport } from './routes/api/public/wiize/webhook'
 import { Route as ApiPublicV1ExtCheckoutSessionsRouteImport } from './routes/api/public/v1/ext/checkout-sessions'
+import { Route as ApiPublicV1ExtServicesRouteImport } from './routes/api/public/v1/ext/services'
+import { Route as ApiPublicV1ExtChargesIdRouteImport } from './routes/api/public/v1/ext/charges.$id'
+import { Route as ApiPublicV1ExtSubscriptionsIdRouteImport } from './routes/api/public/v1/ext/subscriptions.$id'
+import { Route as ApiPublicV1ExtSubscriptionsIdCancelRouteImport } from './routes/api/public/v1/ext/subscriptions.$id.cancel'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -454,6 +459,11 @@ const PortalKeyRoute = PortalKeyRouteImport.update({
   path: '/portal/$key',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TesteCheckoutTokenRoute = TesteCheckoutTokenRouteImport.update({
+  id: '/teste-checkout/$token',
+  path: '/teste-checkout/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerificarIndexRoute = VerificarIndexRouteImport.update({
   id: '/verificar/',
   path: '/verificar/',
@@ -574,6 +584,28 @@ const ApiPublicV1ExtCheckoutSessionsRoute =
     path: '/api/public/v1/ext/checkout-sessions',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicV1ExtServicesRoute = ApiPublicV1ExtServicesRouteImport.update({
+  id: '/api/public/v1/ext/services',
+  path: '/api/public/v1/ext/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ExtChargesIdRoute = ApiPublicV1ExtChargesIdRouteImport.update({
+  id: '/api/public/v1/ext/charges/$id',
+  path: '/api/public/v1/ext/charges/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1ExtSubscriptionsIdRoute =
+  ApiPublicV1ExtSubscriptionsIdRouteImport.update({
+    id: '/api/public/v1/ext/subscriptions/$id',
+    path: '/api/public/v1/ext/subscriptions/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1ExtSubscriptionsIdCancelRoute =
+  ApiPublicV1ExtSubscriptionsIdCancelRouteImport.update({
+    id: '/cancel',
+    path: '/cancel',
+    getParentRoute: () => ApiPublicV1ExtSubscriptionsIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -643,6 +675,7 @@ export interface FileRoutesByFullPath {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda/': typeof AjudaIndexRoute
   '/verificar/': typeof VerificarIndexRoute
@@ -666,6 +699,10 @@ export interface FileRoutesByFullPath {
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
+  '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
+  '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
+  '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -734,6 +771,7 @@ export interface FileRoutesByTo {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda': typeof AjudaIndexRoute
   '/verificar': typeof VerificarIndexRoute
@@ -757,6 +795,10 @@ export interface FileRoutesByTo {
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
+  '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
+  '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
+  '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -828,6 +870,7 @@ export interface FileRoutesById {
   '/oauth/authorize': typeof OauthAuthorizeRoute
   '/pagar/$token': typeof PagarTokenRoute
   '/portal/$key': typeof PortalKeyRoute
+  '/teste-checkout/$token': typeof TesteCheckoutTokenRoute
   '/verificar/$code': typeof VerificarCodeRoute
   '/ajuda/': typeof AjudaIndexRoute
   '/verificar/': typeof VerificarIndexRoute
@@ -851,6 +894,10 @@ export interface FileRoutesById {
   '/api/public/wiize/deliver': typeof ApiPublicWiizeDeliverRoute
   '/api/public/wiize/webhook': typeof ApiPublicWiizeWebhookRoute
   '/api/public/v1/ext/checkout-sessions': typeof ApiPublicV1ExtCheckoutSessionsRoute
+  '/api/public/v1/ext/services': typeof ApiPublicV1ExtServicesRoute
+  '/api/public/v1/ext/charges/$id': typeof ApiPublicV1ExtChargesIdRoute
+  '/api/public/v1/ext/subscriptions/$id': typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
+  '/api/public/v1/ext/subscriptions/$id/cancel': typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -922,6 +969,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda/'
     | '/verificar/'
@@ -945,6 +993,10 @@ export interface FileRouteTypes {
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
     | '/api/public/v1/ext/checkout-sessions'
+    | '/api/public/v1/ext/services'
+    | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/subscriptions/$id'
+    | '/api/public/v1/ext/subscriptions/$id/cancel'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1013,6 +1065,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda'
     | '/verificar'
@@ -1036,6 +1089,10 @@ export interface FileRouteTypes {
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
     | '/api/public/v1/ext/checkout-sessions'
+    | '/api/public/v1/ext/services'
+    | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/subscriptions/$id'
+    | '/api/public/v1/ext/subscriptions/$id/cancel'
   id:
     | '__root__'
     | '/'
@@ -1106,6 +1163,7 @@ export interface FileRouteTypes {
     | '/oauth/authorize'
     | '/pagar/$token'
     | '/portal/$key'
+    | '/teste-checkout/$token'
     | '/verificar/$code'
     | '/ajuda/'
     | '/verificar/'
@@ -1129,6 +1187,10 @@ export interface FileRouteTypes {
     | '/api/public/wiize/deliver'
     | '/api/public/wiize/webhook'
     | '/api/public/v1/ext/checkout-sessions'
+    | '/api/public/v1/ext/services'
+    | '/api/public/v1/ext/charges/$id'
+    | '/api/public/v1/ext/subscriptions/$id'
+    | '/api/public/v1/ext/subscriptions/$id/cancel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1173,6 +1235,7 @@ export interface RootRouteChildren {
   OauthAuthorizeRoute: typeof OauthAuthorizeRoute
   PagarTokenRoute: typeof PagarTokenRoute
   PortalKeyRoute: typeof PortalKeyRoute
+  TesteCheckoutTokenRoute: typeof TesteCheckoutTokenRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
@@ -1188,6 +1251,9 @@ export interface RootRouteChildren {
   ApiPublicWiizeDeliverRoute: typeof ApiPublicWiizeDeliverRoute
   ApiPublicWiizeWebhookRoute: typeof ApiPublicWiizeWebhookRoute
   ApiPublicV1ExtCheckoutSessionsRoute: typeof ApiPublicV1ExtCheckoutSessionsRoute
+  ApiPublicV1ExtServicesRoute: typeof ApiPublicV1ExtServicesRoute
+  ApiPublicV1ExtChargesIdRoute: typeof ApiPublicV1ExtChargesIdRoute
+  ApiPublicV1ExtSubscriptionsIdRoute: typeof ApiPublicV1ExtSubscriptionsIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -1675,6 +1741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teste-checkout/$token': {
+      id: '/teste-checkout/$token'
+      path: '/teste-checkout/$token'
+      fullPath: '/teste-checkout/$token'
+      preLoaderRoute: typeof TesteCheckoutTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verificar/': {
       id: '/verificar/'
       path: '/verificar'
@@ -1829,6 +1902,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1ExtCheckoutSessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/ext/services': {
+      id: '/api/public/v1/ext/services'
+      path: '/api/public/v1/ext/services'
+      fullPath: '/api/public/v1/ext/services'
+      preLoaderRoute: typeof ApiPublicV1ExtServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/ext/charges/$id': {
+      id: '/api/public/v1/ext/charges/$id'
+      path: '/api/public/v1/ext/charges/$id'
+      fullPath: '/api/public/v1/ext/charges/$id'
+      preLoaderRoute: typeof ApiPublicV1ExtChargesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/ext/subscriptions/$id': {
+      id: '/api/public/v1/ext/subscriptions/$id'
+      path: '/api/public/v1/ext/subscriptions/$id'
+      fullPath: '/api/public/v1/ext/subscriptions/$id'
+      preLoaderRoute: typeof ApiPublicV1ExtSubscriptionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/ext/subscriptions/$id/cancel': {
+      id: '/api/public/v1/ext/subscriptions/$id/cancel'
+      path: '/cancel'
+      fullPath: '/api/public/v1/ext/subscriptions/$id/cancel'
+      preLoaderRoute: typeof ApiPublicV1ExtSubscriptionsIdCancelRouteImport
+      parentRoute: typeof ApiPublicV1ExtSubscriptionsIdRoute
+    }
   }
 }
 
@@ -1921,6 +2022,21 @@ const AjudaRouteChildren: AjudaRouteChildren = {
 
 const AjudaRouteWithChildren = AjudaRoute._addFileChildren(AjudaRouteChildren)
 
+interface ApiPublicV1ExtSubscriptionsIdRouteChildren {
+  ApiPublicV1ExtSubscriptionsIdCancelRoute: typeof ApiPublicV1ExtSubscriptionsIdCancelRoute
+}
+
+const ApiPublicV1ExtSubscriptionsIdRouteChildren: ApiPublicV1ExtSubscriptionsIdRouteChildren =
+  {
+    ApiPublicV1ExtSubscriptionsIdCancelRoute:
+      ApiPublicV1ExtSubscriptionsIdCancelRoute,
+  }
+
+const ApiPublicV1ExtSubscriptionsIdRouteWithChildren =
+  ApiPublicV1ExtSubscriptionsIdRoute._addFileChildren(
+    ApiPublicV1ExtSubscriptionsIdRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -1963,6 +2079,7 @@ const rootRouteChildren: RootRouteChildren = {
   OauthAuthorizeRoute: OauthAuthorizeRoute,
   PagarTokenRoute: PagarTokenRoute,
   PortalKeyRoute: PortalKeyRoute,
+  TesteCheckoutTokenRoute: TesteCheckoutTokenRoute,
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
@@ -1978,6 +2095,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicWiizeDeliverRoute: ApiPublicWiizeDeliverRoute,
   ApiPublicWiizeWebhookRoute: ApiPublicWiizeWebhookRoute,
   ApiPublicV1ExtCheckoutSessionsRoute: ApiPublicV1ExtCheckoutSessionsRoute,
+  ApiPublicV1ExtServicesRoute: ApiPublicV1ExtServicesRoute,
+  ApiPublicV1ExtChargesIdRoute: ApiPublicV1ExtChargesIdRoute,
+  ApiPublicV1ExtSubscriptionsIdRoute:
+    ApiPublicV1ExtSubscriptionsIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
