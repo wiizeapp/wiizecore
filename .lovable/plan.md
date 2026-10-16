@@ -18,12 +18,12 @@
 - O que a empresa salvou vira o padrão de todas as cobranças.
 - Cada momento (cobrança criada, antes do vencimento, no vencimento, em atraso, pagamento confirmado) ganha:
   - escolha de canais por momento, dentro do que o plano permite (ex.: criada = só e-mail; pagamento confirmado = e-mail + SMS + WhatsApp);
-  - botão **Editar conteúdo**, com texto da mensagem, logo e cor, e prévia.
+  - botão **Editar aparência**, com logo e cor (o que o Asaas permite), e prévia. O texto das mensagens segue o padrão do Asaas.
 - Preço continua cobrado pela regra atual por aviso, no servidor.
 
-## Limitações importantes (a confirmar)
-- **Personalização de texto/logo/cor**: o Asaas permite ligar/desligar avisos por canal e momento, e mudar logo e cor da página de pagamento. Pela API, ele **não permite reescrever o texto** das mensagens que ele mesmo envia. Para texto 100% editável, só se o envio sair pela própria Wiize Core (e-mail pelo nosso serviço de e-mail; SMS/WhatsApp precisariam de um serviço contratado). Isso conflita com a regra atual "cliente final só recebe aviso via Asaas".
-- **Endereço wiizecore.com**: hoje o site e a API respondem em wiizepay.com. Se wiizecore.com ainda não estiver ligado ao projeto, a documentação apontaria para um endereço que não funciona.
+## Decisões confirmadas
+- wiizecore.com já funciona: todo endereço público e da API passa a ser wiizecore.com.
+- Conteúdo dos lembretes: apenas o que o Asaas permite (canais por momento, logo e cor).
 
 ## Resposta à dúvida
 Sim: quando a empresa cria cobranças pela API com o Lembrete inteligente ligado, os clientes dela recebem os avisos de vencimento normalmente, porque a cobrança pela API passa pelo mesmo caminho das cobranças feitas no painel. Condições: o cliente precisa ter e-mail/celular válidos e a cobrança ser real (Produção). No ambiente de Teste nenhum aviso é enviado.
