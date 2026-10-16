@@ -133,6 +133,8 @@ function ProductPreview() {
           alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
           className="h-full w-full object-cover object-top max-sm:w-[165%] max-sm:max-w-none max-sm:object-left-top"
           loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
       </div>
       <div className="home-dashboard-fade" aria-hidden="true" />
