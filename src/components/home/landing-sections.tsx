@@ -17,11 +17,11 @@ function useUi() {
 
 /* ---------- Shared building blocks ---------- */
 
-export function SectionIntro({ eyebrow, title, accent, text, center = false }: { eyebrow: string; title: string; accent?: string; text?: string; center?: boolean }) {
+export function SectionIntro({ eyebrow, title, accent, text, center = false }: { eyebrow?: string; title: string; accent?: string; text?: string; center?: boolean }) {
   const ui = useUi();
   return (
     <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-xl"}>
-      <p className="section-kicker">{ui(eyebrow)}</p>
+      {eyebrow ? <p className="section-kicker">{ui(eyebrow)}</p> : null}
       <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.6rem]">
         {ui(title)}{accent ? <> <span className="hero-shine">{ui(accent)}</span></> : null}
       </h2>
@@ -96,7 +96,7 @@ export function OperationFlow() {
   ];
   return (
     <section id="plataforma" className="section-shell scroll-mt-24 py-20 lg:py-28">
-      <SectionIntro center eyebrow="A plataforma" title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
+      <SectionIntro center title="Tudo o que você precisa para" accent="administrar seus recebimentos." text="Uma única plataforma para vender, cobrar, receber e organizar o financeiro da sua empresa de serviços." />
       <div className="mt-14 grid gap-4 lg:grid-cols-3">
         <div className="feature-visual feature-visual-1 relative isolate overflow-hidden rounded-xl border border-border p-6 shadow-float lg:row-span-3 lg:p-8">
           <div className="feature-visual-grid absolute inset-0 -z-10" aria-hidden="true" />
@@ -200,7 +200,7 @@ export function ComparisonSection() {
   ];
   return (
     <section className="section-shell py-20 lg:py-28">
-      <SectionIntro center eyebrow="Por que a Wiize Core" title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A Wiize Core cuida do que vem antes e do que vem depois dele." />
+      <SectionIntro center title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A Wiize Core cuida do que vem antes e do que vem depois dele." />
       <div className="relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
         <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 cmp-half-live" />
         <div className="relative">
@@ -382,7 +382,7 @@ export function ContractsSection() {
   const steps = ["Crie o contrato", "Envie para assinatura", "Cliente assina", "Continue com a cobrança"];
   return (
     <section className="section-shell py-20 lg:py-28">
-      <SectionIntro center eyebrow="Contratos e assinatura" title="Contrato e cobrança no mesmo fluxo." text="Envie o contrato, acompanhe a assinatura e siga com a cobrança. O pagamento só é liberado depois que o contratante assina." />
+      <SectionIntro center title="Contrato e cobrança no mesmo fluxo." text="Envie o contrato, acompanhe a assinatura e siga com a cobrança. O pagamento só é liberado depois que o contratante assina." />
       <div className="mt-12 grid items-center gap-6 lg:grid-cols-[1fr_auto_1fr]">
         <Window title="Contrato de prestação de serviços">
           <div className="space-y-2" aria-hidden="true">{[100, 92, 96, 70, 88, 60].map((w, i) => <span key={i} className="block h-2 rounded-full bg-muted" style={{ width: `${w}%` }} />)}</div>
@@ -457,7 +457,7 @@ export function PaymentMethodsSection() {
   return (
     <section className="border-y border-border bg-surface/50">
       <div className="section-shell py-20 lg:py-28">
-        <SectionIntro center eyebrow="Formas de pagamento" title="Receba de forma simples." text="Ofereça as formas de pagamento que seu cliente prefere, na mesma cobrança." />
+        <SectionIntro center title="Receba de forma simples." text="Ofereça as formas de pagamento que seu cliente prefere, na mesma cobrança." />
         <div className="mt-12 grid divide-y divide-border overflow-hidden rounded-xl border border-border bg-card sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
           {methods.map((m) => <div key={m.title} className="p-6"><m.icon className="size-6 text-primary" /><h3 className="mt-4 font-semibold">{ui(m.title)}</h3><p className="mt-1.5 text-sm leading-6 text-muted-foreground">{ui(m.text)}</p></div>)}
         </div>
@@ -478,7 +478,7 @@ export function RemindersSection() {
   ];
   return (
     <section className="section-shell py-20 lg:py-28">
-      <SectionIntro center eyebrow="Lembretes de cobrança" title="Sua cobrança acompanha cada vencimento." text="Escolha um plano de lembretes e os avisos são enviados por e-mail, SMS ou WhatsApp, conforme o plano escolhido." />
+      <SectionIntro center title="Sua cobrança acompanha cada vencimento." text="Escolha um plano de lembretes e os avisos são enviados por e-mail, SMS ou WhatsApp, conforme o plano escolhido." />
       <ol className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((s, i) => <li key={s.title} className="relative border-t-2 border-border pt-5">{i === steps.length - 1 ? <span className="absolute -top-0.5 left-0 h-0.5 w-full bg-primary" /> : null}<s.icon className="size-5 text-primary" /><h3 className="mt-3 font-semibold">{ui(s.title)}</h3><p className="mt-1.5 text-sm leading-6 text-muted-foreground">{ui(s.text)}</p></li>)}
       </ol>
