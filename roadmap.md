@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Separar Marca e Checkout na aparência; prévia dos lembretes com logo/cor salvas e padrão Wiize; conferir navegação e persistência.
+- [ ] Aplicar marca nos e-mails Asaas: depende de confirmação de endpoint oficialmente suportado; não confundir com personalização da fatura.
+
 - [x] Developer Portal para SaaS: seletor Sandbox/Produção no menu, prompts para 6 ferramentas, primeiros passos com progresso real, simulador de testes isolado, consultas de cobrança/assinatura, cancelamento de assinatura, lista de serviços, registros de chamadas e envio automático da fila de avisos a cada minuto; 28 testes da integração aprovados.
 - [x] Fase 2 da API: lista de cobranças, cliente por ID externo, Idempotency-Key no cancelamento e bloqueio de serviços com valor livre; 17 cenários conferidos de ponta a ponta com chave de teste (criação, repetição, adulteração, retorno inseguro, pagamento de teste, assinatura ativa, cancelamento e repetição).
 - [ ] Validar entrega real de aviso a um endpoint HTTPS do cliente e o fluxo de produção com Asaas: depende de endpoint próprio e conta de recebimento aprovada.
