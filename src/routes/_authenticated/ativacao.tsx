@@ -49,10 +49,10 @@ function AtivacaoPage() {
   const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
   return (
     <div>
-      <PartnerNotice storageKey="activation-asaas" title="Análise feita em parceria com o Asaas">
-        <p>A ativação de recebimentos da Wiize Core é realizada em parceria com o <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
-        <p>O Asaas é responsável pela análise dos seus dados e documentos e pela aprovação da conta, seguindo as exigências regulatórias de prevenção à fraude.</p>
-        <p>Você faz tudo por aqui e acompanha cada etapa nesta tela. Avisaremos assim que houver uma resposta.</p>
+      <PartnerNotice storageKey="activation-asaas" title="Como funciona a análise da sua conta">
+        <p>A abertura da sua conta de pagamentos é feita pelo <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
+        <p>Você envia seus dados e documentos aqui na Wiize Core. Nós organizamos e encaminhamos tudo ao Asaas, que faz a análise e a aprovação da conta e nos devolve o resultado.</p>
+        <p>Você acompanha cada etapa nesta tela e avisaremos assim que houver uma resposta.</p>
       </PartnerNotice>
       <PageHeader title="Ative seus pagamentos" description="Para receber pelo Wiize Core, precisamos confirmar a sua identidade e a da sua empresa. Seus dados ficam protegidos. Avisaremos tudo por aqui e no seu e-mail de acesso." />
       {isError ? <ErrorState onRetry={() => refetch()} /> : !isFetchedAfterMount || !data ? <ListSkeleton rows={4} /> : <Content data={data} />}

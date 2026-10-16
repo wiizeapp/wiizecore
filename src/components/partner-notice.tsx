@@ -3,19 +3,7 @@ import { Link2, ShieldCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/brand";
-import asaasBlueLogoUrl from "@/assets/ecosystem-asaas.png";
-const asaasBlueLogo = { url: asaasBlueLogoUrl };
-import asaasWhiteLogoUrl from "@/assets/ecosystem-asaas-white.png";
-const asaasWhiteLogo = { url: asaasWhiteLogoUrl };
-
-function AsaasLogo() {
-  return (
-    <span className="inline-flex h-8 items-center">
-      <img src={asaasBlueLogo.url} alt="Asaas" className="h-6 w-auto dark:hidden" />
-      <img src={asaasWhiteLogo.url} alt="Asaas" className="hidden h-8 w-auto dark:block" />
-    </span>
-  );
-}
+import { AsaasSeal } from "@/components/financial-provider";
 
 /** Aviso institucional exibido uma única vez por navegador (por chave). */
 export function PartnerNotice({ storageKey, title, children }: { storageKey: string; title: string; children: React.ReactNode }) {
@@ -34,11 +22,11 @@ export function PartnerNotice({ storageKey, title, children }: { storageKey: str
         <div className="flex items-center justify-center gap-4 border-b border-border bg-muted/40 px-6 py-6">
           <Brand />
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-muted-foreground"><Link2 className="h-4 w-4" /></span>
-          <AsaasLogo />
+          <AsaasSeal />
         </div>
         <div className="space-y-4 px-6 pb-6 pt-2">
           <div className="space-y-1">
-            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary"><ShieldCheck className="h-3.5 w-3.5" />Parceria oficial</p>
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary"><ShieldCheck className="h-3.5 w-3.5" />Serviços financeiros</p>
             <DialogTitle className="font-display text-xl font-semibold tracking-tight">{title}</DialogTitle>
           </div>
           <DialogDescription asChild>
