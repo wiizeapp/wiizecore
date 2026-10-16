@@ -839,27 +839,14 @@ html::-webkit-scrollbar-thumb {
 }
 
 @utility section-kicker {
-  display: inline-flex;
+  display: block;
   width: fit-content;
-  align-items: center;
-  border: 1px solid color-mix(in oklab, var(--primary) 28%, var(--border));
-  border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--primary) 10%, var(--card));
-  padding: 0.35rem 0.65rem;
   color: var(--primary);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-
-  &::before {
-    width: 0.35rem;
-    height: 0.35rem;
-    margin-right: 0.4rem;
-    border-radius: 999px;
-    background: var(--primary);
-    content: "";
-  }
 }
 
 .text-center > .section-kicker {
