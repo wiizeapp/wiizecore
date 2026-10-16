@@ -38,6 +38,7 @@ import { createPixAutomatic } from "@/lib/pix-automatic.functions";
 import { useTranslation } from "react-i18next";
 import { getLateFees } from "@/lib/late-fees.functions";
 import { ActivationNotice } from "@/components/activation-notice";
+import { CancelledBadge, OverdueLine } from "@/components/charges/late-status";
 
 export const Route = createFileRoute("/_authenticated/cobrancas")({
   validateSearch: (search: Record<string, unknown>): { nova?: boolean; cliente?: string | undefined; contrato?: string | undefined; servico?: string | undefined } => {
@@ -154,7 +155,7 @@ function Cobrancas() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("payments")
-        .select("id, charge_group_id, description, status, method, gross_amount, platform_fee_amount, net_amount, due_on, installment_number, installment_count, subscription_id, created_at, refunded_amount, customers(name, email, document, phone)")
+        .select("id, charge_group_id, description, status, method, gross_amount, platform_fee_amount, net_amount, due_on, original_due_on, original_amount, fine_percent, interest_percent, installment_number, installment_count, subscription_id, created_at, refunded_amount, customers(name, email, document, phone)")
         .eq("tenant_id", tenantId!)
         .order("created_at", { ascending: false })
         .limit(300);
@@ -658,11 +659,20 @@ function Cobrancas() {
                     <TableCell className="hidden xl:table-cell numeric-tabular text-right text-muted-foreground">{formatBRL(g.net)}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap items-center gap-1">
-                        <StatusBadge tone={g.next.status === "paid" ? "success" : g.next.status === "overdue" || g.next.status === "failed" ? "danger" : g.next.status === "refunded" ? "neutral" : "warning"}>
-                          {paymentStatusLabels[g.next.status]}
-                        </StatusBadge>
+                        {g.next.status === "cancelled" ? (
+                          <span onClick={(e) => e.stopPropagation()}><CancelledBadge payment={g.next as never} label={paymentStatusLabels[g.next.status] ?? "Cancelada"} /></span>
+                        ) : (
+                          <StatusBadge tone={g.next.status === "paid" ? "success" : g.next.status === "overdue" || g.next.status === "failed" ? "danger" : g.next.status === "refunded" ? "neutral" : "warning"}>
+                            {paymentStatusLabels[g.next.status]}
+                          </StatusBadge>
+                        )}
                         {inv ? <StatusBadge tone={INVOICE_STATUS_TONE[inv.status as InvoiceStatus]}>NFS-e</StatusBadge> : null}
                       </div>
+                      <span onClick={(e) => e.stopPropagation()}>
+                        <OverdueLine payment={g.next as never} onCancel={() => {
+                          void confirmAction({ title: "Cancelar esta cobrança?", description: "Ela para de somar juros e o link deixa de aceitar pagamento. O contrato continua valendo e você pode ativá-la novamente depois.", confirmText: "Cancelar cobrança", destructive: true }).then((ok) => ok && cancelMutation.mutate(g.id));
+                        }} />
+                      </span>
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}><CopyChargeLinkButton chargeGroupId={g.id} /></TableCell>
                     <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>

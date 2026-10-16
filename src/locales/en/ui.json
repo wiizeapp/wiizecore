@@ -5195,5 +5195,15 @@
   "Os arquivos dos contratos ficam no Drive da sua empresa, na pasta de contratos da integração. Você também pode escrever o contrato aqui mesmo sem conectar.": "Contract files are stored in your company’s Drive, in the integration’s contracts folder. You can also write a contract here without connecting.",
   "Os arquivos dos contratos (original, assinado e comprovante) ficam no Drive da sua empresa, na pasta de contratos da integração. A Wiize Core só acessa os arquivos que ela mesma cria.": "Contract files (original, signed and proof) are stored in your company’s Drive, in the integration’s contracts folder. Wiize Core only accesses files it creates.",
   "Serviços financeiros": "Financial services",
-  "Como funciona a análise da sua conta": "How your account review works"
+  "Como funciona a análise da sua conta": "How your account review works",
+  "Atrasada há": "Overdue for",
+  "dia": "day",
+  "Ativar novamente": "Reactivate",
+  "Cobrança ativada novamente. O link é o mesmo.": "Charge reactivated. The link stays the same.",
+  "Não foi possível ativar agora.": "Could not reactivate right now.",
+  "Ativar cobrança novamente": "Reactivate charge",
+  "Escolha a nova data de vencimento. O cliente paga pelo mesmo link, sem multa nem juros anteriores.": "Choose the new due date. The customer pays through the same link, without previous fines or interest.",
+  "Novo vencimento": "New due date",
+  "Ela para de somar juros e o link deixa de aceitar pagamento. O contrato continua valendo e você pode ativá-la novamente depois.": "It stops accruing interest and the link no longer accepts payment. The contract remains valid and you can reactivate it later.",
+  "Cobrança cancelada por falta de pagamento": "Charge cancelled for non-payment"
 }
