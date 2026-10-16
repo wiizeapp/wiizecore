@@ -145,6 +145,7 @@ export function PublicFooter() {
 export function PublicPage({ children }: { children: React.ReactNode }) {
     useLanguageBootstrap();
   useRevealOnScroll();
+  usePublicDarkDocument();
   const { t } = useTranslation("footer");
   return <div className={`dark min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
@@ -178,5 +179,17 @@ function useRevealOnScroll() {
     items.forEach((el) => io.observe(el));
     document.documentElement.classList.add("reveal-on");
     return () => { io.disconnect(); document.documentElement.classList.remove("reveal-on"); items.forEach((el) => el.classList.add("is-visible")); };
+  }, []);
+}
+
+/** Páginas públicas são sempre escuras: força o documento inteiro (fundo, rolagem) no tema escuro e restaura ao sair. */
+function usePublicDarkDocument() {
+  useEffect(() => {
+    const root = document.documentElement;
+    const hadDark = root.classList.contains("dark");
+    const prevScheme = root.style.colorScheme;
+    root.classList.add("dark");
+    root.style.colorScheme = "dark";
+    return () => { root.classList.toggle("dark", hadDark); root.style.colorScheme = prevScheme; };
   }, []);
 }
