@@ -16,6 +16,11 @@ A Wiize Core não é banco nem instituição de pagamento. O processamento dos p
 - [Perguntas frequentes](https://wiizepay.com/perguntas-frequentes): Respostas diretas.
 - [Suporte](https://wiizepay.com/suporte): Canal oficial de atendimento.
 
+## API para desenvolvedores
+
+- [Documentação da API](https://wiizepay.com/desenvolvedores): Autenticação, checkout, cobranças, assinaturas, webhooks e testes.
+- [Documentação completa em texto](https://wiizepay.com/llms-api.txt): Versão para ferramentas de IA, com endpoints, campos, erros e eventos.
+
 ## Optional
 
 - [Termos de uso](https://wiizepay.com/termos-de-uso)
