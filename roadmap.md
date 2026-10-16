@@ -1,7 +1,8 @@
 # Roadmap
 
 - [x] Developer Portal para SaaS: seletor Sandbox/Produção no menu, prompts para 6 ferramentas, primeiros passos com progresso real, simulador de testes isolado, consultas de cobrança/assinatura, cancelamento de assinatura, lista de serviços, registros de chamadas e envio automático da fila de avisos a cada minuto; 28 testes da integração aprovados.
-- [ ] Validar ponta a ponta com chave real de teste e endpoint externo: depende de o dono criar a chave (exige confirmação em duas etapas) e informar um endpoint HTTPS próprio.
+- [x] Fase 2 da API: lista de cobranças, cliente por ID externo, Idempotency-Key no cancelamento e bloqueio de serviços com valor livre; 17 cenários conferidos de ponta a ponta com chave de teste (criação, repetição, adulteração, retorno inseguro, pagamento de teste, assinatura ativa, cancelamento e repetição).
+- [ ] Validar entrega real de aviso a um endpoint HTTPS do cliente e o fluxo de produção com Asaas: depende de endpoint próprio e conta de recebimento aprovada.
 - [ ] Agendar o envio de avisos também no ambiente da Vercel: depende de configurar o cron com a senha de tarefas no painel da Vercel.
 
 - [x] Trocar toda a marca visível para Wiize Core, incluindo abertura, descrições, rodapés, páginas internas e traduções; sete páginas conferidas, sessão conectada e três idiomas, celular sem transbordamento, 17 testes aprovados; lista completa de 182 arquivos entregue. Domínios, integrações e histórico preservados; validação formal Asaas permanece externa.
