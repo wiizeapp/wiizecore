@@ -1,5 +1,5 @@
 import { getSecurityStatus } from "@/lib/security.functions";
-import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake } from "lucide-react";
+import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake, KeyRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getMyAccess, trackActivity } from "@/lib/team.functions";
 import { PAGE_PERMISSION } from "@/lib/permissions";
