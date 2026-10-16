@@ -5234,5 +5234,6 @@
   "Escolha a nova data de vencimento. O cliente paga pelo mesmo link, sem multa nem juros anteriores.": "Elige la nueva fecha de vencimiento. El cliente paga por el mismo enlace, sin multas ni intereses anteriores.",
   "Novo vencimento": "Nuevo vencimiento",
   "Ela para de somar juros e o link deixa de aceitar pagamento. O contrato continua valendo e você pode ativá-la novamente depois.": "Deja de sumar intereses y el enlace deja de aceptar pagos. El contrato sigue vigente y puedes reactivarlo después.",
-  "Cobrança cancelada por falta de pagamento": "Cobro cancelado por falta de pago"
+  "Cobrança cancelada por falta de pagamento": "Cobro cancelado por falta de pago",
+  "Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos": "Panel financiero de Wiize Core con saldo, indicadores y gráfico de cobros"
 }
