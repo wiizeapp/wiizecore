@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSandboxCheckout, paySandboxCheckout } from "@/lib/ext-portal.functions";
-import { formatCurrency } from "@/lib/format";
+import { formatBRL as formatCurrency } from "@/lib/format";
 
 export const Route = createFileRoute("/teste-checkout/$token")({
   head: () => ({
