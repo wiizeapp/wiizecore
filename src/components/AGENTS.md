@@ -1,5 +1,5 @@
 - Checkout colors map through `checkoutAppearanceVars` only: background = whole page (summary/footer via `checkout-panel`), header = top bar (`checkout-header`, text contrast auto-fixed), surface = cards. Why: real checkout and preview must react identically to each color.
-- Provider seals use unchanged official remote URLs and choose positive/white by the actual checkout background contrast or the public theme. Why: custom checkout colors must not hide or recolor the provider identity.
+- Provider seals use unchanged official remote URLs and choose black/white by the actual checkout background contrast (positive only when following the public theme) or the public theme. Why: custom checkout colors must not hide or recolor the provider identity.
 - Public motion keeps hero, CTA and footer static; feature cards alternate sideways and other cards rise subtly.
 - Dashboard screenshot fixtures are local presentation-only, account-gated and opt-in; never cache/persist them or enable navigation, exports or financial actions while active. Why: mockups must not contaminate real account data.
 

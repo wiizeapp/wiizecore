@@ -9,7 +9,7 @@ export function AsaasSeal({ background }: { background?: string | undefined }) {
   const light = background ? contrastRatio(background, "#000000") >= contrastRatio(background, "#FFFFFF") : undefined;
   const image = (src: string, className: string) => <img src={src} alt={t("Serviços financeiros Asaas")} width={120} height={36} className={`h-9 w-[120px] max-w-full object-contain ${className}`} />;
   return <a href={FINANCIAL_PROVIDER.site} target="_blank" rel="noopener noreferrer" className="inline-flex max-w-full shrink-0 items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-    {light === undefined ? <>{image(FINANCIAL_PROVIDER.seals.positive, "dark:hidden")}{image(FINANCIAL_PROVIDER.seals.white, "hidden dark:block")}</> : image(light ? FINANCIAL_PROVIDER.seals.positive : FINANCIAL_PROVIDER.seals.white, "")}
+    {light === undefined ? <>{image(FINANCIAL_PROVIDER.seals.positive, "dark:hidden")}{image(FINANCIAL_PROVIDER.seals.white, "hidden dark:block")}</> : image(light ? FINANCIAL_PROVIDER.seals.black : FINANCIAL_PROVIDER.seals.white, "")}
   </a>;
 }
 
