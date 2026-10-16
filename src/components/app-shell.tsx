@@ -42,6 +42,7 @@ import { NotificationsBell } from "@/components/notifications-bell";
 import { PrivacyToggle, usePrivacyKey } from "@/components/privacy-toggle";
 import { Brand } from "@/components/brand";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { EnvironmentSwitch } from "@/components/environment-switch";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
@@ -310,7 +311,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{user?.email ?? ""}</p>
             </div>
           </Link>
-          <div className="sidebar-theme"><ThemeToggle /></div>
+          <div className="sidebar-theme flex flex-wrap items-center gap-1.5"><ThemeToggle /><EnvironmentSwitch /></div>
           <Link to="/ajuda" className={`${navLinkClass(pathname.startsWith("/ajuda"))} sidebar-help`} title={!sidebarExpanded ? ui("Central de Ajuda") : undefined}>
             <span className="sidebar-icon-slot"><BookOpen className="sidebar-animated-icon" strokeWidth={1.8} /></span>
             <span className="sidebar-item-label">{ui("Central de Ajuda")}</span>
