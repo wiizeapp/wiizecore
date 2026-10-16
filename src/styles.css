@@ -981,7 +981,7 @@ html::-webkit-scrollbar-thumb {
 
 /* Painel denso do Hero principal, encaixado e emergindo da borda inferior. */
 @utility home-dashboard-stage {
-  height: 16.5rem;
+  height: 19.5rem;
 
   @media (min-width: 40rem) {
     height: 20rem;

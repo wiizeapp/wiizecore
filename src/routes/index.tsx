@@ -126,12 +126,12 @@ function Landing() {
 function ProductPreview() {
   const { t: ui } = useTranslation("ui");
   return (
-    <div className="home-dashboard-stage relative mt-8 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
+    <div className="home-dashboard-stage relative mt-5 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
       <div className="home-dashboard-window relative z-10 mx-auto h-full w-full overflow-hidden rounded-t-2xl bg-card text-left">
         <img
           src={heroDashboard.url}
           alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
-          className="h-full w-full object-cover object-top"
+          className="h-full w-full object-cover object-top max-sm:w-[165%] max-sm:max-w-none max-sm:object-left-top"
           loading="eager"
         />
       </div>
