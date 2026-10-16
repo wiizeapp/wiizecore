@@ -2519,6 +2519,168 @@ export type Database = {
           },
         ]
       }
+      ext_request_logs: {
+        Row: {
+          auth_result: string
+          created_at: string
+          duration_ms: number
+          environment: string | null
+          error_code: string | null
+          id: string
+          integration_id: string | null
+          method: string
+          path: string
+          request_id: string
+          status: number
+          tenant_id: string | null
+        }
+        Insert: {
+          auth_result: string
+          created_at?: string
+          duration_ms: number
+          environment?: string | null
+          error_code?: string | null
+          id?: string
+          integration_id?: string | null
+          method: string
+          path: string
+          request_id: string
+          status: number
+          tenant_id?: string | null
+        }
+        Update: {
+          auth_result?: string
+          created_at?: string
+          duration_ms?: number
+          environment?: string | null
+          error_code?: string | null
+          id?: string
+          integration_id?: string | null
+          method?: string
+          path?: string
+          request_id?: string
+          status?: number
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_request_logs_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_request_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ext_sandbox_charges: {
+        Row: {
+          amount: number
+          cancel_url: string | null
+          charge_type: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          cycles_paid: number
+          document_last4: string | null
+          expires_at: string
+          external_customer_id: string | null
+          external_subscription_id: string | null
+          frequency: string | null
+          history: Json
+          id: string
+          idempotency_key: string
+          integration_id: string
+          payment_method: string | null
+          public_token: string
+          request_hash: string
+          service_id: string
+          service_name: string
+          status: string
+          subscription_status: string | null
+          success_url: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          cancel_url?: string | null
+          charge_type: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          cycles_paid?: number
+          document_last4?: string | null
+          expires_at?: string
+          external_customer_id?: string | null
+          external_subscription_id?: string | null
+          frequency?: string | null
+          history?: Json
+          id?: string
+          idempotency_key: string
+          integration_id: string
+          payment_method?: string | null
+          public_token: string
+          request_hash: string
+          service_id: string
+          service_name: string
+          status?: string
+          subscription_status?: string | null
+          success_url?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cancel_url?: string | null
+          charge_type?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          cycles_paid?: number
+          document_last4?: string | null
+          expires_at?: string
+          external_customer_id?: string | null
+          external_subscription_id?: string | null
+          frequency?: string | null
+          history?: Json
+          id?: string
+          idempotency_key?: string
+          integration_id?: string
+          payment_method?: string | null
+          public_token?: string
+          request_hash?: string
+          service_id?: string
+          service_name?: string
+          status?: string
+          subscription_status?: string | null
+          success_url?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ext_sandbox_charges_integration_id_fkey"
+            columns: ["integration_id"]
+            isOneToOne: false
+            referencedRelation: "ext_integrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ext_sandbox_charges_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ext_webhook_deliveries: {
         Row: {
           attempts: number
