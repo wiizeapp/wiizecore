@@ -7,7 +7,7 @@ import { PublicPage } from "@/components/public-site";
 import type { ReactNode } from "react";
 import { FeatureVisual, type FeatureVisualKind } from "@/components/home/feature-visual";
 import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } from "@/components/home/landing-sections";
-import heroDashboard from "@/assets/hero-dashboard.png.asset.json";
+import heroDashboard from "@/assets/hero-dashboard.webp";
 import { ChargesPremium, ClientsPremium, ServicesPremium, CheckoutPremium, InvoicesPremium, PortalPremium } from "@/components/home/premium-visuals";
 import { useTranslation } from "react-i18next";
 import { AuthoritySection } from "@/components/institutional/infrastructure";
@@ -129,10 +129,12 @@ function ProductPreview() {
     <div className="home-dashboard-stage relative mt-5 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
       <div className="home-dashboard-window relative z-10 mx-auto h-full w-full overflow-hidden rounded-t-2xl bg-card text-left">
         <img
-          src={heroDashboard.url}
+          src={heroDashboard}
           alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
           className="h-full w-full object-cover object-top max-sm:w-[165%] max-sm:max-w-none max-sm:object-left-top"
           loading="eager"
+          fetchPriority="high"
+          decoding="async"
         />
       </div>
       <div className="home-dashboard-fade" aria-hidden="true" />
