@@ -1026,27 +1026,25 @@ html::-webkit-scrollbar-thumb {
   position: absolute;
   z-index: 30;
   /* Encostado na linha de corte da seção, não na base da janela. */
-  inset: auto 0 -2.5rem;
-  height: 6rem;
+  inset: auto 0 -2rem;
+  height: 4rem;
 
   @media (max-width: 39.9375rem) {
-    height: 3rem;
+    height: 2.5rem;
   }
   pointer-events: none;
-  /* Fecha opaco na linha de corte: o painel se dissolve antes de tocar a borda. */
-  background: linear-gradient(to top, var(--background) 42%, transparent);
-  backdrop-filter: blur(1.5px);
-  mask-image: linear-gradient(to top, black 38%, transparent 100%);
+  /* Só a última faixa some de vez: o resto da imagem segue visível e desfocado. */
+  background: linear-gradient(to top, var(--background) 22%, transparent);
+  backdrop-filter: blur(2.5px);
+  mask-image: linear-gradient(to top, black 18%, transparent 100%);
 }
 
-/* Faixa própria da seção "Tudo o que você precisa...": filete, sombra suave e tom
-   mais alto que a abertura, para as duas não se misturarem. */
+/* Faixa da seção "Tudo o que você precisa...": mesma cor da seção "Da primeira
+   cobrança ao dinheiro na conta", separada da abertura por um filete fino. */
 @utility operation-flow-band {
   border-top: 1px solid var(--border);
-  background-color: color-mix(in oklab, var(--surface) 55%, var(--muted));
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--background) 45%, transparent),
-    0 -16px 30px -16px color-mix(in oklab, var(--foreground) 32%, transparent);
+  background-color: var(--surface);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--background) 45%, transparent);
 }
 
 @keyframes feature-demo-enter {
