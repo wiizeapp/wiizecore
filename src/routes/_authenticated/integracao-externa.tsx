@@ -1,24 +1,24 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { BookOpen, Copy, ExternalLink, KeyRound, Pause, Play, Plus, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateTime } from "@/lib/format";
-import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { ExtWebhooksPanel } from "@/components/ext-webhooks-panel";
-import { ExtAiGuide, ExtLogs, ExtOverview } from "@/components/ext-insights";
-import { AiPromptCards, ApiReference, ChargesTab, EnvBadge, GettingStarted, RequestLogs, ServicesTab } from "@/components/developer/portal-parts";
+import { ExtLogs } from "@/components/ext-insights";
+import { ChargesTab, EnvBadge, RequestLogs, ServicesTab } from "@/components/developer/portal-parts";
+import { SecureActionDialog } from "@/components/developer/secure-action-dialog";
 import { useDevEnv } from "@/lib/dev-environment";
-import { BookOpen, CreditCard, FileCode2, KeyRound, Repeat, ScrollText, ShoppingCart, Users, Webhook, FlaskConical } from "lucide-react";
+import { EXT_API_BASE } from "@/lib/ext-docs";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
-  head: () => ({ meta: [{ title: "Developer Portal — Wiize Core" }, { name: "description", content: "API de billing da Wiize Core: checkout, cobranças, assinaturas, webhooks e sandbox." }, { property: "og:title", content: "Developer Portal — Wiize Core" }, { property: "og:description", content: "API de billing da Wiize Core: checkout, cobranças, assinaturas, webhooks e sandbox." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "API e desenvolvedores — Wiize Core" }, { name: "description", content: "Chaves de API, webhooks, testes e registros da integração com a Wiize Core." }, { property: "og:title", content: "API e desenvolvedores — Wiize Core" }, { property: "og:description", content: "Chaves de API, webhooks, testes e registros da integração com a Wiize Core." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Page,
 });
 
@@ -28,12 +28,7 @@ const SCOPE_LABEL: Record<string, string> = {
   "subscriptions:write": "Criar assinaturas", "checkout_sessions:write": "Abrir checkout",
 };
 const STATUS_LABEL: Record<string, string> = { active: "Ativa", suspended: "Suspensa", revoked: "Revogada" };
-
-async function step2fa(t: (k: string) => string) {
-  const mfa = await getMfaState();
-  const code = mfa.factorId && !mfa.isAal2 ? window.prompt(t("Digite o código do seu app autenticador")) ?? "" : "";
-  await ensureTwoFactor(code);
-}
+type Action = { kind: "create" } | { kind: "rotate"; id: string } | { kind: "revoke"; id: string } | null;
 
 function Page() {
   const { t } = useTranslation("ui");
@@ -43,72 +38,47 @@ function Page() {
   const rotate = useServerFn(rotateExtKey);
   const setStatus = useServerFn(setExtIntegrationStatus);
   const q = useQuery({ queryKey: ["ext-integrations"], queryFn: () => list() });
-  const [name, setName] = useState("");
-  const [finPass, setFinPass] = useState("");
   const env = useDevEnv();
-  const [tab, setTab] = useState("overview");
-  const [scopes, setScopes] = useState<string[]>(["services:read", "customers:write", "charges:write", "charges:read", "checkout_sessions:write"]);
+  const [name, setName] = useState("");
+  const [scopes, setScopes] = useState<string[] | null>(null);
+  const [liveOk, setLiveOk] = useState(false);
+  const [action, setAction] = useState<Action>(null);
   const [revealed, setRevealed] = useState<{ secret: string; publicKey: string } | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ["ext-integrations"] });
-  const onErr = (e: unknown) => toast.error(e instanceof Error ? e.message : t("Algo deu errado."));
-
-  const createM = useMutation({
-    mutationFn: async () => { await step2fa(t); return create({ data: { name, environment: env, scopes, financialPassword: finPass } }); },
-    onSuccess: (r) => { setRevealed(r); setName(""); setFinPass(""); void refresh(); }, onError: onErr,
-  });
-  const rotateM = useMutation({
-    mutationFn: async (id: string) => { if (!window.confirm(t("A chave atual para de funcionar na hora. Continuar?"))) throw new Error(t("Cancelado.")); const pw = window.prompt(t("Digite sua senha financeira para gerar a nova chave")) ?? ""; if (!pw) throw new Error(t("Cancelado.")); await step2fa(t); return rotate({ data: { id, financialPassword: pw } }); },
-    onSuccess: (r) => { setRevealed(r); void refresh(); }, onError: onErr,
-  });
-  const statusM = useMutation({
-    mutationFn: async (v: { id: string; status: "active" | "suspended" | "revoked" }) => {
-      if (v.status === "revoked" && !window.confirm(t("Revogar é definitivo. O sistema conectado perde o acesso. Continuar?"))) throw new Error(t("Cancelado."));
-      await step2fa(t); return setStatus({ data: v });
-    },
-    onSuccess: () => { toast.success(t("Integração atualizada.")); void refresh(); }, onError: onErr,
-  });
-
   const copy = (v: string) => { void navigator.clipboard.writeText(v); toast.success(t("Copiado.")); };
-  const allItems = q.data?.integrations ?? [];
-  const items = allItems.filter((i) => i.environment === env);
-  const activeKeys = items.filter((i) => i.status === "active" && i.key).length;
-  const go = (v: string) => { setTab(v); if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const QUICK: { tab: string; label: string; icon: typeof KeyRound }[] = [
-    { tab: "keys", label: "API e chaves", icon: KeyRound }, { tab: "docs", label: "Documentação", icon: BookOpen },
-    { tab: "webhooks", label: "Webhooks", icon: Webhook }, { tab: "services", label: "Checkout", icon: ShoppingCart },
-    { tab: "services", label: "Clientes", icon: Users }, { tab: "charges", label: "Cobranças", icon: CreditCard },
-    { tab: "subscriptions", label: "Assinaturas", icon: Repeat }, { tab: "sandbox", label: "Sandbox", icon: FlaskConical },
-    { tab: "logs", label: "Logs e eventos", icon: ScrollText }, { tab: "start", label: "Exemplos de código", icon: FileCode2 },
-  ];
+
+  const allScopes = q.data?.allScopes ?? [];
+  const chosen = scopes ?? allScopes;
+  const canManage = Boolean(q.data?.canManage);
+  const items = (q.data?.integrations ?? []).filter((i) => i.environment === env && i.status !== "revoked");
+  const toggleStatus = async (id: string, status: "active" | "suspended") => {
+    try { await setStatus({ data: { id, status } }); toast.success(t("Integração atualizada.")); } catch (e) { toast.error(e instanceof Error ? e.message : t("Algo deu errado.")); }
+    void refresh();
+  };
 
   return (
     <div className="space-y-6">
       <Link to="/integracoes" className="text-xs text-muted-foreground hover:text-foreground">← {t("Integrações")}</Link>
-      <section className="surface-panel space-y-4 p-6">
-        <div className="flex flex-wrap items-center gap-2"><EnvBadge env={env} /><span className="text-xs text-muted-foreground">{t("Troque o ambiente no menu lateral.")}</span></div>
-        <div className="max-w-3xl space-y-2">
-          <h1 className="font-display text-2xl font-semibold tracking-tight">{t("Conecte sua aplicação à WiizeCore.")}</h1>
-          <p className="text-sm text-muted-foreground">{t("Pagamentos, cobranças e assinaturas integrados ao seu SaaS. Utilize nossa API para automatizar o faturamento, acompanhar transações e sincronizar o acesso dos seus clientes.")}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button onClick={() => go("start")}>{t("Começar integração")}</Button>
-          <Button variant="outline" onClick={() => go("docs")}>{t("Ver documentação")}</Button>
-          <Button variant="ghost" onClick={() => go("webhooks")}>{t("Webhooks e eventos")}</Button>
-          <span className="text-xs text-muted-foreground">{t("Chaves ativas neste ambiente")}: {q.isLoading ? "…" : activeKeys}</span>
+
+      <section className="surface-panel relative overflow-hidden p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl space-y-3">
+            <EnvBadge env={env} />
+            <h1 className="font-display text-3xl font-semibold tracking-tight">{t("API e desenvolvedores")}</h1>
+            <p className="text-sm text-muted-foreground">{t("Crie chaves e webhooks para o seu sistema cobrar pela Wiize Core. Troque entre Teste e Produção no menu lateral.")}</p>
+            <code className="inline-block rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">{EXT_API_BASE}</code>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline"><a href="/desenvolvedores" target="_blank" rel="noreferrer"><BookOpen className="size-4" />{t("Documentação")}<ExternalLink className="size-3.5" /></a></Button>
+            {canManage && <Button onClick={() => { setName(""); setLiveOk(false); setAction({ kind: "create" }); }}><Plus className="size-4" />{t("Nova chave")}</Button>}
+          </div>
         </div>
       </section>
-      <AiPromptCards env={env} />
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-        {QUICK.map((c) => (
-          <button key={c.label} type="button" onClick={() => go(c.tab)} className="surface-panel flex items-center gap-2 p-3 text-left text-sm transition-colors hover:border-primary/40">
-            <c.icon className="size-4 text-primary" strokeWidth={1.8} />{t(c.label)}
-          </button>
-        ))}
-      </div>
 
       {revealed && (
-        <section className="surface-panel space-y-3 border-primary/40 p-5">
-          <h2 className="font-display text-base font-semibold">{t("Copie sua chave secreta agora")}</h2>
+        <section className="surface-panel space-y-3 border-primary/50 p-5">
+          <h2 className="flex items-center gap-2 font-display text-base font-semibold"><ShieldCheck className="size-4 text-primary" />{t("Copie sua chave secreta agora")}</h2>
           <p className="text-xs text-muted-foreground">{t("Ela aparece só esta vez. Guarde apenas no servidor do seu sistema, nunca no navegador ou no código do site.")}</p>
           <KeyRow label={t("Chave secreta")} value={revealed.secret} onCopy={copy} />
           <KeyRow label={t("Chave pública")} value={revealed.publicKey} onCopy={copy} />
@@ -116,118 +86,108 @@ function Page() {
         </section>
       )}
 
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="h-auto flex-wrap">
-          <TabsTrigger value="overview">{t("Visão geral")}</TabsTrigger>
-          <TabsTrigger value="start">{t("Primeiros passos")}</TabsTrigger>
-          <TabsTrigger value="keys">{t("Chaves de API")}</TabsTrigger>
-          <TabsTrigger value="docs">{t("Documentação")}</TabsTrigger>
-          <TabsTrigger value="services">{t("Serviços e checkout")}</TabsTrigger>
-          <TabsTrigger value="charges">{t("Cobranças")}</TabsTrigger>
-          <TabsTrigger value="subscriptions">{t("Assinaturas")}</TabsTrigger>
-          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
-          <TabsTrigger value="sandbox">Sandbox</TabsTrigger>
-          <TabsTrigger value="logs">{t("Logs e diagnóstico")}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          {env === "live" ? <ExtOverview /> : <p className="surface-panel p-4 text-xs text-muted-foreground">{t("Os números financeiros aparecem somente no ambiente de Produção.")}</p>}
-          <div className="surface-panel space-y-3 p-5 text-sm">
-            <p>{t("Com a Integração Externa, o seu sistema pede à Wiize Core para criar clientes e cobranças, e a Wiize Core avisa o seu sistema quando o pagamento acontece.")}</p>
-            <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
-              <li>{t("Chave secreta: fica só no servidor do seu sistema. Nunca no navegador.")}</li>
-              <li>{t("Chaves de teste só funcionam no ambiente de testes; chaves de produção, só com dinheiro real.")}</li>
-              <li>{t("A senha financeira nunca é usada pela API nem compartilhada com o sistema integrado.")}</li>
-              <li>{t("Sem monitoramento público de disponibilidade por enquanto: acompanhe suas chamadas em Logs e diagnóstico.")}</li>
-            </ul>
+      <section className="space-y-3">
+        <h2 className="font-display text-lg font-semibold">{t("Suas chaves")}</h2>
+        {q.isLoading ? <div className="skeleton-shimmer h-40 rounded-xl" /> : items.length === 0 ? (
+          <div className="surface-panel flex flex-col items-center gap-3 p-10 text-center">
+            <KeyRound className="size-8 text-primary" />
+            <p className="font-semibold">{t("Nenhuma chave neste ambiente")}</p>
+            <p className="max-w-md text-sm text-muted-foreground">{t("Crie a primeira chave para conectar o seu sistema. Depois cadastre o webhook nela.")}</p>
+            {canManage ? <Button onClick={() => setAction({ kind: "create" })}><Plus className="size-4" />{t("Nova chave")}</Button> : <p className="text-xs text-muted-foreground">{t("Somente o dono ou administrador pode criar chaves.")}</p>}
           </div>
-          <ExtAiGuide />
-        </TabsContent>
-        <TabsContent value="start"><GettingStarted env={env} onGo={go} /></TabsContent>
-        <TabsContent value="docs"><ApiReference /></TabsContent>
+        ) : items.map((i) => (
+          <article key={i.id} className="surface-panel grid gap-6 p-5 lg:grid-cols-2">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-base font-semibold">{i.name}</p>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${i.status === "active" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{t(STATUS_LABEL[i.status] ?? i.status)}</span>
+              </div>
+              {i.key && (
+                <div className="space-y-2">
+                  <Field label={t("Chave pública")} value={i.key.publicKey} onCopy={() => copy(i.key!.publicKey)} />
+                  <Field label={t("Chave secreta")} value={i.key.masked} />
+                </div>
+              )}
+              <dl className="grid grid-cols-2 gap-3 text-xs">
+                <div><dt className="text-muted-foreground">{t("Criada em")}</dt><dd>{formatDateTime(i.created_at)}</dd></div>
+                <div><dt className="text-muted-foreground">{t("Último uso")}</dt><dd>{i.last_used_at ? formatDateTime(i.last_used_at) : t("Nunca")}</dd></div>
+              </dl>
+              <div className="flex flex-wrap gap-1.5">{i.scopes.map((s) => <span key={s} className="rounded-md bg-muted px-2 py-0.5 text-[11px]">{t(SCOPE_LABEL[s] ?? s)}</span>)}</div>
+              {canManage && (
+                <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+                  <Button size="sm" variant="outline" onClick={() => setAction({ kind: "rotate", id: i.id })}><RefreshCw className="size-4" />{t("Gerar nova chave")}</Button>
+                  <Button size="sm" variant="outline" onClick={() => void toggleStatus(i.id, i.status === "active" ? "suspended" : "active")}>{i.status === "active" ? <Pause className="size-4" /> : <Play className="size-4" />}{i.status === "active" ? t("Suspender") : t("Reativar")}</Button>
+                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => setAction({ kind: "revoke", id: i.id })}><Trash2 className="size-4" />{t("Revogar")}</Button>
+                </div>
+              )}
+            </div>
+            <div className="lg:border-l lg:border-border lg:pl-6"><ExtWebhooksPanel integrationId={i.id} canManage={canManage} /></div>
+          </article>
+        ))}
+      </section>
+
+      <Tabs defaultValue="services">
+        <TabsList className="h-auto flex-wrap">
+          <TabsTrigger value="services">{t("Serviços")}</TabsTrigger>
+          <TabsTrigger value="charges">{t("Cobranças")}</TabsTrigger>
+          {env === "test" && <TabsTrigger value="sandbox">{t("Simular pagamentos")}</TabsTrigger>}
+          <TabsTrigger value="logs">{t("Registros")}</TabsTrigger>
+        </TabsList>
         <TabsContent value="services"><ServicesTab /></TabsContent>
         <TabsContent value="charges"><ChargesTab env={env} /></TabsContent>
-        <TabsContent value="subscriptions"><ChargesTab env={env} recurringOnly simulate={env === "test"} /></TabsContent>
-        <TabsContent value="sandbox">
-          {env === "test" ? <ChargesTab env="test" simulate /> : <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Mude para Sandbox no menu lateral para simular pagamentos de teste.")}</p>}
-        </TabsContent>
+        {env === "test" && <TabsContent value="sandbox"><ChargesTab env="test" simulate /></TabsContent>}
         <TabsContent value="logs" className="space-y-4">
           <h3 className="text-sm font-semibold">{t("Chamadas à API")}</h3>
           <RequestLogs env={env} />
           <h3 className="text-sm font-semibold">{t("Entregas de webhooks")}</h3>
           <ExtLogs />
         </TabsContent>
-
-        <TabsContent value="webhooks" className="space-y-4">
-          <p className="text-xs text-muted-foreground">{t("A Wiize Core avisa o seu sistema quando algo acontece com uma cobrança criada pela API. Cada aviso vem assinado com o cabeçalho WiizePay-Signature.")}</p>
-          {items.filter((i) => i.status !== "revoked").length === 0 ? <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Crie uma integração primeiro.")}</p> : items.filter((i) => i.status !== "revoked").map((i) => (
-            <section key={i.id} className="surface-panel space-y-3 p-5">
-              <p className="font-semibold">{i.name}</p>
-              <ExtWebhooksPanel integrationId={i.id} canManage={Boolean(q.data?.canManage)} />
-            </section>
-          ))}
-        </TabsContent>
-
-        <TabsContent value="keys" className="space-y-4">
-          {q.data?.canManage && (
-            <section className="surface-panel space-y-4 p-5">
-              <h2 className="font-display text-base font-semibold">{t("Nova integração")}</h2>
-              <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Nome do seu sistema")} maxLength={80} />
-<EnvBadge env={env} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {(q.data.allScopes ?? []).map((s) => (
-                  <label key={s} className="flex items-center gap-2 rounded-md border border-border px-2.5 py-1 text-xs">
-                    <input type="checkbox" checked={scopes.includes(s)} onChange={(e) => setScopes((p) => (e.target.checked ? [...p, s] : p.filter((x) => x !== s)))} />
-                    {t(SCOPE_LABEL[s] ?? s)}
-                  </label>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground">{t("Nenhuma chave dá acesso a saldo, saques, contas bancárias ou configurações da empresa.")}</p>
-              <div className="max-w-xs space-y-1">
-                <label htmlFor="ext-fin-pass" className="text-xs font-medium">{t("Senha financeira")}</label>
-                <Input id="ext-fin-pass" type="password" autoComplete="off" value={finPass} onChange={(e) => setFinPass(e.target.value)} maxLength={128} />
-                <p className="text-[11px] text-muted-foreground">{t("Obrigatória para gerar chaves. A chave completa aparece uma única vez.")}</p>
-              </div>
-              <Button onClick={() => { if (env === "live" && !window.confirm(t("Criar uma chave de PRODUÇÃO? Ela processa cobranças reais."))) return; createM.mutate(); }} disabled={createM.isPending || name.trim().length < 2 || !scopes.length || !finPass}>{createM.isPending ? t("Criando…") : t("Criar integração")}</Button>
-            </section>
-          )}
-
-          {q.isLoading ? <div className="skeleton-shimmer h-24 rounded-xl" /> : items.length === 0 ? (
-            <p className="surface-panel p-5 text-sm text-muted-foreground">{t("Nenhuma integração criada ainda.")}</p>
-          ) : items.map((i) => (
-            <section key={i.id} className="surface-panel space-y-3 p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold">{i.name}</p>
-                  <Badge variant="secondary">{i.environment === "test" ? t("Teste") : t("Produção")}</Badge>
-                  <Badge variant={i.status === "active" ? "default" : "secondary"}>{t(STATUS_LABEL[i.status] ?? i.status)}</Badge>
-                </div>
-                <code className="text-[11px] text-muted-foreground">{i.id}</code>
-              </div>
-              {i.key && (
-                <dl className="grid gap-2 text-xs sm:grid-cols-2">
-                  <div><dt className="text-muted-foreground">{t("Chave pública")}</dt><dd className="flex items-center gap-2 font-mono break-all">{i.key.publicKey}<button className="text-primary" onClick={() => copy(i.key!.publicKey)}>{t("Copiar")}</button></dd></div>
-                  <div><dt className="text-muted-foreground">{t("Chave secreta")}</dt><dd className="font-mono">{i.key.masked}</dd></div>
-                </dl>
-              )}
-              <dl className="grid gap-2 text-xs sm:grid-cols-3">
-                <div><dt className="text-muted-foreground">{t("Criada em")}</dt><dd>{formatDateTime(i.created_at)}</dd></div>
-                <div><dt className="text-muted-foreground">{t("Último uso")}</dt><dd>{i.last_used_at ? formatDateTime(i.last_used_at) : t("Nunca")}</dd></div>
-                <div><dt className="text-muted-foreground">{t("Permissões")}</dt><dd>{i.scopes.map((s) => t(SCOPE_LABEL[s] ?? s)).join(", ")}</dd></div>
-              </dl>
-              {q.data?.canManage && i.status !== "revoked" && (
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" onClick={() => rotateM.mutate(i.id)} disabled={rotateM.isPending}>{t("Gerar nova chave")}</Button>
-                  <Button size="sm" variant="outline" onClick={() => statusM.mutate({ id: i.id, status: i.status === "active" ? "suspended" : "active" })}>{i.status === "active" ? t("Suspender") : t("Reativar")}</Button>
-                  <Button size="sm" variant="destructive" onClick={() => statusM.mutate({ id: i.id, status: "revoked" })}>{t("Revogar")}</Button>
-                </div>
-              )}
-            </section>
-          ))}
-        </TabsContent>
       </Tabs>
+
+      <SecureActionDialog
+        open={action?.kind === "create"} onOpenChange={(v) => !v && setAction(null)}
+        title={env === "live" ? t("Nova chave de Produção") : t("Nova chave de Teste")}
+        description={t("A chave completa aparece uma única vez. Guarde no servidor do seu sistema.")}
+        confirmLabel={t("Criar chave")} needsPassword
+        canConfirm={name.trim().length >= 2 && chosen.length > 0 && (env !== "live" || liveOk)}
+        onConfirm={async ({ password }) => { const r = await create({ data: { name: name.trim(), environment: env, scopes: chosen, financialPassword: password } }); setRevealed(r); setName(""); void refresh(); }}
+      >
+        <div className="space-y-1.5">
+          <label htmlFor="key-name" className="text-sm font-medium">{t("Nome do seu sistema")}</label>
+          <Input id="key-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} placeholder="Meu SaaS" />
+        </div>
+        <details className="rounded-md border border-border p-3 text-sm">
+          <summary className="cursor-pointer font-medium">{t("Permissões")} ({chosen.length}/{allScopes.length})</summary>
+          <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
+            {allScopes.map((s) => (
+              <label key={s} className="flex items-center gap-2 text-xs">
+                <input type="checkbox" checked={chosen.includes(s)} onChange={(e) => setScopes((e.target.checked ? [...chosen, s] : chosen.filter((x) => x !== s)))} />{t(SCOPE_LABEL[s] ?? s)}
+              </label>
+            ))}
+          </div>
+        </details>
+        {env === "live" && <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={liveOk} onChange={(e) => setLiveOk(e.target.checked)} />{t("Entendo que esta chave cria cobranças reais.")}</label>}
+      </SecureActionDialog>
+      <SecureActionDialog
+        open={action?.kind === "rotate"} onOpenChange={(v) => !v && setAction(null)}
+        title={t("Gerar nova chave")} description={t("A chave atual para de funcionar na hora.")} confirmLabel={t("Gerar nova chave")} needsPassword
+        onConfirm={async ({ password }) => { if (action?.kind !== "rotate") return; setRevealed(await rotate({ data: { id: action.id, financialPassword: password } })); void refresh(); }}
+      />
+      <SecureActionDialog
+        open={action?.kind === "revoke"} onOpenChange={(v) => !v && setAction(null)}
+        title={t("Revogar chave?")} description={t("Revogar é definitivo. O sistema conectado perde o acesso. Continuar?")} confirmLabel={t("Revogar")} destructive
+        onConfirm={async () => { if (action?.kind !== "revoke") return; await setStatus({ data: { id: action.id, status: "revoked" } }); toast.success(t("Integração atualizada.")); void refresh(); }}
+      />
+    </div>
+  );
+}
+
+function Field({ label, value, onCopy }: { label: string; value: string; onCopy?: () => void }) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+      <span className="w-28 shrink-0 text-xs text-muted-foreground">{label}</span>
+      <code className="min-w-0 flex-1 truncate text-xs">{value}</code>
+      {onCopy && <button type="button" onClick={onCopy} className="text-muted-foreground hover:text-foreground"><Copy className="size-3.5" /></button>}
     </div>
   );
 }
@@ -237,7 +197,7 @@ function KeyRow({ label, value, onCopy }: { label: string; value: string; onCopy
     <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/40 p-3">
       <span className="text-xs text-muted-foreground">{label}</span>
       <code className="flex-1 break-all text-xs">{value}</code>
-      <Button size="sm" variant="outline" onClick={() => onCopy(value)}>Copiar</Button>
+      <Button size="sm" variant="outline" onClick={() => onCopy(value)}><Copy className="size-3.5" /></Button>
     </div>
   );
 }
