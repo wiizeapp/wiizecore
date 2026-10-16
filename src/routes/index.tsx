@@ -48,7 +48,7 @@ function Landing() {
   return (
     <PublicPage>
       <main>
-        <section className="hero-payment relative overflow-hidden border-b border-border">
+        <section className="hero-payment relative overflow-hidden">
           <div className="section-shell relative z-10 flex flex-col items-center pb-5 pt-10 text-center sm:pt-12 lg:pt-14">
             <div>
               <h1 className="hero-title mx-auto mt-7 max-w-4xl text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold leading-[1.08]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
