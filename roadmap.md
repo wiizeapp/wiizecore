@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Simplificar lateral da documentação, isolar seu tema, atualizar logo/rodapé e uniformizar seletores; rolagem condicional ao abrir grupos do menu em telas pequenas.
+
 - [x] Separar Marca e Checkout na aparência; prévia dos lembretes lê logo/cor salvas com alternativa padrão Wiize; abas, salvamento/releitura da cor e link para Marca conferidos na conta conectada, cor original restaurada, 17 testes aprovados. Upload de nova logo não exercitado nesta conferência.
 - [ ] Aplicar marca nos e-mails Asaas: depende de confirmação de endpoint oficialmente suportado; não confundir com personalização da fatura.
 
