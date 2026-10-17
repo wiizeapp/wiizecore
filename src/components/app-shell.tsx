@@ -100,6 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const sidebarCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const groupScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => {
     if (["/financeiro", "/extrato", "/limites", "/antecipacao", "/multas-e-encargos"].some((path) => pathname.startsWith(path))) return ["financeiro"];
     if (["/cobrancas", "/lembrete-de-cobranca", "/cupons", "/coproducoes"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
@@ -182,6 +183,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   useEffect(() => () => {
     if (sidebarCloseTimer.current) clearTimeout(sidebarCloseTimer.current);
+    if (groupScrollTimer.current) clearTimeout(groupScrollTimer.current);
   }, []);
 
   const navLinkClass = (active: boolean, nested = false) =>
@@ -208,12 +210,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             const childActive = group.children.some((item) => pathname.startsWith(item.to));
             const expanded = sidebarExpanded && expandedGroups.includes(group.id);
             const active = childActive && !expanded;
-            return <div key={group.id}>
-              <button type="button" className={`${navLinkClass(active)} font-normal`} onClick={() => toggleGroup(group.id)} title={!sidebarExpanded ? ui(group.label) : undefined} aria-expanded={expanded}>
+            return <div key={group.id} data-sidebar-group>
+              <Button variant="ghost" type="button" className={`${navLinkClass(active)} font-normal`} onClick={() => toggleGroup(group.id)} title={!sidebarExpanded ? ui(group.label) : undefined} aria-expanded={expanded}>
                 <span className="sidebar-icon-slot"><group.icon className="sidebar-animated-icon" strokeWidth={1.8} /></span>
                 <span className="sidebar-item-label flex-1 text-left">{ui(group.label)}</span>
                 <ChevronRight className={`sidebar-group-chevron ${expanded ? "rotate-90" : ""}`} />
-              </button>
+              </Button>
               <div className={`sidebar-submenu ${expanded ? "is-open" : ""}`}><div><div className="sidebar-submenu-inner">
                 {children.map((item) => <Link key={item.to} to={item.to} className={navLinkClass(pathname.startsWith(item.to), true)}><span className="sidebar-icon-slot"><item.icon className="sidebar-animated-icon" strokeWidth={1.8} /></span><span className="sidebar-item-label">{ui(item.label)}</span></Link>)}
               </div></div></div>
@@ -258,7 +260,24 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/painel" className="grid w-full place-items-start overflow-hidden" title="Wiize Core"><Brand compact={!sidebarExpanded} beta /></Link>
         </div>
         <div className="sidebar-brand-divider" aria-hidden="true" />
-        <nav className="app-sidebar-nav">
+        <nav className="app-sidebar-nav" onClickCapture={(event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const trigger = target.closest('button[aria-expanded="false"]');
+          const group = trigger?.closest<HTMLElement>("[data-sidebar-group]");
+          if (!group) return;
+          const nav = event.currentTarget;
+          if (groupScrollTimer.current) clearTimeout(groupScrollTimer.current);
+          groupScrollTimer.current = setTimeout(() => {
+            if (!group.isConnected || nav.scrollHeight <= nav.clientHeight) return;
+            const bounds = nav.getBoundingClientRect();
+            const content = group.getBoundingClientRect();
+            const delta = content.height > bounds.height - 16 || content.top < bounds.top + 8
+              ? content.top - bounds.top - 8
+              : content.bottom > bounds.bottom - 8 ? content.bottom - bounds.bottom + 8 : 0;
+            if (Math.abs(delta) > 1) nav.scrollBy({ top: delta, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+          }, 240);
+        }}>
           {pathname.startsWith("/nimda") ? <AdminNav expanded={sidebarExpanded} linkClass={navLinkClass} /> : <>
           <Link to="/painel" className={navLinkClass(pathname.startsWith("/painel"))} title={!sidebarExpanded ? "Dashboard" : undefined}>
             <span className="sidebar-icon-slot"><LayoutDashboard className="sidebar-animated-icon" strokeWidth={1.8} /></span>

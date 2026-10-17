@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { ArrowRight, BookOpen, Copy, FileText, KeyRound, Rocket, ShieldCheck, Sparkles, Webhook } from "lucide-react";
@@ -56,15 +56,14 @@ const QUICK = [
 function DocsPage() {
   const { t } = useTranslation("ui");
   const groups = GROUP_ORDER.filter((g) => SECTIONS.some((s) => s.group === g));
-  const [active, setActive] = useState(SECTIONS[0]!.id);
-  const navRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(SECTIONS[0]?.id ?? "guia-ia");
   useEffect(() => {
     let raf = 0;
     const update = () => {
       raf = 0;
-      let current = SECTIONS[0]!.id;
+      let current = "guia-ia";
       for (const s of SECTIONS) { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= 140) current = s.id; }
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = SECTIONS[SECTIONS.length - 1]!.id;
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = SECTIONS.at(-1)?.id ?? current;
       setActive(current);
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
@@ -72,14 +71,10 @@ function DocsPage() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
-  useEffect(() => {
-    const nav = navRef.current; const link = nav?.querySelector<HTMLElement>(`[data-doc="${active}"]`);
-    if (nav && link) { const top = link.offsetTop - nav.clientHeight / 2; nav.scrollTo({ top, behavior: "smooth" }); }
-  }, [active]);
   const activeGroup = SECTIONS.find((s) => s.id === active)?.group;
 
   return (
-    <PublicPage>
+    <PublicPage followTheme>
       <main className="bg-surface/45">
         <section className="border-b border-border bg-background">
           <div className="section-shell py-12 lg:py-16">
@@ -103,11 +98,11 @@ function DocsPage() {
 
         <div className="section-shell grid gap-8 py-10 lg:grid-cols-[16rem_minmax(0,1fr)] lg:py-14">
           <aside className="hidden lg:block">
-            <nav ref={navRef} aria-label={t("Índice")} className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-lg border border-border bg-card p-4 shadow-card">
+            <nav aria-label={t("Índice")} className="rounded-lg border border-border bg-card p-4 shadow-card">
               <p className="px-3 text-xs font-bold uppercase text-muted-foreground">{t("Acessos rápidos")}</p>
               <div className="mt-2 grid grid-cols-2 gap-1.5">
                 {QUICK.map((q) => (
-                  <a key={q.id} href={`#${q.id}`} className="flex flex-col gap-1 rounded-md border border-border p-2 text-xs font-medium transition-colors hover:border-primary/40 hover:bg-accent"><q.icon className="size-3.5 text-primary" />{t(q.label)}</a>
+                  <a key={q.id} href={`#${q.id}`} aria-current={active === q.id ? "location" : undefined} className={`flex items-center gap-2 rounded-md px-2 py-2.5 text-xs font-medium transition-colors hover:bg-accent ${active === q.id ? "bg-accent text-accent-foreground" : "text-muted-foreground"}`}><q.icon className="size-3.5 text-primary" />{t(q.label)}</a>
                 ))}
               </div>
               <div className="my-4 h-px bg-border" />
