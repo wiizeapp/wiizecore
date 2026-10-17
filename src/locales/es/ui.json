@@ -5470,5 +5470,11 @@
   "Cores do checkout": "Colores del checkout",
   "Prévia da marca no checkout": "Vista previa de la marca en el checkout",
   "Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.": "Esta vista previa usa tu marca guardada en Wiize Core. Los avisos enviados por Asaas mantienen la apariencia y los textos del proveedor.",
-  "Editar marca": "Editar marca"
+  "Editar marca": "Editar marca",
+  "Cartão de teste": "Tarjeta de prueba",
+  "Pagamento recusado": "Pago rechazado",
+  "Pagamento pendente (em análise)": "Pago pendiente (en análisis)",
+  "Qualquer validade futura e qualquer CVV de 3 dígitos. Não use um cartão real.": "Cualquier vencimiento futuro y cualquier CVV de 3 dígitos. No use una tarjeta real.",
+  "Pagar com cartão de teste": "Pagar con tarjeta de prueba",
+  "Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.": "Use una de las tarjetas de prueba de la documentación. No se aceptan tarjetas reales en el entorno de pruebas."
 }

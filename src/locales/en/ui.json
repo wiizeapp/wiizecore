@@ -5441,5 +5441,11 @@
   "Cores do checkout": "Checkout colors",
   "Prévia da marca no checkout": "Checkout brand preview",
   "Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.": "This preview uses your brand saved in Wiize Core. Notifications sent by Asaas retain the provider's appearance and text.",
-  "Editar marca": "Edit brand"
+  "Editar marca": "Edit brand",
+  "Cartão de teste": "Test card",
+  "Pagamento recusado": "Payment declined",
+  "Pagamento pendente (em análise)": "Payment pending (under review)",
+  "Qualquer validade futura e qualquer CVV de 3 dígitos. Não use um cartão real.": "Any future expiry date and any 3-digit CVV. Do not use a real card.",
+  "Pagar com cartão de teste": "Pay with test card",
+  "Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.": "Use one of the test cards from the documentation. Real cards are not accepted in the test environment."
 }
