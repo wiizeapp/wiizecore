@@ -71,7 +71,7 @@ function Page() {
       {isError ? <ErrorState onRetry={() => refetch()} /> : isLoading || !data ? <ListSkeleton rows={3} /> : (
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           <section className="surface-panel px-5 sm:px-6">
-            {!data.configured ? <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/25 bg-primary/5 p-4"><CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" /><div><p className="font-semibold">{ui("Padrão da Asaas já ativo")}</p><p className="mt-1 text-sm text-muted-foreground">{ui("Novas cobranças usam multa de 2% e juros de 1% ao mês. Revise e salve para confirmar ou personalize abaixo.")}</p></div></div> : null}
+            {!data.configured ? <div className="mt-5 flex items-start gap-3 rounded-lg border border-primary/25 bg-primary/5 p-4"><CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" /><div><p className="font-semibold">{ui("Padrão da Wiize já ativo")}</p><p className="mt-1 text-sm text-muted-foreground">{ui("Novas cobranças usam multa de 2% e juros de 1% ao mês. Revise e salve para confirmar ou personalize abaixo.")}</p></div></div> : null}
             {block(<Percent className="size-4" />, "Aplicar multa por atraso", "Valor único cobrado após o vencimento.", f.fineEnabled, (v) => setF({ ...f, fineEnabled: v }), f.fine, (v) => setF({ ...f, fine: v }), "%", "Percentual da multa")}
             {block(<TrendingUp className="size-4" />, "Aplicar juros por atraso", "Juros proporcionais aos dias de atraso.", f.interestEnabled, (v) => setF({ ...f, interestEnabled: v }), f.interest, (v) => setF({ ...f, interest: v }), "% ao mês", "Juros")}
             <div className="py-5"><Button onClick={() => mut.mutate()} disabled={!data.canEdit || mut.isPending}>{mut.isPending ? "Salvando…" : "Salvar configurações"}</Button>
@@ -84,7 +84,7 @@ function Page() {
               <div className="flex justify-between"><dt>Juros</dt><dd className="numeric-tabular font-semibold">{data.interestEnabled ? `${pct(data.interestPercent)}% ao mês` : "Desativados"}</dd></div>
             </dl>
             <p className="mt-4 text-xs text-muted-foreground">Essas condições valem para novas cobranças. Cobranças já criadas mantêm as condições do momento em que foram geradas. Se o serviço tiver multa/juros próprios, eles têm prioridade.</p>
-            {!data.configured ? <p className="mt-3 rounded-md bg-primary/10 p-3 text-xs text-foreground">{ui("Configuração inicial da Asaas aplicada automaticamente. Salve para registrar sua confirmação.")}</p> : null}
+            {!data.configured ? <p className="mt-3 rounded-md bg-primary/10 p-3 text-xs text-foreground">{ui("Configuração inicial aplicado automaticamente. Salve para registrar sua confirmação.")}</p> : null}
           </aside>
         </div>
       )}
