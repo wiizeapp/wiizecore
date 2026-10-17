@@ -129,8 +129,20 @@ export const getSandboxCheckout = createServerFn({ method: "GET" })
 
 /** O comprador de teste escolhe o resultado; só existe no simulador. */
 export const paySandboxCheckout = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ token: z.string().regex(/^sbx_[A-Za-z0-9_-]{20,80}$/), outcome: z.enum(["approve", "decline", "pending"]) }).parse(d))
+  .inputValidator((d: unknown) => z.object({
+    token: z.string().regex(/^sbx_[A-Za-z0-9_-]{20,80}$/),
+    outcome: z.enum(["approve", "decline", "pending"]).optional(),
+    // Só cartões fictícios de teste; nunca gravado nem registrado.
+    testCard: z.string().max(25).optional(),
+  }).refine((v) => v.outcome || v.testCard, "outcome_required").parse(d))
   .handler(async ({ data }) => {
+    let outcome = data.outcome;
+    if (data.testCard !== undefined) {
+      const { testCardOutcome } = await import("./ext-test-cards");
+      const fromCard = testCardOutcome(data.testCard);
+      if (!fromCard) throw new Error("Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.");
+      outcome = fromCard;
+    }
     const d = await db();
     const { data: r } = await d.from("ext_sandbox_charges").select("id, tenant_id, expires_at").eq("public_token", data.token).maybeSingle();
     if (!r || new Date(r.expires_at) < new Date()) throw new Error("Link de teste indisponível.");
@@ -138,7 +150,7 @@ export const paySandboxCheckout = createServerFn({ method: "POST" })
     const rl = await consumeRateLimit(d, { scope: "sbx_checkout", identifier: r.id, maxAttempts: 20, windowSeconds: 300, blockSeconds: 300 });
     if (!rl.allowed) throw new Error("Muitas tentativas. Aguarde alguns minutos.");
     const { simulateSandbox } = await import("./ext-sandbox.server");
-    const res = await simulateSandbox(d, r.tenant_id, r.id, data.outcome, "checkout");
+    const res = await simulateSandbox(d, r.tenant_id, r.id, outcome!, "checkout");
     if (!res.ok) throw new Error("Esta cobrança de teste não pode mais receber essa simulação.");
     return { status: res.row.status };
   });

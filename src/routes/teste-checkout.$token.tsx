@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { TEST_CARDS } from "@/lib/ext-test-cards";
 import { getSandboxCheckout, paySandboxCheckout } from "@/lib/ext-portal.functions";
 import { formatBRL as formatCurrency } from "@/lib/format";
 
@@ -35,10 +37,11 @@ function SandboxCheckout() {
   const [busy, setBusy] = useState(false);
   const d = q.data;
 
-  const act = async (outcome: "approve" | "decline" | "pending") => {
+  const [card, setCard] = useState("");
+  const act = async (outcome?: "approve" | "decline" | "pending") => {
     setBusy(true);
     try {
-      await pay({ data: { token, outcome } });
+      await pay({ data: outcome ? { token, outcome } : { token, testCard: card } });
       await q.refetch();
     } catch (e) {
       toast.error(e instanceof Error ? t(e.message) : t("Algo deu errado."));
@@ -68,6 +71,18 @@ function SandboxCheckout() {
             </dl>
             {d.expired ? <p className="text-sm text-muted-foreground">{t("Este link de teste expirou.")}</p> : ["awaiting_payment", "pending"].includes(d.status) ? (
               <div className="grid gap-2">
+                {(!d.method || d.method === "credit_card") && (
+                  <form className="space-y-2 rounded-lg border border-border p-3" onSubmit={(e) => { e.preventDefault(); void act(); }}>
+                    <label htmlFor="sbx-card" className="text-xs font-medium">{t("Cartão de teste")}</label>
+                    <Input id="sbx-card" inputMode="numeric" autoComplete="off" placeholder="4242 4242 4242 4242" value={card}
+                      onChange={(e) => setCard(e.target.value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 "))} />
+                    <ul className="space-y-0.5 text-[11px] text-muted-foreground">
+                      {TEST_CARDS.map((c) => <li key={c.number}><button type="button" className="font-mono underline-offset-2 hover:underline" onClick={() => setCard(c.number)}>{c.number}</button> · {t(c.label)}</li>)}
+                    </ul>
+                    <p className="text-[11px] text-muted-foreground">{t("Qualquer validade futura e qualquer CVV de 3 dígitos. Não use um cartão real.")}</p>
+                    <Button type="submit" className="w-full" disabled={busy || card.replace(/\D/g, "").length !== 16}>{t("Pagar com cartão de teste")}</Button>
+                  </form>
+                )}
                 <Button disabled={busy} onClick={() => act("approve")}>{t("Simular pagamento aprovado")}</Button>
                 <div className="grid grid-cols-2 gap-2">
                   {d.status === "awaiting_payment" && <Button variant="outline" disabled={busy} onClick={() => act("pending")}>{t("Simular pendente")}</Button>}
