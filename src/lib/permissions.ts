@@ -4,7 +4,7 @@ export const PERMISSION_MODULES = [
   { id: "customers", label: "Clientes", actions: ["view", "create", "edit", "delete", "export"] },
   { id: "services", label: "Serviços", actions: ["view", "create", "edit", "delete"] },
   { id: "contracts", label: "Contratos", actions: ["view", "create", "edit", "delete"] },
-  { id: "charges", label: "Central de Recebimentos", actions: ["view", "create", "edit", "delete", "export"] },
+  { id: "charges", label: "Central de Cobranças", actions: ["view", "create", "edit", "delete", "export"] },
   { id: "dunning", label: "Lembrete inteligente", actions: ["view", "manage"] },
   { id: "coupons", label: "Cupons & Incentivos", actions: ["view", "create", "edit", "archive"] },
   { id: "documents", label: "Arquivos e documentos", actions: ["view", "create", "delete"] },
