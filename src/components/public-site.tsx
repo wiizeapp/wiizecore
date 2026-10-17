@@ -182,7 +182,7 @@ function useRevealOnScroll() {
   }, []);
 }
 
-/** Páginas públicas são sempre escuras: força o documento inteiro (fundo, rolagem) no tema escuro e restaura ao sair. */
+/** Public pages stay dark unless opted into the saved theme; restore the document on exit. */
 function usePublicDarkDocument(followTheme: boolean) {
   const [dark, setDark] = useState(true);
   useEffect(() => {
