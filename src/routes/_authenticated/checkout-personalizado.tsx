@@ -188,8 +188,18 @@ function Page() {
 
           </div>
           <div hidden={section !== "marca"}><EditorSection icon={Building2} title={ui("Marca")} description={ui("Sua logo e cor principal identificam sua empresa no checkout e na prévia dos avisos.")}>
-            <div className="flex min-h-28 items-center justify-center rounded-lg border border-dashed border-border bg-muted/20 p-4">
-              {a.logoUrl ? <img src={a.logoUrl} alt="Logo da empresa" className="max-h-20 max-w-[280px] object-contain" /> : <Brand />}
+            <div className="overflow-hidden rounded-lg border border-border">
+              <div data-testid="brand-background-preview" className="flex min-h-52 items-center justify-center px-6 py-10 transition-colors motion-reduce:transition-none" style={{ background: a.brandColor }}>
+                {a.logoUrl ? <img src={a.logoUrl} alt="Logo da empresa" className="max-h-24 max-w-full object-contain sm:max-w-[320px]" /> : <Brand size="lg" color={readableOn(a.brandColor)} accentColor={readableOn(a.brandColor)} />}
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-background px-4 py-4 sm:px-5">
+                <div className="flex items-center gap-3"><Palette className="size-4 shrink-0 text-muted-foreground" /><Label htmlFor="brand-color" className="text-sm font-semibold">{ui("Cor principal da marca")}</Label></div>
+                <label className="relative flex h-11 cursor-pointer items-center gap-3 overflow-hidden rounded-md border border-border bg-card px-3 transition-colors hover:border-primary focus-within:ring-2 focus-within:ring-ring">
+                  <span className="size-6 rounded border border-border" style={{ background: a.brandColor }} />
+                  <span className="font-mono text-xs uppercase">{a.brandColor}</span>
+                  <input id="brand-color" type="color" value={a.brandColor} onChange={(event) => setA((previous) => withBrandColor(previous, event.target.value))} className="absolute inset-0 size-full cursor-pointer opacity-0" />
+                </label>
+              </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
               <Button asChild variant="outline" className="h-10"><label className="cursor-pointer"><UploadCloud className="size-4" />{upload.isPending ? "Otimizando…" : "Enviar imagem"}<input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => { const file = event.target.files?.[0]; if (file) upload.mutate(file); event.target.value = ""; }} /></label></Button>
@@ -205,18 +215,8 @@ function Page() {
                 <Button key={value} type="button" size="sm" variant={a.logoMode === value ? "default" : "outline"} onClick={() => set("logoMode", value)}>{label}</Button>
               ))}
             </div>
-            <div className="space-y-4 border-t border-border pt-5">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><Palette className="size-4" /></span>
-                  <div className="space-y-1"><Label htmlFor="brand-color" className="text-sm font-semibold">{ui("Cor principal da marca")}</Label><p className="max-w-md text-xs leading-5 text-muted-foreground">{ui("A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.")}</p></div>
-                </div>
-                <label className="relative flex h-12 shrink-0 cursor-pointer items-center gap-3 overflow-hidden rounded-lg border border-border bg-background px-3 transition-colors hover:border-primary focus-within:ring-2 focus-within:ring-ring">
-                  <span className="size-7 rounded-md border border-border" style={{ background: a.brandColor }} />
-                  <span className="font-mono text-sm uppercase">{a.brandColor}</span>
-                  <input id="brand-color" type="color" value={a.brandColor} onChange={(event) => setA((previous) => withBrandColor(previous, event.target.value))} className="absolute inset-0 size-full cursor-pointer opacity-0" />
-                </label>
-              </div>
+            <div className="space-y-2 border-t border-border pt-4">
+              <p className="text-xs leading-5 text-muted-foreground">{ui("A cor principal também é aplicada aos botões do checkout. Os demais detalhes ficam na aba Checkout.")}</p>
               <p className="text-xs leading-5 text-muted-foreground">{ui("E-mails enviados pelo Asaas mantêm a aparência do provedor. Salvar aqui não altera a marca desses e-mails.")}</p>
             </div>
           </EditorSection></div>
