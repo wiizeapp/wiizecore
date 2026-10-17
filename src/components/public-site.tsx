@@ -142,12 +142,12 @@ export function PublicFooter() {
   );
 }
 
-export function PublicPage({ children }: { children: React.ReactNode }) {
+export function PublicPage({ children, followTheme = false }: { children: React.ReactNode; followTheme?: boolean }) {
     useLanguageBootstrap();
   useRevealOnScroll();
-  usePublicDarkDocument();
+  const dark = usePublicDarkDocument(followTheme);
   const { t } = useTranslation("footer");
-  return <div className={`dark min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
+  return <div className={`${dark ? "dark" : ""} min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
 /** Revela seções e cartões após o hero, sem animar o conteúdo interno. */
 function useRevealOnScroll() {
@@ -183,13 +183,31 @@ function useRevealOnScroll() {
 }
 
 /** Páginas públicas são sempre escuras: força o documento inteiro (fundo, rolagem) no tema escuro e restaura ao sair. */
-function usePublicDarkDocument() {
+function usePublicDarkDocument(followTheme: boolean) {
+  const [dark, setDark] = useState(true);
   useEffect(() => {
     const root = document.documentElement;
     const hadDark = root.classList.contains("dark");
     const prevScheme = root.style.colorScheme;
-    root.classList.add("dark");
-    root.style.colorScheme = "dark";
-    return () => { root.classList.toggle("dark", hadDark); root.style.colorScheme = prevScheme; };
-  }, []);
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const update = () => {
+      const choice = window.localStorage.getItem("wiize-theme");
+      const isDark = !followTheme || (choice !== "light" && (choice !== "system" || media.matches));
+      setDark(isDark);
+      root.classList.toggle("dark", isDark);
+      root.style.colorScheme = isDark ? "dark" : "light";
+    };
+    update();
+    window.addEventListener("wiize-theme-change", update);
+    window.addEventListener("storage", update);
+    media.addEventListener("change", update);
+    return () => {
+      window.removeEventListener("wiize-theme-change", update);
+      window.removeEventListener("storage", update);
+      media.removeEventListener("change", update);
+      root.classList.toggle("dark", hadDark);
+      root.style.colorScheme = prevScheme;
+    };
+  }, [followTheme]);
+  return dark;
 }

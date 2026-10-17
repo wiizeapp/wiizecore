@@ -23,7 +23,7 @@ export function ThemeToggle() {
   if (!mounted) return <div className="h-8 w-[94px]" aria-hidden="true" />;
 
   return (
-    <div className="inline-flex h-8 items-center overflow-hidden rounded-md border border-sidebar-border bg-sidebar-accent/45 p-0.5 animate-fade-in" role="radiogroup" aria-label="Tema da interface">
+    <div className="inline-flex h-8 shrink-0 items-center overflow-hidden rounded-md border border-sidebar-border bg-sidebar-accent/45 animate-fade-in" role="radiogroup" aria-label="Tema da interface">
       {options.map((option) => {
         const active = theme === option.value;
         return (
@@ -37,8 +37,8 @@ export function ThemeToggle() {
             aria-label={ui(option.label)}
             title={option.title}
             className={cn(
-              "relative size-7 rounded-[5px] text-muted-foreground transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-              active && "border border-sidebar-border bg-background text-foreground shadow-sm hover:bg-background",
+              "relative h-full w-7 rounded-none text-muted-foreground transition-colors duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              active && "bg-background text-foreground hover:bg-background",
             )}
             onClick={() => {
               void setTheme(option.value);

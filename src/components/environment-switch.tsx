@@ -5,6 +5,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useTranslation } from "react-i18next";
 import { setDevEnv, useDevEnv, type DevEnv } from "@/lib/dev-environment";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const OPTIONS: { value: DevEnv; title: string; label: string; icon: typeof Radio }[] = [
   { value: "test", title: "Sandbox — Testes", label: "Teste integrações e fluxos de pagamento sem movimentar dinheiro real.", icon: FlaskConical },
@@ -37,11 +38,12 @@ export function EnvironmentSwitch() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-    <div className="inline-flex h-8 items-center overflow-hidden rounded-md border border-sidebar-border bg-sidebar-accent/45 p-0.5" role="radiogroup" aria-label={t("Ambiente da API")}>
+    <div className="inline-flex h-8 shrink-0 items-center overflow-hidden rounded-md border border-sidebar-border bg-sidebar-accent/45" role="radiogroup" aria-label={t("Ambiente da API")}>
       {OPTIONS.map((o) => {
         const active = env === o.value;
         return (
-          <button
+          <Button
+            variant="ghost"
             key={o.value}
             type="button"
             role="radio"
@@ -49,13 +51,13 @@ export function EnvironmentSwitch() {
             title={`${t(o.title)} — ${t(o.label)}`}
             onClick={() => choose(o.value)}
             className={cn(
-              "inline-flex h-7 items-center gap-1 whitespace-nowrap rounded-[5px] px-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-sidebar-accent-foreground",
-              active && "border border-sidebar-border bg-background text-foreground shadow-sm",
+              "inline-flex h-full items-center gap-1 whitespace-nowrap rounded-none px-1.5 py-0 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              active && "bg-background text-foreground hover:bg-background",
             )}
           >
             <o.icon className={cn("size-3.5", active && o.value === "test" && "text-warning", active && o.value === "live" && "text-primary")} strokeWidth={1.8} />
             {o.value === "test" ? t("Teste") : t("Prod.")}
-          </button>
+          </Button>
         );
       })}
     </div>

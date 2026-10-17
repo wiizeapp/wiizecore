@@ -80,7 +80,7 @@ export function AdminNav({ expanded: sidebarExpanded, linkClass }: { expanded: b
         const active = g.items.some((i) => i.id === current);
         const isOpen = open.includes(g.id);
         return (
-          <div key={g.id}>
+          <div key={g.id} data-sidebar-group>
             <button type="button" className={`${linkClass(active)} font-normal`} onClick={() => toggle(g.id)} title={!sidebarExpanded ? g.label : undefined} aria-expanded={isOpen}>
               <span className="sidebar-icon-slot"><g.icon className="sidebar-animated-icon" strokeWidth={1.8} /></span>
               <span className="sidebar-item-label flex-1 text-left">{g.label}</span>
