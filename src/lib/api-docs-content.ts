@@ -145,7 +145,7 @@ export const DOC_SECTIONS: DocSection[] = [
   ] },
   { id: "testes", group: "Testes", title: "Testes (sandbox)", blocks: [
     { kind: "p", text: "Com uma chave sk_test_, o checkout abre uma página de teste. Ali, ou em API e desenvolvedores → Testes, você simula pagamento, vencimento, recusa, estorno, renovação e cancelamento. Os mesmos webhooks são enviados, com livemode: false." },
-    { kind: "p", text: "Cartões de teste: na página de checkout de teste, digite um dos números abaixo com qualquer validade futura e qualquer CVV de 3 dígitos. O resultado dispara o webhook correspondente (payment.paid, payment.failed ou payment.pending). Cartões reais são recusados no ambiente de testes." },
+    { kind: "p", text: "Cartões de teste: na página de checkout de teste, digite um dos números abaixo com qualquer validade futura e qualquer CVV de 3 dígitos. O resultado dispara o mesmo webhook de um pagamento real: aprovado envia o aviso de pagamento recebido; recusado e pendente enviam payment.updated com o novo status. Cartões reais são recusados no ambiente de testes." },
     { kind: "table", head: ["Número do cartão", "Resultado"], rows: [
       ["4242 4242 4242 4242", "Pagamento aprovado"],
       ["4000 0000 0000 0002", "Pagamento recusado"],
