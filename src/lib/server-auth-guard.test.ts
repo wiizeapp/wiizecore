@@ -20,6 +20,9 @@ const PUBLIC_ALLOWED: Record<string, string[]> = {
   "activation-handoff.functions.ts": ["verifyActivationHandoff", "getMobileActivation", "saveMobileActivation", "uploadMobileActivationDocument", "finishActivationHandoff"],
   // Checkout de teste: protegido pelo código sbx_ do link; só lê/altera registros do simulador.
   "ext-portal.functions.ts": ["getSandboxCheckout", "paySandboxCheckout"],
+  // Link aberto de serviço: comprador sem login; protegido pelo código do link, limite por IP,
+  // preço vindo só da versão salva e sessão curta de 2 h. Criar/listar links continua exigindo login.
+  "service-checkout.functions.ts": ["getServiceCheckout", "startServiceCheckout", "chooseServiceCheckoutMethod"],
   // Janelas embutidas da Wiize: protegidas por passe de uso único + sessão curta de 30 min.
 };
 
