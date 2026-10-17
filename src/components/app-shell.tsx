@@ -61,7 +61,7 @@ const managementItems = [
 ] satisfies Array<{ to: AppPath; label: string; icon: typeof Users }>;
 
 const chargesGroup = { id: "cobrancas", label: "Cobranças", icon: Receipt, children: [
-  { to: "/cobrancas", label: "Central de Recebimentos", icon: Receipt },
+  { to: "/cobrancas", label: "Central de Cobranças", icon: Receipt },
   { to: "/lembrete-de-cobranca", label: "Lembrete inteligente", icon: MessagesSquare },
   { to: "/cupons", label: "Cupons & Incentivos", icon: TicketPercent },
   { to: "/coproducoes", label: "Coproduções", icon: Handshake },
