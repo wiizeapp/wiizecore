@@ -85,7 +85,7 @@ function MobileMenu() {
             {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
           </div> : null}
           {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
-          <SheetClose asChild><Button asChild className="mt-3"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button></SheetClose>
+          <SheetClose asChild><Button asChild className="mt-3 font-bold"><Link to="/auth" preload="intent"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button></SheetClose>
         </nav>
       </SheetContent>
     </Sheet>
@@ -104,7 +104,7 @@ export function PublicHeader() {
         </nav>
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
-          <Button asChild className="hidden sm:inline-flex"><Link to="/auth" preload="intent">{t("access")} <ArrowRight /></Link></Button>
+          <Button asChild className="hidden font-bold sm:inline-flex"><Link to="/auth" preload="intent"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button>
           <MobileMenu />
 
         </div>

@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Aplicar strong explícito com peso 700 nos botões de cadastro e acesso; manter relatório Lovable interno e apresentar erros sem detalhes técnicos, incluindo a página de falha geral em português.
+
 - [x] Reforçar botões públicos (700), usar WiizeCore na configuração compartilhada, home e rodapé, espaçar links do navbar e alinhar SEO da home à abertura atual; conferido de 320 a 1582px sem rolagem lateral, menu Recursos e menu celular funcionais, sem erros de execução. SEO chega ao site publicado na próxima publicação.
 
 - [x] Restaurar caligrafia dos quatro textos flutuantes só no computador, reforçar títulos/ações principais e ajustar largura do menu, abertura e Como funciona para Manrope.
