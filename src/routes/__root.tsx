@@ -17,6 +17,7 @@ import "@/i18n";
 import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/cookies/cookie-consent";
+import { Button } from "@/components/ui/button";
 import { ConfirmDialogHost } from "@/components/confirm-dialog";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 import i18n, { DEFAULT_LANG } from "@/i18n";
@@ -139,26 +140,22 @@ function ErrorComponent({ error, reset }: import("@tanstack/react-router").Error
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">{ui("Esta página não carregou")}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Algo deu errado do nosso lado. Tente novamente ou volte ao início.
+          {ui("Algo deu errado do nosso lado. Tente novamente ou volte ao início.")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="font-bold"
           >
             
             {ui("Tentar novamente")}
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            
-            {ui("Voltar ao início")}
-          </a>
+          </Button>
+          <Button asChild variant="outline" className="font-bold">
+            <a href="/">{ui("Voltar ao início")}</a>
+          </Button>
         </div>
       </div>
     </div>
