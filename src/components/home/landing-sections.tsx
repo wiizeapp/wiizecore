@@ -151,7 +151,7 @@ export function HowItWorksSection() {
       <div className="section-shell pb-20 pt-14 lg:pb-28 lg:pt-20">
         <div className="mx-auto max-w-4xl text-center">
           <p className="section-kicker">{ui("Como funciona")}</p>
-          <h2 className="mt-3 text-[1.25rem] font-bold leading-tight min-[390px]:text-2xl sm:text-4xl lg:text-[2.75rem]">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine whitespace-nowrap">{ui("em 4 passos.")}</span></h2>
+          <h2 className="mt-3 text-[1.0625rem] font-bold leading-tight min-[390px]:text-xl sm:text-4xl lg:text-[2.75rem]">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine whitespace-nowrap">{ui("em 4 passos.")}</span></h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
         <ol className="how-steps mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
