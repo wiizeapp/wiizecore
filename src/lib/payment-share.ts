@@ -1,4 +1,4 @@
-import paymentPreview from "@/assets/payment-link-preview.jpg.asset.json";
+import paymentPreview from "@/assets/payment-link-preview.png.asset.json";
 import { DEPLOY_CONFIG } from "@/lib/deploy-config";
 
 /** Imagem pública exclusiva dos links de pagamento, sem dados do cliente. */
