@@ -53,7 +53,7 @@ function ResourcesMenu() {
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) scheduleClose(); }}
       onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}
     >
-      <Button variant="ghost" size="sm" className="gap-1.5 text-sm font-medium" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{t("resources")} <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} /></Button>
+      <Button variant="ghost" size="sm" className="gap-2 text-sm font-bold" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{t("resources")} <ChevronDown className={`transition-transform ${open ? "rotate-180" : ""}`} /></Button>
       {/* Ponte invisível entre o botão e o painel para o mouse não "cair" no vão. */}
       {open ? <div className="absolute left-0 top-full h-12 w-full" aria-hidden="true" /> : null}
       <div className={`fixed left-1/2 top-[62px] w-[calc(min(80rem,100vw)_-_2.5rem)] -translate-x-1/2 pt-3 transition-opacity duration-200 sm:top-[64px] lg:top-[72px] lg:w-[calc(min(80rem,100vw)_-_4rem)] ${open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`} onMouseEnter={show}>
@@ -98,7 +98,7 @@ export function PublicHeader() {
     <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-2.5 sm:pt-3 lg:px-8">
       <div className="flex h-[3.25rem] w-full items-center justify-between gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-2 shadow-float backdrop-blur-xl sm:gap-3 sm:px-3 lg:h-[3.75rem] lg:px-4">
         <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" className="max-[380px]:gap-1.5 max-[380px]:[&_img]:size-7 max-[380px]:[&>span]:text-lg" /></Link>
-        <nav className="hidden min-w-0 items-center justify-center gap-0 xl:flex [&_a]:px-2 [&_button]:px-2" aria-label={t("mainNav")}>
+        <nav className="hidden min-w-0 items-center justify-center gap-2 xl:flex 2xl:gap-3 [&>a]:px-3 [&>div>button]:px-3" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button>)}
         </nav>
@@ -127,7 +127,7 @@ export function PublicFooter() {
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/sobre" className="hover:text-foreground">Sobre a Wiize Core</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
+            <Link to="/sobre" className="hover:text-foreground">{t("about")}</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
           </div>
         </div>
         <div>

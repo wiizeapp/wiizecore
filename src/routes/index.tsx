@@ -18,7 +18,7 @@ function PortalVisual() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => pageHead({ path: "/", title: "Wiize Core | Plataforma de Pagamentos e Gestão Unificada", description: "Conheça a Wiize Core, uma plataforma que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.", jsonLd: organizationJsonLd() }),
+  head: () => pageHead({ path: "/", title: "WiizeCore | Pagamentos inteligentes para empresas de serviços", description: "Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma. Conheça a WiizeCore e simplifique a operação da sua empresa.", jsonLd: organizationJsonLd() }),
   component: Landing,
 });
 
@@ -36,7 +36,7 @@ const featureGroups: Array<{ icon: typeof Wallet; tag: string; title: string; vi
 ];
 
 const faqs = [
-  ["O que é a Wiize Core?", "Uma plataforma para empresas de serviços organizarem clientes, serviços, cobranças, recebimentos, contratos, notas fiscais e o financeiro em um só lugar."],
+  ["O que é a WiizeCore?", "Uma plataforma para empresas de serviços organizarem clientes, serviços, cobranças, recebimentos, contratos, notas fiscais e o financeiro em um só lugar."],
   ["Quais formas de pagamento estão disponíveis?", "Pix, Pix Automático, boleto e cartão de crédito, conforme a configuração da sua conta."],
   ["Posso criar contratos e enviar para assinatura?", "Sim. Você cria o contrato, envia para assinatura eletrônica e acompanha quem já assinou."],
   ["Posso emitir nota fiscal?", "Sim, notas fiscais de serviço conforme a configuração fiscal da sua empresa."],
@@ -106,7 +106,7 @@ function Landing() {
 
         <section className="section-shell grid gap-12 py-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:py-20"><div><p className="section-kicker">{ui("Perguntas frequentes")}</p><h2 className="mt-3 text-3xl font-semibold sm:text-4xl">{ui("Informação clara")} <span className="hero-shine">{ui("antes de começar.")}</span></h2></div><Accordion type="single" collapsible>{faqs.map(([question = "",answer = ""], index) => <AccordionItem key={question} value={`faq-${index}`}><AccordionTrigger className="text-base">{ui(question)}</AccordionTrigger><AccordionContent className="pr-8 leading-6 text-muted-foreground">{ui(answer)}</AccordionContent></AccordionItem>)}</Accordion></section>
 
-        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a Wiize Core")}>
+        <section className="premium-cta relative isolate overflow-hidden border-y border-border px-5 py-16 text-center sm:px-10 sm:py-20 lg:py-24" aria-label={ui("Comece com a WiizeCore")}>
               <div className="premium-cta-glow absolute inset-0 -z-10" aria-hidden="true" />
               <div className="premium-cta-grid absolute inset-0 -z-10" aria-hidden="true" />
               <div className="mx-auto max-w-3xl">
@@ -126,11 +126,11 @@ function Landing() {
 function ProductPreview() {
   const { t: ui } = useTranslation("ui");
   return (
-    <div className="home-dashboard-stage relative mt-5 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro Wiize Core")}>
+    <div className="home-dashboard-stage relative mt-5 w-full flex-1 sm:mt-12" aria-label={ui("Demonstração do painel financeiro WiizeCore")}>
       <div className="home-dashboard-window relative z-10 mx-auto h-full w-full overflow-hidden rounded-t-2xl bg-card text-left">
         <img
           src={heroDashboard}
-          alt={ui("Painel financeiro da Wiize Core com saldo, indicadores e gráfico de recebimentos")}
+          alt={ui("Painel financeiro da WiizeCore com saldo, indicadores e gráfico de recebimentos")}
           className="h-full w-full object-cover object-top max-sm:w-[165%] max-sm:max-w-none max-sm:object-left-top"
           loading="eager"
           fetchPriority="high"

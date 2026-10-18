@@ -6,7 +6,7 @@ export const SITE_URL = DEPLOY_CONFIG.publicSiteUrl.replace(/\/$/, "");
 export const absoluteUrl = (path: string) => new URL(path, SITE_URL + "/").href;
 
 export const BRAND_DESCRIPTION =
-  "A Wiize Core é uma plataforma de software que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços. O processamento dos pagamentos é feito por infraestrutura de pagamentos de terceiros (Asaas).";
+  "A WiizeCore é uma plataforma de software que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços. O processamento dos pagamentos é feito por infraestrutura de pagamentos de terceiros (Asaas).";
 
 type Crumb = { name: string; path: string };
 type PageHeadInput = {
