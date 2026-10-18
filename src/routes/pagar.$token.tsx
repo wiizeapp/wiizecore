@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { paymentShareMeta } from "@/lib/payment-share";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
@@ -28,7 +29,8 @@ export const Route = createFileRoute("/pagar/$token")({
       { property: "og:title", content: "Pagamento seguro — Wiize Core" },
       { property: "og:description", content: "Finalize seu pagamento com Pix, boleto ou cartão." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...paymentShareMeta,
     ],
   }),
   loader: async ({ params, context }) => {

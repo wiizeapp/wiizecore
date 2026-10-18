@@ -10,6 +10,8 @@ export const DEPLOY_CONFIG = {
     "https://project--8edc01d5-8e9e-4cd9-bcf6-085c3e825be4-dev.lovable.app",
   /** Endereço público da API e da documentação para desenvolvedores. */
   apiSiteUrl: "https://wiizecore.com",
+  /** Origem pública que serve a imagem compartilhada dos links de pagamento. */
+  paymentShareAssetOrigin: "https://wiizecore.lovable.app",
   /** Endereço que recebe avisos enviados ao Wiize CRM. */
   wiizeWebhookUrl:
     "https://wgokhkawjdxsmvfuhazb.supabase.co/functions/v1/wiize-pay-webhook",

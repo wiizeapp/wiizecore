@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { paymentShareMeta } from "@/lib/payment-share";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -20,7 +21,8 @@ export const Route = createFileRoute("/checkout/$token")({
       { property: "og:title", content: "Checkout — Wiize Core" },
       { property: "og:description", content: "Informe seus dados, escolha a forma de pagamento e conclua sua contratação com segurança." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      ...paymentShareMeta,
       { name: "robots", content: "noindex" },
     ],
   }),
