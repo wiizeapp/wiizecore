@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Reforçar botões públicos, padronizar o nome WiizeCore, espaçar links do navbar e alinhar SEO da home à abertura atual; conferir computador e celular.
+
 - [x] Restaurar caligrafia dos quatro textos flutuantes só no computador, reforçar títulos/ações principais e ajustar largura do menu, abertura e Como funciona para Manrope.
 
 - [x] Aplicar Manrope aos textos e títulos do site, preservando a imagem e a fonte da logo; manter fontes próprias de assinaturas e códigos.
