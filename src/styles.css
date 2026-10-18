@@ -843,6 +843,48 @@ html::-webkit-scrollbar-thumb {
   animation: hero-shine 9s linear infinite;
 }
 
+/* Botões do site público: ao passar o mouse, o botão só sobe um pouco
+   e um feixe fino de luz cruza a superfície, igual ao destaque do título. */
+.public-site button[data-variant="default"],
+.public-site a[data-variant="default"] {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.public-site button[data-variant="default"]::after,
+.public-site a[data-variant="default"]::after {
+  position: absolute;
+  inset: -60% auto -60% -40%;
+  width: 42%;
+  transform: translateX(-230%) rotate(18deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, white 16%, transparent) 34%,
+    color-mix(in oklab, white 72%, transparent) 50%,
+    color-mix(in oklab, white 16%, transparent) 66%,
+    transparent 100%
+  );
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.public-site button[data-variant="default"]:hover::after,
+.public-site a[data-variant="default"]:hover::after {
+  opacity: 1;
+  transform: translateX(330%) rotate(18deg);
+  transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site button[data-variant="default"]::after,
+  .public-site a[data-variant="default"]::after {
+    display: none;
+  }
+}
+
 @utility section-kicker {
   display: inline-flex;
   width: fit-content;
