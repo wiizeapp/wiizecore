@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Aplicar Manrope aos textos e títulos do site, preservando a imagem e a fonte da logo; manter fontes próprias de assinaturas e códigos.
+
 - [x] Usar a imagem enviada exclusivamente nas prévias de WhatsApp dos links de pagamento e serviço; imagem pública HTTPS em PNG (1200×675, 287 KB) conferida no HTML das duas rotas, home/contratos/documentação inalterados, compilação OK. Disponível nos links publicados após a próxima publicação.
 
 - [x] Simplificar lateral da documentação sem scroll interno, respeitar claro/escuro/sistema apenas nessa página pública, atualizar logo/rodapé e uniformizar seletores; rolagem condicional do menu conferida na conta conectada a 1274×776, documentação a 390×844 sem transbordamento, sem erros de execução.

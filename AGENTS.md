@@ -9,7 +9,8 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Visible product identity, including the separately styled product label, comes from `src/lib/brand-config.ts`; preserve existing technical identifiers, URLs and persisted integration names when changing the display brand. Why: rebranding must not break integrations or historical records.
+- Display identity comes from `src/lib/brand-config.ts`; preserve technical identifiers, URLs and integration names. Why: rebranding must not break integrations/history.
+- Keep brand and content font tokens separate; retain code/signature fonts. Why: typography changes must preserve the wordmark and functional formats.
 - Official financial-provider URLs and channels live in `src/lib/financial-provider.ts`; shared branding/support render through `src/components/financial-provider.tsx`. Why: keep checkout, public site and help consistent without modifying official seals.
 - Operações financeiras são autorizadas no servidor, isoladas por empresa, auditadas e idempotentes; valores monetários usam Decimal/NUMERIC.
 - Asaas usa subcontas/split; liquidação só após confirmação do provedor; antecipação segue `docs/antecipacao.md`.
