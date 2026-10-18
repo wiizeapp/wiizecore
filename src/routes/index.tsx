@@ -18,7 +18,7 @@ function PortalVisual() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => pageHead({ path: "/", title: "Wiize Core | Plataforma de Pagamentos e Gestão Unificada", description: "Conheça a Wiize Core, uma plataforma que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.", jsonLd: organizationJsonLd() }),
+  head: () => pageHead({ path: "/", title: "WiizeCore | Pagamentos inteligentes para empresas de serviços", description: "Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma. Conheça a WiizeCore e simplifique a operação da sua empresa.", jsonLd: organizationJsonLd() }),
   component: Landing,
 });
 

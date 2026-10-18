@@ -170,12 +170,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wiize Core" },
+      { title: "WiizeCore" },
       { name: "description", content: "Pagamentos e gestão financeira para prestadores de serviços." },
-      { property: "og:title", content: "Wiize Core" },
+      { property: "og:title", content: "WiizeCore" },
       { property: "og:description", content: "Pagamentos e gestão financeira para prestadores de serviços." },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Wiize Core" },
+      { property: "og:site_name", content: "WiizeCore" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [

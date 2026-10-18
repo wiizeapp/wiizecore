@@ -235,7 +235,7 @@
 
 /* Checkout: faixa do topo com cor própria e texto legível calculado automaticamente. */
 .public-site main h1, .public-site main h2 { font-weight: 700; }
-.public-site [data-variant="default"] { font-weight: 700; }
+.public-site [data-variant] { font-weight: 700; }
 
 @utility checkout-header {
   --foreground: var(--checkout-header-foreground);
