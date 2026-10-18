@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Reforçar botões públicos, padronizar o nome WiizeCore, espaçar links do navbar e alinhar SEO da home à abertura atual; conferir computador e celular.
+- [x] Reforçar botões públicos (700), usar WiizeCore na configuração compartilhada, home e rodapé, espaçar links do navbar e alinhar SEO da home à abertura atual; conferido de 320 a 1582px sem rolagem lateral, menu Recursos e menu celular funcionais, sem erros de execução. SEO chega ao site publicado na próxima publicação.
 
 - [x] Restaurar caligrafia dos quatro textos flutuantes só no computador, reforçar títulos/ações principais e ajustar largura do menu, abertura e Como funciona para Manrope.
 
