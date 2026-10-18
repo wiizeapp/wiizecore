@@ -146,3 +146,5 @@
 - [x] Reduzir o espaçamento interno da barra superior pública (altura 84→72 px no computador, 72→60 px no celular) e o recorte do menu "Recursos"; computador e celular conferidos, sem texto apertado e sem sobreposição do painel, compilação OK.
 
 - [x] Barra superior mais compacta ainda: altura 72→60 px no computador e 60→52 px no celular, laterais e topo do cabeçalho mais justos; menu "Recursos" reposicionado e conferido no navegador sem sobreposição, compilação OK.
+
+- [x] Botões do site: tirar o halo verde do hover, manter só a subida leve (2px) e fazer um feixe fino de luz atravessar o botão, como no destaque do título; travessia, elevação e ausência de halo conferidas no navegador, compilação OK.
