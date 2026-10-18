@@ -184,7 +184,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Outfit:wght@500;600;700&family=Dancing+Script:wght@600&family=Great+Vibes&family=Allura&family=Satisfy&family=Homemade+Apple&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Outfit:wght@500;600;700&family=Caveat:wght@600;700&family=Dancing+Script:wght@600&family=Great+Vibes&family=Allura&family=Satisfy&family=Homemade+Apple&display=swap",
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],

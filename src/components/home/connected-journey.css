@@ -21,6 +21,9 @@ main > section:has(+ .connected-journey) { border-bottom-width: 0; }
 .connected-journey-stage-payment { top: 18px; right: -1%; animation-delay: -1.5s; }
 .connected-journey-stage-documents { top: 232px; right: 0; animation-delay: -4.5s; }
 .connected-journey-stage h3 { font-family: var(--font-hand); font-size: 1.875rem; font-weight: 700; line-height: 1.15; color: var(--journey-foreground); }
+@media (min-width: 1024px) {
+  .connected-journey-stage h3 { font-family: var(--font-calligraphy); }
+}
 .connected-journey-stage-details h3, .connected-journey-stage-contract h3 { text-align: left; }
 .connected-journey-stage-payment h3, .connected-journey-stage-documents h3 { text-align: right; }
 .connected-journey-link { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: 27px minmax(0, 1fr) 46px; align-items: center; gap: .75rem; width: 600px; max-width: 56%; min-height: 80px; padding: .7rem .7rem .7rem 1.5rem; border: 1px solid transparent; border-radius: 999px; background: linear-gradient(var(--journey-surface),var(--journey-surface)) padding-box, var(--journey-border-gradient) border-box; box-shadow: var(--journey-link-shadow); }

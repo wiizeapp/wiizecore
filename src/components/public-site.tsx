@@ -71,7 +71,7 @@ function MobileMenu() {
   const [resourcesOpen, setResourcesOpen] = useState(false);
   return (
     <Sheet open={open} onOpenChange={(value) => { setOpen(value); if (!value) setResourcesOpen(false); }}>
-      <SheetTrigger asChild><Button variant="ghost" size="icon" className="lg:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
+      <SheetTrigger asChild><Button variant="ghost" size="icon" className="xl:hidden" aria-label={t("openMenu")}><Menu /></Button></SheetTrigger>
       <SheetContent side="right" className="dark inset-0 h-[100dvh] w-full max-w-none overflow-y-auto border-0 bg-background text-foreground sm:max-w-none">
         <SheetHeader className="text-left">
           <SheetTitle className="sr-only">{t("menuTitle")}</SheetTitle>
@@ -96,9 +96,9 @@ export function PublicHeader() {
   const { t } = useNavLabels();
   return (
     <header className="relative z-40 mx-auto w-full max-w-[80rem] px-5 pt-2.5 sm:pt-3 lg:px-8">
-      <div className="grid h-[3.25rem] w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-2 shadow-float backdrop-blur-xl sm:gap-3 sm:px-3 lg:h-[3.75rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-4">
+      <div className="flex h-[3.25rem] w-full items-center justify-between gap-2 rounded-[var(--radius-xl)] border border-border/70 bg-background/85 px-2 shadow-float backdrop-blur-xl sm:gap-3 sm:px-3 lg:h-[3.75rem] lg:px-4">
         <Link to="/" aria-label={t("home")} className="flex shrink-0 items-center justify-self-start"><Brand size="lg" className="max-[380px]:gap-1.5 max-[380px]:[&_img]:size-7 max-[380px]:[&>span]:text-lg" /></Link>
-        <nav className="hidden items-center justify-self-center gap-1 lg:flex" aria-label={t("mainNav")}>
+        <nav className="hidden min-w-0 items-center justify-center gap-0 xl:flex [&_a]:px-2 [&_button]:px-2" aria-label={t("mainNav")}>
           <ResourcesMenu />
           {publicLinks.map((item) => <Button key={item.to} asChild variant="ghost" size="sm" className="text-sm"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button>)}
         </nav>
@@ -147,7 +147,7 @@ export function PublicPage({ children, followTheme = false }: { children: React.
   useRevealOnScroll();
   const dark = usePublicDarkDocument(followTheme);
   const { t } = useTranslation("footer");
-  return <div className={`${dark ? "dark" : ""} min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
+  return <div className={`public-site ${dark ? "dark" : ""} min-h-screen bg-background text-foreground`}><PublicHeader />{children}<PublicFooter /><Button asChild size="icon" className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-float sm:bottom-7 sm:right-7" aria-label={t("support")}><a href={SUPPORT_URL} target="_blank" rel="noreferrer"><MessageCircle className="size-5" /></a></Button></div>;
 }
 /** Revela seções e cartões após o hero, sem animar o conteúdo interno. */
 function useRevealOnScroll() {

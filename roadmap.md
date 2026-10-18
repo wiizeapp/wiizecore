@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Restaurar caligrafia dos quatro textos flutuantes só no computador, reforçar títulos/ações principais e ajustar largura do menu, abertura e Como funciona para Manrope.
+
 - [x] Aplicar Manrope aos textos e títulos do site, preservando a imagem e a fonte da logo; manter fontes próprias de assinaturas e códigos.
 
 - [x] Usar a imagem enviada exclusivamente nas prévias de WhatsApp dos links de pagamento e serviço; imagem pública HTTPS em PNG (1200×675, 287 KB) conferida no HTML das duas rotas, home/contratos/documentação inalterados, compilação OK. Disponível nos links publicados após a próxima publicação.
