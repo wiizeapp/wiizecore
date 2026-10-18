@@ -28,6 +28,7 @@
   --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-brand: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-hand: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-calligraphy: "Caveat", "Segoe Print", cursive;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -233,6 +234,9 @@
 }
 
 /* Checkout: faixa do topo com cor própria e texto legível calculado automaticamente. */
+.public-site main h1, .public-site main h2 { font-weight: 700; }
+.public-site [data-variant="default"] { font-weight: 700; }
+
 @utility checkout-header {
   --foreground: var(--checkout-header-foreground);
   --muted-foreground: var(--checkout-header-muted);

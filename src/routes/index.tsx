@@ -51,7 +51,7 @@ function Landing() {
         <section className="hero-payment relative overflow-hidden">
           <div className="section-shell relative z-10 flex flex-col items-center pb-8 pt-10 text-center sm:pt-12 lg:pt-14">
             <div>
-              <h1 className="hero-title mx-auto mt-7 max-w-4xl text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold leading-[1.08]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
+              <h1 className="hero-title mx-auto mt-7 max-w-5xl text-lg font-bold leading-[1.15] min-[390px]:text-[1.375rem] sm:text-[2.75rem] lg:text-[3.25rem]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
               <p className="mx-auto mt-5 max-w-xl text-balance text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.")}</p>
               <div className="mt-7 flex flex-col items-center gap-2.5"><Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }}>{ui("Crie sua conta grátis agora")} <ArrowRight className="size-4" /></Link></Button><p className="text-[11px] font-medium text-muted-foreground sm:text-xs"><strong className="font-semibold">{ui("Sem mensalidade")}</strong>. {ui("Aprovação rápida")}</p></div>
             </div>
@@ -65,7 +65,7 @@ function Landing() {
         <ComparisonSection />
 
         <section data-reveal="features" className="section-shell py-20 lg:py-28" aria-label={ui("Funcionalidades")}>
-          <div className="mx-auto max-w-2xl text-center"><h2 className=" text-3xl font-semibold sm:text-5xl">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
+          <div className="mx-auto max-w-4xl text-center"><h2 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-[2.75rem]">{ui("Tudo para cobrar e receber")} <span className="hero-shine">{ui("seus serviços.")}</span></h2><p className="mt-4 text-base leading-7 text-muted-foreground">{ui("Do contrato ao dinheiro na conta, com as formas de pagamento que seu cliente prefere.")}</p></div>
           <div className="mt-14 space-y-14 lg:space-y-20">
             {featureGroups.map((group, index) => (
               <article key={group.tag} data-reveal={index % 2 === 0 ? "left" : "right"} className="grid overflow-hidden rounded-lg bg-card shadow-float lg:min-h-[32rem] lg:grid-cols-2 lg:items-stretch">

@@ -20,9 +20,9 @@ function useUi() {
 export function SectionIntro({ eyebrow, title, accent, text, center = false }: { eyebrow?: string; title: string; accent?: string; text?: string; center?: boolean }) {
   const ui = useUi();
   return (
-    <div className={center ? "mx-auto max-w-2xl text-center" : "max-w-xl"}>
+    <div className={center ? "mx-auto max-w-4xl text-center" : "min-w-0 max-w-xl"}>
       {eyebrow ? <p className="section-kicker">{ui(eyebrow)}</p> : null}
-      <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-[2.6rem]">
+      <h2 className="mt-3 text-3xl font-bold leading-tight sm:text-[2.5rem]">
         {ui(title)}{accent ? <> <span className="hero-shine">{ui(accent)}</span></> : null}
       </h2>
       {text ? <p className="mt-4 text-base leading-7 text-muted-foreground">{ui(text)}</p> : null}
@@ -149,9 +149,9 @@ export function HowItWorksSection() {
   return (
     <section className="border-y border-border bg-surface">
       <div className="section-shell pb-20 pt-14 lg:pb-28 lg:pt-20">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <p className="section-kicker">{ui("Como funciona")}</p>
-          <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine">{ui("em 4 passos.")}</span></h2>
+          <h2 className="mt-3 text-[1.0625rem] font-bold leading-tight min-[390px]:text-xl sm:text-4xl lg:text-[2.75rem]">{ui("Da primeira cobrança ao dinheiro na conta")} <span className="hero-shine whitespace-nowrap">{ui("em 4 passos.")}</span></h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Sem planilhas e sem conferir extrato: cada passo alimenta o próximo automaticamente.")}</p>
         </div>
         <ol className="how-steps mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
