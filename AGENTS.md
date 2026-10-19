@@ -40,3 +40,4 @@
 - Read subdirectories' scoped `AGENTS.md` before edits.
 - Public illustration and attribution rules live in `src/components/AGENTS.md`. Why: scoped ownership.
 - Help Center content lives in `src/lib/help-content.ts` (no fee values; fee/settlement widgets read live config) and suggestions in `feature_suggestions` via `help-center.functions.ts` (admin notes in a separate admin-only table). Why: docs never drift from checkout rates.
+- Browser analytics goes only through `src/lib/analytics` (normalized paths, param filter, consent-gated; GTM present → dataLayer only). Why: one source per event, no PII/token leaks; see docs/analytics.md.
