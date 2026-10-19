@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
 const PATTERNS = { gtm_id: /^GTM-[A-Z0-9]{4,12}$/, ga4_id: /^G-[A-Z0-9]{4,15}$/, meta_pixel_id: /^[0-9]{6,20}$/ };
 
 export function AdminTracking() {
+  const { t: ui } = useTranslation("ui");
   const qc = useQueryClient();
   const settings = useQuery({
     queryKey: ["admin-tracking"],
@@ -68,6 +70,9 @@ export function AdminTracking() {
         <div className="space-y-1.5"><Label>Google Tag Manager</Label><Input placeholder="GTM-XXXXXX" value={form.gtm_id} onChange={(e) => setForm((f) => ({ ...f, gtm_id: e.target.value }))} /></div>
         <div className="space-y-1.5"><Label>Pixel do Meta</Label><Input placeholder="123456789012345" value={form.meta_pixel_id} onChange={(e) => setForm((f) => ({ ...f, meta_pixel_id: e.target.value }))} /></div>
       </div>
+      {form.gtm_id.trim() && form.ga4_id.trim() ? (
+        <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">{ui("Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.")}</p>
+      ) : null}
       <Button onClick={save} disabled={saving || settings.isLoading}>{saving ? "Salvando…" : "Salvar"}</Button>
 
       <div className="border-t border-border pt-4">
