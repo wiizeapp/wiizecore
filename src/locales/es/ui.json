@@ -5479,5 +5479,6 @@
   "Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.": "Use una de las tarjetas de prueba de la documentación. No se aceptan tarjetas reales en el entorno de pruebas.",
   "Boleto recorrente": "Boleto recurrente",
   "Mesma taxa do à vista · taxa fixa em cada cobrança": "Misma tarifa que al contado · tarifa fija en cada cobro",
-  "Cartão recorrente": "Tarjeta recurrente"
+  "Cartão recorrente": "Tarjeta recurrente",
+  "Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.": "Con GTM configurado, el sitio envía todo solo por GTM y no carga GA4 directamente, para no contar doble. Configura GA4 dentro de GTM."
 }

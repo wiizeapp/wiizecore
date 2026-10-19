@@ -85,7 +85,7 @@ function MobileMenu() {
             {resourceLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="h-auto justify-start py-2.5"><Link to={item.to} preload="intent"><item.icon className="size-4 text-primary" />{res(item.key)[0]}</Link></Button></SheetClose>)}
           </div> : null}
           {publicLinks.map((item) => <SheetClose key={item.to} asChild><Button asChild variant="ghost" className="justify-start"><Link to={item.to} preload="intent" activeProps={{ className: "bg-accent text-accent-foreground", "aria-current": "page" }}>{t(item.key)}</Link></Button></SheetClose>)}
-          <SheetClose asChild><Button asChild className="mt-3 font-bold"><Link to="/auth" preload="intent"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button></SheetClose>
+          <SheetClose asChild><Button asChild className="mt-3 font-bold"><Link to="/auth" preload="intent" data-analytics-event="cta_clicked" data-analytics-name="access" data-analytics-location="mobile_menu"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button></SheetClose>
         </nav>
       </SheetContent>
     </Sheet>
@@ -104,7 +104,7 @@ export function PublicHeader() {
         </nav>
         <div className="flex items-center justify-self-end gap-2 sm:gap-3">
           <LanguageSwitcher />
-          <Button asChild className="hidden font-bold sm:inline-flex"><Link to="/auth" preload="intent"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button>
+          <Button asChild className="hidden font-bold sm:inline-flex"><Link to="/auth" preload="intent" data-analytics-event="cta_clicked" data-analytics-name="access" data-analytics-location="navbar"><strong className="font-bold">{t("access")}</strong> <ArrowRight /></Link></Button>
           <MobileMenu />
 
         </div>
@@ -127,7 +127,7 @@ export function PublicFooter() {
         <div>
           <p className="text-sm font-semibold">{t("product")}</p>
           <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
-            <Link to="/sobre" className="hover:text-foreground">{t("about")}</Link><Link to="/taxas" className="hover:text-foreground">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
+            <Link to="/sobre" className="hover:text-foreground">{t("about")}</Link><Link to="/taxas" className="hover:text-foreground" data-analytics-event="navigation_clicked" data-analytics-name="pricing" data-analytics-location="footer">{tn("fees")}</Link><Link to="/prazos" className="hover:text-foreground">{tn("terms")}</Link><Link to="/seguranca-e-confianca" className="hover:text-foreground">{tn("security")}</Link><Link to="/ajuda" className="hover:text-foreground">Central de Ajuda</Link>
           </div>
         </div>
         <div>

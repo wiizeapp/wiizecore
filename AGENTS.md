@@ -14,7 +14,6 @@
 - Official financial-provider URLs and channels live in `src/lib/financial-provider.ts`; shared branding/support render through `src/components/financial-provider.tsx`. Why: keep checkout, public site and help consistent without modifying official seals.
 - Operações financeiras são autorizadas no servidor, isoladas por empresa, auditadas e idempotentes; valores monetários usam Decimal/NUMERIC.
 - Asaas usa subcontas/split; liquidação só após confirmação do provedor; antecipação segue `docs/antecipacao.md`.
-- Taxas e custos ficam nas configurações versionadas; cálculos em `src/lib/fee-math.ts`; totais em `src/lib/financial-summary.ts`.
 - Área interna usa `src/components/ds` e estados de `src/components/states`; nunca mostrar valores falsos durante carregamento.
 - PT-BR (default/fallback, BRL)/EN/ES in `src/locales`; every new visible PT string gets a PT-keyed entry in `{en,es}/ui.json` in the same change.
 - Wiize: OAuth+PKCE, APIs assinadas, tokens criptografados, isolado por empresa; `ui_theme` só visual, fora de state/PKCE/redirect/escopos.
@@ -32,11 +31,9 @@
 - Internal app mounts only after onboarding completes or is skipped; skips remain recorded for Admin insights.
 - Activation handoff uses a short-lived one-time token plus code; IP only audits/limits because mobile IP changes. Prevalidate document quality before private upload.
 - Payout data (`bank_accounts.sensitive_enc`) and KYC form (`payment_activations.form_enc`) are encrypted server-side; plaintext columns hold masks/safe keys only.
-- Environment URLs live in `src/lib/deploy-config.ts`; payment-only share metadata in `src/lib/payment-share.ts`. Why: isolate hosts and previews.
 - Todo aviso à empresa passa por `src/lib/notify.server.ts` (sininho + e-mail Resend via `src/lib/email.server.ts`), com chave de deduplicação em `email_outbox`. Why: falha de e-mail nunca quebra operação financeira.
 - Roles live in a separate table; server team access goes through `src/lib/member-access.server.ts` (active membership + `src/lib/permissions.ts`), max one active membership per user. Why: block ex-members and restricted roles server-side.
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
 
 - Read subdirectories' scoped `AGENTS.md` before edits.
-- Public illustration and attribution rules live in `src/components/AGENTS.md`. Why: scoped ownership.
-- Help Center content lives in `src/lib/help-content.ts` (no fee values; fee/settlement widgets read live config) and suggestions in `feature_suggestions` via `help-center.functions.ts` (admin notes in a separate admin-only table). Why: docs never drift from checkout rates.
+- Scoped rules: `src/components/AGENTS.md` (illustrations/attribution), `src/lib/AGENTS.md` (fees, help, env URLs, analytics).

@@ -244,7 +244,7 @@ export function ComparisonSection() {
       </div>
       <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-5 text-muted-foreground">{ui("Comparação entre usar apenas um link de pagamento e usar a Wiize Core. Os recursos dependem do plano e da configuração da sua conta.")}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }}>{ui("Começar agora")} <ArrowRight className="size-4" /></Link></Button>
+        <Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }} data-analytics-event="cta_clicked" data-analytics-name="signup" data-analytics-location="landing_final">{ui("Começar agora")} <ArrowRight className="size-4" /></Link></Button>
       </div>
     </section>
   );

@@ -53,7 +53,7 @@ function Landing() {
             <div>
               <h1 className="hero-title mx-auto mt-7 max-w-5xl text-lg font-bold leading-[1.15] min-[390px]:text-[1.375rem] sm:text-[2.75rem] lg:text-[3.25rem]"><span className="block">{ui("Pagamentos inteligentes")}</span>{" "}<span className="hero-shine block">{ui("para empresas de serviços.")}</span></h1>
               <p className="mx-auto mt-5 max-w-xl text-balance text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{ui("Pagamentos, contratos, assinaturas, notas fiscais e gestão financeira em uma única plataforma, criada para simplificar a operação da sua empresa.")}</p>
-              <div className="mt-7 flex flex-col items-center gap-2.5"><Button asChild size="lg" className="font-bold"><Link to="/auth" search={{ modo: "criar" }}><strong className="font-bold">{ui("Crie sua conta grátis agora")}</strong> <ArrowRight className="size-4" /></Link></Button><p className="text-[11px] font-medium text-muted-foreground sm:text-xs"><strong className="font-semibold">{ui("Sem mensalidade")}</strong>. {ui("Aprovação rápida")}</p></div>
+              <div className="mt-7 flex flex-col items-center gap-2.5"><Button asChild size="lg" className="font-bold"><Link to="/auth" search={{ modo: "criar" }} data-analytics-event="cta_clicked" data-analytics-name="signup" data-analytics-location="home_hero"><strong className="font-bold">{ui("Crie sua conta grátis agora")}</strong> <ArrowRight className="size-4" /></Link></Button><p className="text-[11px] font-medium text-muted-foreground sm:text-xs"><strong className="font-semibold">{ui("Sem mensalidade")}</strong>. {ui("Aprovação rápida")}</p></div>
             </div>
             <ProductPreview />
           </div>
@@ -113,7 +113,7 @@ function Landing() {
                 <h2 className="mt-5 text-2xl font-semibold leading-[1.2] text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-[1.15]">{ui("Você chegou no fim da página...")}</h2>
                 <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-base leading-8 text-muted-foreground sm:text-lg sm:leading-9">{ui("Se chegou até aqui, é porque tá interessado.\nEntão vai lá, faz logo o cadastro.")}</p>
                 <Button asChild size="lg" className="premium-cta-button mt-8 min-w-56 px-8 text-base">
-                  <Link to="/auth" search={{ modo: "criar" }}>{ui("Vai, clica nesse botão\n")} <ArrowRight className="h-4 w-4" /></Link>
+                  <Link to="/auth" search={{ modo: "criar" }} data-analytics-event="cta_clicked" data-analytics-name="signup" data-analytics-location="home_highlight">{ui("Vai, clica nesse botão\n")} <ArrowRight className="h-4 w-4" /></Link>
                 </Button>
               </div>
               <div className="premium-cta-edge absolute inset-x-[8%] bottom-0 h-px" aria-hidden="true" />
