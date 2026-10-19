@@ -132,7 +132,7 @@ function FeesPage() {
         <section className="resource-hero relative overflow-hidden border-b border-border">
           <div className="section-shell relative z-10 flex flex-col items-center py-16 text-center lg:py-24">
             <span className="rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">{t("hero.eyebrow")}</span>
-            <h1 className="hero-title mt-6 max-w-4xl text-balance text-[1.75rem] font-semibold leading-tight sm:text-6xl"><span className="block">{t("hero.lead")}</span><span className="hero-shine block">{t("hero.highlight")}</span></h1>
+            <h1 className="hero-title mt-6 max-w-4xl text-balance text-4xl font-semibold leading-tight sm:text-6xl"><span className="block">{t("hero.lead")}</span><span className="hero-shine block">{t("hero.highlight")}</span></h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">{t("hero.subtitle")}</p>
           </div>
         </section>

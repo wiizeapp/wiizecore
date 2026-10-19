@@ -88,7 +88,7 @@ export function ResourcePage({ config }: { config: ResourcePageConfig }) {
       <div className="section-shell relative z-10 flex flex-col items-center pb-5 pt-10 text-center sm:pt-12 lg:pt-14">
         <div>
           <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-primary backdrop-blur-xl"><Icon className="size-3.5" />{config.eyebrow}</span>
-          <h1 className="hero-title mx-auto mt-7 max-w-6xl text-[1.375rem] font-semibold leading-[1.08] sm:text-5xl lg:text-6xl"><span className="block">{config.title}</span><span className="hero-shine mt-1 block sm:whitespace-nowrap">{config.highlight}</span></h1>
+          <h1 className="hero-title mx-auto mt-7 max-w-6xl text-3xl [text-wrap:wrap] font-semibold leading-[1.08] sm:text-5xl lg:text-6xl"><span className="block">{config.title}</span><span className="hero-shine mt-1 block sm:whitespace-nowrap">{config.highlight}</span></h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">{config.description}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3"><Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }}>{ui("Começar agora")} <ArrowRight /></Link></Button><Button asChild size="lg" variant="outline"><Link to="/taxas">{ui("Ver taxas")}</Link></Button></div>
         </div>
