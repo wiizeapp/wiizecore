@@ -5476,5 +5476,8 @@
   "Pagamento pendente (em análise)": "Pago pendiente (en análisis)",
   "Qualquer validade futura e qualquer CVV de 3 dígitos. Não use um cartão real.": "Cualquier vencimiento futuro y cualquier CVV de 3 dígitos. No use una tarjeta real.",
   "Pagar com cartão de teste": "Pagar con tarjeta de prueba",
-  "Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.": "Use una de las tarjetas de prueba de la documentación. No se aceptan tarjetas reales en el entorno de pruebas."
+  "Use um dos cartões de teste da documentação. Cartões reais não são aceitos no ambiente de testes.": "Use una de las tarjetas de prueba de la documentación. No se aceptan tarjetas reales en el entorno de pruebas.",
+  "Boleto recorrente": "Boleto recurrente",
+  "Mesma taxa do à vista · taxa fixa em cada cobrança": "Misma tarifa que al contado · tarifa fija en cada cobro",
+  "Cartão recorrente": "Tarjeta recurrente"
 }

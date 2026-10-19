@@ -29,7 +29,9 @@
     "single": "Boleto al contado",
     "installments": "Boleto en cuotas",
     "perBoleto": "Por boleto",
-    "range": "Boleto de {{min}}x a {{max}}x"
+    "range": "Boleto de {{min}}x a {{max}}x",
+    "recurring": "Boleto recurrente",
+    "recurringHint": "Misma tarifa que al contado · tarifa fija en cada cobro"
   },
   "cards": {
     "title": "Tarjetas",
@@ -41,7 +43,9 @@
     "debit": "Débito",
     "creditSingle": "Crédito al contado",
     "creditRange": "Crédito de {{min}}x a {{max}}x",
-    "note": "La tarifa fija se cobra una sola vez por venta, incluso en compras en cuotas."
+    "note": "La tarifa fija se cobra una sola vez por venta, incluso en compras en cuotas.",
+    "recurring": "Tarjeta recurrente",
+    "recurringHint": "Misma tarifa que al contado · tarifa fija en cada cobro"
   },
   "services": {
     "title": "Servicios adicionales",

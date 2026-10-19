@@ -29,7 +29,9 @@
     "single": "Boleto à vista",
     "installments": "Boleto parcelado",
     "perBoleto": "Por boleto",
-    "range": "Boleto de {{min}}x a {{max}}x"
+    "range": "Boleto de {{min}}x a {{max}}x",
+    "recurring": "Boleto recorrente",
+    "recurringHint": "Mesma taxa do à vista · taxa fixa em cada cobrança"
   },
   "cards": {
     "title": "Cartões",
@@ -41,7 +43,9 @@
     "debit": "Débito",
     "creditSingle": "Crédito à vista",
     "creditRange": "Crédito de {{min}}x a {{max}}x",
-    "note": "A taxa fixa é cobrada uma única vez por venda, mesmo em compras parceladas."
+    "note": "A taxa fixa é cobrada uma única vez por venda, mesmo em compras parceladas.",
+    "recurring": "Cartão recorrente",
+    "recurringHint": "Mesma taxa do à vista · taxa fixa em cada cobrança"
   },
   "services": {
     "title": "Serviços adicionais",
