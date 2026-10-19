@@ -78,16 +78,26 @@ function RateLine({ label, hint, extra, row, promotional = false }: { label: str
   );
 }
 
-function TierList({ rows, singleLabel, rangeKey, promoteSingle = false }: { rows: FeeRow[]; singleLabel: string; rangeKey: string; promoteSingle?: boolean }) {
+function TierList({ rows, singleLabel, rangeKey, promoteSingle = false, recurringLabel }: { rows: FeeRow[]; singleLabel: string; rangeKey: string; promoteSingle?: boolean; recurringLabel?: string }) {
   const { t } = useTranslation("fees");
   return (
     <dl>
-      {rows.map((row) => (
-        <div key={row.id} className="flex min-h-16 flex-col justify-center gap-2 border-t border-border/60 py-4 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
-          <dt className="text-sm text-muted-foreground">{row.installment_max <= 1 ? singleLabel : t(rangeKey, { min: row.installment_min, max: row.installment_max })}</dt>
-           <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promoteSingle && row.installment_max === 1} /></dd>
-        </div>
-      ))}
+      {rows.flatMap((row) => {
+        const cls = "flex min-h-16 flex-col justify-center gap-2 border-t border-border/60 py-4 first:border-t-0 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between";
+        const items = [
+          <div key={row.id} className={cls}>
+            <dt className="text-sm text-muted-foreground">{row.installment_max <= 1 ? singleLabel : t(rangeKey, { min: row.installment_min, max: row.installment_max })}</dt>
+            <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} promotional={promoteSingle && row.installment_max === 1} /></dd>
+          </div>,
+        ];
+        if (recurringLabel && row.installment_max <= 1) items.push(
+          <div key={`${row.id}-rec`} className={cls}>
+            <dt className="text-sm text-muted-foreground">{recurringLabel}</dt>
+            <dd className="shrink-0 sm:max-w-[15rem]"><Rate row={row} /></dd>
+          </div>,
+        );
+        return items;
+      })}
       {!rows.length ? <p className="py-4 text-sm text-muted-foreground">{t("loading")}</p> : null}
     </dl>
   );
@@ -142,15 +152,13 @@ function FeesPage() {
               <RateLine label={t("pix.recurring")} hint={t("pix.perCharge")} row={pixRec} />
             </Block>
             <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")} noteClass="lg:min-h-[4.25rem]" footer={promoRate != null ? <PromoNote text={t("promo.stripBoleto", { rate: formatPercent(promoRate) })} /> : undefined}>
-              <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle />
-              <div className="mt-4 border-t border-border/60 pt-4"><RateLine label={t("boleto.recurring")} hint={t("boleto.recurringHint")} row={boletoSingle} /></div>
+              <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle recurringLabel={t("boleto.recurring")} />
             </Block>
             <Block icon={CreditCard} title={t("cards.title")} desc={t("cards.subtitle")} className="lg:col-span-2">
               <div className="grid gap-5">
                 <section className="rounded-lg border border-border/70 bg-background/35 p-4 sm:p-5">
                   <div className="mb-5 flex items-center gap-3 border-b border-border/60 pb-4"><span className="grid size-9 place-items-center rounded-md bg-primary/10 text-primary"><CreditCard className="size-4" /></span><div><h4 className="font-semibold">{t("cards.creditTitle")}</h4><p className="text-xs text-muted-foreground">{t("cards.desc", { max: maxCredit })}</p></div></div>
-                  <TierList rows={credit} singleLabel={t("cards.creditSingle")} rangeKey="cards.creditRange" />
-                  <div className="mt-4 border-t border-border/60 pt-4"><RateLine label={t("cards.recurring")} hint={t("cards.recurringHint")} row={credit.find((r) => r.installment_max <= 1)} /></div>
+                  <TierList rows={credit} singleLabel={t("cards.creditSingle")} rangeKey="cards.creditRange" recurringLabel={t("cards.recurring")} />
                   <p className="mt-5 flex gap-2 rounded-md bg-primary/10 px-3 py-2 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{t("cards.note")}</p>
                 </section>
               </div>
