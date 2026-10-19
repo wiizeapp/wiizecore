@@ -4,15 +4,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { buildUniversalAiGuide } from "@/lib/api-docs-content";
-import lovable from "@/assets/ai-tools/lovable.png.asset.json";
-import openai from "@/assets/ai-tools/openai.png.asset.json";
-import claude from "@/assets/ai-tools/claude.png.asset.json";
-import cursor from "@/assets/ai-tools/cursor.png.asset.json";
-import base44 from "@/assets/ai-tools/base44.png.asset.json";
-import gemini from "@/assets/ai-tools/gemini.png.asset.json";
-import replit from "@/assets/ai-tools/replit.png.asset.json";
 
-const LOGOS = [lovable, openai, claude, cursor, gemini, base44, replit];
+const LOGOS = ["lovable", "openai", "claude", "cursor", "gemini", "base44", "replit"];
 
 /** Logos sobrepostos em zigue-zague: cada um invade levemente o de baixo. */
 function LogoStack() {
@@ -20,8 +13,8 @@ function LogoStack() {
     <div className="relative h-44 w-36 shrink-0" aria-hidden>
       {LOGOS.map((l, i) => (
         <img
-          key={l.url}
-          src={l.url}
+          key={l}
+          src={`/images/ai-tools/${l}.png`}
           alt=""
           loading="lazy"
           className="absolute size-14 rounded-2xl border-2 border-card bg-card object-cover shadow-card"
