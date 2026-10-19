@@ -492,15 +492,15 @@ export function RemindersSection() {
 type Testimonial = { text: string; name: string; role: string };
 
 const TESTIMONIALS: Testimonial[] = [
-  { text: "Antes eu corria atrás de pagamento no fim do mês. Hoje a cobrança sai na data certa e eu só acompanho o que entrou.", name: "Marina Duarte", role: "Consultora financeira" },
-  { text: "Contrato assinado e cobrança no mesmo fluxo. A agência parou de perder prazo de pagamento.", name: "Rafael Nogueira", role: "Dono de agência digital" },
-  { text: "Coloquei as mensalidades no Pix Automático e parei de cobrar manualmente. O sistema lembra por mim.", name: "Cláudia Ferreira", role: "Advogada" },
-  { text: "Em duas semanas organizamos anos de cobranças atrasadas. Hoje sei exatamente quanto falta receber.", name: "Pedro Salgado", role: "Contador" },
-  { text: "Meus clientes pagam num checkout com a marca do meu escritório. Parece página própria.", name: "Juliana Prado", role: "Arquiteta" },
-  { text: "A senha financeira me deu confiança para delegar: minha equipe emite cobrança, mas não movimenta o dinheiro.", name: "André Luiz", role: "Dono de clínica" },
-  { text: "Notas fiscais e recebimentos na mesma tela aposentaram a planilha que eu mantia havia anos.", name: "Beatriz Camargo", role: "Mentora de negócios" },
-  { text: "Comecei num sábado e na segunda já estava cobrando. Não precisei treinar ninguém.", name: "Thiago Mendes", role: "Dono de software house" },
-  { text: "Sei quem pagou, quem atrasou e quanto vai entrar no mês. Nunca tive essa clareza antes.", name: "Vanessa Lopes", role: "Gestora de tráfego" },
+  { text: "O que mais gostei foi separar as cobranças pagas das que ainda estão em aberto. Parece um detalhe, mas era justamente o que me confundia na planilha quando eu ia fechar o mês.", name: "Marina Duarte", role: "Consultora financeira" },
+  { text: "Aqui na agência, contrato ficava numa pasta e cobrança em outra. Gostei de conseguir consultar os dois pelo cliente. Ainda ajustamos nossa organização, mas ficou mais fácil encontrar o que preciso.", name: "Rafael Nogueira", role: "Dono de agência digital" },
+  { text: "Uso mais para acompanhar os honorários mensais. Para mim, o melhor é conferir o que venceu sem abrir cada cadastro. A configuração inicial exigiu atenção, depois a rotina ficou bem mais simples.", name: "Cláudia Ferreira", role: "Advogada" },
+  { text: "Sou de conferir os detalhes antes de dar baixa em qualquer coisa. Gostei de ter o histórico de cada cobrança à mão. Não substitui minha conferência, mas ajuda bastante quando aparece alguma dúvida.", name: "Pedro Salgado", role: "Contador" },
+  { text: "Gostei da página de pagamento com a identidade do escritório. Eu envio o link junto com as informações do projeto e fica tudo mais organizado. Foi a parte que mais fez sentido para o meu trabalho.", name: "Juliana Prado", role: "Arquiteta" },
+  { text: "Minha prioridade era a recepção conseguir acompanhar as cobranças sem depender de mim para toda consulta. Achei a lista fácil de entender. Precisei organizar os cadastros primeiro, mas valeu o trabalho.", name: "André Luiz", role: "Dono de clínica" },
+  { text: "O portal foi o que mais me agradou. Faz sentido deixar recibos e contratos disponíveis para o cliente consultar. Prefiro isso a ficar procurando arquivo em conversa antiga toda vez que alguém pede.", name: "Beatriz Camargo", role: "Mentora de negócios" },
+  { text: "Comecei só pelas cobranças, sem mexer no resto da nossa rotina. Achei bom conseguir cadastrar os serviços e reaproveitar as informações. Ainda estou conhecendo as outras partes, mas essa já uso no dia a dia.", name: "Thiago Mendes", role: "Dono de software house" },
+  { text: "Abro a lista de cobranças antes de falar com os clientes. Gosto de ver o vencimento e o status juntos, sem cruzar várias anotações. Para quem cuida do atendimento e do financeiro, esse detalhe ajuda.", name: "Vanessa Lopes", role: "Gestora de tráfego" },
 ];
 
 function testimonialInitials(name: string): string {
@@ -539,8 +539,8 @@ export function AudienceSection() {
   return (
     <section id="depoimentos" data-reveal="none" className="relative w-full overflow-hidden py-16 md:py-24">
       <div className="section-shell relative mb-12 text-center">
-                <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("O que nossos")} <span className="hero-shine">{ui("clientes dizem")}</span></h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{ui("Veja como empresas de serviços estão cobrando, recebendo e organizando o financeiro com a Wiize Core.")}</p>
+                <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{ui("Opiniões sobre")} <span className="hero-shine">{ui("o dia a dia.")}</span></h2>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">{ui("Depoimentos ilustrativos, com nomes e relatos fictícios. Não são avaliações verificadas de clientes.")}</p>
       </div>
       <div className="tm-mask-x relative flex flex-col gap-4 md:gap-6" role="region" aria-label={ui("Depoimentos de clientes")}>
         <TestimonialsRow items={TESTIMONIALS.slice(0, 5)} duration={60} />

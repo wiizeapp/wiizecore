@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Reescrever os nove depoimentos com opiniões naturais e profissionais, identificar os exemplos fictícios e atualizar traduções; seção conferida no computador e celular, sem rolagem horizontal ou erros de execução, compilação OK.
+
 - [x] Aplicar strong explícito com peso 700 nos botões de cadastro e acesso; manter relatório Lovable interno e apresentar erros sem detalhes técnicos, incluindo a página de falha geral em português.
 
 - [x] Reforçar botões públicos (700), usar WiizeCore na configuração compartilhada, home e rodapé, espaçar links do navbar e alinhar SEO da home à abertura atual; conferido de 320 a 1582px sem rolagem lateral, menu Recursos e menu celular funcionais, sem erros de execução. SEO chega ao site publicado na próxima publicação.
