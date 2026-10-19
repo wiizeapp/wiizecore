@@ -7,5 +7,6 @@
 - Public pages opt into saved-theme handling through PublicPage, restoring the document theme on exit. Why: documentation preferences must not change other public pages.
 - Sidebar groups expose data-sidebar-group; the shared nav adjusts visibility after expansion only if needed. Why: regular and admin groups share behavior without scrolling the page.
 - Institutional metric sources live in `institutional/infrastructure-data.ts`. Why: shared attribution.
+- AI-guide logos use bundled image imports instead of literal public paths. Why: include the source-controlled logos automatically in deployments.
 - The landing's connected journey is a presentation-only home component with an inert illustrative URL and SVG connections; its outer surface follows the ComparisonSection page-background token while the capsule uses section-specific global semantic tokens. Why: visual storytelling must not imply an active checkout or change other public sections.
 - The four 3D step icons in "Como funciona" are scaled from their measured visible content plus a per-artwork optical weight, never from a single fixed pixel size. Why: the drawings have very different shapes, so one fixed box makes one icon look bigger than the rest.
