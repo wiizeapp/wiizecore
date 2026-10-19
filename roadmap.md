@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Reescrever os nove depoimentos com opiniões naturais e profissionais, identificar os exemplos fictícios, atualizar traduções e conferir a seção.
+- [x] Reescrever os nove depoimentos com opiniões naturais e profissionais, identificar os exemplos fictícios e atualizar traduções; seção conferida no computador e celular, sem rolagem horizontal ou erros de execução, compilação OK.
 
 - [x] Aplicar strong explícito com peso 700 nos botões de cadastro e acesso; manter relatório Lovable interno e apresentar erros sem detalhes técnicos, incluindo a página de falha geral em português.
 
