@@ -143,12 +143,14 @@ function FeesPage() {
             </Block>
             <Block icon={Landmark} title={t("boleto.title")} desc={t("boleto.desc")} note={t("boleto.note")} noteClass="lg:min-h-[4.25rem]" footer={promoRate != null ? <PromoNote text={t("promo.stripBoleto", { rate: formatPercent(promoRate) })} /> : undefined}>
               <TierList rows={boleto} singleLabel={t("boleto.single")} rangeKey="boleto.range" promoteSingle />
+              <div className="mt-4 border-t border-border/60 pt-4"><RateLine label={t("boleto.recurring")} hint={t("boleto.recurringHint")} row={boletoSingle} /></div>
             </Block>
             <Block icon={CreditCard} title={t("cards.title")} desc={t("cards.subtitle")} className="lg:col-span-2">
               <div className="grid gap-5">
                 <section className="rounded-lg border border-border/70 bg-background/35 p-4 sm:p-5">
                   <div className="mb-5 flex items-center gap-3 border-b border-border/60 pb-4"><span className="grid size-9 place-items-center rounded-md bg-primary/10 text-primary"><CreditCard className="size-4" /></span><div><h4 className="font-semibold">{t("cards.creditTitle")}</h4><p className="text-xs text-muted-foreground">{t("cards.desc", { max: maxCredit })}</p></div></div>
                   <TierList rows={credit} singleLabel={t("cards.creditSingle")} rangeKey="cards.creditRange" />
+                  <div className="mt-4 border-t border-border/60 pt-4"><RateLine label={t("cards.recurring")} hint={t("cards.recurringHint")} row={credit.find((r) => r.installment_max <= 1)} /></div>
                   <p className="mt-5 flex gap-2 rounded-md bg-primary/10 px-3 py-2 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-3.5 shrink-0 text-primary" />{t("cards.note")}</p>
                 </section>
               </div>

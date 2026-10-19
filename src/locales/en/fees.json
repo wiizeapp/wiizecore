@@ -29,7 +29,9 @@
     "single": "One-time boleto",
     "installments": "Installment boleto",
     "perBoleto": "Per boleto",
-    "range": "Boleto from {{min}}x to {{max}}x"
+    "range": "Boleto from {{min}}x to {{max}}x",
+    "recurring": "Recurring boleto",
+    "recurringHint": "Same fee as one-time · fixed fee on every charge"
   },
   "cards": {
     "title": "Cards",
@@ -41,7 +43,9 @@
     "debit": "Debit",
     "creditSingle": "Credit, single payment",
     "creditRange": "Credit from {{min}}x to {{max}}x",
-    "note": "The fixed fee is charged only once per sale, even for installment purchases."
+    "note": "The fixed fee is charged only once per sale, even for installment purchases.",
+    "recurring": "Recurring card",
+    "recurringHint": "Same fee as single payment · fixed fee on every charge"
   },
   "services": {
     "title": "Additional services",
