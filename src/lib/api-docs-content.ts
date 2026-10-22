@@ -140,8 +140,15 @@ export const DOC_SECTIONS: DocSection[] = [
     ] },
   ] },
   { id: "assinatura-webhook", group: "Webhooks", title: "Verificar a assinatura", blocks: [
+    { kind: "note", text: "Verificar a assinatura é OBRIGATÓRIO. O endereço do seu webhook é público: qualquer pessoa que o descobrir pode enviar um payment.confirmed falso por POST e liberar acesso sem pagar. Só a assinatura prova que o aviso veio da Wiize Core." },
     { kind: "p", text: "Cada aviso traz o cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo, \"t.corpo_bruto\"). Rejeite se a diferença de tempo passar de 5 minutos." },
     { kind: "code", label: "Node.js", code: EXT_DOCS_SNIPPETS.verify },
+    { kind: "list", items: [
+      "Nunca libere acesso, crédito ou funcionalidade sem antes verificar a assinatura com o segredo whsec_.",
+      "O segredo whsec_ fica só no seu servidor, em variável de ambiente. Se vazar, gere outro em API e desenvolvedores → Webhooks (Gerar novo segredo).",
+      "Em caso de dúvida sobre um aviso, confirme o status com GET /charges/{charge_id} usando a sua chave sk_ antes de liberar.",
+      "Eventos de teste (livemode: false) nunca devem liberar acesso em produção.",
+    ] },
   ] },
   { id: "testes", group: "Testes", title: "Testes (sandbox)", blocks: [
     { kind: "p", text: "Com uma chave sk_test_, o checkout abre uma página de teste. Ali, ou em API e desenvolvedores → Testes, você simula pagamento, vencimento, recusa, estorno, renovação e cancelamento. Os mesmos webhooks são enviados, com livemode: false." },
@@ -167,6 +174,7 @@ export const DOC_SECTIONS: DocSection[] = [
       "Nunca registre em log a chave secreta, o segredo do webhook, CPF/CNPJ completo ou dados de cartão.",
       "Guarde valores como decimal (ex.: \"99.90\"), nunca como número de ponto flutuante.",
       "Troque a chave imediatamente se suspeitar de vazamento (Gerar nova chave).",
+      "Webhook sem verificação de assinatura é falha crítica: permite que um comprador finja um pagamento aprovado e use o seu sistema de graça.",
       "Use uma chave por sistema, com somente as permissões necessárias.",
     ] },
   ] },
