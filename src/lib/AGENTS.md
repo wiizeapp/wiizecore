@@ -13,6 +13,7 @@
 - Service checkout share URLs use the request's site origin for navigation only; financial callbacks remain in deploy-config and billing helpers. Why: copying a link must not point at an obsolete preview or alter provider destinations.
 - External API endpoints wrap handlers in `withExtApi` (`ext-api.server.ts`) for request id, key/scope check, rate limit and secret-free request logs; test keys without a sandbox payment account use the isolated simulator (`ext_sandbox_charges`, rules in `ext-sandbox.ts`) and never touch `payments`. Why: sandbox must never create or confirm real money movement.
 - Developer docs and AI prompts derive from `EXT_ENDPOINTS`/`buildToolPrompt` in `ext-docs.ts` only. Why: one versioned source prevents contradictory docs.
+- Webhook docs, AI prompts and the webhooks panel must always state signature verification as mandatory and mention confirming via GET /charges/{id}. Why: a client SaaS that skips verification lets buyers forge payment.confirmed and self-approve.
 
 - Taxas e custos ficam nas configurações versionadas; cálculos em `src/lib/fee-math.ts`; totais em `src/lib/financial-summary.ts`.
 - Environment URLs live in `src/lib/deploy-config.ts`; payment-only share metadata in `src/lib/payment-share.ts`. Why: isolate hosts and previews.

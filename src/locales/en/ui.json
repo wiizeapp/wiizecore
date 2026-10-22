@@ -4890,6 +4890,7 @@
   "Voltar para o site": "Back to the site",
   "Voltar sem pagar": "Go back without paying",
   "Segredo de assinatura (aparece só esta vez)": "Signing secret (shown only once)",
+  "Atenção: no seu sistema, libere o acesso somente depois de verificar a assinatura do aviso com o segredo. Sem essa verificação, qualquer pessoa que descobrir o endereço pode fingir um pagamento aprovado e usar o seu sistema sem pagar.": "Warning: in your system, only grant access after verifying the webhook signature with the secret. Without this check, anyone who discovers the endpoint can fake an approved payment and use your system for free.",
   "Adicionar endereço": "Add endpoint",
   "Nenhum endereço de aviso cadastrado.": "No notice endpoint registered.",
   "Enviar teste": "Send test",

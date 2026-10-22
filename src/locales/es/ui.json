@@ -4919,6 +4919,7 @@
   "Voltar para o site": "Volver al sitio",
   "Voltar sem pagar": "Volver sin pagar",
   "Segredo de assinatura (aparece só esta vez)": "Secreto de firma (se muestra solo una vez)",
+  "Atenção: no seu sistema, libere o acesso somente depois de verificar a assinatura do aviso com o segredo. Sem essa verificação, qualquer pessoa que descobrir o endereço pode fingir um pagamento aprovado e usar o seu sistema sem pagar.": "Atención: en tu sistema, concede el acceso solo después de verificar la firma del aviso con el secreto. Sin esta verificación, cualquier persona que descubra la dirección puede fingir un pago aprobado y usar tu sistema gratis.",
   "Adicionar endereço": "Agregar endpoint",
   "Nenhum endereço de aviso cadastrado.": "Ningún endpoint de aviso registrado.",
   "Enviar teste": "Enviar prueba",
