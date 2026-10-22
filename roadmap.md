@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Investigar e corrigir falhas dos webhooks Resend; conferir assinatura, endereço sem redirecionamento, recuperação de mensagens e reativação dos dois cadastros. Histórico e configuração dos dois no Resend dependem de acesso autorizado ou detalhes enviados pelo usuário.
+
 - [x] Reescrever os nove depoimentos com opiniões naturais e profissionais, identificar os exemplos fictícios e atualizar traduções; seção conferida no computador e celular, sem rolagem horizontal ou erros de execução, compilação OK.
 
 - [x] Aplicar strong explícito com peso 700 nos botões de cadastro e acesso; manter relatório Lovable interno e apresentar erros sem detalhes técnicos, incluindo a página de falha geral em português.
