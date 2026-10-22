@@ -1,5 +1,7 @@
 # Library rules
 
+- Resend inbound uses `resend-inbound.server.ts` with Standard Webhooks verification over the raw body; acknowledge only stored messages, retry failed fetches, and log codes/status only. Why: avoid forged events, lost content and private email leaks.
+
 - Brand and checkout share versioned appearance; `brandColor` is independent of surfaces and reminder previews read saved settings through `getCheckoutAppearance`. Why: avoid duplicate storage and preserve historical charges.
 
 - Security headers belong only in `security-headers.ts`; attack alerts use `security-alerts.server.ts`, fired from audit helpers and grouped per 30 minutes. Why: centralize protections and avoid duplicate alerts.
