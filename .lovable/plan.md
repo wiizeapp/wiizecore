@@ -4,7 +4,7 @@
 - O endereço informado, `https://wiizecore.com/api/public/webhooks/resend-inbound`, responde com **308** e redireciona para `www.wiizecore.com`.
 - Um aviso de diagnóstico assinado com a configuração disponível foi **recusado com 401** no endereço com www e **aceito com 200** no endereço Lovable. Isso indica configurações diferentes entre os ambientes, mas ainda não confirma qual segredo está cadastrado em cada webhook do Resend.
 - O código atual pode salvar uma mensagem vazia quando a busca do conteúdo falha, impedindo sua recuperação nas novas tentativas.
-- Ainda não recebemos a imagem de uma tentativa com erro nem acessamos o histórico do Resend. A imagem enviada mostra somente o cadastro desativado.
+- As novas imagens confirmam falhas repetidas de email.sent, email.delivered e email.received; não mostram a resposta de uma tentativa individual. O acesso ao Resend foi recusado, e não foi possível consultar seus cadastros diretamente.
 
 ## Fase 1 — Correção e testes
 - Preservar o endereço da rota e a exigência de assinatura válida.
