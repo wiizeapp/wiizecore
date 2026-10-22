@@ -45,6 +45,9 @@ export function ExtWebhooksPanel({ integrationId, canManage }: { integrationId: 
   if (q.isLoading) return <div className="skeleton-shimmer h-20 rounded-xl" />;
   return (
     <div className="space-y-3">
+      <p className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs">
+        {t("Atenção: no seu sistema, libere o acesso somente depois de verificar a assinatura do aviso com o segredo. Sem essa verificação, qualquer pessoa que descobrir o endereço pode fingir um pagamento aprovado e usar o seu sistema sem pagar.")}
+      </p>
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground">{(d?.endpoints ?? []).length} {t("endereço(s)")}</p>
         {canManage && <Button size="sm" variant="outline" onClick={() => setAction({ kind: "create" })}><Plus className="size-4" />{t("Adicionar endereço")}</Button>}
