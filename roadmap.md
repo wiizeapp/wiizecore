@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Investigar e corrigir falhas dos webhooks Resend; conferir assinatura, endereço sem redirecionamento, recuperação de mensagens e reativação dos dois cadastros. Histórico e configuração dos dois no Resend dependem de acesso autorizado ou detalhes enviados pelo usuário.
+- [x] Corrigir recebimento Resend: assinatura padronizada, falhas de consulta sem salvar mensagens vazias, repetição idempotente e erros sem dados privados; 24 testes aprovados, endpoint local aceita eventos assinados ignorados (200) e rejeita sem assinatura (401), compilação OK.
+- [ ] Concluir recuperação Resend em produção: implantar na Vercel, usar endereço www sem redirecionamento, alinhar segredo do cadastro correto, identificar duplicados, reativar e reenviar mensagem real com conferência na caixa de entrada. Bloqueado por acesso/configuração externa Resend/Vercel; conexão foi recusada, imagens não mostram resposta individual. Passos em docs/resend-webhooks.md.
 
 - [x] Reescrever os nove depoimentos com opiniões naturais e profissionais, identificar os exemplos fictícios e atualizar traduções; seção conferida no computador e celular, sem rolagem horizontal ou erros de execução, compilação OK.
 
