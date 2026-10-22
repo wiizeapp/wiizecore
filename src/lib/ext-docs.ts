@@ -49,7 +49,9 @@ redirect(session.url);`,
   "external_customer_id": "cli_42",
   "external_subscription_id": null
 }`,
-  verify: `// Cabeçalho: WiizePay-Signature: t=1760000000,v1=<hmac>
+  verify: `// OBRIGATÓRIO: sem esta verificação, qualquer pessoa que descobrir a URL
+// do seu webhook pode forjar um "payment.confirmed" e ganhar acesso sem pagar.
+// Cabeçalho: WiizePay-Signature: t=1760000000,v1=<hmac>
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export function verifyWiizePay(secret: string, header: string, rawBody: string) {
@@ -99,6 +101,8 @@ API da Wiize Core:
 Webhooks (avisos):
 - Crie um endpoint HTTPS que leia o corpo BRUTO e verifique o header "WiizePay-Signature: t=<unix>,v1=<hex>":
   HMAC-SHA256(segredo whsec_, "<t>.<corpo>") em hex, comparação em tempo constante, rejeite se |agora − t| > 300 s.
+- A verificação é OBRIGATÓRIA: a URL do webhook é pública e, sem ela, qualquer pessoa pode forjar um
+  payment.confirmed por POST e liberar acesso sem pagar. Webhook sem verificação é falha crítica.
 - Guarde event.id e ignore repetidos. Responda 2xx rápido e processe em fila.
 - Eventos: ${EXT_EVENT_NAMES.join(", ")}.
 - Só marque como pago ao receber payment.confirmed. O retorno via success_url NÃO confirma pagamento.
@@ -174,6 +178,8 @@ ${EXT_DOCS_SNIPPETS.errors}
 WEBHOOKS
 - Endpoint HTTPS no servidor que lê o corpo BRUTO.
 - Cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo whsec_, "<t>.<corpo bruto>"). Compare em tempo constante; rejeite se |agora − t| > 300 s.
+- A verificação é OBRIGATÓRIA e vem ANTES de qualquer atualização de acesso: a URL do webhook é pública e, sem ela, qualquer pessoa pode forjar um payment.confirmed por POST e usar o sistema sem pagar. Webhook sem verificação é falha crítica.
+- Em caso de dúvida sobre um evento, confirme o status com GET /charges/{charge_id} (chave sk_) antes de liberar acesso. Eventos com livemode: false nunca liberam acesso em produção.
 - Corpo: { id, object:"event", type, livemode, created, data: { charge_id, checkout_session_id, service_id, charge_type, external_customer_id, external_subscription_id, payments[] } }
 - Eventos: ${EXT_EVENT_NAMES.join(", ")}.
 - Idempotência: grave event.id numa tabela com chave única e ignore repetidos. Responda 2xx rapidamente (o tempo limite é configurado no endpoint) e processe depois.
@@ -181,7 +187,7 @@ WEBHOOKS
 - Falhas recebem novas tentativas com espera crescente (até 12).
 
 REGRAS DE NEGÓCIO
-- Libere acesso só com payment.confirmed ou subscription.renewed (ou status "paid" na consulta). O retorno via success_url NÃO confirma pagamento.
+- Libere acesso só com payment.confirmed ou subscription.renewed com assinatura VÁLIDA (ou status "paid" na consulta GET /charges/{id}). O retorno via success_url NÃO confirma pagamento.
 - payment.overdue / subscription.overdue: aplique sua regra de carência ou suspensão.
 - payment.cancelled / subscription.cancelled / payment.refunded: revogue ou ajuste o acesso conforme sua regra.
 - Para cancelar uma assinatura, chame POST /subscriptions/{id}/cancel.
