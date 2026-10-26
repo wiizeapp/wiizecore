@@ -9,11 +9,13 @@ import { ADMIN_IDLE_MS } from "@/lib/admin-session-policy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
 
 export function AdminUnlockGate({ children }: { children: ReactNode }) {
   const { t } = useTranslation("ui");
   const begin = useServerFn(beginAdminUnlock), complete = useServerFn(completeAdminUnlock), touch = useServerFn(touchAdminPage), close = useServerFn(closeAdminPage);
   const qc = useQueryClient();
+  const { user, session } = useAuth();
   const [unlocked, setUnlocked] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState("");
   const [code, setCode] = useState(""), [password, setPassword] = useState(""), [confirmation, setConfirmation] = useState("");
   const [challenge, setChallenge] = useState<{ challengeId: string; hasPassword: boolean } | null>(null);
@@ -23,6 +25,9 @@ export function AdminUnlockGate({ children }: { children: ReactNode }) {
     setAdminProof(null); setUnlocked(false); setChallenge(null); setCode(""); setPassword(""); setConfirmation("");
     void qc.cancelQueries(); qc.clear();
   };
+  useEffect(() => {
+    if (!session || !user) lock();
+  }, [session, user?.id]);
   useEffect(() => {
     const clear = () => { setAdminProof(null); void qc.cancelQueries(); qc.clear(); setUnlocked(false); setChallenge(null); };
     window.addEventListener("pagehide", clear);
