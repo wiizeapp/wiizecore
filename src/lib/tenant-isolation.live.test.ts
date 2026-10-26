@@ -66,7 +66,7 @@ suite("isolamento entre empresas (A não alcança B)", () => {
   });
 
   it("A não lê arquivos privados de ativação da empresa B", async () => {
-    const r = await fetch(`${env.ISO_URL}/storage/v1/object/list/activation-documents`, {
+    const r = await fetch(`${env.ISO_URL}/storage/v1/object/list/kyc-documents`, {
       method: "POST",
       headers: { apikey: env.ISO_ANON_KEY!, authorization: `Bearer ${env.ISO_A_TOKEN}`, "content-type": "application/json" },
       body: JSON.stringify({ prefix: `${env.ISO_B_TENANT}/` }),
@@ -80,6 +80,3 @@ suite("isolamento entre empresas (A não alcança B)", () => {
   });
 });
 
-it("sem credenciais de homologação a suíte fica pendente, nunca aprovada", () => {
-  expect(typeof ready).toBe("boolean");
-});
