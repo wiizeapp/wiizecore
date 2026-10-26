@@ -144,7 +144,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!wd) throw new Error("Saque não encontrado.");
     if (wd.requested_by === context.userId) throw new Error("Você não pode aprovar um saque solicitado por você mesmo.");
-    const editableStatuses = data.decision === "approve" ? ['requested', 'in_analysis', 'processing'] : ['requested', 'in_analysis'];
+    const editableStatuses = ['requested', 'in_analysis'];
     if (!editableStatuses.includes(wd.status)) throw new Error("Este saque não pode mais ser alterado.");
     if (data.decision === "reject" && data.note.length < 3) throw new Error("Informe o motivo da recusa.");
 
@@ -170,8 +170,16 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
       };
       // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à Wiize Core).
       const fee = Number(wd.fee_amount ?? 0);
-      // 2) Taxa ok: envia o Pix.
-      await admin.from("withdrawals").update({ status: "processing", provider_requested_at: new Date().toISOString(), updated_at: new Date().toISOString() }).eq("id", wd.id);
+      // 2) Reserva exclusiva: só um pedido consegue passar para "processing"; evita Pix enviado duas vezes.
+      const { data: claimed } = await admin
+        .from("withdrawals")
+        .update({ status: "processing", provider_requested_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq("id", wd.id)
+        .in("status", ["requested", "in_analysis"])
+        .is("provider_transfer_id", null)
+        .select("id")
+        .maybeSingle();
+      if (!claimed) throw new Error("Este saque já está sendo enviado. Confira o resultado antes de tentar de novo.");
       try {
         const pix = (await import("./doc-validation")).pixKeyType(bank.pix_key);
         if (!pix || bank.pix_key.includes("•")) throw new Error("Chave Pix da conta de saque inválida");
@@ -181,12 +189,15 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           pixAddressKey: pix.key,
           pixAddressKeyType: pix.type,
           description: data.note || `Saque Wiize Core ${wd.id}`,
+          externalReference: `withdrawal:${wd.id}`,
         });
         reference = transfer.id;
         await admin.from("withdrawals").update({ provider_transfer_id: transfer.id, provider_status: transfer.status ?? "requested", transfer_reference: transfer.id }).eq("id", wd.id);
       } catch (e) {
         await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_kept_in_subaccount: fee } });
-        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. Tente aprovar novamente.`);
+        // Pix recusado: libera a reserva para nova tentativa manual.
+        await admin.from("withdrawals").update({ status: "in_analysis", updated_at: new Date().toISOString() }).eq("id", wd.id).eq("status", "processing").is("provider_transfer_id", null);
+        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. Confira no Asaas antes de aprovar novamente.`);
       }
     }
     const { error } =
