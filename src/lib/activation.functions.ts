@@ -45,7 +45,7 @@ export const getActivation = createServerFn({ method: "GET" })
       } catch (e) { console.error("sync ativação", e instanceof Error ? e.message : "x"); }
     }
     const [{ data: docs }, { data: events }] = await Promise.all([
-      admin.from("activation_documents").select("id, kind, mime_type, size_bytes, created_at").eq("tenant_id", m.tenant_id).order("created_at"),
+      admin.from("activation_documents").select("id, kind, mime_type, size_bytes, created_at").eq("tenant_id", m.tenant_id).is("superseded_at", null).order("created_at"),
       admin.from("activation_events").select("to_status, message, created_at").eq("tenant_id", m.tenant_id).order("created_at", { ascending: false }).limit(20),
     ]);
     return {
@@ -141,7 +141,7 @@ export const submitActivation = createServerFn({ method: "POST" })
       if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta Wiize Core. Use um documento que ainda não tenha conta.");
     }
     if (!BRAZIL_STATES.some(([uf]) => uf === (f["state"] ?? "").toUpperCase())) throw new Error("Selecione um Estado válido.");
-    const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id);
+    const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id).is("superseded_at", null);
     const have = new Set((documents ?? []).map((document: { kind: string }) => document.kind));
     const required = REQUIRED_DOCS[row.person_type as "individual" | "company"] ?? REQUIRED_DOCS.individual;
     if (required.some((kind) => !have.has(kind))) throw new Error("Envie todos os documentos obrigatórios.");

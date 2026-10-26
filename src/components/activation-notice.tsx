@@ -11,18 +11,15 @@ export function useActivationStatus(tenantId: string | null | undefined) {
     enabled: Boolean(tenantId),
     staleTime: 60_000,
     queryFn: async () =>
-      ((await supabase.from("payment_activations").select("status").eq("tenant_id", tenantId!).maybeSingle()).data?.status ?? "not_started") as string,
+      ((await supabase.from("payment_activations").select("status").eq("tenant_id", tenantId ?? "").maybeSingle()).data?.status ?? "not_started") as string,
   });
 }
 
 export function activationCopy(status: string) {
-  if (status === "submitted" || status === "under_review" || status === "in_progress")
-    return { title: "Sua conta está em análise", body: "Você já pode criar cobranças (até R$ 2.000 enquanto a análise não termina), mas os recebimentos só são liberados depois que a conta for aprovada." };
-  if (status === "action_required")
-    return { title: "Sua análise de conta precisa de ajustes", body: "Corrija os dados pendentes para liberar os recebimentos. Até lá, as cobranças podem ser criadas, mas nada é recebido." };
-  if (status === "rejected" || status === "suspended")
-    return { title: "Recebimentos bloqueados", body: "Sua conta não foi liberada para receber pagamentos. Revise a ativação para continuar." };
-  return { title: "Ative sua conta para receber pagamentos", body: "Faça a análise completa da sua conta para liberar tudo. Você pode criar cobranças de teste (até R$ 2.000), mas não recebe nada enquanto os pagamentos não forem ativados." };
+  if (status === "submitted" || status === "under_review") return {title:"Sua conta está em análise",body:"Acompanhe a análise da Asaas pelo painel. A produção depende da aprovação."};
+  if(status === "in_progress" || status === "draft") return {title:"Continue sua ativação",body:"Confira o pagamento da taxa de ativação e retome seu cadastro. Seus dados existentes estão preservados."};
+  if(status === "action_required") return {title:"Precisamos de informações adicionais",body:"Consulte as pendências e acompanhe a análise da Asaas."};
+  return {title:"Ative sua conta em produção",body:"A ativação começa com uma taxa única de R$ 19,90, seguida do cadastro e da análise da Asaas."};
 }
 
 export function ActivationNotice({ tenantId, compact = false }: { tenantId: string | null | undefined; compact?: boolean }) {
