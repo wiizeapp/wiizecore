@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Resolver pendências B–G da auditoria de segurança: isolamento dos avisos por empresa/conexão, senha financeira nas coproduções/cancelamento de saque, troca de pagamento bloqueada em falha do provedor, 2FA nas operações financeiras e contador atômico.
+- [ ] Fase 2 Global: base aditiva de operação/moeda/conexão, vínculos de clientes e saldos isolados; Brasil permanece BRL/Asaas, sem ativar Rapyd.
+- [ ] Verificar regressões e documentar arquivos alterados; pagamentos/estornos/saques reais dependem de ambiente de teste autorizado do provedor.
+
 - [x] Corrigir recebimento Resend: assinatura padronizada, falhas de consulta sem salvar mensagens vazias, repetição idempotente e erros sem dados privados; 24 testes aprovados, endpoint local aceita eventos assinados ignorados (200) e rejeita sem assinatura (401), compilação OK.
 - [ ] Concluir recuperação Resend em produção: implantar na Vercel, usar endereço www sem redirecionamento, alinhar segredo do cadastro correto, identificar duplicados, reativar e reenviar mensagem real com conferência na caixa de entrada. Bloqueado por acesso/configuração externa Resend/Vercel; conexão foi recusada, imagens não mostram resposta individual. Passos em docs/resend-webhooks.md.
 
