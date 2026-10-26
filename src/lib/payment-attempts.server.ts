@@ -1,4 +1,5 @@
 import { computeLateCharges, todaySaoPaulo } from "./late-charges";
+import { assertReplaceableProviderPayment } from "./financial-scope";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 type Actor = "customer" | "provider" | "system";
@@ -32,7 +33,7 @@ export async function recordOriginalAttempts(admin: Admin, tenantId: string, cha
   const appearanceId = await latestAppearanceId(admin, tenantId);
   const { data: rows } = await admin
     .from("payments")
-    .select("id, method, provider_payment_id, gross_amount, due_on, invoice_url, bank_slip_url, current_attempt_id")
+    .select("id, method, provider_connection_id, provider_payment_id, gross_amount, due_on, invoice_url, bank_slip_url, current_attempt_id")
     .eq("tenant_id", tenantId)
     .eq("charge_group_id", chargeGroupId);
   for (const p of rows ?? []) {
@@ -42,7 +43,7 @@ export async function recordOriginalAttempts(admin: Admin, tenantId: string, cha
       const { data: a } = await admin
         .from("payment_attempts")
         .upsert({
-          tenant_id: tenantId, payment_id: p.id, attempt_number: 1, method: p.method, provider_payment_id: p.provider_payment_id,
+          tenant_id: tenantId, payment_id: p.id, provider_connection_id: p.provider_connection_id, attempt_number: 1, method: p.method, provider_payment_id: p.provider_payment_id,
           status: "active", reason: "original", amount: p.gross_amount, due_on: p.due_on, invoice_url: p.invoice_url,
           bank_slip_url: p.bank_slip_url, actor: "provider", actor_user_id: userId, idempotency_key: "original",
         }, { onConflict: "payment_id,idempotency_key" })
@@ -159,21 +160,27 @@ export async function switchPaymentAttempt(
     throw new Error(message);
   };
 
-  const { getTenantProvider, computePlatformFeeDetails } = await import("./billing.server");
-  const conn = await getTenantProvider(admin, p.tenant_id);
+  const { computePlatformFeeDetails } = await import("./billing.server");
+  const { getPaymentProvider } = await import("./financial-origin.server");
+  let conn;
+  try { conn = await getPaymentProvider(admin, p.tenant_id, p.id); }
+  catch { return fail("A origem desta cobrança precisa ser conferida antes de continuar."); }
   const masterWalletId = process.env["ASAAS_MASTER_WALLET_ID"];
   if (!conn || !masterWalletId) return fail("Pagamento temporariamente indisponível.");
   const { data: customer } = await admin.from("customers").select("provider_customer_id").eq("id", p.customer_id ?? "").eq("tenant_id", p.tenant_id).maybeSingle();
   if (!customer?.provider_customer_id) return fail("Cadastro do cliente incompleto para esta operação.");
 
   // Nunca substitui uma tentativa que o provedor já confirmou.
+  const oldProviderId = p.provider_payment_id;
+  if (!oldProviderId) return fail("Pagamento temporariamente indisponível.");
+  let current;
   try {
-    const current = await conn.provider.getPayment(p.provider_payment_id!);
-    const st = String((current as { status?: string }).status ?? "");
-    if (["RECEIVED", "CONFIRMED", "RECEIVED_IN_CASH"].includes(st)) return fail("O pagamento desta cobrança já foi confirmado.");
-  } catch (e) {
-    if (e instanceof Error && e.message.includes("confirmado")) throw e;
+    current = await conn.provider.getPayment(oldProviderId);
+  } catch {
+    return fail("Não foi possível verificar o pagamento atual. Tente novamente.");
   }
+  try { assertReplaceableProviderPayment(current, oldProviderId, reactivating); }
+  catch (e) { return fail(e instanceof Error ? e.message : "Não foi possível validar o pagamento atual."); }
 
   const singleCash = !p.provider_installment_id && !p.subscription_id;
   const fee = await computePlatformFeeDetails(admin, q.total, input.method, 1, false, singleCash ? p.tenant_id : undefined);
@@ -213,27 +220,25 @@ export async function switchPaymentAttempt(
     return fail(e instanceof Error ? e.message : "O provedor recusou a nova forma de pagamento.");
   }
 
+  // Persist the remote ID before cancellation; uncertainty must retain the blocking pending attempt.
+  const { error: remoteSaveError } = await admin.from("payment_attempts").update({
+    provider_payment_id: created.id, provider_connection_id: conn.connection.id,
+    invoice_url: created.invoiceUrl ?? null, bank_slip_url: created.bankSlipUrl ?? null,
+  }).eq("id", pending.id).eq("tenant_id", p.tenant_id).eq("status", "pending");
+  if (remoteSaveError) throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
+
   try {
     // Na reativação a tentativa anterior já foi cancelada no provedor.
-    if (reactivating) await conn.provider.cancelPayment(p.provider_payment_id!).catch(() => undefined);
-    else await conn.provider.cancelPayment(p.provider_payment_id!);
+    if (!reactivating) await conn.provider.cancelPayment(oldProviderId);
   } catch {
-    await conn.provider.cancelPayment(created.id).catch(() => undefined);
-    return fail("Não foi possível substituir a forma de pagamento agora. Tente novamente.");
+    await admin.from("payment_attempts").update({ error_message: "provider_cancellation_uncertain" }).eq("id", pending.id);
+    throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
   }
 
-  if (p.current_attempt_id) await admin.from("payment_attempts").update({ status: "superseded" }).eq("id", p.current_attempt_id).eq("status", "active");
-  else await admin.from("payment_attempts").update({ status: "superseded" }).eq("payment_id", p.id).eq("status", "active");
-  await admin.from("payment_attempts").update({
-    status: "active", provider_payment_id: created.id, invoice_url: created.invoiceUrl ?? null, bank_slip_url: created.bankSlipUrl ?? null,
-  }).eq("id", pending.id);
-
-  await admin.from("payments").update({
-    provider_payment_id: created.id,
-    method: input.method,
-    status: "awaiting_payment",
-    gross_amount: q.total,
-    due_on: dueOn,
+  const { error: activationError } = await admin.rpc("activate_payment_attempt", {
+    _tenant_id: p.tenant_id, _payment_id: p.id, _attempt_id: pending.id,
+    _expected_provider_id: oldProviderId, _reactivating: reactivating,
+    _changes: {
     platform_fee_amount: fee.totalFee,
     provider_fee_covered_amount: coverCents / 100,
     fee_configuration_id: fee.feeConfigurationId,
@@ -242,14 +247,9 @@ export async function switchPaymentAttempt(
     fee_percentage_amount: fee.percentageFeeAmount,
     fee_calculated_at: fee.calculationTimestamp,
     net_amount: r2(q.total - fee.totalFee),
-    invoice_url: created.invoiceUrl ?? null,
-    bank_slip_url: created.bankSlipUrl ?? null,
-    current_attempt_id: pending.id,
-    original_amount: p.original_amount ?? p.gross_amount,
-    original_due_on: p.original_due_on ?? p.due_on,
-    ...(reactivating ? { original_amount: q.base } : {}),
-    updated_at: new Date().toISOString(),
-  }).eq("id", p.id).eq("tenant_id", p.tenant_id);
+    },
+  });
+  if (activationError) throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
 
   // O link continua o mesmo; se tinha expirado, ganha 3 dias para concluir o pagamento.
   const soon = new Date(Math.max(Date.now(), Date.parse(`${dueOn}T23:59:59-03:00`)) + 3 * 86_400_000).toISOString();
@@ -269,8 +269,9 @@ export async function switchPaymentAttempt(
 }
 
 /** Eventos do provedor sobre tentativas já substituídas não alteram a cobrança. */
-export async function isSupersededProviderPayment(admin: Admin, providerPaymentId: string) {
-  const { data } = await admin.from("payment_attempts").select("status, tenant_id").eq("provider_payment_id", providerPaymentId).maybeSingle();
+export async function isSupersededProviderPayment(admin: Admin, tenantId: string, connectionId: string, providerPaymentId: string) {
+  const { data, error } = await admin.from("payment_attempts").select("status, tenant_id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_payment_id", providerPaymentId).maybeSingle();
+  if (error) throw new Error("attempt_lookup_failed");
   return data && ["superseded", "failed", "cancelled"].includes(data.status) ? data : null;
 }
 

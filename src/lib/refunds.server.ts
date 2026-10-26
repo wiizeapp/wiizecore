@@ -1,4 +1,4 @@
-import { getTenantProvider } from "./billing.server";
+import { getPaymentProvider } from "./financial-origin.server";
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -6,8 +6,8 @@ type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server"
 export async function sendRefundToProvider(admin: AdminClient, refundId: string) {
   const { data: r } = await (admin.from as any)("refunds").select("id, tenant_id, payment_id, refund_amount, status, reason").eq("id", refundId).single();
   if (!r || r.status !== "requested") return;
-  const { data: p } = await admin.from("payments").select("provider_payment_id").eq("id", r.payment_id).single();
-  const conn = await getTenantProvider(admin, r.tenant_id);
+  const { data: p } = await admin.from("payments").select("provider_payment_id").eq("id", r.payment_id).eq("tenant_id", r.tenant_id).single();
+  const conn = await getPaymentProvider(admin, r.tenant_id, r.payment_id);
   const fail = async (msg: string) => {
     await (admin.rpc as any)("apply_refund_event", { _refund_id: r.id, _status: "failed", _provider_status: "ERROR", _event_id: null, _message: msg });
   };
@@ -37,9 +37,8 @@ export async function sendRefundToProvider(admin: AdminClient, refundId: string)
 }
 
 /** Retorna true quando o evento pertence a um reembolso iniciado pela Wiize Core. */
-export async function handleRefundWebhook(admin: AdminClient, tenantId: string | null, providerPaymentId: string, eventType: string, eventId: string) {
-  let q = admin.from("payments").select("id").eq("provider_payment_id", providerPaymentId);
-  if (tenantId) q = q.eq("tenant_id", tenantId);
+export async function handleRefundWebhook(admin: AdminClient, tenantId: string, providerPaymentId: string, eventType: string, eventId: string, connectionId: string) {
+  const q = admin.from("payments").select("id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider", "asaas").eq("provider_payment_id", providerPaymentId);
   const { data: pay } = await q.limit(1).maybeSingle();
   if (!pay) return false;
   const { data: r } = await (admin.from as any)("refunds").select("id").eq("payment_id", pay.id).in("status", ["requested", "processing"]).limit(1).maybeSingle();

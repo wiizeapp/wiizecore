@@ -1,4 +1,5 @@
 import { logAudit } from "./audit.server";
+import { assertBrasilScope } from "./financial-scope";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 const FINANCE = ["owner", "admin", "finance"];
@@ -113,6 +114,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     ]);
     if (!customer) throw new Error("Cliente não encontrado.");
     if (!service) throw new Error("Serviço não encontrado ou inativo.");
+    assertBrasilScope(service);
     // Trusted conditions: loaded only from the immutable, tenant-scoped issued link.
     if (data.serviceCheckoutVersionId) {
       const { data: v } = await admin.from("service_checkout_versions").select("*").eq("id", data.serviceCheckoutVersionId).eq("tenant_id", tenantId).eq("service_id", service.id).maybeSingle();
@@ -179,7 +181,11 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     if (dueOn < today) throw new Error("O vencimento não pode estar no passado.");
 
     // Cliente no provedor (criado sob demanda).
-    let providerCustomerId = customer.provider_customer_id as string | null;
+    const { data: customerLink, error: linkError } = await admin.from("customer_provider_links")
+      .select("provider_customer_id").eq("tenant_id", tenantId).eq("customer_id", customer.id)
+      .eq("provider_connection_id", conn.connection.id).maybeSingle();
+    if (linkError) throw new Error("Não foi possível conferir o cliente na conta de pagamentos.");
+    let providerCustomerId = customerLink?.provider_customer_id ?? null;
     if (!providerCustomerId) {
       const created = await conn.provider.createCustomer({
         name: customer.name,
@@ -195,7 +201,11 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
         notificationDisabled: true,
       });
       providerCustomerId = created.id;
-      await admin.from("customers").update({ provider_customer_id: created.id }).eq("id", customer.id);
+      const { error: saveLinkError } = await admin.from("customer_provider_links").insert({
+        tenant_id: tenantId, customer_id: customer.id, provider_connection_id: conn.connection.id, provider_customer_id: created.id,
+      });
+      if (saveLinkError) throw new Error("Não foi possível registrar o cliente na conta de pagamentos.");
+      await admin.from("customers").update({ provider_customer_id: created.id }).eq("id", customer.id).eq("tenant_id", tenantId);
     }
 
     const method = data.method === "undefined" ? null : data.method;
@@ -226,6 +236,9 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       status: "created" as const,
       method,
       provider: "asaas",
+      provider_connection_id: conn.connection.id,
+      operation: "brasil",
+      currency: "BRL",
       created_by: userId,
       fee_payer_share: data.feePassShare,
       fine_percent: finePct,
@@ -363,6 +376,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           .from("subscriptions")
           .insert({
             tenant_id: tenantId,
+            provider_connection_id: conn.connection.id,
             customer_id: customer.id,
             service_id: service.id,
             contract_id: contractId,
