@@ -5,6 +5,7 @@ import { requireMfaAuth } from "@/lib/mfa-middleware";
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
 
 async function requireAdmin(context: Ctx) {
+  await (await import("./admin-session.server")).assertAdminPage(context);
   const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
   if (!data) throw new Error("Acesso restrito à equipe Wiize Core.");
   const { assertTwoFactor } = await import("./finance.server");

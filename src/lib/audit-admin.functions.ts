@@ -10,6 +10,7 @@ type Ctx = { supabase: any; userId: string; claims: unknown };
  * com 2FA confirmado na sessão. Toda consulta, exportação e recusa fica registrada.
  */
 async function requirePlatformAdmin(context: Ctx, action: string, limit: { max: number; window: number }) {
+  await (await import("./admin-session.server")).assertAdminPage(context);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { consumeRateLimit, logAudit } = await import("./audit.server");
   const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });

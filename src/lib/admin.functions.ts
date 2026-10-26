@@ -12,6 +12,7 @@ async function isPlatformAdmin(context: Ctx) {
 
 /** Admin Wiize Core: papel platform_admin + sessão com 2FA (aal2). */
 async function requireAdmin(context: Ctx) {
+  await (await import("./admin-session.server")).assertAdminPage(context);
   if (!(await isPlatformAdmin(context))) throw new Error("Acesso restrito à equipe Wiize Core.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
