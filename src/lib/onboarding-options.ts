@@ -89,3 +89,20 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
 
 export const validOption = (key: OnboardingKey, id: string) =>
   ONBOARDING_STEPS.find((s) => s.key === key)?.options.some((o) => o.id === id) ?? false;
+
+/** Etapas obrigatórias que ainda faltam (regra usada pelo servidor antes de marcar como concluído). */
+export function missingRequiredSteps(answers: Partial<Record<OnboardingKey, string | string[] | null | undefined>>): OnboardingKey[] {
+  return ONBOARDING_STEPS.filter((s) => !s.optional).map((s) => s.key).filter((k) => {
+    const v = answers[k];
+    return Array.isArray(v) ? v.length === 0 : !v;
+  });
+}
+
+/** Primeira etapa sem resposta, para retomar do ponto certo. */
+export function resumeIndex(answers: Partial<Record<OnboardingKey, string | string[] | null | undefined>>): number {
+  const i = ONBOARDING_STEPS.findIndex((s) => {
+    const v = answers[s.key];
+    return !s.optional && (Array.isArray(v) ? v.length === 0 : !v);
+  });
+  return i < 0 ? ONBOARDING_STEPS.length - 1 : i;
+}
