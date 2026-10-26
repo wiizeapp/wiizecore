@@ -18,7 +18,7 @@ const CAT_LABEL: Record<string, string> = { auth: "Login", security: "Segurança
 const RESULT_LABEL: Record<string, string> = { success: "Sucesso", failure: "Falha", blocked: "Bloqueado" };
 const ALL = "__all";
 
-type Filters = { from?: string; to?: string; category?: string; result?: string; risk?: string; search?: string; action?: string };
+type Filters = Partial<Record<"from" | "to" | "category" | "result" | "risk" | "search" | "action", string | undefined>>;
 
 /** Seção "Auditoria e Segurança" do painel administrativo. Todo acesso é validado e registrado no servidor. */
 export function AdminAuditSecurity() {
@@ -177,7 +177,7 @@ function Stat({ label, value, loading }: { label: string; value?: number; loadin
   );
 }
 
-function Pick({ value, onChange, placeholder, options }: { value?: string; onChange: (v: string) => void; placeholder: string; options: (readonly [string, string])[] | string[][] }) {
+function Pick({ value, onChange, placeholder, options }: { value?: string | undefined; onChange: (v: string) => void; placeholder: string; options: (readonly [string, string])[] | string[][] }) {
   return (
     <Select value={value ?? ALL} onValueChange={onChange}>
       <SelectTrigger aria-label={placeholder}><SelectValue placeholder={placeholder} /></SelectTrigger>
