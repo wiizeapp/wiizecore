@@ -167,7 +167,7 @@ export async function switchPaymentAttempt(
   catch { return fail("A origem desta cobrança precisa ser conferida antes de continuar."); }
   const masterWalletId = process.env["ASAAS_MASTER_WALLET_ID"];
   if (!conn || !masterWalletId) return fail("Pagamento temporariamente indisponível.");
-  const { data: customer } = await admin.from("customers").select("provider_customer_id").eq("id", p.customer_id ?? "").eq("tenant_id", p.tenant_id).maybeSingle();
+  const { data: customer } = await admin.from("customer_provider_links").select("provider_customer_id").eq("customer_id", p.customer_id ?? "").eq("tenant_id", p.tenant_id).eq("provider_connection_id", conn.connection.id).maybeSingle();
   if (!customer?.provider_customer_id) return fail("Cadastro do cliente incompleto para esta operação.");
 
   // Nunca substitui uma tentativa que o provedor já confirmou.
@@ -272,6 +272,7 @@ export async function switchPaymentAttempt(
 export async function isSupersededProviderPayment(admin: Admin, tenantId: string, connectionId: string, providerPaymentId: string) {
   const { data, error } = await admin.from("payment_attempts").select("status, tenant_id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_payment_id", providerPaymentId).maybeSingle();
   if (error) throw new Error("attempt_lookup_failed");
+  if (data?.status === "pending") throw new Error("attempt_activation_pending");
   return data && ["superseded", "failed", "cancelled"].includes(data.status) ? data : null;
 }
 
