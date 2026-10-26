@@ -2,7 +2,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 import { adminGrantValid } from "./admin-session-policy";
 import { tokenFingerprint } from "./crypto.server";
 
-export type AdminContext = { userId: string; claims: unknown; supabase: { rpc: (name: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }> } };
+export type AdminContext = { userId: string; claims: unknown; supabase: { rpc: (name: "has_role", args: { _user_id: string; _role: "platform_admin" }) => PromiseLike<{ data: unknown; error: unknown }> } };
 
 export async function assertAdminPage(context: AdminContext, touch = false) {
   const claims = context.claims as { aal?: string; session_id?: string };
