@@ -14,11 +14,11 @@ const ready = ["ISO_URL", "ISO_ANON_KEY", "ISO_A_TOKEN", "ISO_A_TENANT", "ISO_B_
 const suite = ready ? describe : describe.skip;
 
 function rest(path: string, init: RequestInit = {}) {
-  return fetch(`${env.ISO_URL}/rest/v1/${path}`, {
+  return fetch(`${env["ISO_URL"]}/rest/v1/${path}`, {
     ...init,
     headers: {
-      apikey: env.ISO_ANON_KEY!,
-      authorization: `Bearer ${env.ISO_A_TOKEN}`,
+      apikey: env["ISO_ANON_KEY"]!,
+      authorization: `Bearer ${env["ISO_A_TOKEN"]}`,
       "content-type": "application/json",
       prefer: "return=representation",
       ...(init.headers ?? {}),
@@ -41,41 +41,41 @@ const tables = [
 suite("isolamento entre empresas (A não alcança B)", () => {
   for (const t of tables) {
     it(`A não lê ${t} da empresa B`, async () => {
-      expect(await rows(await rest(`${t}?tenant_id=eq.${env.ISO_B_TENANT}&select=*&limit=5`))).toHaveLength(0);
+      expect(await rows(await rest(`${t}?tenant_id=eq.${env["ISO_B_TENANT"]}&select=*&limit=5`))).toHaveLength(0);
     });
   }
 
   it("A não altera cobrança da empresa B", async () => {
-    const r = await rest(`payments?id=eq.${env.ISO_B_PAYMENT}`, { method: "PATCH", body: JSON.stringify({ description: "x" }) });
+    const r = await rest(`payments?id=eq.${env["ISO_B_PAYMENT"]}`, { method: "PATCH", body: JSON.stringify({ description: "x" }) });
     expect(await rows(r)).toHaveLength(0);
   });
 
   it("A não exclui cliente da empresa B", async () => {
-    const r = await rest(`customers?id=eq.${env.ISO_B_CUSTOMER}`, { method: "DELETE" });
+    const r = await rest(`customers?id=eq.${env["ISO_B_CUSTOMER"]}`, { method: "DELETE" });
     expect(await rows(r)).toHaveLength(0);
   });
 
   it("A não cria cliente dentro da empresa B", async () => {
-    const r = await rest("customers", { method: "POST", body: JSON.stringify({ tenant_id: env.ISO_B_TENANT, name: "teste-isolamento" }) });
+    const r = await rest("customers", { method: "POST", body: JSON.stringify({ tenant_id: env["ISO_B_TENANT"], name: "teste-isolamento" }) });
     expect(r.ok).toBe(false);
   });
 
   it("A não marca avisos da empresa B como lidos", async () => {
-    const r = await rest("rpc/mark_notifications_read", { method: "POST", body: JSON.stringify({ _tenant_id: env.ISO_B_TENANT }) });
+    const r = await rest("rpc/mark_notifications_read", { method: "POST", body: JSON.stringify({ _tenant_id: env["ISO_B_TENANT"] }) });
     expect(r.ok).toBe(false);
   });
 
   it("A não lê arquivos privados de ativação da empresa B", async () => {
-    const r = await fetch(`${env.ISO_URL}/storage/v1/object/list/kyc-documents`, {
+    const r = await fetch(`${env["ISO_URL"]}/storage/v1/object/list/kyc-documents`, {
       method: "POST",
-      headers: { apikey: env.ISO_ANON_KEY!, authorization: `Bearer ${env.ISO_A_TOKEN}`, "content-type": "application/json" },
-      body: JSON.stringify({ prefix: `${env.ISO_B_TENANT}/` }),
+      headers: { apikey: env["ISO_ANON_KEY"]!, authorization: `Bearer ${env["ISO_A_TOKEN"]}`, "content-type": "application/json" },
+      body: JSON.stringify({ prefix: `${env["ISO_B_TENANT"]}/` }),
     });
     expect(await rows(r)).toHaveLength(0);
   });
 
   it("controle: A enxerga a própria empresa", async () => {
-    const r = await rest(`tenants?id=eq.${env.ISO_A_TENANT}&select=id`);
+    const r = await rest(`tenants?id=eq.${env["ISO_A_TENANT"]}&select=id`);
     expect(await rows(r)).toHaveLength(1);
   });
 });
