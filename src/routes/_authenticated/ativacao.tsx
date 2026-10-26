@@ -53,6 +53,7 @@ function AtivacaoPage() {
   const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], enabled: fee.data?.status === "confirmed", queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
   if(fee.isError) return <ErrorState onRetry={()=>fee.refetch()}/>;
   if(!fee.data) return <ListSkeleton rows={3}/>;
+  if(fee.data.status!=="confirmed" && !fee.data.enabled) return <BetaNotice/>;
   if(fee.data.status!=="confirmed") return <ActivationFeeCheckout/>;
   return (
     <div>

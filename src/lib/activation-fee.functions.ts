@@ -12,7 +12,9 @@ export const getActivationFee=createServerFn({method:'POST'}).middleware([requir
  const {supabaseAdmin:admin}=await import('@/integrations/supabase/client.server');
  const {data,error}=await admin.from('activation_fee_payments').select('status,provider_payment_id,environment').eq('tenant_id',tenantId).maybeSingle();
  if(error) throw new Error('Não foi possível consultar a ativação.');
- return {status:data?.status ?? 'not_started',amountCents:1990,environment:data?.environment ?? null};
+ const enabled=process.env['ACTIVATION_FEE_ENABLED']==='true';
+ if(enabled){const {announceProductionLaunch}=await import('./production-launch.server');void announceProductionLaunch(admin,20);}
+ return {status:data?.status ?? 'not_started',amountCents:1990,environment:data?.environment ?? null,enabled};
 });
 export const prepareActivationPix=createServerFn({method:'POST'}).middleware([requireMfaAuth]).inputValidator(i=>z.object({name:z.string().trim().min(3).max(150),document:z.string().regex(/^\d{11}$|^\d{14}$/),email:z.string().email().max(200),accepted:z.literal(true)}).strict().parse(i)).handler(async({data,context})=>{
  const tenantId=await member(context);
