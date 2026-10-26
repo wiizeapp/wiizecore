@@ -1,5 +1,5 @@
 /**
- * Wiize Core — padrão visual interno (referência: Dashboard).
+ * WiizePay — padrão visual interno (referência: Dashboard).
  * Toda página interna deve montar sua tela com estas peças.
  */
 import type { ReactNode } from "react";

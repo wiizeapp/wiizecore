@@ -16,8 +16,8 @@ describe('public historical infrastructure figures', () => {
     for (const metric of infrastructureData.metrics) expect(metric.source).toBe(infrastructureData.source.url);
     expect(new URL(infrastructureData.source.url).protocol).toBe('https:');
   });
-  it('explicitly separates provider figures from Wiize Core results', () => {
-    expect(infrastructureData.disclaimer).toContain('não representam volume transacionado, receita ou lucro da Wiize Core');
+  it('explicitly separates provider figures from WiizePay results', () => {
+    expect(infrastructureData.disclaimer).toContain('não representam volume transacionado, receita ou lucro da WiizePay');
     expect(infrastructureData.disclaimer).toContain('divulgados em 2026');
   });
 });

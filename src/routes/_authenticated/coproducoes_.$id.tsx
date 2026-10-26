@@ -16,9 +16,9 @@ import { CP_STATUS } from "@/lib/coproduction-labels";
 export const Route = createFileRoute("/_authenticated/coproducoes_/$id")({
   head: () => ({
     meta: [
-      { title: "Convite de coprodução — Wiize Core" },
-      { name: "description", content: "Veja e responda ao convite para participar de uma coprodução na Wiize Core." },
-      { property: "og:title", content: "Convite de coprodução — Wiize Core" },
+      { title: "Convite de coprodução — WiizePay" },
+      { name: "description", content: "Veja e responda ao convite para participar de uma coprodução na WiizePay." },
+      { property: "og:title", content: "Convite de coprodução — WiizePay" },
       { property: "og:description", content: "Aceite ou recuse a participação no valor líquido recebido." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -131,7 +131,7 @@ export const cancelCoproduction = createServerFn({ method: "POST" })
     const now = new Date().toISOString();
     await a.from("payment_coproductions").update({ status: "cancelled", cancelled_at: now, updated_at: now }).eq("id", cp.id);
     await a.from("payment_coproduction_participants").update({ status: "cancelled", updated_at: now }).eq("coproduction_id", cp.id).in("status", ["pending", "accepted"]);
-    // Se a divisão já estava no Asaas, volta a deixar só a taxa Wiize Core nas parcelas abertas.
+    // Se a divisão já estava no Asaas, volta a deixar só a taxa WiizePay nas parcelas abertas.
     if (cp.split_applied_at) {
       const { getPaymentProvider } = await import("./financial-origin.server");
       const { splitFor } = await import("./coproduction.server");

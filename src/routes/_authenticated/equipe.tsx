@@ -24,9 +24,9 @@ import { ACTION_LABEL, CRITICAL_PERMISSIONS, PERMISSION_MODULES, ROLE_LABEL, bas
 export const Route = createFileRoute("/_authenticated/equipe")({
   head: () => ({
     meta: [
-      { title: "Equipe e permissões — Wiize Core" },
+      { title: "Equipe e permissões — WiizePay" },
       { name: "description", content: "Convide colaboradores, defina cargos e permissões e acompanhe a atividade da equipe." },
-      { property: "og:title", content: "Equipe e permissões — Wiize Core" },
+      { property: "og:title", content: "Equipe e permissões — WiizePay" },
       { property: "og:description", content: "Gestão de usuários, permissões e auditoria da sua empresa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

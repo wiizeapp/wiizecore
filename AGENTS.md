@@ -9,7 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Display identity comes from `src/lib/brand-config.ts`; preserve technical identifiers, URLs and integration names. Why: rebranding must not break integrations/history.
+- Display identity comes from `src/lib/brand-config.ts`; preserve technical identifiers and external integration URLs/names; app-owned production URLs come from `src/lib/deploy-config.ts`. Why: rebranding must not break integrations/history.
 - Keep brand and content font tokens separate; retain code/signature fonts. Why: typography changes must preserve the wordmark and functional formats.
 - Official financial-provider URLs and channels live in `src/lib/financial-provider.ts`; shared branding/support render through `src/components/financial-provider.tsx`. Why: keep checkout, public site and help consistent without modifying official seals.
 - Operações financeiras são autorizadas no servidor, isoladas por empresa, auditadas e idempotentes; valores monetários usam Decimal/NUMERIC.

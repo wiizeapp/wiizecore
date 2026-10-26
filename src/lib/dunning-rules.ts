@@ -97,7 +97,7 @@ export function toAsaasNotifications(
         else chs = steps.due;
       } else if (n.event === "PAYMENT_OVERDUE") chs = n.id === overdue[0]?.id ? steps.overdue : steps.overdue_repeat;
     }
-    // E-mail de cobrança criada é enviado pela Wiize Core; desliga no Asaas para não duplicar.
+    // E-mail de cobrança criada é enviado pela WiizePay; desliga no Asaas para não duplicar.
     if (n.event === "PAYMENT_CREATED") extra["emailEnabledForCustomer"] = false;
     out.push({ id: n.id, ...flags(chs), ...extra });
   }

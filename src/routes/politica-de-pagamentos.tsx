@@ -1,7 +1,7 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
-export const Route = createFileRoute("/politica-de-pagamentos")({ head: () => pageHead({ path: "/politica-de-pagamentos", title: "Política de Pagamentos — Wiize Core", description: "Regras gerais de cobranças e pagamentos no Wiize Core.", ogDescription: "Métodos, confirmações, taxas e disponibilidade de pagamentos.", breadcrumb: [{ name: "Política de pagamentos", path: "/politica-de-pagamentos" }] }), component: Page });
+export const Route = createFileRoute("/politica-de-pagamentos")({ head: () => pageHead({ path: "/politica-de-pagamentos", title: "Política de Pagamentos — WiizePay", description: "Regras gerais de cobranças e pagamentos no WiizePay.", ogDescription: "Métodos, confirmações, taxas e disponibilidade de pagamentos.", breadcrumb: [{ name: "Política de pagamentos", path: "/politica-de-pagamentos" }] }), component: Page });
 function Page() { return <LegalPage eyebrow="Pagamentos" title="Política de Pagamentos" description="Regras de cobrança, confirmação, liquidação e documentos relacionados aos pagamentos realizados pela experiência plataforma. Este conteúdo deve passar por revisão jurídica antes da publicação definitiva." highlights={[
   { icon: "payments", title: "Confirmação confiável", description: "Uma cobrança só é considerada paga após confirmação do prestador responsável pelo processamento." },
   { icon: "security", title: "Operação protegida", description: "Tentativas, alterações, estornos e disputas seguem controles de segurança e registros de auditoria." },

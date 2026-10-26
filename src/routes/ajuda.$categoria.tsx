@@ -9,7 +9,7 @@ import { HELP_ARTICLES, HELP_FAQ, categoryById } from "@/lib/help-content";
 
 export const Route = createFileRoute("/ajuda/$categoria")({
   loader: ({ params }) => { const c = categoryById(params.categoria); if (!c) throw notFound(); return { category: c }; },
-  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda Wiize Core` }, { name: "description", content: "Informações e recursos da plataforma Wiize Core." }, { property: "og:title", content: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda Wiize Core` }, { property: "og:description", content: "Informações e recursos da plataforma Wiize Core." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda WiizePay` }, { name: "description", content: "Informações e recursos da plataforma WiizePay." }, { property: "og:title", content: `${loaderData?.category.title ?? "Ajuda"} | Central de Ajuda WiizePay` }, { property: "og:description", content: "Informações e recursos da plataforma WiizePay." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: CategoryPage,
 });
 

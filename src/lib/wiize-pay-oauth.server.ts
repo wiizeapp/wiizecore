@@ -2,7 +2,7 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypt
 import { DEPLOY_CONFIG } from "./deploy-config";
 import { hashSecretValue, verifySecretValue } from "./crypto.server";
 
-/** Servidor de autorização Wiize Core para o cliente Wiize (CRM). Tudo aqui roda só no servidor. */
+/** Servidor de autorização WiizePay para o cliente Wiize (CRM). Tudo aqui roda só no servidor. */
 export const WIIZE_CLIENT_NAME = "Wiize";
 export const WIIZE_REDIRECT_URIS: string[] = [...DEPLOY_CONFIG.wiizeRedirectUris];
 export const WIIZE_ALLOWED_SCOPES = ["crm.read", "contacts.read", "companies.read", "deals.read", "sales.read", "products.read", "charges.write", "customers.write"];

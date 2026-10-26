@@ -42,7 +42,7 @@ export const getProviderConnection = createServerFn({ method: "GET" })
 
 const onboardingSchema = z.object({ financialPassword: z.string().min(1).max(200) });
 
-/** Cria a subconta da empresa a partir da conta principal Wiize Core. A chave retornada pelo Asaas é cifrada imediatamente. */
+/** Cria a subconta da empresa a partir da conta principal WiizePay. A chave retornada pelo Asaas é cifrada imediatamente. */
 export const createAsaasSubaccount = createServerFn({ method: "POST" })
   .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => onboardingSchema.parse(input))

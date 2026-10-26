@@ -14,11 +14,11 @@ import { formatBRL as formatCurrency } from "@/lib/format";
 export const Route = createFileRoute("/teste-checkout/$token")({
   head: () => ({
     meta: [
-      { title: "Checkout de teste — Wiize Core" },
-      { name: "description", content: "Ambiente de testes da Wiize Core: nenhum dinheiro real é movimentado." },
+      { title: "Checkout de teste — WiizePay" },
+      { name: "description", content: "Ambiente de testes da WiizePay: nenhum dinheiro real é movimentado." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Checkout de teste — Wiize Core" },
-      { property: "og:description", content: "Ambiente de testes da Wiize Core: nenhum dinheiro real é movimentado." },
+      { property: "og:title", content: "Checkout de teste — WiizePay" },
+      { property: "og:description", content: "Ambiente de testes da WiizePay: nenhum dinheiro real é movimentado." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

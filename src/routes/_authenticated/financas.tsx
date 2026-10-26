@@ -26,9 +26,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/financas")({
   head: () => ({
     meta: [
-      { title: "Gestão financeira — Wiize Core" },
+      { title: "Gestão financeira — WiizePay" },
       { name: "description", content: "Organize entradas, saídas, contas e cartões da sua empresa de forma simples." },
-      { property: "og:title", content: "Gestão financeira — Wiize Core" },
+      { property: "og:title", content: "Gestão financeira — WiizePay" },
       { property: "og:description", content: "Entradas, saídas e contas da empresa em um só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -93,7 +93,7 @@ function GestaoPage() {
     const names = new Map(all.map((c) => [c.id, c.name]));
     return new Map(all.map((c) => [c.id, c.parent_id ? `${names.get(c.parent_id) ?? "Categoria"} / ${c.name}` : c.name]));
   }, [d]);
-  const accName = useMemo(() => new Map<string, string>([["wiizepay", "Saldo Wiize Core"], ...(d?.accounts ?? []).map((a: any) => [a.id, a.name] as [string, string])]), [d]);
+  const accName = useMemo(() => new Map<string, string>([["wiizepay", "Saldo WiizePay"], ...(d?.accounts ?? []).map((a: any) => [a.id, a.name] as [string, string])]), [d]);
   const entries = (d?.entries ?? []) as Entry[];
   const filtered = entries.filter((e) =>
     (type === "all" || e.direction === type) && (status === "all" || (status === "overdue" ? e.status === "pending" && e.due_on < todayStr() : status === "pending" ? e.status === "pending" && e.due_on >= todayStr() : e.status === status)) && (account === "all" || e.account_id === account)
@@ -127,7 +127,7 @@ function GestaoPage() {
 
       {d?.canWrite && !d.canCreateEntries ? (
         <div className="surface-panel mb-6 grid gap-4 border-primary/30 p-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-          <div className="flex min-w-0 items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/12 text-primary"><Wallet className="h-5 w-5" /></span><div><p className="font-semibold">Prepare sua gestão financeira</p><p className="mt-1 text-sm text-muted-foreground">Cadastre contas, categorias e subcategorias agora. Entradas e saídas serão liberadas automaticamente após seu primeiro pagamento recebido pela Wiize Core.</p></div></div>
+          <div className="flex min-w-0 items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/12 text-primary"><Wallet className="h-5 w-5" /></span><div><p className="font-semibold">Prepare sua gestão financeira</p><p className="mt-1 text-sm text-muted-foreground">Cadastre contas, categorias e subcategorias agora. Entradas e saídas serão liberadas automaticamente após seu primeiro pagamento recebido pela WiizePay.</p></div></div>
           <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => setAccountOpen(true)}><Landmark className="h-4 w-4" /> Contas</Button><Button variant="outline" onClick={() => setCategoriesOpen(true)}><FolderTree className="h-4 w-4" /> Categorias</Button></div>
         </div>
       ) : null}
@@ -171,7 +171,7 @@ function GestaoPage() {
                   <TableCell className="w-full max-w-0">
                     <div className="flex min-w-0 items-center gap-2"><span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg ${e.direction === "in" ? "bg-primary/12 text-primary" : "bg-destructive/10 text-destructive"}`}>{e.direction === "in" ? <ArrowDownLeft className="h-3.5 w-3.5" /> : e.description.toLowerCase().includes("estorno") || e.description.toLowerCase().includes("reembolso") ? <RotateCcw className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}</span><div className="min-w-0"><p className="truncate font-medium">{e.description}{e.group_total ? <span className="ml-1 text-xs text-muted-foreground">{e.group_index}/{e.group_total}</span> : null}</p><p className="truncate text-xs text-muted-foreground">{accName.get(e.account_id ?? "") ?? "Sem conta"}<span className="sm:hidden"> · {STATUS_LABEL(e)[0]}</span>{e.auto ? " · Automático" : e.transfer_id ? " · Transferência" : e.card_invoice_id ? " · Fatura de cartão" : " · Manual"}</p></div></div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{e.auto ? "Wiize Core" : catName.get(e.category_id ?? "") ?? "Outros"}</TableCell>
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{e.auto ? "WiizePay" : catName.get(e.category_id ?? "") ?? "Outros"}</TableCell>
                   <TableCell className="hidden sm:table-cell text-sm">{formatDate(e.due_on)}</TableCell>
                    <TableCell className="hidden sm:table-cell"><StatusBadge tone={STATUS_LABEL(e)[1]}>{STATUS_LABEL(e)[0]}</StatusBadge></TableCell>
                   <TableCell className={`numeric-tabular whitespace-nowrap text-right font-semibold ${e.status === "cancelled" || e.status === "reversed" ? "text-muted-foreground line-through" : e.direction === "in" ? "text-primary" : ""}`}>{e.direction === "in" ? "+" : "−"} {formatBRL(e.amount)}</TableCell>
@@ -373,7 +373,7 @@ function CategoryDialog({ categories, onClose }: { categories: Category[]; onClo
                 <div className="mb-2 flex items-center gap-2">{dir === "in" ? <ArrowDownLeft className="h-4 w-4 text-primary" /> : <ArrowUpRight className="h-4 w-4 text-destructive" />}<p className="text-sm font-semibold">{dir === "in" ? "Receitas" : "Despesas"}</p><span className="text-xs text-muted-foreground">{own.filter((c) => c.direction === dir && visible(c)).length}</span></div>
                 {rows.length ? <div className="overflow-hidden rounded-xl border border-border bg-card">{rows}</div> : <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">{term ? "Nada encontrado." : show === "archived" ? "Nenhuma categoria arquivada." : "Nenhuma categoria própria."}</p>}
               </section>); })}
-            <p className="text-xs text-muted-foreground">Categorias padrão da Wiize Core seguem disponíveis e protegidas.</p>
+            <p className="text-xs text-muted-foreground">Categorias padrão da WiizePay seguem disponíveis e protegidas.</p>
           </div>
           <div className="space-y-4 self-start lg:sticky lg:top-4">
             <form className="space-y-3 rounded-xl border border-border bg-card p-5 shadow-sm" onSubmit={(e) => { e.preventDefault(); if (name.trim()) save.mutate(); }}>
@@ -408,7 +408,7 @@ function AccountsCard({ accounts, wiizePayBalance, loading, onOpen }: { accounts
         <div className="space-y-3 p-4">{[0, 1, 2].map((i) => <div key={i} className="skeleton-shimmer h-10 rounded-lg" />)}</div>
       ) : (
         <div className="divide-y divide-border">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-primary/5 px-4 py-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">Saldo Wiize Core</p><p className="truncate text-xs text-muted-foreground">Disponível para saque · somente leitura</p></div><p className="numeric-tabular text-right text-sm font-semibold">{wiizePayBalance === null ? "—" : formatBRL(wiizePayBalance)}</p></div>
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-primary/5 px-4 py-3"><div className="min-w-0"><p className="truncate text-sm font-semibold">Saldo WiizePay</p><p className="truncate text-xs text-muted-foreground">Disponível para saque · somente leitura</p></div><p className="numeric-tabular text-right text-sm font-semibold">{wiizePayBalance === null ? "—" : formatBRL(wiizePayBalance)}</p></div>
           {active.length ? active.map((a) => (
             <button key={a.id} type="button" onClick={() => onOpen(a)} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50">
               <div className="min-w-0"><p className="truncate text-sm font-medium">{a.name}</p><p className="truncate text-xs text-muted-foreground">{ACCOUNT_KIND[a.kind]} · Ativa</p></div>
@@ -501,7 +501,7 @@ function FinancialRegistrySheet({ data, onNewAccount, onEditAccount, onCategorie
     <Tabs defaultValue="accounts" className="mt-5"><TabsList className="grid w-full grid-cols-2"><TabsTrigger value="accounts">Contas</TabsTrigger><TabsTrigger value="categories">Categorias</TabsTrigger></TabsList>
       <TabsContent value="accounts" className="mt-4 space-y-3">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3"><div className="min-w-0"><p className="font-semibold">Contas e saldos</p><p className="text-xs text-muted-foreground">Saldos atualizados pelas movimentações pagas.</p></div>{data.canWrite ? <Button size="sm" onClick={onNewAccount}><Plus className="h-4 w-4" /> Nova conta</Button> : null}</div>
-        <div className="rounded-lg border border-primary/25 bg-primary/8 p-4"><div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground"><Wallet className="h-5 w-5" /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Saldo Wiize Core</p><p className="text-xs text-muted-foreground">Automático · somente leitura</p></div><p className="numeric-tabular text-right font-semibold">{data.wiizePayBalance === null ? "—" : formatBRL(data.wiizePayBalance)}</p></div></div>
+        <div className="rounded-lg border border-primary/25 bg-primary/8 p-4"><div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground"><Wallet className="h-5 w-5" /></span><div className="min-w-0"><p className="truncate text-sm font-semibold">Saldo WiizePay</p><p className="text-xs text-muted-foreground">Automático · somente leitura</p></div><p className="numeric-tabular text-right font-semibold">{data.wiizePayBalance === null ? "—" : formatBRL(data.wiizePayBalance)}</p></div></div>
         {data.accounts.length ? data.accounts.map((item) => <AccountRegistryRow key={item.id} item={item} canWrite={data.canWrite} onEdit={() => onEditAccount(item)} />) : <EmptyState icon={<Landmark className="h-5 w-5" />} title="Nenhuma conta cadastrada" text="Cadastre sua primeira conta para acompanhar o saldo." />}
       </TabsContent>
       <TabsContent value="categories" className="mt-4 space-y-4"><div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3"><div className="min-w-0"><p className="font-semibold">Categorias e subcategorias</p><p className="text-xs text-muted-foreground">Organize entradas e saídas no seu plano financeiro.</p></div>{data.canWrite ? <Button size="sm" onClick={onCategories}><FolderTree className="h-4 w-4" /> Gerenciar</Button> : null}</div><div className="grid grid-cols-2 gap-3"><div className="rounded-lg border border-border p-4"><p className="text-xs text-muted-foreground">Entradas</p><p className="mt-1 text-2xl font-bold">{ownCategories.filter((item) => item.direction === "in").length}</p></div><div className="rounded-lg border border-border p-4"><p className="text-xs text-muted-foreground">Saídas</p><p className="mt-1 text-2xl font-bold">{ownCategories.filter((item) => item.direction === "out").length}</p></div></div><p className="text-xs text-muted-foreground">As categorias padrão continuam disponíveis e protegidas contra alterações.</p></TabsContent>
@@ -558,7 +558,7 @@ function EntrySheet({ entry, canWrite, catName, accName, onClose }: { entry: Ent
                 ["Tipo", entry.transfer_id ? "Transferência" : entry.card_invoice_id ? "Pagamento de fatura" : entry.direction === "in" ? "Entrada" : "Saída"],
                 ["Status", STATUS_LABEL(entry)[0]],
                 ["Data", formatDate(entry.due_on)],
-                ["Categoria", entry.auto ? "Wiize Core" : catName.get(entry.category_id ?? "") ?? "Outros"],
+                ["Categoria", entry.auto ? "WiizePay" : catName.get(entry.category_id ?? "") ?? "Outros"],
                 ["Conta", accName.get(entry.account_id ?? "") ?? "Sem conta"],
                 entry.group_total ? [entry.group_kind === "installment" ? "Parcela" : "Recorrência", `${entry.group_index} de ${entry.group_total}`] : null,
                 entry.cost_center ? ["Centro de custo", entry.cost_center] : null,
@@ -568,7 +568,7 @@ function EntrySheet({ entry, canWrite, catName, accName, onClose }: { entry: Ent
               ))}
             </dl>
             {entry.auto ? (
-              <p className="mt-6 rounded-lg bg-muted p-3 text-xs text-muted-foreground">Lançado automaticamente pela Wiize Core. Não pode ser editado aqui.</p>
+              <p className="mt-6 rounded-lg bg-muted p-3 text-xs text-muted-foreground">Lançado automaticamente pela WiizePay. Não pode ser editado aqui.</p>
             ) : canWrite ? (
               entry.status === "cancelled" || entry.status === "reversed" ? (
                 <p className="mt-6 rounded-lg bg-muted p-3 text-xs text-muted-foreground">Movimentação {entry.status === "reversed" ? "estornada" : "cancelada"}. Ela fica no histórico e não afeta saldos.</p>

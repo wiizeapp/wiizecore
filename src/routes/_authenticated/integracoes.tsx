@@ -10,7 +10,7 @@ import bling from "@/assets/integrations/bling.png";
 import omie from "@/assets/integrations/omie.png";
 
 export const Route = createFileRoute("/_authenticated/integracoes")({
-  head: () => ({ meta: [{ title: "Integrações — Wiize Core" }, { name: "description", content: "Conecte a Wiize Core a outros sistemas." }, { property: "og:title", content: "Integrações — Wiize Core" }, { property: "og:description", content: "Conecte a Wiize Core a outros sistemas." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "Integrações — WiizePay" }, { name: "description", content: "Conecte a WiizePay a outros sistemas." }, { property: "og:title", content: "Integrações — WiizePay" }, { property: "og:description", content: "Conecte a WiizePay a outros sistemas." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: Integracoes,
 });
 
@@ -26,7 +26,7 @@ const SOON = [
 function Integracoes() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Integrações" description="Conecte a Wiize Core aos sistemas que você já usa." />
+      <PageHeader title="Integrações" description="Conecte a WiizePay aos sistemas que você já usa." />
       <IntegrationsCard />
       <DriveIntegrationCard />
       <section className="surface-panel p-5 sm:p-6">

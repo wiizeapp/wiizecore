@@ -15,7 +15,7 @@ import { listPublicFees, simulatePaymentFee } from "@/lib/fees.functions";
 import { formatBRL, formatPercent } from "@/lib/format";
 
 export const Route = createFileRoute("/taxas")({
-  head: () => pageHead({ path: "/taxas", title: "Taxas Wiize Core | Tarifas e Condições de Pagamento", description: "Saiba quanto custa receber por Pix, boleto e cartão na Wiize Core. Cobrança, notas fiscais, contratos, clientes e gestão financeira em um só lugar, sem mensalidade e sem custos escondidos.", ogDescription: "Taxas transparentes para receber e controle completo do seu negócio: notas fiscais, contratos, clientes e gestão financeira.", breadcrumb: [{ name: "Taxas", path: "/taxas" }] }),
+  head: () => pageHead({ path: "/taxas", title: "Taxas WiizePay | Tarifas e Condições de Pagamento", description: "Saiba quanto custa receber por Pix, boleto e cartão na WiizePay. Cobrança, notas fiscais, contratos, clientes e gestão financeira em um só lugar, sem mensalidade e sem custos escondidos.", ogDescription: "Taxas transparentes para receber e controle completo do seu negócio: notas fiscais, contratos, clientes e gestão financeira.", breadcrumb: [{ name: "Taxas", path: "/taxas" }] }),
   component: FeesPage,
 });
 

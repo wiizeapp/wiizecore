@@ -11,7 +11,7 @@ import { HELP_ARTICLES, HELP_CATEGORIES, HELP_FAQ, categoryById } from "@/lib/he
 import { FinancialSupport } from "@/components/financial-provider";
 
 export const Route = createFileRoute("/ajuda/")({
-  head: () => ({ meta: [{ title: "Central de Ajuda | Wiize Core" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Core." }, { property: "og:title", content: "Central de Ajuda | Wiize Core" }, { property: "og:description", content: "Respostas, guias, taxas, prazos e calculadoras da Wiize Core." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "Central de Ajuda | WiizePay" }, { name: "description", content: "Respostas, guias, taxas, prazos e calculadoras da WiizePay." }, { property: "og:title", content: "Central de Ajuda | WiizePay" }, { property: "og:description", content: "Respostas, guias, taxas, prazos e calculadoras da WiizePay." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: HelpHome,
 });
 
@@ -32,7 +32,7 @@ function HelpHome() {
 
   return (
     <div>
-      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a Wiize Core e consulte informações sobre taxas, pagamentos e recebimentos.")} />
+      <PageHeader title={ui("Central de Ajuda")} description={ui("Encontre respostas, aprenda a utilizar a WiizePay e consulte informações sobre taxas, pagamentos e recebimentos.")} />
       <div className="mb-10">
         <div className="relative mx-auto max-w-2xl">
           <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />

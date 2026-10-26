@@ -111,7 +111,7 @@ export function ExtWebhooksPanel({ integrationId, canManage }: { integrationId: 
 
       <SecureActionDialog
         open={action?.kind === "create"} onOpenChange={(v) => !v && setAction(null)}
-        title={t("Novo endereço de webhook")} description={t("A Wiize Core vai avisar este endereço quando uma cobrança mudar.")}
+        title={t("Novo endereço de webhook")} description={t("A WiizePay vai avisar este endereço quando uma cobrança mudar.")}
         confirmLabel={t("Criar webhook")} needsPassword canConfirm={url.startsWith("https://") && chosen.length > 0}
         onConfirm={async ({ password }) => { const r = await create({ data: { integrationId, url, events: chosen, financialPassword: password } }); setSecret(r.secret); setUrl(""); toast.success(t("Webhook criado.")); void refresh(); }}
       >

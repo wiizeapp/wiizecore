@@ -17,8 +17,8 @@ const ep = (path: string, method: string) => EXT_ENDPOINTS.find((e) => e.path ==
 
 export const DOC_SECTIONS: DocSection[] = [
   { id: "introducao", group: "Começo", title: "Introdução", blocks: [
-    { kind: "p", text: "A API da Wiize Core permite que o seu sistema (SaaS, app ou site) crie cobranças, abra o checkout hospedado, acompanhe pagamentos e assinaturas e receba avisos automáticos (webhooks) quando algo muda." },
-    { kind: "p", text: "Você não precisa recriar login, clientes ou cadastros: os seus usuários continuam no seu sistema; a Wiize Core cuida da cobrança e do recebimento." },
+    { kind: "p", text: "A API da WiizePay permite que o seu sistema (SaaS, app ou site) crie cobranças, abra o checkout hospedado, acompanhe pagamentos e assinaturas e receba avisos automáticos (webhooks) quando algo muda." },
+    { kind: "p", text: "Você não precisa recriar login, clientes ou cadastros: os seus usuários continuam no seu sistema; a WiizePay cuida da cobrança e do recebimento." },
     { kind: "list", items: [
       `URL base: ${EXT_API_BASE}`,
       "Formato: JSON (UTF-8) em todas as requisições e respostas.",
@@ -28,7 +28,7 @@ export const DOC_SECTIONS: DocSection[] = [
   ] },
   { id: "inicio-rapido", group: "Começo", title: "Início rápido em 5 passos", blocks: [
     { kind: "list", items: [
-      "1. Entre na Wiize Core e abra Integrações → API e desenvolvedores.",
+      "1. Entre na WiizePay e abra Integrações → API e desenvolvedores.",
       "2. Escolha o ambiente Teste no menu lateral e clique em Nova chave (pede a sua senha financeira).",
       "3. Copie a chave secreta sk_test_… e guarde como variável de ambiente do servidor (ex.: WIIZE_SECRET_KEY).",
       "4. Cadastre um serviço com valor fixo em Serviços e pegue o service_id (GET /services).",
@@ -123,7 +123,7 @@ export const DOC_SECTIONS: DocSection[] = [
     { kind: "p", text: "O cliente é criado (ou reaproveitado pelo CPF/CNPJ) automaticamente no checkout. portal_url leva à Central do cliente, onde ele vê cobranças, recibos e documentos entrando com e-mail e CPF/CNPJ." },
   ] },
   { id: "webhooks", group: "Webhooks", title: "Configurar webhooks", blocks: [
-    { kind: "p", text: "Webhooks são avisos que a Wiize Core envia ao seu servidor quando algo acontece. Cadastre o endereço em API e desenvolvedores → sua chave → Webhooks." },
+    { kind: "p", text: "Webhooks são avisos que a WiizePay envia ao seu servidor quando algo acontece. Cadastre o endereço em API e desenvolvedores → sua chave → Webhooks." },
     { kind: "list", items: [
       "O endereço precisa ser https e público (sem IP ou rede interna).",
       "Ao criar, você recebe o segredo whsec_… uma única vez. Guarde como WIIZE_WEBHOOK_SECRET.",
@@ -140,7 +140,7 @@ export const DOC_SECTIONS: DocSection[] = [
     ] },
   ] },
   { id: "assinatura-webhook", group: "Webhooks", title: "Verificar a assinatura", blocks: [
-    { kind: "note", text: "Verificar a assinatura é OBRIGATÓRIO. O endereço do seu webhook é público: qualquer pessoa que o descobrir pode enviar um payment.confirmed falso por POST e liberar acesso sem pagar. Só a assinatura prova que o aviso veio da Wiize Core." },
+    { kind: "note", text: "Verificar a assinatura é OBRIGATÓRIO. O endereço do seu webhook é público: qualquer pessoa que o descobrir pode enviar um payment.confirmed falso por POST e liberar acesso sem pagar. Só a assinatura prova que o aviso veio da WiizePay." },
     { kind: "p", text: "Cada aviso traz o cabeçalho WiizePay-Signature: t=<unix>,v1=<hex>. v1 = HMAC-SHA256(segredo, \"t.corpo_bruto\"). Rejeite se a diferença de tempo passar de 5 minutos." },
     { kind: "code", label: "Node.js", code: EXT_DOCS_SNIPPETS.verify },
     { kind: "list", items: [
@@ -162,7 +162,7 @@ export const DOC_SECTIONS: DocSection[] = [
   ] },
   { id: "producao", group: "Testes", title: "Ir para produção", blocks: [
     { kind: "list", items: [
-      "Conta de pagamentos ativada na Wiize Core.",
+      "Conta de pagamentos ativada na WiizePay.",
       "Chave sk_live_ criada e guardada no servidor de produção.",
       "Webhook de produção cadastrado e testado.",
       "Liberação de acesso só por payment.confirmed / subscription.renewed.",
@@ -199,7 +199,7 @@ export function docsAsText() {
 
 /** Guia único para qualquer IA de programação. Nunca contém chaves reais. */
 export function buildUniversalAiGuide() {
-  return `Você é um desenvolvedor sênior. Integre este projeto à API de pagamentos da Wiize Core (checkout hospedado, cobranças, assinaturas e webhooks).
+  return `Você é um desenvolvedor sênior. Integre este projeto à API de pagamentos da WiizePay (checkout hospedado, cobranças, assinaturas e webhooks).
 
 COMO TRABALHAR
 1. Leia a estrutura do projeto antes de alterar (autenticação, banco, rotas de servidor). Não reconstrua login nem duplique modelos.

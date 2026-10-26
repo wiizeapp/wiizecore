@@ -5,10 +5,10 @@
   "security": "Seguridad",
   "access": "Acceder a la plataforma",
   "openMenu": "Abrir menú",
-  "menuTitle": "Menú Wiize Core",
+  "menuTitle": "Menú WiizePay",
   "mainNav": "Navegación principal",
   "mobileNav": "Navegación móvil",
-  "home": "Wiize Core — inicio",
+  "home": "WiizePay — inicio",
   "items": {
     "charges": [
       "Cobros y pagos",

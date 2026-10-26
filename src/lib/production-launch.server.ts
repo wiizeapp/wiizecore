@@ -1,3 +1,5 @@
+import { DEPLOY_CONFIG } from "./deploy-config";
+
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 export const PRODUCTION_LAUNCH_KIND = "production_launch";
@@ -23,16 +25,16 @@ export async function announceProductionLaunch(admin: Admin, limit = 50) {
     const skip = new Set([...(done ?? []), ...(paid ?? [])].map((r) => r.tenant_id));
     const pending = (tenants ?? []).filter((t) => !skip.has(t.id)).slice(0, limit);
     const { notifyTenant } = await import("./notify.server");
-    const base = process.env["PUBLIC_APP_URL"] || "https://wiizecore.lovable.app";
+    const base = DEPLOY_CONFIG.publicSiteUrl;
     for (const t of pending) {
       await notifyTenant(admin, {
         tenantId: t.id,
         kind: PRODUCTION_LAUNCH_KIND,
         dedupeKey: `production-launch:${t.id}`,
         title: "Sua conta de produção está liberada!",
-        body: "A WiizeCore saiu da versão beta. Ative sua conta de produção e comece a receber pagamentos reais agora mesmo.",
+        body: "A WiizePay saiu da versão beta. Ative sua conta de produção e comece a receber pagamentos reais agora mesmo.",
         link: `${base}/ativacao`,
-        email: { subject: "WiizeCore: conta de produção liberada" },
+        email: { subject: "WiizePay: conta de produção liberada" },
       });
       sent++;
     }

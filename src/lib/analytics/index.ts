@@ -1,5 +1,5 @@
 /**
- * Analytics WiizeCore — ponto ÚNICO de envio no navegador.
+ * Analytics WiizePay — ponto ÚNICO de envio no navegador.
  * Regras: GTM configurado → só dataLayer (GA4 direto desligado); sem GTM → GA4 direto via gtag.
  * Nada é enviado sem consentimento de análise; endereços são normalizados e parâmetros filtrados.
  * Compras/receita NUNCA saem do navegador (ver docs/analytics.md).

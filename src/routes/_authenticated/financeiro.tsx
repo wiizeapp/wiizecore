@@ -26,10 +26,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/financeiro")({
   head: () => ({
     meta: [
-      { title: "Financeiro — Wiize Core" },
-      { name: "description", content: "Veja saldos, extrato, liberações e solicite saques na Wiize Core." },
-      { property: "og:title", content: "Financeiro — Wiize Core" },
-      { property: "og:description", content: "Veja saldos, extrato, liberações e solicite saques na Wiize Core." },
+      { title: "Financeiro — WiizePay" },
+      { name: "description", content: "Veja saldos, extrato, liberações e solicite saques na WiizePay." },
+      { property: "og:title", content: "Financeiro — WiizePay" },
+      { property: "og:description", content: "Veja saldos, extrato, liberações e solicite saques na WiizePay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -169,7 +169,7 @@ function Financeiro() {
         action={
           <Button onClick={() => {
             if (!banks?.length) { toast.info("Cadastre uma conta bancária para receber seus saques."); setBankOpen(true); return; }
-            if (banks[0]?.verification_status !== "verified") { toast.info("Sua conta bancária será liberada para saque assim que o cadastro Wiize Core for aprovado."); return; }
+            if (banks[0]?.verification_status !== "verified") { toast.info("Sua conta bancária será liberada para saque assim que o cadastro WiizePay for aprovado."); return; }
             setWithdrawOpen(true);
           }}>
             {banks?.length ? "Solicitar saque" : "Cadastrar conta para saque"}
@@ -499,7 +499,7 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
               <p className="text-muted-foreground">O saque vai para esta chave Pix. Ela precisa estar no mesmo CPF/CNPJ da empresa. Na hora do saque, o Asaas confere a chave e recusa se houver erro.</p>
               <label className="flex items-start gap-2">
                 <input type="checkbox" className="mt-1" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-                <span>Confirmo que conferi os dados e que a conta é da minha empresa. A Wiize Core não se responsabiliza por transferências feitas para dados informados errado.</span>
+                <span>Confirmo que conferi os dados e que a conta é da minha empresa. A WiizePay não se responsabiliza por transferências feitas para dados informados errado.</span>
               </label>
               <Button type="button" variant="outline" size="sm" onClick={() => { setReview(false); setAgree(false); }}>Corrigir dados</Button>
             </div>

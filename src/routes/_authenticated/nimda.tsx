@@ -34,10 +34,10 @@ import { AdminPld } from "@/components/admin/admin-pld";
 export const Route = createFileRoute("/_authenticated/nimda")({
   head: () => ({
     meta: [
-      { title: "Nimda — Wiize Core" },
-      { name: "description", content: "Acompanhe receita, movimentações e aprove saques da plataforma Wiize Core." },
-      { property: "og:title", content: "Nimda — Wiize Core" },
-      { property: "og:description", content: "Acompanhe receita, movimentações e aprove saques da plataforma Wiize Core." },
+      { title: "Nimda — WiizePay" },
+      { name: "description", content: "Acompanhe receita, movimentações e aprove saques da plataforma WiizePay." },
+      { property: "og:title", content: "Nimda — WiizePay" },
+      { property: "og:description", content: "Acompanhe receita, movimentações e aprove saques da plataforma WiizePay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -65,7 +65,7 @@ const statusLabels: Record<string, string> = {
 };
 const kindLabels: Record<string, string> = {
   payment: "Recebimento",
-  platform_fee: "Receita Wiize Core",
+  platform_fee: "Receita WiizePay",
   provider_fee: "Taxa do provedor",
   refund: "Estorno",
   withdrawal: "Saque",
@@ -210,7 +210,7 @@ function AdminContent() {
           <p className="px-2 py-2 text-xs text-muted-foreground">Clique em uma empresa para ver o painel completo.</p>
           </div>);
   const taxasView = (<div className="surface-panel p-2">
-          <h3 className="px-2 pt-2 text-sm font-semibold">Taxas Wiize Core por pagamento (valores em uso)</h3>
+          <h3 className="px-2 pt-2 text-sm font-semibold">Taxas WiizePay por pagamento (valores em uso)</h3>
           <Table>
             <TableHeader>
               <TableRow>
@@ -268,7 +268,7 @@ function AdminContent() {
     visao: <AdminDashboard />,
     transacoes: <AdminTransactions f={fin} preset={drill} />,
     receitas: <AdminRevenue f={fin} />,
-    despesas: soon("Nenhuma despesa própria registrada", "Os custos do provedor já aparecem em Receitas e Taxas. O cadastro de despesas internas da Wiize Core (infraestrutura, software, marketing etc.) será a próxima etapa."),
+    despesas: soon("Nenhuma despesa própria registrada", "Os custos do provedor já aparecem em Receitas e Taxas. O cadastro de despesas internas da WiizePay (infraestrutura, software, marketing etc.) será a próxima etapa."),
     taxas: <div className="space-y-6"><AdminFeeSettings />{taxasView}</div>,
     contas: <div className="surface-panel p-2"><ContasEmpresas /></div>,
     receber: <AdminReceivables f={fin} />,
@@ -287,7 +287,7 @@ function AdminContent() {
     aprovacoes: <div className="space-y-6">{saquesView}<div className="surface-panel p-2"><AdminRecoveries /></div></div>,
     caixa: <AdminInbox />,
     sugestoes: <AdminSuggestions />,
-    suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da Wiize Core."),
+    suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da WiizePay."),
     auditoria: <AdminAuditSecurity />,
     pld: <AdminPld />,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,
@@ -297,7 +297,7 @@ function AdminContent() {
 
   return (
     <div>
-      <PageHeader title={section === "dashboard" ? "Dashboard Admin" : ADMIN_LABELS[section]} description={section === "dashboard" ? "Centro de controle financeiro da Wiize Core." : "Área administrativa Wiize Core."} />
+      <PageHeader title={section === "dashboard" ? "Dashboard Admin" : ADMIN_LABELS[section]} description={section === "dashboard" ? "Centro de controle financeiro da WiizePay." : "Área administrativa WiizePay."} />
       {periodSections.includes(section) ? <PeriodBar f={fin} /> : null}
       {section === "transacoes" && drill ? <div className="mb-3"><Button size="sm" variant="ghost" onClick={() => setDrill(null)}>Limpar filtro “{drill.title}”</Button></div> : null}
       {views[section]}
@@ -423,7 +423,7 @@ function Empty({ cols, text }: { cols: number; text: string }) {
 function ContasEmpresas() {
   const fn = useServerFn(getTenantAccounts);
   const { data, isLoading, refetch, isFetching } = useQuery({ queryKey: ["admin-accounts"], queryFn: () => fn() });
-  const labels: Record<string, string> = { gross_amount: "Valor da cobrança", platform_fee: "Taxa Wiize Core" };
+  const labels: Record<string, string> = { gross_amount: "Valor da cobrança", platform_fee: "Taxa WiizePay" };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 px-2 pt-2">
@@ -466,7 +466,7 @@ function ContasEmpresas() {
             <TableRow>
               <TableHead>Empresa</TableHead>
               <TableHead>Item</TableHead>
-              <TableHead className="text-right">Wiize Core</TableHead>
+              <TableHead className="text-right">WiizePay</TableHead>
               <TableHead className="text-right">Provedor</TableHead>
               <TableHead>Detectado</TableHead>
             </TableRow>
@@ -520,8 +520,8 @@ function TenantDetailDialog({ tenantId, onClose }: { tenantId: string | null; on
               <Stat label="Disponível" value={formatBRL(data.wallet.available)} highlight />
               <Stat label="Em saque" value={formatBRL(data.wallet.blocked)} />
               <Stat label="Sacado" value={formatBRL(data.wallet.withdrawn)} />
-              <Stat label="Taxas pagas à Wiize Core" value={formatBRL(data.wallet.fees)} />
-              <Stat label="Lucro Wiize Core (após custo)" value={formatBRL(wiize)} highlight />
+              <Stat label="Taxas pagas à WiizePay" value={formatBRL(data.wallet.fees)} />
+              <Stat label="Lucro WiizePay (após custo)" value={formatBRL(wiize)} highlight />
               <Stat label="Cobranças pagas" value={String(paid.length)} />
             </div>
 
@@ -564,7 +564,7 @@ function TenantDetailDialog({ tenantId, onClose }: { tenantId: string | null; on
                     <TableHead>Data</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Valor</TableHead>
-                    <TableHead className="text-right">Taxa Wiize Core</TableHead>
+                    <TableHead className="text-right">Taxa WiizePay</TableHead>
                     <TableHead className="text-right">Custo provedor</TableHead>
                     <TableHead className="text-right">Líquido</TableHead>
                   </TableRow>

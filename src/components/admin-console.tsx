@@ -24,10 +24,10 @@ export function AdminDashboard() {
           <Button key={p} size="sm" variant={days === p ? "default" : "outline"} onClick={() => setDays(p)}>{p === 1 ? "Hoje" : `${p} dias`}</Button>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Volume processado é dinheiro dos clientes. Receita Wiize Core é só o que fica para a plataforma.</p>
+      <p className="text-xs text-muted-foreground">Volume processado é dinheiro dos clientes. Receita WiizePay é só o que fica para a plataforma.</p>
       <StatGrid>
         <StatCard label="Volume processado" loading={isLoading} value={formatBRL(d?.volume ?? 0)} hint={`${d?.paymentsCount ?? 0} pagamentos`} />
-        <StatCard label="Receita Wiize Core" loading={isLoading} value={formatBRL(d?.revenue ?? 0)} hint="Cobranças + saques + notas" />
+        <StatCard label="Receita WiizePay" loading={isLoading} value={formatBRL(d?.revenue ?? 0)} hint="Cobranças + saques + notas" />
         <StatCard label="Custo do provedor" loading={isLoading} value={formatBRL(d?.providerCost ?? 0)} />
         <StatCard label="Aprovações pendentes" loading={isLoading} value={(d?.pending.withdrawals ?? 0) + (d?.pending.activations ?? 0) + (d?.pending.recoveries ?? 0)} hint={`${d?.pending.withdrawals ?? 0} saques · ${d?.pending.activations ?? 0} ativações · ${d?.pending.recoveries ?? 0} 2FA`} />
       </StatGrid>

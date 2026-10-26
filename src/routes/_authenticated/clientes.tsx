@@ -23,10 +23,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/clientes")({
   head: () => ({
     meta: [
-      { title: "Clientes — Wiize Core" },
-      { name: "description", content: "Cadastre clientes, documentos e contatos para cobranças e contratos na Wiize Core." },
-      { property: "og:title", content: "Clientes — Wiize Core" },
-      { property: "og:description", content: "Cadastre clientes, documentos e contatos para cobranças e contratos na Wiize Core." },
+      { title: "Clientes — WiizePay" },
+      { name: "description", content: "Cadastre clientes, documentos e contatos para cobranças e contratos na WiizePay." },
+      { property: "og:title", content: "Clientes — WiizePay" },
+      { property: "og:description", content: "Cadastre clientes, documentos e contatos para cobranças e contratos na WiizePay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

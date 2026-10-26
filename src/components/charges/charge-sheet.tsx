@@ -220,7 +220,7 @@ function RefundDialog({ paymentId, ctx, onClose }: { paymentId: string; ctx: any
                 </button>
               ))}
             </div>
-            {mode === "gross" ? <p className="text-xs text-muted-foreground">A taxa Wiize Core ({formatBRL(ctx.payment.fee)}) não é devolvida. A diferença sai do seu saldo.</p> : null}
+            {mode === "gross" ? <p className="text-xs text-muted-foreground">A taxa WiizePay ({formatBRL(ctx.payment.fee)}) não é devolvida. A diferença sai do seu saldo.</p> : null}
             {ctx.policy.allow_partial ? (
               <div className="grid grid-cols-2 gap-3">
                 <div><Label>Tipo</Label>

@@ -39,7 +39,7 @@ export function VerifyPanel({ initialCode }: { initialCode?: string }) {
       {m.isError ? <div className="surface-panel p-5 text-sm">{(m.error as Error).message}</div> : null}
       {r && !r.found ? (
         <div className="surface-panel flex items-start gap-3 p-5 text-sm"><XCircle className="h-6 w-6 shrink-0 text-destructive" />
-          <div><p className="font-medium">Documento não encontrado</p><p className="text-muted-foreground">O código não existe ou o arquivo foi alterado depois de gerado pela Wiize Core.</p></div></div>
+          <div><p className="font-medium">Documento não encontrado</p><p className="text-muted-foreground">O código não existe ou o arquivo foi alterado depois de gerado pela WiizePay.</p></div></div>
       ) : null}
       {r && r.found ? (
         <div className="surface-panel overflow-hidden text-sm">

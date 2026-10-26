@@ -186,7 +186,7 @@ export function HowItWorksSection() {
   );
 }
 
-/* ---------- Comparison: só um link de pagamento vs Wiize Core ---------- */
+/* ---------- Comparison: só um link de pagamento vs WiizePay ---------- */
 
 export function ComparisonSection() {
   const ui = useUi();
@@ -201,7 +201,7 @@ export function ComparisonSection() {
   ];
   return (
     <section className="section-shell py-20 lg:py-28">
-      <SectionIntro center title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A Wiize Core cuida do que vem antes e do que vem depois dele." />
+      <SectionIntro center title="Receber o pagamento" accent="é só o começo." text="Um link de pagamento resolve o momento da cobrança. A WiizePay cuida do que vem antes e do que vem depois dele." />
       <div className="relative mt-12 overflow-hidden rounded-2xl border border-border bg-card shadow-float">
         <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 cmp-half-live" />
         <div className="relative">
@@ -209,15 +209,15 @@ export function ComparisonSection() {
             <div className="flex min-w-0 flex-col items-start gap-2 border-b border-border/70 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
               <span className="grid size-9 shrink-0 place-items-center rounded-xl border sm:size-11 border-border bg-muted/40 text-muted-foreground"><CreditCard className="size-5" /></span>
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{ui("Sem a Wiize Core")}</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{ui("Sem a WiizePay")}</p>
                 <p className="mt-0.5 font-display text-sm font-semibold text-muted-foreground sm:text-base">{ui("Só um link de pagamento")}</p>
               </div>
             </div>
             <div className="flex min-w-0 flex-col items-start gap-2 border-b border-l border-border/70 border-l-primary/20 px-3 py-4 sm:flex-row sm:items-center sm:gap-3.5 sm:px-7 sm:py-5">
-              <img src={brandLogo.url} alt="Wiize Core" width={44} height={44} className="size-9 shrink-0 rounded-xl sm:size-11" />
+              <img src={brandLogo.url} alt="WiizePay" width={44} height={44} className="size-9 shrink-0 rounded-xl sm:size-11" />
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a Wiize Core")}</p>
-                <p className="mt-0.5 font-display text-sm font-semibold sm:text-base">Wiize <span className="text-primary">Core</span></p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">{ui("Com a WiizePay")}</p>
+                <p className="mt-0.5 font-display text-sm font-semibold sm:text-base">Wiize<span className="text-primary">Pay</span></p>
               </div>
               <span className="ml-auto hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary lg:block">{ui("Tudo no mesmo fluxo")}</span>
             </div>
@@ -242,7 +242,7 @@ export function ComparisonSection() {
           ))}
         </div>
       </div>
-      <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-5 text-muted-foreground">{ui("Comparação entre usar apenas um link de pagamento e usar a Wiize Core. Os recursos dependem do plano e da configuração da sua conta.")}</p>
+      <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-5 text-muted-foreground">{ui("Comparação entre usar apenas um link de pagamento e usar a WiizePay. Os recursos dependem do plano e da configuração da sua conta.")}</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Button asChild size="lg"><Link to="/auth" search={{ modo: "criar" }} data-analytics-event="cta_clicked" data-analytics-name="signup" data-analytics-location="landing_final">{ui("Começar agora")} <ArrowRight className="size-4" /></Link></Button>
       </div>

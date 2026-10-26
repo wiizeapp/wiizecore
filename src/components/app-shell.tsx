@@ -121,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       ? user.user_metadata["picture"]
       : undefined;
   const fullName = typeof user?.user_metadata?.["full_name"] === "string" ? user.user_metadata["full_name"] : undefined;
-  const profileName = fullName || workspace?.tenantName || user?.email?.split("@")[0] || "Conta Wiize Core";
+  const profileName = fullName || workspace?.tenantName || user?.email?.split("@")[0] || "Conta WiizePay";
   const profileInitials = profileName
     .split(/\s+/)
     .filter(Boolean)
@@ -258,7 +258,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         onMouseLeave={collapseSidebar}
       >
         <div className="app-sidebar-brand">
-          <Link to="/painel" className="grid w-full place-items-start overflow-hidden" title="Wiize Core"><Brand compact={!sidebarExpanded} beta /></Link>
+          <Link to="/painel" className="grid w-full place-items-start overflow-hidden" title="WiizePay"><Brand compact={!sidebarExpanded} beta /></Link>
         </div>
         <div className="sidebar-brand-divider" aria-hidden="true" />
         <nav className="app-sidebar-nav" onClickCapture={(event) => {

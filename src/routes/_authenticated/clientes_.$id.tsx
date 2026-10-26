@@ -31,10 +31,10 @@ export const Route = createFileRoute("/_authenticated/clientes_/$id")({
     TABS.some((t) => t.id === s["aba"]) ? { aba: s["aba"] as Tab } : {},
   head: () => ({
     meta: [
-      { title: "Cliente — Wiize Core" },
+      { title: "Cliente — WiizePay" },
       { name: "description", content: "Central 360º do cliente: dados, contratos, cobranças, parcelas e financeiro." },
-      { property: "og:title", content: "Cliente — Wiize Core" },
-      { property: "og:description", content: "Central 360º do cliente na Wiize Core." },
+      { property: "og:title", content: "Cliente — WiizePay" },
+      { property: "og:description", content: "Central 360º do cliente na WiizePay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

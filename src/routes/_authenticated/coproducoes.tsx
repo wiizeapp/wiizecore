@@ -17,9 +17,9 @@ import { cancelCoproduction, listCoproductions, retryCoproductionSplit } from "@
 export const Route = createFileRoute("/_authenticated/coproducoes")({
   head: () => ({
     meta: [
-      { title: "Coproduções — Wiize Core" },
+      { title: "Coproduções — WiizePay" },
       { name: "description", content: "Acompanhe as cobranças divididas com coprodutores e o valor líquido recebido em cada parcela." },
-      { property: "og:title", content: "Coproduções — Wiize Core" },
+      { property: "og:title", content: "Coproduções — WiizePay" },
       { property: "og:description", content: "Divisão do valor líquido recebido entre parceiros." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

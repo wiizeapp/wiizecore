@@ -85,7 +85,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     const { ASAAS_DEFAULT_LATE_FEES } = await import("./late-fees");
     const { onlyDigits } = await import("./format");
     const masterWalletId = process.env['ASAAS_MASTER_WALLET_ID'];
-    if (!masterWalletId) throw new Error("A carteira principal da Wiize Core ainda não foi configurada.");
+    if (!masterWalletId) throw new Error("A carteira principal da WiizePay ainda não foi configurada.");
 
     // Idempotência: mesma chave devolve a mesma cobrança.
     const { data: existing } = await admin

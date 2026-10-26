@@ -94,7 +94,7 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
     setSaving(true);
     try {
       await saveFn({ data: payload(true) });
-      toast.success(ui("Obrigado! Sua Wiize Core está pronta."));
+      toast.success(ui("Obrigado! Sua WiizePay está pronta."));
       qc.setQueryData(["my-onboarding"], { done: true, answers: {}, resumeAt: 0 });
     } catch (e) {
       toast.error(e instanceof Error ? ui(e.message) : ui("Não foi possível salvar suas respostas."));
@@ -125,9 +125,9 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
         {stage === "welcome" ? (
           <section key="welcome" className="onboarding-enter mx-auto w-full max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> {ui("Boas-vindas à Wiize Core")}
+              <Sparkles className="h-3.5 w-3.5" /> {ui("Boas-vindas à WiizePay")}
             </div>
-            <h1 className="mb-4 font-display text-3xl font-bold sm:text-5xl">{ui("Vamos configurar a Wiize Core para o seu negócio em 1 minuto.")}</h1>
+            <h1 className="mb-4 font-display text-3xl font-bold sm:text-5xl">{ui("Vamos configurar a WiizePay para o seu negócio em 1 minuto.")}</h1>
             <p className="mx-auto mb-9 max-w-xl text-base text-muted-foreground sm:text-lg">{ui("Algumas perguntas rápidas para personalizar suas cobranças, seu financeiro e seus próximos passos.")}</p>
             <div className="flex flex-col items-center gap-3">
               <Button size="lg" className="h-12 px-8" onClick={() => setStage("questions")}>{ui("Começar")}<ArrowRight /></Button>

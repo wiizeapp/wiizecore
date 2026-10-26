@@ -32,10 +32,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/contratos")({
   head: () => ({
     meta: [
-      { title: "Contratos — Wiize Core" },
-      { name: "description", content: "Crie contratos, gere links de assinatura e acompanhe versões assinadas na Wiize Core." },
-      { property: "og:title", content: "Contratos — Wiize Core" },
-      { property: "og:description", content: "Crie contratos, gere links de assinatura e acompanhe versões assinadas na Wiize Core." },
+      { title: "Contratos — WiizePay" },
+      { name: "description", content: "Crie contratos, gere links de assinatura e acompanhe versões assinadas na WiizePay." },
+      { property: "og:title", content: "Contratos — WiizePay" },
+      { property: "og:description", content: "Crie contratos, gere links de assinatura e acompanhe versões assinadas na WiizePay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

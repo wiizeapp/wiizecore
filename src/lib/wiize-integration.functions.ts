@@ -138,7 +138,7 @@ const importInput = z.object({
   idempotencyKey: z.string().min(8).max(100),
 });
 
-/** Vincula ou cria cliente Wiize Core a partir do Wiize, sem duplicar. */
+/** Vincula ou cria cliente WiizePay a partir do Wiize, sem duplicar. */
 export const importWiizeCustomer = createServerFn({ method: "POST" })
   .middleware([requireMfaAuth])
   .inputValidator((d) => importInput.parse(d))

@@ -26,7 +26,7 @@ export function absoluteUrl(path: string) {
   return path.startsWith("http") ? path : `${DEPLOY_CONFIG.publicSiteUrl}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-/** Modelo HTML único da Wiize Core: simples, legível e sem dados sensíveis. */
+/** Modelo HTML único da WiizePay: simples, legível e sem dados sensíveis. */
 export function renderEmail(i: EmailInput) {
   const brand = BRAND_CONFIG.displayName;
   const rows = (i.lines ?? [])
@@ -63,7 +63,7 @@ export async function sendEmail(admin: Admin, opts: { tenantId: string | null; k
   if (error || !row) return { duplicate: true };
   const id = (row as { id: string }).id;
   const key = process.env["RESEND_API_KEY"];
-  const from = process.env["RESEND_FROM_EMAIL"] || "Wiize Core <notificacoes@wiizepay.com>";
+  const from = process.env["RESEND_FROM_EMAIL"] || "WiizePay <notificacoes@wiizepay.com>";
   const mark = (patch: Record<string, unknown>) => admin.from("email_outbox" as never).update(patch as never).eq("id", id);
   if (!key) {
     await mark({ status: "skipped", error_message: "RESEND_API_KEY ausente" });

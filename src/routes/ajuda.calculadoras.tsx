@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/app-shell";
 import { AnticipationCalculator, FeeCalculator, HelpBreadcrumb, SuggestCTA } from "@/components/help/help-parts";
 
 export const Route = createFileRoute("/ajuda/calculadoras")({
-  head: () => ({ meta: [{ title: "Calculadoras | Central de Ajuda Wiize Core" }, { name: "description", content: "Informações e recursos da plataforma Wiize Core." }, { property: "og:title", content: "Calculadoras | Central de Ajuda Wiize Core" }, { property: "og:description", content: "Informações e recursos da plataforma Wiize Core." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: () => ({ meta: [{ title: "Calculadoras | Central de Ajuda WiizePay" }, { name: "description", content: "Informações e recursos da plataforma WiizePay." }, { property: "og:title", content: "Calculadoras | Central de Ajuda WiizePay" }, { property: "og:description", content: "Informações e recursos da plataforma WiizePay." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: CalculatorsPage,
 });
 

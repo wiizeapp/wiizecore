@@ -10,7 +10,7 @@ type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any
 async function requireAdmin(context: Ctx) {
   await (await import("./admin-session.server")).assertAdminPage(context);
   const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
-  if (!data) throw new Error("Acesso restrito à equipe Wiize Core.");
+  if (!data) throw new Error("Acesso restrito à equipe WiizePay.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

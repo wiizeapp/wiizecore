@@ -23,10 +23,10 @@ import { CheckoutBrandHeader, CheckoutProgress, CheckoutStageHeader, CheckoutTer
 export const Route = createFileRoute("/pagar/$token")({
   head: () => ({
     meta: [
-      { title: "Pagamento seguro — Wiize Core" },
+      { title: "Pagamento seguro — WiizePay" },
       { name: "description", content: "Finalize seu pagamento com Pix, boleto ou cartão de forma segura." },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Pagamento seguro — Wiize Core" },
+      { property: "og:title", content: "Pagamento seguro — WiizePay" },
       { property: "og:description", content: "Finalize seu pagamento com Pix, boleto ou cartão." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

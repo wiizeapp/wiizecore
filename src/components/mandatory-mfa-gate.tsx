@@ -133,7 +133,7 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
           ) : enrollment ? (
             <div className="grid gap-6 md:grid-cols-2 md:gap-8">
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a WiizeCore.")}</p>
+                <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a WiizePay.")}</p>
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
                   <p className="flex items-center gap-2 text-sm font-semibold"><Lock className="h-4 w-4 text-primary" />{ui("Por que ativar?")}</p>
                   <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">

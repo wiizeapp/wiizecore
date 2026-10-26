@@ -85,7 +85,7 @@ export function ActivationFeeCheckout(){
      <Brand className="shrink-0"/>
      <div className="flex gap-1.5" aria-hidden>{[0,1,2].map(i=><span key={i} className={`h-1 flex-1 rounded-full ${i<=(qr?2:step==='form'?1:0)?'bg-primary':'bg-muted'}`}/>)}</div>
      <DialogHeader className="space-y-2 text-left">
-      <DialogTitle className="font-display text-xl">{t(qr?'Conclua o pagamento da ativação':step==='form'?'Dados do pagador':'Leve sua conta WiizeCore para produção')}</DialogTitle>
+      <DialogTitle className="font-display text-xl">{t(qr?'Conclua o pagamento da ativação':step==='form'?'Dados do pagador':'Leve sua conta WiizePay para produção')}</DialogTitle>
       <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'Abra e verifique sua conta de recebimentos. A aprovação final é da instituição parceira.')}</DialogDescription>
      </DialogHeader>
      {paid ? <div className="space-y-5 py-2 text-center">

@@ -10,10 +10,10 @@ async function isPlatformAdmin(context: Ctx) {
   return Boolean(data);
 }
 
-/** Admin Wiize Core: papel platform_admin + sessão com 2FA (aal2). */
+/** Admin WiizePay: papel platform_admin + sessão com 2FA (aal2). */
 async function requireAdmin(context: Ctx) {
   await (await import("./admin-session.server")).assertAdminPage(context);
-  if (!(await isPlatformAdmin(context))) throw new Error("Acesso restrito à equipe Wiize Core.");
+  if (!(await isPlatformAdmin(context))) throw new Error("Acesso restrito à equipe WiizePay.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -170,7 +170,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           email: { subject: "Seu saque não foi concluído" },
         });
       };
-      // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à Wiize Core).
+      // Taxa de saque: fica na subconta para cobrir a tarifa de transferência do próprio Asaas (sem repasse à WiizePay).
       const fee = Number(wd.fee_amount ?? 0);
       // 2) Reserva exclusiva: só um pedido consegue passar para "processing"; evita Pix enviado duas vezes.
       const { data: claimed } = await admin
@@ -190,7 +190,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
           operationType: "PIX",
           pixAddressKey: pix.key,
           pixAddressKeyType: pix.type,
-          description: data.note || `Saque Wiize Core ${wd.id}`,
+          description: data.note || `Saque WiizePay ${wd.id}`,
           externalReference: `withdrawal:${wd.id}`,
         });
         reference = transfer.id;

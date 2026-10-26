@@ -66,7 +66,7 @@ export function DriveIntegrationCard() {
               <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">Não conectado</span>
             )}
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">Os arquivos dos contratos (original, assinado e comprovante) ficam no Drive da sua empresa, na pasta de contratos da integração. A Wiize Core só acessa os arquivos que ela mesma cria.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Os arquivos dos contratos (original, assinado e comprovante) ficam no Drive da sua empresa, na pasta de contratos da integração. A WiizePay só acessa os arquivos que ela mesma cria.</p>
           {d?.connected ? <p className="mt-2 text-xs">Conta: <span className="font-medium">{d.email ?? "—"}</span>{d.since ? ` · desde ${formatDateTime(d.since)}` : ""}</p> : null}
         </div>
         {d?.canManage && d.configured ? (

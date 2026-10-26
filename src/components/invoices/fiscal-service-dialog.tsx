@@ -54,7 +54,7 @@ export function FiscalServiceDialog({ row, portal, codeHelp, onClose, onSaved, p
               <SelectContent><SelectItem value="none">Nenhum</SelectItem>{(services.data ?? []).map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <p className="text-[11px] text-muted-foreground">Confira alíquota e retenções com seu contador. O Wiize Core não calcula impostos por conta própria.</p>
+          <p className="text-[11px] text-muted-foreground">Confira alíquota e retenções com seu contador. O WiizePay não calcula impostos por conta própria.</p>
           <Button className="w-full" onClick={() => m.mutate()} disabled={m.isPending || f.name.length < 2 || !f.code.trim()}>Salvar serviço fiscal</Button>
         </div>
       </DialogContent>
