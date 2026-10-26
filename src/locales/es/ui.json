@@ -35,7 +35,6 @@
   "Confira o pagamento da taxa de ativação e retome seu cadastro. Seus dados existentes estão preservados.": "Consulta el pago y retoma el registro. Tus datos existentes están preservados.",
   "Consulte as pendências e acompanhe a análise da Asaas.": "Consulta los pendientes y sigue el análisis de Asaas.",
   "A ativação começa com uma taxa única de R$ 19,90, seguida do cadastro e da análise da Asaas.": "La activación empieza con una tarifa única de R$19,90, seguida del registro y análisis de Asaas.",
-
   "Prevenção à lavagem de dinheiro": "Prevención del lavado de dinero",
   "Acesso protegido ao Admin": "Acceso protegido al Admin",
   "O acesso ao Admin será bloqueado em breve.": "El acceso al Admin se bloqueará pronto.",
@@ -120,7 +119,6 @@
   "Escolha o resultado da análise.": "Elige el resultado del análisis.",
   "Versão de criptografia indisponível.": "Versión de cifrado no disponible.",
   "Conteúdo protegido inválido.": "Contenido protegido inválido.",
-
   "Todo saque exige senha financeira e verificação em duas etapas.": "Todo retiro exige contraseña financiera y verificación en dos pasos.",
   "A verificação em duas etapas é obrigatória para saques.": "La verificación en dos pasos es obligatoria para retiros.",
   "Esta operação aceita somente cobranças do Brasil em reais.": "Esta operación solo acepta cobros de Brasil en reales.",
@@ -5677,5 +5675,18 @@
   "Risco": "Riesgo",
   "Salvei meu código reserva em local seguro": "Guardé mi código de respaldo en un lugar seguro",
   "Seu código reserva": "Tu código de respaldo",
-  "Verificar integridade": "Verificar integridad"
+  "Verificar integridade": "Verificar integridad",
+  "A verificação em duas etapas é obrigatória para usar a WiizeCore.": "La verificación en dos pasos es obligatoria para usar WiizeCore.",
+  "Por que ativar?": "¿Por qué activarla?",
+  "Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.": "Aunque alguien descubra tu contraseña, no podrá entrar sin tu celular.",
+  "Protege seu saldo, saques e os dados dos seus clientes.": "Protege tu saldo, retiros y los datos de tus clientes.",
+  "Segue o padrão de segurança exigido por instituições financeiras.": "Sigue el estándar de seguridad exigido por instituciones financieras.",
+  "Instale um aplicativo autenticador": "Instala una aplicación autenticadora",
+  "Use o Google Authenticator, Microsoft Authenticator ou outro de sua preferência. Eles são gratuitos na loja do seu celular.": "Usa Google Authenticator, Microsoft Authenticator u otra de tu preferencia. Son gratuitas en la tienda de tu celular.",
+  "Leia o QR Code com o aplicativo": "Escanea el código QR con la aplicación",
+  "No aplicativo, toque em adicionar conta e aponte a câmera para o código abaixo.": "En la aplicación, toca agregar cuenta y apunta la cámara al código de abajo.",
+  "Não consegue ler? Digite esta chave no aplicativo:": "¿No puedes escanearlo? Escribe esta clave en la aplicación:",
+  "Copiado!": "¡Copiado!",
+  "Digite o código de 6 dígitos": "Escribe el código de 6 dígitos",
+  "Informe o número que aparece no aplicativo. Ele muda a cada 30 segundos.": "Ingresa el número que aparece en la aplicación. Cambia cada 30 segundos."
 }

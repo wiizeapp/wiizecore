@@ -35,7 +35,6 @@
   "Confira o pagamento da taxa de ativação e retome seu cadastro. Seus dados existentes estão preservados.": "Check activation payment and resume registration. Your existing data is preserved.",
   "Consulte as pendências e acompanhe a análise da Asaas.": "Check outstanding items and follow Asaas review.",
   "A ativação começa com uma taxa única de R$ 19,90, seguida do cadastro e da análise da Asaas.": "Activation starts with a one-time R$19.90 fee, followed by registration and Asaas review.",
-
   "Prevenção à lavagem de dinheiro": "Anti-money laundering",
   "Acesso protegido ao Admin": "Protected Admin access",
   "O acesso ao Admin será bloqueado em breve.": "Admin access will lock shortly.",
@@ -120,7 +119,6 @@
   "Escolha o resultado da análise.": "Choose the review outcome.",
   "Versão de criptografia indisponível.": "Encryption version unavailable.",
   "Conteúdo protegido inválido.": "Invalid protected content.",
-
   "Todo saque exige senha financeira e verificação em duas etapas.": "Every withdrawal requires a financial password and two-step verification.",
   "A verificação em duas etapas é obrigatória para saques.": "Two-step verification is mandatory for withdrawals.",
   "Esta operação aceita somente cobranças do Brasil em reais.": "This operation only accepts Brazilian charges in BRL.",
@@ -5648,5 +5646,18 @@
   "Risco": "Risk",
   "Salvei meu código reserva em local seguro": "I saved my backup code somewhere safe",
   "Seu código reserva": "Your backup code",
-  "Verificar integridade": "Check integrity"
+  "Verificar integridade": "Check integrity",
+  "A verificação em duas etapas é obrigatória para usar a WiizeCore.": "Two-step verification is required to use WiizeCore.",
+  "Por que ativar?": "Why enable it?",
+  "Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.": "Even if someone discovers your password, they can't sign in without your phone.",
+  "Protege seu saldo, saques e os dados dos seus clientes.": "Protects your balance, withdrawals and your customers' data.",
+  "Segue o padrão de segurança exigido por instituições financeiras.": "Follows the security standard required by financial institutions.",
+  "Instale um aplicativo autenticador": "Install an authenticator app",
+  "Use o Google Authenticator, Microsoft Authenticator ou outro de sua preferência. Eles são gratuitos na loja do seu celular.": "Use Google Authenticator, Microsoft Authenticator or another of your choice. They're free in your phone's app store.",
+  "Leia o QR Code com o aplicativo": "Scan the QR code with the app",
+  "No aplicativo, toque em adicionar conta e aponte a câmera para o código abaixo.": "In the app, tap add account and point the camera at the code below.",
+  "Não consegue ler? Digite esta chave no aplicativo:": "Can't scan it? Type this key in the app:",
+  "Copiado!": "Copied!",
+  "Digite o código de 6 dígitos": "Enter the 6-digit code",
+  "Informe o número que aparece no aplicativo. Ele muda a cada 30 segundos.": "Enter the number shown in the app. It changes every 30 seconds."
 }
