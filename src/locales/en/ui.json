@@ -5692,5 +5692,9 @@
   "Abertura da conta": "Account opening",
   "Verificação de identidade": "Identity verification",
   "Suporte dedicado": "Dedicated support",
-  "Abra e verifique sua conta de recebimentos. A aprovação final é da instituição parceira.": "Open and verify your receiving account. Final approval is up to the partner institution."
+  "Abra e verifique sua conta de recebimentos. A aprovação final é da instituição parceira.": "Open and verify your receiving account. Final approval is up to the partner institution.",
+  "Pagamento confirmado!": "Payment confirmed!",
+  "Deu tudo certo. Agora envie seus dados e documentos para concluir a ativação da sua conta.": "All set. Now send your data and documents to complete your account activation.",
+  "Enviar documentos": "Send documents",
+  "Aguardando pagamento...": "Waiting for payment..."
 }
