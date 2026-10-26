@@ -5509,5 +5509,9 @@
   "Boleto recorrente": "Boleto recurrente",
   "Mesma taxa do à vista · taxa fixa em cada cobrança": "Misma tarifa que al contado · tarifa fija en cada cobro",
   "Cartão recorrente": "Tarjeta recurrente",
-  "Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.": "Con GTM configurado, el sitio envía todo solo por GTM y no carga GA4 directamente, para no contar doble. Configura GA4 dentro de GTM."
+  "Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.": "Con GTM configurado, el sitio envía todo solo por GTM y no carga GA4 directamente, para no contar doble. Configura GA4 dentro de GTM.",
+  "Brasil": "Brasil",
+  "Global": "Global",
+  "Operação Global em preparação": "Operación Global en preparación",
+  "Ainda não é possível receber do exterior. Nenhuma cobrança, saldo ou cliente aparece aqui até a integração internacional ser aprovada. Volte para Brasil para continuar usando sua conta normalmente.": "Aún no es posible recibir del exterior. Ningún cobro, saldo o cliente aparece aquí hasta que se apruebe la integración internacional. Vuelva a Brasil para seguir usando su cuenta normalmente."
 }

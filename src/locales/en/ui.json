@@ -5480,5 +5480,9 @@
   "Boleto recorrente": "Recurring boleto",
   "Mesma taxa do à vista · taxa fixa em cada cobrança": "Same fee as one-time · fixed fee on every charge",
   "Cartão recorrente": "Recurring card",
-  "Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.": "With GTM filled in, the site sends everything only through GTM and does not load GA4 directly, to avoid double counting. Set up GA4 inside GTM."
+  "Com o GTM preenchido, o site envia tudo só pelo GTM e não carrega o GA4 direto, para não contar em dobro. Configure o GA4 dentro do GTM.": "With GTM filled in, the site sends everything only through GTM and does not load GA4 directly, to avoid double counting. Set up GA4 inside GTM.",
+  "Brasil": "Brazil",
+  "Global": "Global",
+  "Operação Global em preparação": "Global operation in preparation",
+  "Ainda não é possível receber do exterior. Nenhuma cobrança, saldo ou cliente aparece aqui até a integração internacional ser aprovada. Volte para Brasil para continuar usando sua conta normalmente.": "Receiving from abroad is not available yet. No charge, balance or customer appears here until the international integration is approved. Switch back to Brazil to keep using your account normally."
 }

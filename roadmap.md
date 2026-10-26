@@ -160,3 +160,6 @@
 - [x] Botões do site: tirar o halo verde do hover, manter só a subida leve (2px) e fazer um feixe fino de luz atravessar o botão, como no destaque do título; travessia, elevação e ausência de halo conferidas no navegador, compilação OK.
 
 - [ ] Analytics fases 2–5 (funil, eventos do servidor/receita, painel Admin, testes/docs) — plano aprovado 2026-10-19
+
+- [x] Fase 3 Global: seletor Brasil/Global no topo salvo no servidor por usuário/empresa; Global mostra área vazia e bloqueada, sem alterar dados financeiros; 2 testes.
+- [ ] Fase 4 Global (Rapyd sandbox): depende das chaves de teste da Rapyd e das respostas sobre modelo contratado, países e moedas.
