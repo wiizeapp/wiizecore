@@ -93,6 +93,112 @@ export type Database = {
           },
         ]
       }
+      activation_fee_events: {
+        Row: {
+          created_at: string
+          error_code: string | null
+          event_type: string
+          external_id: string
+          id: string
+          payment_id: string | null
+          processed_at: string | null
+          state: string
+        }
+        Insert: {
+          created_at?: string
+          error_code?: string | null
+          event_type: string
+          external_id: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string | null
+          state?: string
+        }
+        Update: {
+          created_at?: string
+          error_code?: string | null
+          event_type?: string
+          external_id?: string
+          id?: string
+          payment_id?: string | null
+          processed_at?: string | null
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activation_fee_events_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "activation_fee_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activation_fee_payments: {
+        Row: {
+          amount_cents: number
+          confirmed_amount_cents: number | null
+          confirmed_at: string | null
+          created_at: string
+          currency: string
+          environment: string
+          id: string
+          origin_wallet_id: string
+          owner_id: string
+          provider_customer_id: string | null
+          provider_payment_id: string | null
+          reference: string
+          status: string
+          tenant_id: string
+          terms_version: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents?: number
+          confirmed_amount_cents?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          environment: string
+          id?: string
+          origin_wallet_id: string
+          owner_id: string
+          provider_customer_id?: string | null
+          provider_payment_id?: string | null
+          reference: string
+          status?: string
+          tenant_id: string
+          terms_version: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          confirmed_amount_cents?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          origin_wallet_id?: string
+          owner_id?: string
+          provider_customer_id?: string | null
+          provider_payment_id?: string | null
+          reference?: string
+          status?: string
+          tenant_id?: string
+          terms_version?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activation_fee_payments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activation_mobile_handoffs: {
         Row: {
           attempts: number
@@ -148,6 +254,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "activation_mobile_handoffs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      activation_provider_operations: {
+        Row: {
+          created_at: string
+          environment: string
+          id: string
+          kind: string
+          provider_id: string | null
+          reference: string
+          result_enc: string | null
+          state: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          id?: string
+          kind: string
+          provider_id?: string | null
+          reference: string
+          result_enc?: string | null
+          state?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          id?: string
+          kind?: string
+          provider_id?: string | null
+          reference?: string
+          result_enc?: string | null
+          state?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activation_provider_operations_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
@@ -7742,6 +7895,20 @@ export type Database = {
         }
         Returns: undefined
       }
+      activation_claim_operation: {
+        Args: {
+          _environment: string
+          _kind: string
+          _reference: string
+          _tenant: string
+        }
+        Returns: Json
+      }
+      activation_confirm_fee: {
+        Args: { _cents: number; _id: string; _provider: string }
+        Returns: boolean
+      }
+      activation_fee_paid: { Args: { _tenant: string }; Returns: boolean }
       admin_page_unlocked: { Args: never; Returns: boolean }
       admin_review_activation: {
         Args: {

@@ -309,6 +309,13 @@
       "when": 1793041049242,
       "tag": "0043_pld_exact_decimal_sources",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793042324229,
+      "tag": "0044_activation_fee_required_and_durable_operations",
+      "breakpoints": true
     }
   ]
 }
