@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useServerFn} from '@tanstack/react-start';
 import {useQueryClient} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
-import {ArrowLeft,ArrowRight,Check,Copy,FileCheck2,Lock,QrCode,RefreshCw,Rocket,ShieldCheck,Zap} from 'lucide-react';
+import {ArrowLeft,ArrowRight,Building2,Headphones,Infinity,ScanFace,Check,Copy,FileCheck2,Lock,QrCode,RefreshCw,Rocket,ShieldCheck,Zap} from 'lucide-react';
 import {prepareActivationPix,refreshActivationFee} from '@/lib/activation-fee.functions';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -11,12 +11,14 @@ import {Checkbox} from '@/components/ui/checkbox';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {Brand} from '@/components/brand';
 
-function Price({compact=false}:{compact?:boolean}){
+function Price(){
  const {t}=useTranslation('ui');
- return <div className={compact?'':'space-y-1'}>
-  <p className="text-xs text-muted-foreground">{t('De')} <span className="line-through">R$ 49,90</span> {t('por apenas')}</p>
-  <p className={`font-display font-bold text-foreground ${compact?'text-5xl':'text-5xl'}`} aria-label="R$ 19,90"><span className="mr-1 text-[0.52em] font-medium text-muted-foreground">R$</span>19<span className="text-[0.52em] font-medium text-muted-foreground">,90</span></p>
-  <p className="text-xs text-muted-foreground">{t('Pagamento único via Pix. Sem mensalidade e sem renovação.')}</p>
+ return <div className="flex items-center justify-between gap-4">
+  <div className="space-y-1">
+   <p className="text-[11px] font-semibold uppercase tracking-wider text-primary">{t('Taxa única de ativação')}</p>
+   <p className="text-xs text-muted-foreground">{t('De')} <span className="line-through">R$ 49,90</span> · {t('sem mensalidade')}</p>
+  </div>
+  <p className="font-display text-4xl font-bold leading-none text-foreground" aria-label="R$ 19,90"><span className="mr-1 text-[0.45em] font-medium text-muted-foreground">R$</span>19<span className="text-[0.45em] font-medium text-muted-foreground">,90</span></p>
  </div>;
 }
 
@@ -65,7 +67,7 @@ export function ActivationFeeCheckout(){
      <div className="flex gap-1.5" aria-hidden>{[0,1,2].map(i=><span key={i} className={`h-1 flex-1 rounded-full ${i<=(qr?2:step==='form'?1:0)?'bg-primary':'bg-muted'}`}/>)}</div>
      <DialogHeader className="space-y-2 text-left">
       <DialogTitle className="font-display text-xl">{t(qr?'Conclua o pagamento da ativação':step==='form'?'Dados do pagador':'Leve sua conta WiizeCore para produção')}</DialogTitle>
-      <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'Uma taxa única que cobre a abertura e a verificação da sua conta de recebimentos. A aprovação final é feita pela instituição de pagamento parceira.')}</DialogDescription>
+      <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'Abra e verifique sua conta de recebimentos. A aprovação final é da instituição parceira.')}</DialogDescription>
      </DialogHeader>
      {qr ? <div className="space-y-4">
       <img className="mx-auto size-52 rounded-xl border border-border bg-white p-2" src={`data:image/png;base64,${qr.encodedImage}`} alt={t('QR Code Pix')}/>
@@ -76,12 +78,9 @@ export function ActivationFeeCheckout(){
       <p className="text-xs text-muted-foreground">{t('A confirmação pode levar alguns instantes. Não pague novamente.')}</p>
       <Button className="w-full" disabled={busy} onClick={async()=>{setBusy(true);setError('');try{const r=await refresh();if(r.status==='confirmed'){await qc.invalidateQueries();setOpen(false);}else setError(t('Pagamento ainda pendente.'));}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível consultar a ativação.'));}finally{setBusy(false);}}}><RefreshCw className="size-4"/>{t('Consultar pagamento')}</Button>
      </div> : step==='intro' ? <div className="space-y-5">
-      <div className="rounded-xl border border-primary/25 bg-primary/5 p-4"><Price compact/></div>
-      <div className="space-y-2">
-       <p className="text-sm font-semibold">{t('O que está incluído na taxa única')}</p>
-       <ul className="space-y-2 text-sm text-muted-foreground">
-        {[t('Abertura da sua conta de recebimentos com a instituição de pagamento parceira'),t('Verificação de identidade e análise dos seus documentos'),t('Suporte durante todo o processo de ativação'),t('Pago uma única vez: sem mensalidade nem renovação')].map(x=><li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-primary"/>{x}</li>)}
-       </ul>
+      <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-5"><Price/></div>
+      <div className="grid grid-cols-2 gap-2">
+       {[{i:Building2,x:t('Abertura da conta')},{i:ScanFace,x:t('Verificação de identidade')},{i:Headphones,x:t('Suporte dedicado')},{i:Infinity,x:t('Pagamento único')}].map(({i:I,x})=><div key={x} className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/30 px-3 py-2.5 text-xs font-medium"><I className="size-4 shrink-0 text-primary"/>{x}</div>)}
       </div>
       <Button className="w-full" size="lg" onClick={()=>setStep('form')}>{t('Avançar')}<ArrowRight className="size-4"/></Button>
       <Button className="w-full" variant="ghost" onClick={()=>setOpen(false)}>{t('Agora não')}</Button>
