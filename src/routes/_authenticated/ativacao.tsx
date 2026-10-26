@@ -485,7 +485,7 @@ function BetaNotice() {
         </div>
         <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-foreground"><strong>{t("Fique tranquilo:")}</strong> {t("assim que liberarmos, você recebe um aviso aqui e no seu e-mail.")}</p>
-          <Button asChild variant="outline" size="sm"><Link to="/">{t("Voltar ao painel")}</Link></Button>
+          <Button asChild variant="outline" size="sm"><Link to="/painel">{t("Voltar ao painel")}</Link></Button>
         </div>
       </div>
     </div>
