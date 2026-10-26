@@ -166,40 +166,18 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                 <Button className="justify-self-start" variant="ghost" disabled={i === 0 || saving} onClick={() => setI((current) => current - 1)}>{ui("Voltar")}</Button>
                 <div className="flex shrink-0 items-center justify-end gap-2">
-                  <Button disabled={!canNext || saving} onClick={() => (i < ONBOARDING_STEPS.length - 1 ? setI((current) => current + 1) : finish())}>
+                  <Button disabled={!canNext || saving} onClick={() => (i < ONBOARDING_STEPS.length - 1 ? next() : finish())}>
                     {saving ? <Loader2 className="animate-spin" /> : null}
                     {i < ONBOARDING_STEPS.length - 1 ? ui("Continuar") : ui("Concluir")}
                     {!saving && i < ONBOARDING_STEPS.length - 1 ? <ArrowRight /> : null}
                   </Button>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={saving}
-                onClick={() => void skip()}
-                className="ml-auto mt-1 flex w-fit text-xs font-normal text-muted-foreground hover:text-foreground sm:hidden"
-              >
-                {saving ? <Loader2 className="animate-spin" /> : null}
-                {ui("Pular por agora")}
-              </Button>
             </div>
           </section>
         )}
       </div>
       </main>
-      {stage === "questions" ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={saving}
-          onClick={() => void skip()}
-          className="fixed bottom-5 right-6 z-10 hidden rounded-full border border-border/70 bg-background/85 px-3 py-1 text-xs font-normal text-muted-foreground shadow-sm backdrop-blur-sm hover:text-foreground sm:inline-flex"
-        >
-          {saving ? <Loader2 className="animate-spin" /> : null}
-          {ui("Pular por agora")}
-        </Button>
-      ) : null}
     </div>
   );
 }
