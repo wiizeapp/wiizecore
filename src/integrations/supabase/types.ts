@@ -7487,6 +7487,17 @@ export type Database = {
     }
     Functions: {
       _fin_writer: { Args: { _tenant: string }; Returns: undefined }
+      activate_payment_attempt: {
+        Args: {
+          _attempt_id: string
+          _changes: Json
+          _expected_provider_id: string
+          _payment_id: string
+          _reactivating: boolean
+          _tenant_id: string
+        }
+        Returns: undefined
+      }
       admin_review_activation: {
         Args: {
           _admin_id: string
