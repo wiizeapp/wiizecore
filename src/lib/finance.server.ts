@@ -19,35 +19,24 @@ async function tenantOf(admin: AdminClient, userId: string) {
 export async function assertFinancialPassword(admin: AdminClient, userId: string, password: string, purpose: string) {
   const { verifySecretValue } = await import("./crypto.server");
   const tenantId = await tenantOf(admin, userId);
-  const { data: tenant } = tenantId
-    ? await admin.from("tenants").select("financial_failed_attempts, financial_locked_until").eq("id", tenantId).maybeSingle()
-    : { data: null };
-  if (tenant?.financial_locked_until && new Date(tenant.financial_locked_until) > new Date()) {
-    throw new Error(lockMessage(tenant.financial_locked_until));
-  }
-  const { data: credential } = await admin
+  const { data: credential, error: credentialError } = await admin
     .from("financial_credentials")
-    .select("password_hash, failed_attempts, locked_until")
+    .select("password_hash")
     .eq("user_id", userId)
     .maybeSingle();
+  if (credentialError) throw new Error("Não foi possível confirmar sua segurança agora. Tente novamente.");
   if (!credential) throw new Error("Cadastre sua senha financeira antes de continuar.");
-  if (credential.locked_until && new Date(credential.locked_until) > new Date()) {
-    throw new Error(lockMessage(credential.locked_until));
+  const valid = Boolean(password) && verifySecretValue(password, credential.password_hash);
+  const { data: result, error } = await admin.rpc("record_financial_password_check", {
+    _user_id: userId, _expected_hash: credential.password_hash, _valid: valid,
+  });
+  if (error || !result || typeof result !== "object" || Array.isArray(result)) {
+    throw new Error("Não foi possível confirmar sua segurança agora. Tente novamente.");
   }
-  if (!password || !verifySecretValue(password, credential.password_hash)) {
-    const attempts = Math.max(tenant?.financial_failed_attempts ?? 0, credential.failed_attempts) + 1;
-    const lock = attempts >= FINANCIAL_PASSWORD_MAX_ATTEMPTS;
-    const until = lock ? new Date(Date.now() + FINANCIAL_PASSWORD_LOCK_MINUTES * 60 * 1000).toISOString() : null;
-    await admin
-      .from("financial_credentials")
-      .update({ failed_attempts: lock ? 0 : attempts, locked_until: until })
-      .eq("user_id", userId);
-    if (tenantId) {
-      await admin
-        .from("tenants")
-        .update({ financial_failed_attempts: lock ? 0 : attempts, financial_locked_until: until })
-        .eq("id", tenantId);
-    }
+  const state = result as { state?: string; attempts?: number; lockedUntil?: string | null };
+  if (state.state !== "valid") {
+    const attempts = state.attempts ?? 0;
+    const lock = state.state === "locked";
     await logSecurityEvent(admin, {
       userId,
       tenantId,
@@ -56,7 +45,8 @@ export async function assertFinancialPassword(admin: AdminClient, userId: string
       metadata: { purpose, attempts },
     });
     await logAudit(admin, { userId, tenantId, action: "financial_password.verify", result: "failure", metadata: { purpose } });
-    if (lock) throw new Error(lockMessage(until!));
+    if (lock && state.lockedUntil) throw new Error(lockMessage(state.lockedUntil));
+    if (state.state !== "invalid") throw new Error("Não foi possível confirmar sua segurança agora. Tente novamente.");
     const left = FINANCIAL_PASSWORD_MAX_ATTEMPTS - attempts;
     throw new Error(
       left === 1
@@ -64,11 +54,6 @@ export async function assertFinancialPassword(admin: AdminClient, userId: string
         : `Senha financeira incorreta. Restam ${left} tentativas antes do bloqueio da empresa.`,
     );
   }
-  await admin
-    .from("financial_credentials")
-    .update({ failed_attempts: 0, locked_until: null, last_used_at: new Date().toISOString() })
-    .eq("user_id", userId);
-  if (tenantId) await admin.from("tenants").update({ financial_failed_attempts: 0 }).eq("id", tenantId);
   await logAudit(admin, { userId, tenantId, action: "financial_password.verify", metadata: { purpose } });
 }
 

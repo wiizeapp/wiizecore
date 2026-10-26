@@ -65,8 +65,8 @@ export const addBankAccount = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => bankSchema.parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
-    const { assertTwoFactorIfEnrolled, assertFinancialPassword } = await import("./finance.server");
-    await assertTwoFactorIfEnrolled(context.claims, context.userId);
+    const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
+    assertTwoFactor(context.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await assertFinancialPassword(supabaseAdmin, context.userId, data.financialPassword, "bank_account.add");
     // Validação interna antes de aceitar a conta para saque.
@@ -168,8 +168,8 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     // Saque é permissão crítica: só Proprietário e Admin (nunca colaborador financeiro).
     const m = await requireMembership(context, ["owner", "admin"]);
-    const { assertFinancialPassword, assertTwoFactorIfEnrolled } = await import("./finance.server");
-    await assertTwoFactorIfEnrolled(context.claims, context.userId);
+    const { assertFinancialPassword, assertTwoFactor } = await import("./finance.server");
+    assertTwoFactor(context.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { consumeRateLimit } = await import("./audit.server");
     const rl = await consumeRateLimit(supabaseAdmin, {
