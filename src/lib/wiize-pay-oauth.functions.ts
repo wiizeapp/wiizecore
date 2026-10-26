@@ -76,6 +76,7 @@ export const decideAuthorize = createServerFn({ method: "POST" })
 export const provisionWiizeClient = createServerFn({ method: "POST" })
   .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
+    await (await import("./admin-session.server")).assertAdminPage(context);
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
     if (!isAdmin) throw new Error("Acesso negado.");
     if ((context.claims as { aal?: string }).aal !== "aal2") throw new Error("Confirme o 2FA para continuar.");

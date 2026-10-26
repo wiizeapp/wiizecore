@@ -288,6 +288,13 @@
       "when": 1793036161112,
       "tag": "0040_mandatory_mfa_and_audit_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1793040549746,
+      "tag": "0041_admin_page_sessions_and_pld_cases",
+      "breakpoints": true
     }
   ]
 }

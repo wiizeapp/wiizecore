@@ -10,7 +10,7 @@ export type AdminSection =
   | "dashboard" | "unit" | "regua" | "simulador" | "visao" | "transacoes" | "receitas" | "despesas" | "taxas" | "contas" | "receber" | "pagar" | "conciliacao"
   | "pagamentos" | "cobrancas" | "clientes" | "faturas" | "saques" | "chargebacks" | "estornos"
   | "empresas" | "publico" | "analise" | "aprovacoes" | "suporte" | "auditoria"
-  | "configuracoes" | "permissoes" | "admins" | "caixa" | "sugestoes";
+  | "configuracoes" | "permissoes" | "admins" | "caixa" | "sugestoes" | "pld";
 
 type Item = { id: AdminSection; label: string; icon: typeof Users };
 export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; items: Item[] }[] = [
@@ -46,6 +46,7 @@ export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; item
     { id: "sugestoes", label: "Sugestões de usuários", icon: Lightbulb },
     { id: "suporte", label: "Suporte", icon: LifeBuoy },
     { id: "auditoria", label: "Auditoria e Segurança", icon: ShieldCheck },
+    { id: "pld", label: "Prevenção à lavagem de dinheiro", icon: ShieldAlert },
   ] },
   { id: "administracao", label: "Administração", icon: Settings, items: [
     { id: "configuracoes", label: "Configurações", icon: Settings },

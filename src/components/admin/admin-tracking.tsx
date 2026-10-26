@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { getAdminTracking, saveAdminTracking } from "@/lib/admin-tracking.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,17 +14,16 @@ const PATTERNS = { gtm_id: /^GTM-[A-Z0-9]{4,12}$/, ga4_id: /^G-[A-Z0-9]{4,15}$/,
 export function AdminTracking() {
   const { t: ui } = useTranslation("ui");
   const qc = useQueryClient();
+  const read = useServerFn(getAdminTracking), write = useServerFn(saveAdminTracking);
   const settings = useQuery({
     queryKey: ["admin-tracking"],
-    queryFn: async () => (await supabase.from("tracking_settings").select("id, enabled, gtm_id, ga4_id, meta_pixel_id, updated_at").maybeSingle()).data,
+    queryFn: async () => (await read()).settings,
   });
   const consents = useQuery({
     queryKey: ["admin-cookie-consents"],
     queryFn: async () => {
-      const { data, count } = await supabase.from("cookie_consents")
-        .select("id, created_at, functional, analytics, marketing, policy_version, language, user_id, page_url", { count: "exact" })
-        .order("created_at", { ascending: false }).limit(20);
-      return { rows: data ?? [], total: count ?? 0 };
+      const result = await read();
+      return { rows: result.rows, total: result.total };
     },
   });
   const [form, setForm] = useState({ enabled: true, gtm_id: "", ga4_id: "", meta_pixel_id: "" });
@@ -43,11 +43,9 @@ export function AdminTracking() {
       if (v && !PATTERNS[k as keyof typeof PATTERNS].test(v)) { toast.error(`Código inválido: ${v}`); return; }
     }
     setSaving(true);
-    const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("tracking_settings")
-      .upsert({ id: true, enabled: form.enabled, ...clean, updated_by: u.user?.id ?? null });
-    setSaving(false);
-    if (error) { toast.error("Não foi possível salvar."); return; }
+    try { await write({ data: { enabled: form.enabled, ...clean } }); }
+    catch { toast.error("Não foi possível salvar."); return; }
+    finally { setSaving(false); }
     toast.success("Configurações de análise salvas.");
     void qc.invalidateQueries({ queryKey: ["admin-tracking"] });
   };

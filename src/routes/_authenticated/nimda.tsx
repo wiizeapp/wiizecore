@@ -17,7 +17,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/app-shell";
 import { getAdminOverview, getAdminStatus, getTenantAccounts, getTenantDetail, listAdminWithdrawals, reviewWithdrawal, updatePlatformSetting } from "@/lib/admin.functions";
-import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +28,8 @@ import { AiReconciliation } from "@/components/ai-reconciliation";
 import { AdminActivations } from "@/components/admin-activations";
 import { AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-console";
 import { AdminAuditSecurity } from "@/components/admin/admin-audit-security";
+import { AdminUnlockGate } from "@/components/admin/admin-unlock-gate";
+import { AdminPld } from "@/components/admin/admin-pld";
 
 export const Route = createFileRoute("/_authenticated/nimda")({
   head: () => ({
@@ -80,39 +81,7 @@ const feeMethodLabels: Record<string, string> = {
 };
 
 function AdminPage() {
-  const { data: mfa, refetch } = useQuery({ queryKey: ["mfa-state-admin"], queryFn: getMfaState });
-  const [code, setCode] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  if (!mfa) return <p className="text-muted-foreground">Carregando…</p>;
-  if (!mfa.factorId)
-    return <div className="surface-panel p-6">Ative a verificação em duas etapas na página Segurança para usar a administração.</div>;
-  if (!mfa.isAal2)
-    return (
-      <form
-        className="surface-panel mx-auto max-w-sm space-y-4 p-6"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setBusy(true);
-          try {
-            await ensureTwoFactor(code, true);
-            await refetch();
-          } catch (err) {
-            toast.error((err as Error).message);
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <h1 className="text-lg font-semibold">Confirme sua identidade</h1>
-        <p className="text-sm text-muted-foreground">Digite o código do seu app autenticador para acessar a administração.</p>
-        <Input inputMode="numeric" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} autoFocus />
-        <Button className="w-full" disabled={busy}>
-          Entrar
-        </Button>
-      </form>
-    );
-  return <AdminContent />;
+  return <AdminUnlockGate><AdminContent /></AdminUnlockGate>;
 }
 
 function AdminContent() {
@@ -320,6 +289,7 @@ function AdminContent() {
     sugestoes: <AdminSuggestions />,
     suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da Wiize Core."),
     auditoria: <AdminAuditSecurity />,
+    pld: <AdminPld />,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,
     permissoes: soon("Permissões", "Hoje existe um único papel administrativo, com verificação em duas etapas obrigatória. Papéis separados (financeiro, suporte, leitura) virão numa próxima etapa."),
     admins: <div className="surface-panel p-4"><AdminUsers /></div>,

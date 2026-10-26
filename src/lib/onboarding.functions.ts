@@ -84,6 +84,7 @@ export const skipOnboarding = createServerFn({ method: "POST" })
 export const getOnboardingInsights = createServerFn({ method: "GET" })
   .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
+    await (await import("./admin-session.server")).assertAdminPage(context);
     const { data: isAdmin } = await (context as Ctx).supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
     if (!isAdmin) throw new Error("Acesso restrito à equipe Wiize Core.");
     const { assertTwoFactor } = await import("./finance.server");
