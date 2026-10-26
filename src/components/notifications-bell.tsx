@@ -9,6 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ActivationNotice } from "@/components/activation-notice";
+import { useServerFn } from "@tanstack/react-start";
+import { listAdminNotifications, markAdminNotifications } from "@/lib/admin-notifications.functions";
+import { getAdminProof } from "@/lib/admin-unlock-state";
 
 type Item = { id: string; kind?: string | null; title: string; body: string | null; link: string | null; read_at: string | null; created_at: string; admin?: boolean };
 
@@ -39,6 +42,7 @@ function timeAgo(iso: string) {
 export function NotificationsBell({ tenantId }: { tenantId: string }) {
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const listAdmin = useServerFn(listAdminNotifications), markAdmin = useServerFn(markAdminNotifications);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"all" | "unread">("all");
 
@@ -52,9 +56,7 @@ export function NotificationsBell({ tenantId }: { tenantId: string }) {
   const { data: adminData } = useQuery({
     queryKey: ["platform-notifications"],
     refetchInterval: 60_000,
-    queryFn: async () =>
-      ((await supabase.from("platform_notifications").select("id, kind, title, body, link, read_at, created_at")
-        .order("created_at", { ascending: false }).limit(20)).data ?? []) as Item[],
+    queryFn: async () => getAdminProof() ? await listAdmin() as Item[] : [],
   });
 
   useEffect(() => {
@@ -85,14 +87,14 @@ export function NotificationsBell({ tenantId }: { tenantId: string }) {
   async function markRead(n: Item) {
     if (n.read_at) return;
     optimistic([n.id]);
-    if (n.admin) await supabase.from("platform_notifications").update({ read_at: new Date().toISOString() }).eq("id", n.id);
+    if (n.admin) await markAdmin({ data: { id: n.id } });
     else await supabase.rpc("mark_notifications_read", { _tenant_id: tenantId, _ids: [n.id] });
     refresh();
   }
   async function markAll() {
     optimistic(null);
     await supabase.rpc("mark_notifications_read", { _tenant_id: tenantId });
-    if (adminData?.some((n) => !n.read_at)) await supabase.from("platform_notifications").update({ read_at: new Date().toISOString() }).is("read_at", null);
+    if (adminData?.some((n) => !n.read_at)) await markAdmin({ data: {} });
     refresh();
   }
   function openItem(n: Item) {
