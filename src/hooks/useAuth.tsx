@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { syncThemeFromProfile } from "@/lib/theme";
+import { recordAuthEvent } from "@/lib/auth-events.functions";
 
 type AuthState = {
   session: Session | null;
@@ -46,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: session?.user ?? null,
         loading,
         signOut: async () => {
+          await recordAuthEvent({ data: { kind: "auth.logout" } }).catch(() => null);
           await supabase.auth.signOut();
         },
       }}
