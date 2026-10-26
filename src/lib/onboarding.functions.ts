@@ -1,12 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { ONBOARDING_STEPS, validOption, type OnboardingKey } from "./onboarding-options";
 
 type Ctx = { supabase: any; userId: string; claims: unknown };
 
 export const getMyOnboarding = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data } = await (context as Ctx).supabase
       .from("user_onboarding").select("completed_at, skipped").eq("user_id", context.userId).maybeSingle();
@@ -17,7 +17,7 @@ const single = (key: OnboardingKey) =>
   z.string().max(40).nullable().optional().refine((v) => !v || validOption(key, v), "Opção inválida");
 
 export const saveOnboarding = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({
     role: single("role"),
     business_type: single("business_type"),
@@ -50,7 +50,7 @@ export const saveOnboarding = createServerFn({ method: "POST" })
   });
 
 export const skipOnboarding = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: member } = await supabaseAdmin.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
@@ -74,7 +74,7 @@ export const skipOnboarding = createServerFn({ method: "POST" })
 
 /** Resultados agregados para o Admin (platform_admin + 2FA). */
 export const getOnboardingInsights = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data: isAdmin } = await (context as Ctx).supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
     if (!isAdmin) throw new Error("Acesso restrito à equipe Wiize Core.");

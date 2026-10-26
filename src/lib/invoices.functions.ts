@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string; claims?: { email?: string } };
 const WRITE = ["owner", "admin", "finance"];
@@ -18,7 +18,7 @@ const todayBR = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 1
 
 /** Visão da configuração fiscal: status, faltas, opções municipais (sem segredos) e progresso da jornada. */
 export const getFiscalOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx, false);
     const db = await admin();
@@ -68,7 +68,7 @@ export const getFiscalOverview = createServerFn({ method: "GET" })
 
 /** Consulta exigências do município e a configuração atual no provedor (404 = ainda não configurado). */
 export const refreshMunicipalOptions = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const db = await admin();
@@ -123,7 +123,7 @@ const settingsSchema = z.object({
 });
 
 export const saveFiscalSettings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => settingsSchema.parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -182,7 +182,7 @@ export const saveFiscalSettings = createServerFn({ method: "POST" })
   });
 
 export const searchMunicipalServices = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ q: z.string().max(100).optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -210,7 +210,7 @@ const fiscalServiceSchema = z.object({
 }).refine((v) => Boolean(v.municipalServiceCode), { message: "Informe o código do serviço." });
 
 export const saveFiscalService = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => fiscalServiceSchema.parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -237,7 +237,7 @@ export const saveFiscalService = createServerFn({ method: "POST" })
   });
 
 export const archiveFiscalService = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -247,7 +247,7 @@ export const archiveFiscalService = createServerFn({ method: "POST" })
   });
 
 export const saveIssuanceDefaults = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({
     autoIssue: z.boolean(),
     rule: z.enum(["ON_PAYMENT_CONFIRMATION", "ON_PAYMENT_DUE_DATE", "BEFORE_PAYMENT_DUE_DATE", "ON_DUE_DATE_MONTH", "ON_NEXT_MONTH"]),
@@ -272,7 +272,7 @@ export const saveIssuanceDefaults = createServerFn({ method: "POST" })
 
 /** Cobranças e parcelamentos que podem receber nota (existem no provedor, não canceladas, sem nota ativa). */
 export const listInvoiceSources = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const db = await admin();
@@ -312,7 +312,7 @@ const createSchema = z.object({
 });
 
 export const createInvoice = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => createSchema.parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -364,7 +364,7 @@ async function ownedInvoice(db: any, tenantId: string, id: string) {
 }
 
 export const cancelInvoice = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -384,7 +384,7 @@ export const cancelInvoice = createServerFn({ method: "POST" })
   });
 
 export const authorizeInvoiceNow = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -402,7 +402,7 @@ export const authorizeInvoiceNow = createServerFn({ method: "POST" })
 
 /** Recuperação pontual (não é polling): atualiza documentos e status a partir do provedor. */
 export const syncInvoice = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx, false);
@@ -429,7 +429,7 @@ export const syncInvoice = createServerFn({ method: "POST" })
 
 /** Emissão automática para uma recorrência, via configuração oficial de assinaturas do provedor. */
 export const configureSubscriptionInvoices = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({
     subscriptionId: z.string().uuid(),
     fiscalServiceId: z.string().uuid(),

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 import { SANDBOX_ACTIONS } from "./ext-sandbox";
 
@@ -16,7 +16,7 @@ async function integrationIds(tenantId: string, env: "test" | "live") {
 
 /** Serviços da empresa e se podem ser vendidos pelo checkout externo. */
 export const listPortalServices = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const a = await loadAccess(context.userId);
     const { data } = await (await db()).from("services").select("id, name, amount, type, frequency, active, custom_amount, accepted_methods").eq("tenant_id", a.tenantId).is("archived_at", null).order("name").limit(200);
@@ -28,7 +28,7 @@ export const listPortalServices = createServerFn({ method: "GET" })
 
 /** Cobranças criadas pela API no ambiente escolhido. Teste = simulador; produção = cobranças reais. */
 export const listPortalCharges = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => envInput.extend({ recurringOnly: z.boolean().default(false) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await loadAccess(context.userId);
@@ -66,7 +66,7 @@ export const listPortalCharges = createServerFn({ method: "GET" })
 
 /** Simulação de pagamento de teste. Só dono/administrador; só registros de teste da própria empresa. */
 export const simulatePortalCharge = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), action: z.enum(SANDBOX_ACTIONS) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await loadAccess(context.userId);
@@ -82,7 +82,7 @@ export const simulatePortalCharge = createServerFn({ method: "POST" })
 
 /** Diagnóstico: chamadas recebidas pela API, sem corpo, chave ou dados pessoais. */
 export const listPortalRequests = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => envInput.parse(d))
   .handler(async ({ data, context }) => {
     const a = await loadAccess(context.userId);
@@ -92,7 +92,7 @@ export const listPortalRequests = createServerFn({ method: "GET" })
 
 /** Progresso real do roteiro de primeiros passos, calculado a partir do que aconteceu. */
 export const getPortalProgress = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => envInput.parse(d))
   .handler(async ({ data, context }) => {
     const a = await loadAccess(context.userId);

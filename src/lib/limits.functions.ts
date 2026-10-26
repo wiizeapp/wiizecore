@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: any; userId: string; claims: unknown };
@@ -50,7 +50,7 @@ async function tenantLimits(admin: any, tenantId: string) {
 }
 
 export const getMyLimits = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -62,7 +62,7 @@ export const getMyLimits = createServerFn({ method: "GET" })
   });
 
 export const requestLimitIncrease = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     dailyLimit: z.number().positive().max(10_000_000),
     monthlyCount: z.number().int().min(1).max(1000).optional(),
@@ -91,7 +91,7 @@ export const requestLimitIncrease = createServerFn({ method: "POST" })
   });
 
 export const listLimitRequests = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data: tenants } = await admin.from("tenants").select("id, name").order("name");
@@ -102,7 +102,7 @@ export const listLimitRequests = createServerFn({ method: "GET" })
   });
 
 export const reviewLimitRequest = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     id: z.string().uuid(),
     action: z.enum(["in_review", "approved", "rejected"]),

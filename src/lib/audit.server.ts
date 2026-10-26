@@ -96,7 +96,7 @@ export async function logSecurityEvent(
     severity: entry.severity ?? "info",
     ip_address: ip,
     user_agent: userAgent,
-    metadata: (entry.metadata ?? {}) as never,
+    metadata: (sanitizeMetadata(entry.metadata ?? {}) ?? {}) as never,
   });
   if (entry.severity && entry.severity !== "info") {
     const { alertSecurityIncident } = await import("./security-alerts.server");

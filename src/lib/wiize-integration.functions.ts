@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 
 async function ownerAccess(userId: string) {
@@ -11,7 +11,7 @@ async function ownerAccess(userId: string) {
 }
 
 export const getWiizeConnection = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { wiizeConfig, getAdmin } = await import("./wiize-integration.server");
     const access = await loadAccess(context.userId);
@@ -29,7 +29,7 @@ export const getWiizeConnection = createServerFn({ method: "GET" })
   });
 
 export const startWiizeConnect = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const s = await import("./wiize-integration.server");
     const cfg = s.wiizeConfig();
@@ -87,7 +87,7 @@ export const startWiizeLogin = createServerFn({ method: "POST" }).handler(async 
 });
 
 export const disconnectWiize = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const s = await import("./wiize-integration.server");
     const access = await ownerAccess(context.userId);
@@ -114,7 +114,7 @@ export const disconnectWiize = createServerFn({ method: "POST" })
 const customerQuery = z.object({ search: z.string().trim().max(120).optional(), page: z.number().int().min(1).max(1000).default(1) });
 
 export const listWiizeCustomers = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => customerQuery.parse(d))
   .handler(async ({ data, context }) => {
     const s = await import("./wiize-integration.server");
@@ -140,7 +140,7 @@ const importInput = z.object({
 
 /** Vincula ou cria cliente Wiize Core a partir do Wiize, sem duplicar. */
 export const importWiizeCustomer = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => importInput.parse(d))
   .handler(async ({ data, context }) => {
     const s = await import("./wiize-integration.server");

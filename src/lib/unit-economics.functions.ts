@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { MIX_LABELS, mixKeyFor, type MixKey } from "./fee-math";
 import { buildUnitEconomics, type UePayment } from "./unit-economics";
 
@@ -17,7 +17,7 @@ async function requireAdmin(context: Ctx) {
 }
 
 export const getUnitEconomics = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { start: string; end: string }) => z.object({ start: z.string().datetime(), end: z.string().datetime() }).parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);
@@ -82,7 +82,7 @@ export const getUnitEconomics = createServerFn({ method: "GET" })
 const methodEnum = z.enum(["pix", "pix_recurring", "boleto", "debit_card", "credit_card"]);
 
 export const getFeeConfiguration = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const now = new Date().toISOString();
@@ -110,7 +110,7 @@ const rateInput = z.object({
 
 /** Nova versão de taxa/custo: encerra a anterior (não altera transações já criadas) e registra histórico. */
 export const saveRate = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => rateInput.parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);

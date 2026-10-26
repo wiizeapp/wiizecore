@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
@@ -17,7 +17,7 @@ async function requireAdmin(context: Ctx) {
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 export const runAiReconciliation = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) =>
     z.object({
       tenantId: z.string().uuid(),
@@ -55,7 +55,7 @@ export const runAiReconciliation = createServerFn({ method: "POST" })
   });
 
 export const listAiReconciliations = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ tenantId: z.string().uuid().nullable() }).parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);

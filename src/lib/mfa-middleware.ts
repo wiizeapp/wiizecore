@@ -1,5 +1,5 @@
 import { createMiddleware } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { sessionHasMfa } from "./mfa-policy";
 
 /**
@@ -8,7 +8,7 @@ import { sessionHasMfa } from "./mfa-policy";
  * e de aceite de convite usam `requireSupabaseAuth` diretamente.
  */
 export const requireMfaAuth = createMiddleware({ type: "function" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .server(async ({ next, context }) => {
     if (!sessionHasMfa(context.claims)) {
       try {

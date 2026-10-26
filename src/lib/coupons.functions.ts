@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { COUPON_CODE_RE, normalizeCouponCode } from "./coupon-math";
 
 type Ctx = { supabase: any; userId: string };
@@ -19,7 +19,7 @@ async function membership(context: Ctx, perm: string) {
 }
 
 export const listCoupons = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx, "coupons.view");
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -66,7 +66,7 @@ const couponInput = z.object({
 
 /** Cria ou edita. A empresa vem sempre da sessão; campos extras são rejeitados. */
 export const saveCoupon = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => couponInput.parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx, data.id ? "coupons.edit" : "coupons.create");
@@ -99,7 +99,7 @@ export const saveCoupon = createServerFn({ method: "POST" })
   });
 
 export const setCouponStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["active", "paused", "archived"]) }).strict().parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx, data.status === "archived" ? "coupons.archive" : "coupons.edit");

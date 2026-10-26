@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { ASAAS_DEFAULT_LATE_FEES } from "./late-fees";
 
 type Ctx = { supabase: any; userId: string };
@@ -13,7 +13,7 @@ async function membership(context: Ctx) {
 }
 
 export const getLateFees = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -38,7 +38,7 @@ const schema = z.object({
 });
 
 export const saveLateFees = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => schema.parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);

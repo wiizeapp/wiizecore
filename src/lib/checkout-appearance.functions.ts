@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { appearanceSchema, contrastIssues } from "./checkout-appearance";
 
 type Ctx = { supabase: any; userId: string };
@@ -14,7 +14,7 @@ async function membership(context: Ctx) {
 }
 
 export const getCheckoutAppearance = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -34,7 +34,7 @@ export const getCheckoutAppearance = createServerFn({ method: "GET" })
 
 /** Cada salvamento cria uma nova versão; cobranças antigas mantêm a versão em que foram criadas. */
 export const saveCheckoutAppearance = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => appearanceSchema.parse(i))
   .handler(async ({ data, context }) => {
     const ctx = context as Ctx;
@@ -90,7 +90,7 @@ async function auditLogo(admin: any, tenantId: string, userId: string, action: s
 
 /** Recebe a logo já otimizada, confere o conteúdo real e guarda em armazenamento privado. */
 export const uploadCheckoutLogo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ contentType: z.string(), base64: z.string().max(Math.ceil(MAX_BYTES * 1.4)) }).parse(i))
   .handler(async ({ data, context }) => {
     const ctx = context as Ctx;
@@ -116,7 +116,7 @@ function allowedRemoteUrl(value: string) {
 
 /** Importa uma logo HTTPS para o armazenamento privado; o checkout não depende do endereço externo. */
 export const importCheckoutLogo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ url: z.string().url().max(2000) }).parse(i))
   .handler(async ({ data, context }) => {
     const ctx = context as Ctx;
@@ -138,7 +138,7 @@ export const importCheckoutLogo = createServerFn({ method: "POST" })
 
 /** Remove somente uploads ainda não usados por nenhuma versão salva. */
 export const discardCheckoutLogo = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ logoPath: z.string().max(160) }).parse(i))
   .handler(async ({ data, context }) => {
     const ctx = context as Ctx;

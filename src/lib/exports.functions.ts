@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 /** Autoriza e registra uma exportação. Só papéis financeiros podem exportar. */
 export const authorizeExport = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) =>
     z.object({
       kind: z.enum(["cobrancas", "pagamentos", "inadimplencia", "saques", "extrato"]),

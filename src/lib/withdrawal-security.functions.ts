@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 /** Preferência do usuário: exigir código 2FA além da senha financeira em saques. */
 export const getWithdrawalSecurity = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data } = await context.supabase
       .from("user_security_settings")
@@ -16,7 +16,7 @@ export const getWithdrawalSecurity = createServerFn({ method: "GET" })
 
 /** Liga/desliga a exigência. Sempre pede senha financeira e sessão confirmada com 2FA (aal2). */
 export const setWithdrawalSecurity = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) =>
     z.object({ required: z.boolean(), financialPassword: z.string().min(1).max(200) }).parse(input),
   )

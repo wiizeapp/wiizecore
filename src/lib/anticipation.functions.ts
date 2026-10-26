@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string; claims: unknown };
@@ -15,7 +15,7 @@ async function membership(context: Ctx, roles?: string[]) {
 
 /** Lista recebíveis pagos com elegibilidade local + histórico. */
 export const listReceivables = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -54,7 +54,7 @@ export const listReceivables = createServerFn({ method: "GET" })
 
 /** Consulta elegibilidade no Asaas e simula (não executa nada). */
 export const simulateReceivable = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ paymentId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx, FINANCE);
@@ -68,7 +68,7 @@ export const simulateReceivable = createServerFn({ method: "POST" })
 
 /** requestAnticipation — revalida tudo no servidor, idempotente, exige 2FA + senha financeira. */
 export const requestAnticipation = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) =>
     z.object({
       paymentId: z.string().uuid(),

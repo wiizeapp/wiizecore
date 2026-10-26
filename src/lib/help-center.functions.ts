@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
 
@@ -12,7 +12,7 @@ const clean = (s: string) => s.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]
 
 /** Cliente: grava uma sugestão ligada ao usuário logado e à empresa ativa (se houver). */
 export const submitSuggestion = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({
     category: z.enum(SUGGESTION_CATEGORIES),
     title: z.string().transform(clean).pipe(z.string().min(3).max(140)),
@@ -39,7 +39,7 @@ export const submitSuggestion = createServerFn({ method: "POST" })
 
 /** Cliente: registra "Isso ajudou?" (uma resposta por artigo, pode mudar). */
 export const rateArticle = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ slug: z.string().regex(/^[a-z0-9-]{2,120}$/), helpful: z.boolean() }).parse(d))
   .handler(async ({ context, data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -58,7 +58,7 @@ async function requireAdmin(context: Ctx) {
 }
 
 export const adminListSuggestions = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data, error } = await admin.from("feature_suggestions").select("id, user_id, tenant_id, category, title, description, source_page, status, priority, assigned_to, created_at, updated_at").order("created_at", { ascending: false }).limit(1000);
@@ -73,7 +73,7 @@ export const adminListSuggestions = createServerFn({ method: "GET" })
   });
 
 export const adminSuggestionDetail = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const admin = await requireAdmin(context as Ctx);
@@ -93,7 +93,7 @@ export const adminSuggestionDetail = createServerFn({ method: "GET" })
   });
 
 export const adminUpdateSuggestion = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({
     id: z.string().uuid(),
     status: z.enum(SUGGESTION_STATUSES).optional(),

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { validCnpj, validCpf } from "./doc-validation";
 import { activationFormSchema, BRAZIL_STATES, REQUIRED_DOCS } from "./activation-validation";
 
@@ -30,7 +30,7 @@ async function ensureRow(admin: any, tenantId: string) {
 }
 
 export const getActivation = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await ownerMembership(context as Ctx);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -58,7 +58,7 @@ export const getActivation = createServerFn({ method: "GET" })
   });
 
 export const saveActivationDraft = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     personType: z.enum(["individual", "company"]).nullable(),
     form: activationFormSchema,
@@ -102,7 +102,7 @@ export const saveActivationDraft = createServerFn({ method: "POST" })
   });
 
 export const uploadActivationDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ kind: z.enum(DOC_KINDS), mimeType: z.string(), base64: z.string().max(12_000_000) }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await ownerMembership(context as Ctx); assertManager(m.role);
@@ -118,7 +118,7 @@ export const uploadActivationDocument = createServerFn({ method: "POST" })
   });
 
 export const submitActivation = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await ownerMembership(context as Ctx); assertManager(m.role);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -173,7 +173,7 @@ export const submitActivation = createServerFn({ method: "POST" })
 
 /** Consulta agora a situação da análise no Asaas e reenvia documentos novos ou corrigidos. */
 export const refreshActivationStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await ownerMembership(context as Ctx); assertManager(m.role);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -199,7 +199,7 @@ async function requireAdmin(context: Ctx) {
 const mask = (v?: string) => (v ? v.replace(/\d(?=\d{2})/g, "•") : "");
 
 export const listActivations = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data } = await admin.from("payment_activations").select("tenant_id, status, person_type, submitted_at, reviewed_at, updated_at, tenants(name)").order("submitted_at", { ascending: true, nullsFirst: false });
@@ -207,7 +207,7 @@ export const listActivations = createServerFn({ method: "GET" })
   });
 
 export const getActivationDetail = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ tenantId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);

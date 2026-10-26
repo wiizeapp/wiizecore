@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 /**
  * Checkout aberto por serviço: um link fixo onde quem paga informa os próprios dados,
@@ -18,7 +18,7 @@ async function base() {
 // ---------- Área interna ----------
 
 export const listServiceCheckoutLinks = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const access = await (await import("./member-access.server")).requireModulePerm(context.userId, "services.view");
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
@@ -35,7 +35,7 @@ export const listServiceCheckoutLinks = createServerFn({ method: "GET" })
   });
 
 export const setServiceCheckoutLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { serviceId: string; active: boolean; amount?: string; chargeType?: "one_time" | "installment" | "recurring"; frequency?: string; maxInstallments?: number; newVersion?: boolean }) => z.object({
     serviceId: z.string().uuid(), active: z.boolean(), amount: z.string().regex(/^\d{1,10}([.,]\d{1,2})?$/).optional(),
     chargeType: z.enum(["one_time", "installment", "recurring"]).optional(),

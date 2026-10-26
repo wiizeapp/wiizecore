@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { contractEvent } from "./contracts.functions";
 
 const LINK_TTL_DAYS = 7;
@@ -22,7 +22,7 @@ async function memberTenant(supabase: { from: (t: string) => any }, userId: stri
  * O token é retornado uma única vez; no banco fica apenas a impressão digital.
  */
 export const createContractLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return { contractId: input.contractId };
@@ -112,7 +112,7 @@ export async function issueContractLink(
 
 /** Revoga todos os links ativos de um contrato. */
 export const revokeContractLinks = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return { contractId: input.contractId };

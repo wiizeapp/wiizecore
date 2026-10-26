@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: any; userId: string };
 
@@ -13,7 +13,7 @@ async function membership(context: Ctx) {
 
 /** Forma atual, tentativas e linha do tempo de uma cobrança da empresa. */
 export const getChargeTimeline = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ paymentId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -43,7 +43,7 @@ export const getChargeTimeline = createServerFn({ method: "POST" })
 
 /** O prestador troca a forma de pagamento, sempre com senha financeira validada no servidor. */
 export const providerSwitchMethod = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) =>
     z.object({
       paymentId: z.string().uuid(),
@@ -74,7 +74,7 @@ export const providerSwitchMethod = createServerFn({ method: "POST" })
 
 /** Ativa de novo uma cobrança cancelada, com nova data, no mesmo link e na mesma cobrança. */
 export const reactivateCharge = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) =>
     z.object({ paymentId: z.string().uuid(), dueOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).parse(i),
   )

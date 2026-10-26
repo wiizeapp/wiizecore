@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 export const DOC_MAX_BYTES = 12 * 1024 * 1024;
@@ -42,7 +42,7 @@ const WRITE = ["owner", "admin", "finance"];
 const READ = [...WRITE, "viewer"];
 
 export const listCustomerDocuments = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ customerId: z.string().uuid().optional(), search: z.string().max(80).optional(), page: z.number().int().min(1).max(10_000).default(1), pageSize: z.number().int().min(5).max(50).default(10) }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, READ);
@@ -67,7 +67,7 @@ export const listCustomerDocuments = createServerFn({ method: "POST" })
   });
 
 export const uploadCustomerDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     customerId: z.string().uuid(), title: z.string().trim().min(2).max(120), buttonLabel: z.string().trim().min(2).max(60),
     fileName: z.string().trim().min(1).max(180), mime: z.string().max(120), base64: z.string().min(4).max(17_000_000), visible: z.boolean().default(true),
@@ -98,7 +98,7 @@ export const uploadCustomerDocument = createServerFn({ method: "POST" })
   });
 
 export const updateCustomerDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), title: z.string().trim().min(2).max(120).optional(), buttonLabel: z.string().trim().min(2).max(60).optional(), visible: z.boolean().optional() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, WRITE);
@@ -114,7 +114,7 @@ export const updateCustomerDocument = createServerFn({ method: "POST" })
   });
 
 export const deleteCustomerDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, WRITE);
@@ -128,7 +128,7 @@ export const deleteCustomerDocument = createServerFn({ method: "POST" })
   });
 
 export const openCustomerDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, READ);

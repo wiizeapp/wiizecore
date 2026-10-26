@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string };
@@ -54,7 +54,7 @@ const createChargeSchema = z.object({
 
 
 export const createCharge = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => createChargeSchema.parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);
@@ -63,7 +63,7 @@ export const createCharge = createServerFn({ method: "POST" })
   });
 
 export const regeneratePaymentLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid(), days: z.number().int().min(1).max(90).default(30) }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);
@@ -91,7 +91,7 @@ export const regeneratePaymentLink = createServerFn({ method: "POST" })
 
 /** Devolve o link fixo da cobrança. Links antigos (sem cópia guardada) recebem um novo link permanente uma única vez. */
 export const getChargeLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, [...FINANCE, "viewer"]);
@@ -127,7 +127,7 @@ export const getChargeLink = createServerFn({ method: "POST" })
   });
 
 export const revokePaymentLinks = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);
@@ -144,7 +144,7 @@ export const revokePaymentLinks = createServerFn({ method: "POST" })
 
 /** Cancela uma cobrança sem recebimentos e a retira imediatamente dos totais. */
 export const cancelCharge = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
@@ -211,7 +211,7 @@ export const cancelCharge = createServerFn({ method: "POST" })
   });
 
 export const listWebhookEvents = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await requireMembership(context, ["owner", "admin", "finance"]);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -226,7 +226,7 @@ export const listWebhookEvents = createServerFn({ method: "GET" })
 
 /** Ambiente de teste: simula o pagamento da próxima parcela em aberto. */
 export const simulateSandboxPayment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
@@ -258,7 +258,7 @@ export const simulateSandboxPayment = createServerFn({ method: "POST" })
 
 /** Consulta o status oficial das parcelas desta cobrança no provedor e aplica atualizações. */
 export const syncChargeStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin", "finance"]);
@@ -282,7 +282,7 @@ export const syncChargeStatus = createServerFn({ method: "POST" })
   });
 
 export const reprocessWebhookEvent = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ eventId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
@@ -299,7 +299,7 @@ export const reprocessWebhookEvent = createServerFn({ method: "POST" })
 
 /** Registra (ou re-registra) o webhook no Asaas com um token aleatório desta empresa. */
 export const syncAsaasWebhook = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -311,7 +311,7 @@ export const syncAsaasWebhook = createServerFn({ method: "POST" })
 
 /** Salva o CPF/CNPJ informado na cobrança em um cliente que ainda não tem documento. */
 export const setCustomerDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ customerId: z.string().uuid(), document: z.string().max(20) }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);
