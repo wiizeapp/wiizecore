@@ -246,6 +246,13 @@
       "when": 1792175392416,
       "tag": "0034_ext_idempotency_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793016311066,
+      "tag": "0035_financial_security_and_global_foundation",
+      "breakpoints": true
     }
   ]
 }

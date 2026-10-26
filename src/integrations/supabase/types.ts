@@ -289,6 +289,7 @@ export type Database = {
           anticipation_fee_amount: number
           commercial_monthly_rate: number | null
           created_at: string
+          currency: string
           failure_reason: string | null
           gross_amount: number
           id: string
@@ -297,10 +298,12 @@ export type Database = {
           margin_collected_at: string | null
           margin_transfer_id: string | null
           net_amount: number
+          operation: string
           payment_id: string | null
           processed_at: string | null
           provider: string
           provider_anticipation_id: string | null
+          provider_connection_id: string | null
           provider_fee_amount: number
           provider_fee_is_estimated: boolean
           provider_net_amount: number | null
@@ -320,6 +323,7 @@ export type Database = {
           anticipation_fee_amount: number
           commercial_monthly_rate?: number | null
           created_at?: string
+          currency?: string
           failure_reason?: string | null
           gross_amount: number
           id?: string
@@ -328,10 +332,12 @@ export type Database = {
           margin_collected_at?: string | null
           margin_transfer_id?: string | null
           net_amount: number
+          operation?: string
           payment_id?: string | null
           processed_at?: string | null
           provider?: string
           provider_anticipation_id?: string | null
+          provider_connection_id?: string | null
           provider_fee_amount?: number
           provider_fee_is_estimated?: boolean
           provider_net_amount?: number | null
@@ -351,6 +357,7 @@ export type Database = {
           anticipation_fee_amount?: number
           commercial_monthly_rate?: number | null
           created_at?: string
+          currency?: string
           failure_reason?: string | null
           gross_amount?: number
           id?: string
@@ -359,10 +366,12 @@ export type Database = {
           margin_collected_at?: string | null
           margin_transfer_id?: string | null
           net_amount?: number
+          operation?: string
           payment_id?: string | null
           processed_at?: string | null
           provider?: string
           provider_anticipation_id?: string | null
+          provider_connection_id?: string | null
           provider_fee_amount?: number
           provider_fee_is_estimated?: boolean
           provider_net_amount?: number | null
@@ -383,6 +392,13 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anticipation_requests_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -1662,12 +1678,62 @@ export type Database = {
           },
         ]
       }
+      customer_provider_links: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          provider_connection_id: string
+          provider_customer_id: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          provider_connection_id: string
+          provider_customer_id: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          provider_connection_id?: string
+          provider_customer_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_provider_links_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_provider_links_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_provider_links_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
           address_number: string | null
           city: string | null
           complement: string | null
+          country_code: string
           created_at: string
           created_by: string | null
           data_status: string
@@ -1694,6 +1760,7 @@ export type Database = {
           address_number?: string | null
           city?: string | null
           complement?: string | null
+          country_code?: string
           created_at?: string
           created_by?: string | null
           data_status?: string
@@ -1720,6 +1787,7 @@ export type Database = {
           address_number?: string | null
           city?: string | null
           complement?: string | null
+          country_code?: string
           created_at?: string
           created_by?: string | null
           data_status?: string
@@ -3927,6 +3995,7 @@ export type Database = {
           canceled_at: string | null
           charge_group_id: string | null
           created_at: string
+          currency: string
           customer_id: string | null
           deductions: number
           effective_date: string
@@ -3942,6 +4011,7 @@ export type Database = {
           municipal_service_name: string | null
           number: string | null
           observations: string | null
+          operation: string
           origin: string
           payment_id: string | null
           pdf_url: string | null
@@ -3964,6 +4034,7 @@ export type Database = {
           canceled_at?: string | null
           charge_group_id?: string | null
           created_at?: string
+          currency?: string
           customer_id?: string | null
           deductions?: number
           effective_date: string
@@ -3979,6 +4050,7 @@ export type Database = {
           municipal_service_name?: string | null
           number?: string | null
           observations?: string | null
+          operation?: string
           origin: string
           payment_id?: string | null
           pdf_url?: string | null
@@ -4001,6 +4073,7 @@ export type Database = {
           canceled_at?: string | null
           charge_group_id?: string | null
           created_at?: string
+          currency?: string
           customer_id?: string | null
           deductions?: number
           effective_date?: string
@@ -4016,6 +4089,7 @@ export type Database = {
           municipal_service_name?: string | null
           number?: string | null
           observations?: string | null
+          operation?: string
           origin?: string
           payment_id?: string | null
           pdf_url?: string | null
@@ -4472,6 +4546,7 @@ export type Database = {
           attempt_number: number
           bank_slip_url: string | null
           created_at: string
+          currency: string
           due_on: string | null
           error_message: string | null
           fine_amount: number
@@ -4480,7 +4555,9 @@ export type Database = {
           interest_amount: number
           invoice_url: string | null
           method: Database["public"]["Enums"]["payment_method"] | null
+          operation: string
           payment_id: string
+          provider_connection_id: string | null
           provider_payment_id: string | null
           reason: string
           status: string
@@ -4494,6 +4571,7 @@ export type Database = {
           attempt_number: number
           bank_slip_url?: string | null
           created_at?: string
+          currency?: string
           due_on?: string | null
           error_message?: string | null
           fine_amount?: number
@@ -4502,7 +4580,9 @@ export type Database = {
           interest_amount?: number
           invoice_url?: string | null
           method?: Database["public"]["Enums"]["payment_method"] | null
+          operation?: string
           payment_id: string
+          provider_connection_id?: string | null
           provider_payment_id?: string | null
           reason?: string
           status?: string
@@ -4516,6 +4596,7 @@ export type Database = {
           attempt_number?: number
           bank_slip_url?: string | null
           created_at?: string
+          currency?: string
           due_on?: string | null
           error_message?: string | null
           fine_amount?: number
@@ -4524,7 +4605,9 @@ export type Database = {
           interest_amount?: number
           invoice_url?: string | null
           method?: Database["public"]["Enums"]["payment_method"] | null
+          operation?: string
           payment_id?: string
+          provider_connection_id?: string | null
           provider_payment_id?: string | null
           reason?: string
           status?: string
@@ -4537,6 +4620,13 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_attempts_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -4839,6 +4929,7 @@ export type Database = {
           contract_id: string | null
           created_at: string
           created_by: string | null
+          currency: string
           current_attempt_id: string | null
           customer_id: string | null
           description: string | null
@@ -4865,11 +4956,13 @@ export type Database = {
           last_provider_event_id: string | null
           method: Database["public"]["Enums"]["payment_method"] | null
           net_amount: number
+          operation: string
           original_amount: number | null
           original_due_on: string | null
           paid_at: string | null
           platform_fee_amount: number
           provider: string
+          provider_connection_id: string | null
           provider_cost_config_id: string | null
           provider_fee_amount: number
           provider_fee_covered_amount: number
@@ -4900,6 +4993,7 @@ export type Database = {
           contract_id?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           current_attempt_id?: string | null
           customer_id?: string | null
           description?: string | null
@@ -4926,11 +5020,13 @@ export type Database = {
           last_provider_event_id?: string | null
           method?: Database["public"]["Enums"]["payment_method"] | null
           net_amount?: number
+          operation?: string
           original_amount?: number | null
           original_due_on?: string | null
           paid_at?: string | null
           platform_fee_amount?: number
           provider?: string
+          provider_connection_id?: string | null
           provider_cost_config_id?: string | null
           provider_fee_amount?: number
           provider_fee_covered_amount?: number
@@ -4961,6 +5057,7 @@ export type Database = {
           contract_id?: string | null
           created_at?: string
           created_by?: string | null
+          currency?: string
           current_attempt_id?: string | null
           customer_id?: string | null
           description?: string | null
@@ -4987,11 +5084,13 @@ export type Database = {
           last_provider_event_id?: string | null
           method?: Database["public"]["Enums"]["payment_method"] | null
           net_amount?: number
+          operation?: string
           original_amount?: number | null
           original_due_on?: string | null
           paid_at?: string | null
           platform_fee_amount?: number
           provider?: string
+          provider_connection_id?: string | null
           provider_cost_config_id?: string | null
           provider_fee_amount?: number
           provider_fee_covered_amount?: number
@@ -5044,6 +5143,13 @@ export type Database = {
             columns: ["fee_configuration_id"]
             isOneToOne: false
             referencedRelation: "payment_fee_settings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -5560,6 +5666,7 @@ export type Database = {
         Row: {
           completed_at: string | null
           created_at: string
+          currency: string
           deduction_amount: number
           deduction_reason: string | null
           deduction_type: string
@@ -5573,9 +5680,11 @@ export type Database = {
           kind: string
           last_provider_event_id: string | null
           mode: string
+          operation: string
           original_amount: number
           payment_id: string
           processed_at: string | null
+          provider_connection_id: string | null
           provider_status: string | null
           reason: string
           refund_amount: number
@@ -5589,6 +5698,7 @@ export type Database = {
         Insert: {
           completed_at?: string | null
           created_at?: string
+          currency?: string
           deduction_amount?: number
           deduction_reason?: string | null
           deduction_type?: string
@@ -5602,9 +5712,11 @@ export type Database = {
           kind: string
           last_provider_event_id?: string | null
           mode: string
+          operation?: string
           original_amount: number
           payment_id: string
           processed_at?: string | null
+          provider_connection_id?: string | null
           provider_status?: string | null
           reason: string
           refund_amount: number
@@ -5618,6 +5730,7 @@ export type Database = {
         Update: {
           completed_at?: string | null
           created_at?: string
+          currency?: string
           deduction_amount?: number
           deduction_reason?: string | null
           deduction_type?: string
@@ -5631,9 +5744,11 @@ export type Database = {
           kind?: string
           last_provider_event_id?: string | null
           mode?: string
+          operation?: string
           original_amount?: number
           payment_id?: string
           processed_at?: string | null
+          provider_connection_id?: string | null
           provider_status?: string | null
           reason?: string
           refund_amount?: number
@@ -5650,6 +5765,13 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -5920,6 +6042,7 @@ export type Database = {
           auto_renew: boolean
           created_at: string
           created_by: string | null
+          currency: string
           custom_amount: boolean
           cycles: number | null
           description: string | null
@@ -5934,6 +6057,7 @@ export type Database = {
           installments: number | null
           interest_percentage: number
           name: string
+          operation: string
           starts_on: string | null
           tenant_id: string
           type: Database["public"]["Enums"]["service_type"]
@@ -5947,6 +6071,7 @@ export type Database = {
           auto_renew?: boolean
           created_at?: string
           created_by?: string | null
+          currency?: string
           custom_amount?: boolean
           cycles?: number | null
           description?: string | null
@@ -5961,6 +6086,7 @@ export type Database = {
           installments?: number | null
           interest_percentage?: number
           name: string
+          operation?: string
           starts_on?: string | null
           tenant_id: string
           type?: Database["public"]["Enums"]["service_type"]
@@ -5974,6 +6100,7 @@ export type Database = {
           auto_renew?: boolean
           created_at?: string
           created_by?: string | null
+          currency?: string
           custom_amount?: boolean
           cycles?: number | null
           description?: string | null
@@ -5988,6 +6115,7 @@ export type Database = {
           installments?: number | null
           interest_percentage?: number
           name?: string
+          operation?: string
           starts_on?: string | null
           tenant_id?: string
           type?: Database["public"]["Enums"]["service_type"]
@@ -6009,6 +6137,7 @@ export type Database = {
           amount: number
           contract_id: string | null
           created_at: string
+          currency: string
           customer_id: string
           cycles: number | null
           cycles_done: number
@@ -6017,6 +6146,8 @@ export type Database = {
           id: string
           method: Database["public"]["Enums"]["payment_method"]
           next_charge_on: string | null
+          operation: string
+          provider_connection_id: string | null
           provider_subscription_id: string | null
           service_id: string | null
           starts_on: string
@@ -6028,6 +6159,7 @@ export type Database = {
           amount: number
           contract_id?: string | null
           created_at?: string
+          currency?: string
           customer_id: string
           cycles?: number | null
           cycles_done?: number
@@ -6036,6 +6168,8 @@ export type Database = {
           id?: string
           method?: Database["public"]["Enums"]["payment_method"]
           next_charge_on?: string | null
+          operation?: string
+          provider_connection_id?: string | null
           provider_subscription_id?: string | null
           service_id?: string | null
           starts_on?: string
@@ -6047,6 +6181,7 @@ export type Database = {
           amount?: number
           contract_id?: string | null
           created_at?: string
+          currency?: string
           customer_id?: string
           cycles?: number | null
           cycles_done?: number
@@ -6055,6 +6190,8 @@ export type Database = {
           id?: string
           method?: Database["public"]["Enums"]["payment_method"]
           next_charge_on?: string | null
+          operation?: string
+          provider_connection_id?: string | null
           provider_subscription_id?: string | null
           service_id?: string | null
           starts_on?: string
@@ -6074,6 +6211,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -6421,30 +6565,36 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          currency: string
           description: string | null
           id: string
           kind: Database["public"]["Enums"]["transaction_kind"]
           occurred_at: string
+          operation: string
           payment_id: string | null
           tenant_id: string
         }
         Insert: {
           amount: number
           created_at?: string
+          currency?: string
           description?: string | null
           id?: string
           kind: Database["public"]["Enums"]["transaction_kind"]
           occurred_at?: string
+          operation?: string
           payment_id?: string | null
           tenant_id: string
         }
         Update: {
           amount?: number
           created_at?: string
+          currency?: string
           description?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["transaction_kind"]
           occurred_at?: string
+          operation?: string
           payment_id?: string | null
           tenant_id?: string
         }
@@ -6642,10 +6792,12 @@ export type Database = {
           },
         ]
       }
-      wallets: {
+      wallet_balances: {
         Row: {
           available_balance: number
           blocked_balance: number
+          currency: string
+          operation: string
           pending_balance: number
           tenant_id: string
           total_fees: number
@@ -6656,6 +6808,8 @@ export type Database = {
         Insert: {
           available_balance?: number
           blocked_balance?: number
+          currency: string
+          operation?: string
           pending_balance?: number
           tenant_id: string
           total_fees?: number
@@ -6666,6 +6820,55 @@ export type Database = {
         Update: {
           available_balance?: number
           blocked_balance?: number
+          currency?: string
+          operation?: string
+          pending_balance?: number
+          tenant_id?: string
+          total_fees?: number
+          total_received?: number
+          total_withdrawn?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_balances_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          available_balance: number
+          blocked_balance: number
+          currency: string
+          operation: string
+          pending_balance: number
+          tenant_id: string
+          total_fees: number
+          total_received: number
+          total_withdrawn: number
+          updated_at: string
+        }
+        Insert: {
+          available_balance?: number
+          blocked_balance?: number
+          currency?: string
+          operation?: string
+          pending_balance?: number
+          tenant_id: string
+          total_fees?: number
+          total_received?: number
+          total_withdrawn?: number
+          updated_at?: string
+        }
+        Update: {
+          available_balance?: number
+          blocked_balance?: number
+          currency?: string
+          operation?: string
           pending_balance?: number
           tenant_id?: string
           total_fees?: number
@@ -6692,8 +6895,10 @@ export type Database = {
           payload: Json
           payload_hash: string | null
           processed_at: string | null
+          processing_started_at: string | null
           processing_status: Database["public"]["Enums"]["webhook_status"]
           provider: string
+          provider_connection_id: string | null
           received_at: string
           retry_count: number
           tenant_id: string | null
@@ -6706,8 +6911,10 @@ export type Database = {
           payload: Json
           payload_hash?: string | null
           processed_at?: string | null
+          processing_started_at?: string | null
           processing_status?: Database["public"]["Enums"]["webhook_status"]
           provider: string
+          provider_connection_id?: string | null
           received_at?: string
           retry_count?: number
           tenant_id?: string | null
@@ -6720,13 +6927,22 @@ export type Database = {
           payload?: Json
           payload_hash?: string | null
           processed_at?: string | null
+          processing_started_at?: string | null
           processing_status?: Database["public"]["Enums"]["webhook_status"]
           provider?: string
+          provider_connection_id?: string | null
           received_at?: string
           retry_count?: number
           tenant_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "webhook_events_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "webhook_events_tenant_id_fkey"
             columns: ["tenant_id"]
@@ -7170,12 +7386,15 @@ export type Database = {
           amount: number
           bank_account_id: string | null
           completed_at: string | null
+          currency: string
           failure_reason: string | null
           fee_amount: number
           id: string
           idempotency_key: string | null
           net_amount: number
+          operation: string
           provider_confirmed_at: string | null
+          provider_connection_id: string | null
           provider_requested_at: string | null
           provider_status: string | null
           provider_transfer_id: string | null
@@ -7192,12 +7411,15 @@ export type Database = {
           amount: number
           bank_account_id?: string | null
           completed_at?: string | null
+          currency?: string
           failure_reason?: string | null
           fee_amount?: number
           id?: string
           idempotency_key?: string | null
           net_amount?: number
+          operation?: string
           provider_confirmed_at?: string | null
+          provider_connection_id?: string | null
           provider_requested_at?: string | null
           provider_status?: string | null
           provider_transfer_id?: string | null
@@ -7214,12 +7436,15 @@ export type Database = {
           amount?: number
           bank_account_id?: string | null
           completed_at?: string | null
+          currency?: string
           failure_reason?: string | null
           fee_amount?: number
           id?: string
           idempotency_key?: string | null
           net_amount?: number
+          operation?: string
           provider_confirmed_at?: string | null
+          provider_connection_id?: string | null
           provider_requested_at?: string | null
           provider_status?: string | null
           provider_transfer_id?: string | null
@@ -7238,6 +7463,13 @@ export type Database = {
             columns: ["bank_account_id"]
             isOneToOne: false
             referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawals_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
             referencedColumns: ["id"]
           },
           {
@@ -7395,6 +7627,10 @@ export type Database = {
         Returns: number
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      record_financial_password_check: {
+        Args: { _expected_hash: string; _user_id: string; _valid: boolean }
+        Returns: Json
+      }
       refund_coproduction_splits: {
         Args: { _payment_id: string }
         Returns: number
