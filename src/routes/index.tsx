@@ -7,7 +7,7 @@ import { PublicPage } from "@/components/public-site";
 import type { ReactNode } from "react";
 import { FeatureVisual, type FeatureVisualKind } from "@/components/home/feature-visual";
 import { OperationFlow, HowItWorksSection, ComparisonSection, AudienceSection } from "@/components/home/landing-sections";
-import heroDashboard from "@/assets/hero-dashboard.webp";
+import heroDashboard from "@/assets/hero-dashboard-wiizepay.webp";
 import { ChargesPremium, ClientsPremium, ServicesPremium, CheckoutPremium, InvoicesPremium, PortalPremium } from "@/components/home/premium-visuals";
 import { useTranslation } from "react-i18next";
 import { AuthoritySection } from "@/components/institutional/infrastructure";
