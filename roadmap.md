@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Auditar e planejar taxa única de ativação de produção de R$ 19,90 via Pix Asaas, preservando testes gratuitos e bloqueando cadastro/documentos/subconta antes do pagamento.
+- [ ] Implementar fluxo aprovado, confirmação financeira, idempotência, reconciliação, telas/Admin/notificações, testes e documentação; nenhuma cobrança ou publicação automática.
+
 - [x] Preparar plano de controles próprios PLD: alertas de movimentação suspeita, casos no Admin, criptografia e desbloqueio temporário por 2FA + senha financeira.
 - [x] Implementar base PLD cifrada, regras versionadas em observação, fila no Admin e desbloqueio temporário por 2FA + senha financeira; migrations 0041–0043 aplicadas, sem publicação do aplicativo.
 - [ ] Validar acesso Admin autenticado, fechamento/reabertura e análise completa — bloqueado pela ausência de sessão autorizada da conta solicitante; regras e agendamento não ativados, parâmetros dependem de aprovação especializada.
