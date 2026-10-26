@@ -379,7 +379,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             {workspace && !workspace.hasFinancialPassword ? (
               <Badge variant="outline" className="hidden sm:inline-flex">{ui("Senha financeira pendente")}</Badge>
             ) : null}
-            <OperationSwitch />
             <PrivacyToggle />
             {workspace?.tenantId ? <NotificationsBell tenantId={workspace.tenantId} /> : null}
             <Button asChild size="sm" className="gap-1.5">
