@@ -302,6 +302,13 @@
       "when": 1793040955264,
       "tag": "0042_pld_explicit_privileges_and_atomic_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1793041049242,
+      "tag": "0043_pld_exact_decimal_sources",
+      "breakpoints": true
     }
   ]
 }

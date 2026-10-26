@@ -7919,6 +7919,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      pld_observation_sources: {
+        Args: {
+          _end: string
+          _previous: string
+          _start: string
+          _tenant: string
+        }
+        Returns: Json
+      }
       pld_update_case: {
         Args: {
           _action: string
