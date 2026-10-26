@@ -80,7 +80,7 @@ export function ActivationFeeCheckout(){
       <div className="space-y-2">
        <p className="text-sm font-semibold">{t('O que está incluído na taxa única')}</p>
        <ul className="space-y-2 text-sm text-muted-foreground">
-        {[t('Abertura da sua conta de recebimentos com a instituição de pagamento parceira'),t('Verificação de identidade e análise dos seus documentos'),t('Suporte durante todo o processo de ativação'),t('Uso vitalício da conta, sem mensalidade')].map(x=><li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-primary"/>{x}</li>)}
+        {[t('Abertura da sua conta de recebimentos com a instituição de pagamento parceira'),t('Verificação de identidade e análise dos seus documentos'),t('Suporte durante todo o processo de ativação'),t('Pago uma única vez: sem mensalidade nem renovação')].map(x=><li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-primary"/>{x}</li>)}
        </ul>
       </div>
       <Button className="w-full" size="lg" onClick={()=>setStep('form')}>{t('Avançar')}<ArrowRight className="size-4"/></Button>
