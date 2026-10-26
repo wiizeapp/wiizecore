@@ -15,8 +15,8 @@ function Price({compact=false}:{compact?:boolean}){
  const {t}=useTranslation('ui');
  return <div className={compact?'':'space-y-1'}>
   <p className="text-xs text-muted-foreground">{t('De')} <span className="line-through">R$ 49,90</span> {t('por apenas')}</p>
-  <p className={`font-display font-bold text-foreground ${compact?'text-3xl':'text-4xl'}`} aria-label="R$ 19,90"><span className="mr-1 text-[0.52em] font-medium text-muted-foreground">R$</span>19<span className="text-[0.52em] font-medium text-muted-foreground">,90</span></p>
-  <p className="text-xs text-muted-foreground">{t('Taxa única via Pix. Sem mensalidade.')}</p>
+  <p className={`font-display font-bold text-foreground ${compact?'text-5xl':'text-5xl'}`} aria-label="R$ 19,90"><span className="mr-1 text-[0.52em] font-medium text-muted-foreground">R$</span>19<span className="text-[0.52em] font-medium text-muted-foreground">,90</span></p>
+  <p className="text-xs text-muted-foreground">{t('Pagamento único via Pix. Sem mensalidade e sem renovação.')}</p>
  </div>;
 }
 
@@ -49,9 +49,11 @@ export function ActivationFeeCheckout(){
      </ul>
     </div>
     <div className="flex flex-col justify-center gap-4 rounded-2xl border border-primary/25 bg-primary/5 p-6">
-     <Price/>
+     <p className="text-sm font-semibold">{t('Como funciona a ativação')}</p>
+     <ol className="space-y-3 text-sm text-muted-foreground">
+      {[t('Inicie a ativação da sua conta'),t('Envie seus dados e documentos'),t('Após a aprovação, comece a receber')].map((x,i)=><li key={x} className="flex items-center gap-3"><span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i+1}</span>{x}</li>)}
+     </ol>
      <Button size="lg" className="w-full" onClick={()=>{setStep('intro');setOpen(true);}}><Rocket className="size-4"/>{t('Ativar produção')}</Button>
-     <p className="text-center text-[11px] text-muted-foreground">{t('O pagamento não garante aprovação.')}</p>
     </div>
    </div>
   </div>
@@ -63,7 +65,7 @@ export function ActivationFeeCheckout(){
      <div className="flex gap-1.5" aria-hidden>{[0,1,2].map(i=><span key={i} className={`h-1 flex-1 rounded-full ${i<=(qr?2:step==='form'?1:0)?'bg-primary':'bg-muted'}`}/>)}</div>
      <DialogHeader className="space-y-2 text-left">
       <DialogTitle className="font-display text-xl">{t(qr?'Conclua o pagamento da ativação':step==='form'?'Dados do pagador':'Leve sua conta WiizeCore para produção')}</DialogTitle>
-      <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'O pagamento permite continuar o cadastro. A produção depende da análise e aprovação da Asaas.')}</DialogDescription>
+      <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'Uma taxa única que cobre a abertura e a verificação da sua conta de recebimentos. A aprovação final é feita pela instituição de pagamento parceira.')}</DialogDescription>
      </DialogHeader>
      {qr ? <div className="space-y-4">
       <img className="mx-auto size-52 rounded-xl border border-border bg-white p-2" src={`data:image/png;base64,${qr.encodedImage}`} alt={t('QR Code Pix')}/>
@@ -75,11 +77,12 @@ export function ActivationFeeCheckout(){
       <Button className="w-full" disabled={busy} onClick={async()=>{setBusy(true);setError('');try{const r=await refresh();if(r.status==='confirmed'){await qc.invalidateQueries();setOpen(false);}else setError(t('Pagamento ainda pendente.'));}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível consultar a ativação.'));}finally{setBusy(false);}}}><RefreshCw className="size-4"/>{t('Consultar pagamento')}</Button>
      </div> : step==='intro' ? <div className="space-y-5">
       <div className="rounded-xl border border-primary/25 bg-primary/5 p-4"><Price compact/></div>
-      <ol className="space-y-3 text-sm">
-       {[t('Pague a taxa única via Pix'),t('Complete o cadastro e envie os documentos'),t('Aguarde a análise e comece a receber')].map((s,i)=><li key={s} className="flex items-center gap-3">
-        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i+1}</span><span>{s}</span>
-       </li>)}
-      </ol>
+      <div className="space-y-2">
+       <p className="text-sm font-semibold">{t('O que está incluído na taxa única')}</p>
+       <ul className="space-y-2 text-sm text-muted-foreground">
+        {[t('Abertura da sua conta de recebimentos com a instituição de pagamento parceira'),t('Verificação de identidade e análise dos seus documentos'),t('Suporte durante todo o processo de ativação'),t('Pago uma única vez: sem mensalidade nem renovação')].map(x=><li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-primary"/>{x}</li>)}
+       </ul>
+      </div>
       <Button className="w-full" size="lg" onClick={()=>setStep('form')}>{t('Avançar')}<ArrowRight className="size-4"/></Button>
       <Button className="w-full" variant="ghost" onClick={()=>setOpen(false)}>{t('Agora não')}</Button>
      </div> : <form className="space-y-4" onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');try{const r=await prepare({data:{name,document:document.replace(/\D/g,''),email,accepted:true}});if(r.paid){await qc.invalidateQueries();setOpen(false);}else setQr(r.qr);}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível preparar a ativação.'));}finally{setBusy(false);}}}>
