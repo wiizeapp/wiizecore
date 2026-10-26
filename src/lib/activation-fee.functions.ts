@@ -25,7 +25,7 @@ export const prepareActivationPix=createServerFn({method:'POST'}).middleware([re
  const limit=await consumeRateLimit(admin,{scope:'activation_fee_prepare',identifier:tenantId,maxAttempts:10,windowSeconds:600,blockSeconds:600});
  if(!limit.allowed) throw new Error('Aguarde alguns minutos antes de tentar novamente.');
  const master=activationMaster(),reference=`activation:${tenantId}`;
- const {error:insertError}=await admin.from('activation_fee_payments').upsert({tenant_id:tenantId,owner_id:context.userId,environment:master.environment,origin_wallet_id:master.wallet,reference,terms_version:'activation-2026-10'}, {onConflict:'tenant_id',ignoreDuplicates:true});
+ const {error:insertError}=await admin.from('activation_fee_payments').upsert({tenant_id:tenantId,owner_id:context.userId,environment:master.environment,origin_wallet_id:master.wallet,reference,terms_version:'activation-2026-10-nonrefundable'}, {onConflict:'tenant_id',ignoreDuplicates:true});
  if(insertError) throw new Error('Não foi possível preparar a ativação.');
  const {data:row,error}=await admin.from('activation_fee_payments').select('*').eq('tenant_id',tenantId).single();
  if(error || !row) throw new Error('Não foi possível consultar a ativação.');
