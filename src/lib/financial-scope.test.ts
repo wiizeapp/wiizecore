@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assertBrasilScope, assertReplaceableProviderPayment, scopedProviderEventId } from "./financial-scope";
+import { assertReplaceableProviderPayment, scopedProviderEventId } from "./financial-scope";
 import { assertTwoFactor, assertFinancialPassword } from "./finance.server";
 import { vi } from "vitest";
 
@@ -10,11 +10,6 @@ describe("escopo financeiro", () => {
   it("isola o mesmo aviso por conexão autenticada", () => {
     expect(scopedProviderEventId("a", "evt1")).toBe("a:evt1");
     expect(scopedProviderEventId("b", "evt1")).not.toBe(scopedProviderEventId("a", "evt1"));
-  });
-  it("aceita somente Brasil e BRL nesta fase", () => {
-    expect(() => assertBrasilScope({ operation: "brasil", currency: "BRL" })).not.toThrow();
-    expect(() => assertBrasilScope({ operation: "global", currency: "USD" })).toThrow();
-    expect(() => assertBrasilScope({ operation: "brasil", currency: "USD" })).toThrow();
   });
   it("não substitui pagamento já confirmado ou em análise", () => {
     for (const status of ["CONFIRMED", "RECEIVED", "AWAITING_RISK_ANALYSIS", "REFUNDED"]) {

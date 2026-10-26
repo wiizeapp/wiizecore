@@ -43,7 +43,6 @@ import { PrivacyToggle, usePrivacyKey } from "@/components/privacy-toggle";
 import { Brand } from "@/components/brand";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { EnvironmentSwitch } from "@/components/environment-switch";
-import { OperationSwitch, OperationGate } from "@/components/operation-switch";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
@@ -388,7 +387,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Button>
           </div>
         </header>
-        <main className="flex-1 py-6 lg:py-8"><div key={privacyKey} className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 xl:px-8">{/^\/(perfil|seguranca|nimda|equipe)/.test(pathname) ? children : <OperationGate>{children}</OperationGate>}</div></main>
+        <main className="flex-1 py-6 lg:py-8"><div key={privacyKey} className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 xl:px-8">{children}</div></main>
       </div>
     </div>
   );

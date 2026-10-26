@@ -3,12 +3,6 @@ export function scopedProviderEventId(connectionId: string, externalEventId: str
   return `${connectionId}:${externalEventId}`;
 }
 
-export function assertBrasilScope(row: { operation?: string | null; currency?: string | null }) {
-  if (row.operation !== "brasil" || row.currency !== "BRL") {
-    throw new Error("Esta operação aceita somente cobranças do Brasil em reais.");
-  }
-}
-
 export function assertReplaceableProviderPayment(
   payment: { id?: string; status?: string; deleted?: boolean },
   expectedId: string,

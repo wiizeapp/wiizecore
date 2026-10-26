@@ -1,5 +1,4 @@
 import { logAudit } from "./audit.server";
-import { assertBrasilScope } from "./financial-scope";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 const FINANCE = ["owner", "admin", "finance"];
@@ -114,7 +113,6 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     ]);
     if (!customer) throw new Error("Cliente não encontrado.");
     if (!service) throw new Error("Serviço não encontrado ou inativo.");
-    assertBrasilScope(service);
     // Trusted conditions: loaded only from the immutable, tenant-scoped issued link.
     if (data.serviceCheckoutVersionId) {
       const { data: v } = await admin.from("service_checkout_versions").select("*").eq("id", data.serviceCheckoutVersionId).eq("tenant_id", tenantId).eq("service_id", service.id).maybeSingle();
@@ -237,8 +235,6 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
       method,
       provider: "asaas",
       provider_connection_id: conn.connection.id,
-      operation: "brasil",
-      currency: "BRL",
       created_by: userId,
       fee_payer_share: data.feePassShare,
       fine_percent: finePct,
