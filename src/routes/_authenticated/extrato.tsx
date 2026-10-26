@@ -22,10 +22,10 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/extrato")({
   head: () => ({
     meta: [
-      { title: "Extrato completo — Wiize Core" },
-      { name: "description", content: "Todas as movimentações da sua conta Wiize Core com filtros e exportação." },
-      { property: "og:title", content: "Extrato completo — Wiize Core" },
-      { property: "og:description", content: "Movimentações da conta Wiize Core com filtros e exportação para Excel." },
+      { title: "Extrato completo — WiizePay" },
+      { name: "description", content: "Todas as movimentações da sua conta WiizePay com filtros e exportação." },
+      { property: "og:title", content: "Extrato completo — WiizePay" },
+      { property: "og:description", content: "Movimentações da conta WiizePay com filtros e exportação para Excel." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -130,7 +130,7 @@ function ExtratoPage() {
   const t = totals.data;
   return (
     <div>
-      <PageHeader title={ui("Extrato completo")} description="Todas as movimentações da sua conta Wiize Core."
+      <PageHeader title={ui("Extrato completo")} description="Todas as movimentações da sua conta WiizePay."
         action={<Button variant="outline" disabled={exporting || !tenantId} onClick={exportXlsx}><Download className="h-4 w-4" /> {exporting ? "Exportando..." : "Exportar Excel"}</Button>} />
       <div className="mb-4 grid grid-cols-2 gap-1 rounded-xl border border-border bg-card p-1 sm:flex sm:w-fit sm:flex-wrap">
         {([["today", ui("Hoje")], ["yesterday", ui("Ontem")], ["month", "Mês"], ["30d", ui("Últimos 30 dias")], ["90d", ui("Últimos 90 dias")]] as const).map(([k, l]) => (

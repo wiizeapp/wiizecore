@@ -49,8 +49,8 @@ export function AiPromptCards({ env }: { env: DevEnv }) {
   return (
     <section className="surface-panel space-y-4 p-5">
       <div>
-        <h2 className="flex items-center gap-2 font-display text-base font-semibold"><Bot className="size-4 text-primary" />{t("Integre a WiizeCore com inteligência artificial")}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{t("Conecte sua aplicação à WiizeCore em minutos. Copie um prompt completo para sua ferramenta de desenvolvimento e implemente o fluxo de cobrança, checkout, assinaturas e webhooks com segurança.")}</p>
+        <h2 className="flex items-center gap-2 font-display text-base font-semibold"><Bot className="size-4 text-primary" />{t("Integre a WiizePay com inteligência artificial")}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("Conecte sua aplicação à WiizePay em minutos. Copie um prompt completo para sua ferramenta de desenvolvimento e implemente o fluxo de cobrança, checkout, assinaturas e webhooks com segurança.")}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {AI_TOOLS.map((tool) => (
@@ -106,7 +106,7 @@ export function GettingStarted({ env, onGo }: { env: DevEnv; onGo: (tab: string)
         {q.isLoading ? <div className="skeleton-shimmer h-16 rounded-lg" /> : checks.map(([ok, label]) => (
           <p key={label} className="flex items-center gap-2 text-sm">{ok ? <CheckCircle2 className="size-4 text-primary" /> : <Circle className="size-4 text-muted-foreground" />}{t(label)}</p>
         ))}
-        <p className="text-[11px] text-muted-foreground">{t("A liberação de acesso no seu SaaS é confirmada pelo seu próprio sistema; esta lista mostra apenas o que a Wiize Core consegue verificar.")}</p>
+        <p className="text-[11px] text-muted-foreground">{t("A liberação de acesso no seu SaaS é confirmada pelo seu próprio sistema; esta lista mostra apenas o que a WiizePay consegue verificar.")}</p>
       </section>
       <section className="surface-panel space-y-2 p-5">
         <h3 className="text-sm font-semibold">{t("Primeira chamada")}</h3>

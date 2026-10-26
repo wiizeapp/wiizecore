@@ -151,7 +151,7 @@ export function IssueWizard({ open, onOpenChange, services, init, environment }:
               {([
                 ["payment", Receipt, "A partir de uma cobrança", "Vincule a nota a uma cobrança existente."],
                 ["installment", Layers, "A partir de um parcelamento", "Vincule a nota a um parcelamento."],
-                ["standalone", FileText, "Nota avulsa", "Para serviços recebidos fora da Wiize Core (dinheiro, transferência, outra maquininha)."],
+                ["standalone", FileText, "Nota avulsa", "Para serviços recebidos fora da WiizePay (dinheiro, transferência, outra maquininha)."],
               ] as const).map(([k, Icon, t, d]) => (
                 <button key={k} type="button" className={sel(origin === k)} onClick={() => { setOrigin(k); setPaymentId(null); setGroupId(null); setCustomerId(null); }}>
                   <span className="flex items-center gap-3">

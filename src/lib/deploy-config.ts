@@ -3,13 +3,13 @@
  * Ao copiar o projeto, ajuste somente este arquivo.
  */
 export const DEPLOY_CONFIG = {
-  /** Endereço público oficial do site Wiize Core. */
+  /** Endereço público oficial do site WiizePay. */
   publicSiteUrl: "https://wiizepay.com",
   /** Endereço estável usado quando o pedido vem do preview/localhost (avisos do Asaas). */
   stableFallbackUrl:
     "https://project--8edc01d5-8e9e-4cd9-bcf6-085c3e825be4-dev.lovable.app",
   /** Endereço público da API e da documentação para desenvolvedores. */
-  apiSiteUrl: "https://wiizecore.com",
+  apiSiteUrl: "https://wiizepay.com",
   /** Origem pública que serve a imagem compartilhada dos links de pagamento. */
   paymentShareAssetOrigin: "https://wiizecore.lovable.app",
   /** Endereço que recebe avisos enviados ao Wiize CRM. */
@@ -21,7 +21,7 @@ export const DEPLOY_CONFIG = {
     "https://www.wiize.com.br/configuracoes/integracoes/wiize-pay/callback",
     "https://wiize-lb2.lovable.app/configuracoes/integracoes/wiize-pay/callback",
   ],
-  /** Domínio dos e-mails de cadastro criados para cada empresa no Asaas (redirecionados para a caixa da Wiize Core). */
+  /** Domínio dos e-mails de cadastro criados para cada empresa no Asaas (redirecionados para a caixa da WiizePay). */
   providerSignupEmailDomain: "wiizepay.com",
   /** Únicos sites que podem mostrar as janelas /embed/* e trocar mensagens com elas. */
   wiizeEmbedOrigins: [

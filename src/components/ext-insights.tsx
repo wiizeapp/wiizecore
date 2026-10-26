@@ -131,7 +131,7 @@ export function ExtDocs() {
           <li>{t("Só considere pago quando chegar o aviso payment.confirmed assinado. O retorno ao site não confirma pagamento.")}</li>
           <li>{t("Use chaves de teste até tudo funcionar, depois troque pelas de produção.")}</li>
           <li>{t("Se uma chave vazar, gere uma nova na aba Credenciais na hora.")}</li>
-          <li>{t("Cartão é digitado sempre no checkout da Wiize Core; seu sistema nunca recebe dados do cartão.")}</li>
+          <li>{t("Cartão é digitado sempre no checkout da WiizePay; seu sistema nunca recebe dados do cartão.")}</li>
         </ul>
       </section>
       <p className="text-xs text-muted-foreground">{t("Endereço base")}: <code>{EXT_API_BASE}</code></p>

@@ -27,9 +27,9 @@ import { contrastIssues, DEFAULT_APPEARANCE, headerTextColors, readableOn, THEME
 export const Route = createFileRoute("/_authenticated/checkout-personalizado")({
   head: () => ({
     meta: [
-      { title: "Marca e Checkout — Wiize Core" },
+      { title: "Marca e Checkout — WiizePay" },
       { name: "description", content: "Configure sua marca e personalize o checkout dos seus clientes." },
-      { property: "og:title", content: "Marca e Checkout — Wiize Core" },
+      { property: "og:title", content: "Marca e Checkout — WiizePay" },
       { property: "og:description", content: "Logo, cores e textos do seu checkout." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -50,7 +50,7 @@ const COLOR_FIELDS: { key: "background" | "header" | "surface" | "button" | "but
 ];
 const ISSUE: Record<string, string> = { text: "Texto principal", mutedText: "Texto secundário", buttonText: "Texto do botão", background: "Fundo da página" };
 const THEME_NAMES = {
-  wiize: { name: "Wiize Core", description: "Verde preciso e fundo suave" },
+  wiize: { name: "WiizePay", description: "Verde preciso e fundo suave" },
   clean: { name: "Minimalista", description: "Branco e alto contraste" },
   dark: { name: "Escuro", description: "Elegante e confortável" },
 } as const;

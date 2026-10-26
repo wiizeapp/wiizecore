@@ -17,7 +17,7 @@ export function FinancialIdentity({ background }: { background?: string | undefi
   const { t } = useTranslation("ui");
   return <div className="flex flex-col items-center justify-center gap-2 text-center">
     <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3"><Brand size="sm" /><AsaasSeal background={background} /></div>
-    <p className="text-xs leading-5 text-muted-foreground">{t("Plataforma Wiize Core. Serviços financeiros prestados pelo Asaas.")}</p>
+    <p className="text-xs leading-5 text-muted-foreground">{t("Plataforma WiizePay. Serviços financeiros prestados pelo Asaas.")}</p>
   </div>;
 }
 
@@ -29,14 +29,14 @@ export function FinancialSupport({ compact = false }: { compact?: boolean }) {
     <p className={`${compact ? "" : "mt-3 text-sm"} text-muted-foreground`}>{t("Atendimento financeiro Asaas:")} <a href={FINANCIAL_PROVIDER.phoneHref} className="hover:underline">{FINANCIAL_PROVIDER.phone}</a> — {t("telefone para pessoa jurídica e canal de mensagens no mesmo número.")}</p>
     <a href={FINANCIAL_PROVIDER.supportHref} className="mt-2 block text-sm text-primary hover:underline">{FINANCIAL_PROVIDER.email}</a>
     <Button asChild variant="outline" size="sm" className="mt-3"><a href={FINANCIAL_PROVIDER.supportHref} target="_blank" rel="noopener noreferrer">{t("Acessar suporte financeiro")}</a></Button>
-    {!compact ? <p className="mt-4 text-xs text-muted-foreground">{t("Para acesso, configuração e uso da plataforma, fale com o suporte Wiize Core.")}</p> : null}
+    {!compact ? <p className="mt-4 text-xs text-muted-foreground">{t("Para acesso, configuração e uso da plataforma, fale com o suporte WiizePay.")}</p> : null}
   </section>;
 }
-/** Logo Wiize Core ao lado do selo oficial, separados por um divisor sutil. */
+/** Logo WiizePay ao lado do selo oficial, separados por um divisor sutil. */
 export function BrandWithSeal({ background }: { background?: string | undefined }) {
   return <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"><Brand size="sm" /><span aria-hidden="true" className="h-6 w-px bg-border" /><AsaasSeal background={background} /></div>;
 }
-/** Rodapé discreto com a logo Wiize Core e o selo oficial lado a lado. */
+/** Rodapé discreto com a logo WiizePay e o selo oficial lado a lado. */
 export function SealFooter({ background, className = "" }: { background?: string | undefined; className?: string }) {
   return <footer className={`flex justify-center border-t border-border px-4 py-3 ${className}`}><BrandWithSeal background={background} /></footer>;
 }

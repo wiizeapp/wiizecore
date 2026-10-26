@@ -21,9 +21,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/antecipacao")({
   head: () => ({
     meta: [
-      { title: "Receba mais rápido — Wiize Core" },
+      { title: "Receba mais rápido — WiizePay" },
       { name: "description", content: "Antecipe recebíveis já pagos e elegíveis e acompanhe o histórico de antecipações." },
-      { property: "og:title", content: "Receba mais rápido — Wiize Core" },
+      { property: "og:title", content: "Receba mais rápido — WiizePay" },
       { property: "og:description", content: "Antecipe recebíveis já pagos e elegíveis e acompanhe o histórico." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -140,7 +140,7 @@ function ConfirmDialog({ sim, onClose }: { sim: Sim; onClose: () => void }) {
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogHeader><DialogTitle>Antecipar recebível</DialogTitle></DialogHeader>
-        <p className="text-sm text-muted-foreground">Confira os valores antes de confirmar. A antecipação é feita diretamente com o Asaas, sem aprovação da Wiize Core.</p>
+        <p className="text-sm text-muted-foreground">Confira os valores antes de confirmar. A antecipação é feita diretamente com o Asaas, sem aprovação da WiizePay.</p>
         <dl className="numeric-tabular space-y-2 rounded-lg border border-border bg-muted/30 p-4 text-sm">
           <div className="flex justify-between text-muted-foreground"><dt>Valor da cobrança</dt><dd>{formatBRL(sim.grossAmount)}</dd></div>
           <div className="flex justify-between"><dt>Líquido do recebível</dt><dd>{formatBRL(sim.receivableNet)}</dd></div>

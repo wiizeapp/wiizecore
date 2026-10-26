@@ -23,9 +23,9 @@ import { BEFORE_OFFSETS, CHANNELS, PLAN_CHANNELS, PLAN_ORDER, type DunningChanne
 export const Route = createFileRoute("/_authenticated/lembrete-de-cobranca")({
   head: () => ({
     meta: [
-      { title: "Lembrete inteligente — Wiize Core" },
+      { title: "Lembrete inteligente — WiizePay" },
       { name: "description", content: "Configure avisos automáticos por WhatsApp, SMS, e-mail e ligação para suas cobranças." },
-      { property: "og:title", content: "Lembrete inteligente — Wiize Core" },
+      { property: "og:title", content: "Lembrete inteligente — WiizePay" },
       { property: "og:description", content: "Avisos automáticos das suas cobranças." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -148,8 +148,8 @@ function Regua() {
 
       <PartnerNotice storageKey="dunning-asaas-v2" title="Como funcionam os lembretes">
         <p>Os avisos de cobrança são enviados aos seus clientes pelo <strong className="text-foreground">Asaas</strong>, instituição de pagamento autorizada pelo Banco Central.</p>
-        <p>Você define as regras aqui na Wiize Core e nós repassamos ao Asaas, que entrega o e-mail, o SMS e o WhatsApp antes do vencimento, no dia e depois do atraso.</p>
-        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na Wiize Core. Em alguns avisos, o Asaas aparece como remetente da mensagem.</p>
+        <p>Você define as regras aqui na WiizePay e nós repassamos ao Asaas, que entrega o e-mail, o SMS e o WhatsApp antes do vencimento, no dia e depois do atraso.</p>
+        <p>O valor, as parcelas e o andamento de cada cobrança continuam aqui na WiizePay. Em alguns avisos, o Asaas aparece como remetente da mensagem.</p>
       </PartnerNotice>
 
       {data.level !== "normal" ? (
@@ -259,7 +259,7 @@ function Regua() {
             </div>
             <div className="space-y-2 p-4 text-sm text-muted-foreground"><p>Olá, cliente. Este é um lembrete da sua cobrança.</p><div className="h-2 w-3/4 rounded bg-muted" /><div className="h-2 w-1/2 rounded bg-muted" /><span className="mt-2 inline-block rounded-md px-3 py-1.5 text-xs font-medium" style={{ background: appearance.brandColor, color: readableOn(appearance.brandColor) }}>Pagar agora</span></div>
           </div>}
-          <div className="flex gap-2 rounded-lg border bg-muted/40 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0" /><p>{ui("Esta prévia usa sua marca salva na Wiize Core. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.")}</p></div>
+          <div className="flex gap-2 rounded-lg border bg-muted/40 p-3 text-xs leading-5 text-muted-foreground"><Info className="mt-0.5 size-4 shrink-0" /><p>{ui("Esta prévia usa sua marca salva na WiizePay. Os avisos enviados pelo Asaas mantêm a aparência e os textos do provedor.")}</p></div>
           <DialogFooter><Button variant="outline" onClick={() => setEditStep(null)}>Fechar</Button><Button asChild><Link to="/checkout-personalizado" hash="marca"><Palette className="h-4 w-4" />{ui("Editar marca")}</Link></Button></DialogFooter>
         </DialogContent>
       </Dialog>

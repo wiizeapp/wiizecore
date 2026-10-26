@@ -40,7 +40,7 @@ export function AdminWiizeCredentials() {
     <section className="surface-panel space-y-4 p-5">
       <div>
         <h2 className="font-display text-base font-semibold">Integração Wiize (CRM)</h2>
-        <p className="mt-1 text-xs text-muted-foreground">Gera as credenciais para o Wiize se conectar à Wiize Core. O segredo aparece só uma vez: copie e guarde no Wiize.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Gera as credenciais para o Wiize se conectar à WiizePay. O segredo aparece só uma vez: copie e guarde no Wiize.</p>
       </div>
       <Button onClick={() => m.mutate()} disabled={m.isPending}>{m.isPending ? "Gerando…" : "Gerar credenciais do Wiize"}</Button>
       {result ? (

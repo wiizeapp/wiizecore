@@ -6,7 +6,7 @@ export const Route = createFileRoute("/llms-api.txt")({
     handlers: {
       GET: async () => {
         const { buildUniversalAiGuide } = await import("@/lib/api-docs-content");
-        return new Response(`# Wiize Core API\n\n${buildUniversalAiGuide()}\n`, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
+        return new Response(`# WiizePay API\n\n${buildUniversalAiGuide()}\n`, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } });
       },
     },
   },

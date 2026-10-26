@@ -16,7 +16,7 @@ async function requirePlatformAdmin(context: Ctx, action: string, limit: { max: 
   const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
   if (!isAdmin) {
     await logAudit(supabaseAdmin, { userId: context.userId, action: "admin.audit_access_denied", result: "blocked", risk: "high" });
-    throw new Error("Acesso restrito à equipe Wiize Core.");
+    throw new Error("Acesso restrito à equipe WiizePay.");
   }
   const rl = await consumeRateLimit(supabaseAdmin, { scope: `audit_admin:${action}`, identifier: context.userId, maxAttempts: limit.max, windowSeconds: limit.window, blockSeconds: limit.window });
   if (!rl.allowed) {

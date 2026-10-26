@@ -77,16 +77,16 @@ export type AiPromptInput = { saas: string; language: string; database: string; 
 const clean = (v: string, fb: string) => v.replace(/[\r\n]+/g, " ").trim().slice(0, 200) || fb;
 
 export function buildExtAiPrompt(i: AiPromptInput) {
-  return `Você é um desenvolvedor sênior. Integre o sistema "${clean(i.saas, "meu SaaS")}" à Wiize Core (pagamentos).
+  return `Você é um desenvolvedor sênior. Integre o sistema "${clean(i.saas, "meu SaaS")}" à WiizePay (pagamentos).
 
 Contexto do meu sistema:
 - Linguagem: ${clean(i.language, "a definir")}
 - Banco de dados: ${clean(i.database, "a definir")}
 - Hospedagem: ${clean(i.hosting, "a definir")}
-- O que vendo: ${clean(i.services, "serviços cadastrados na Wiize Core")}
+- O que vendo: ${clean(i.services, "serviços cadastrados na WiizePay")}
 - Formas de pagamento: ${clean(i.methods, "Pix, boleto e cartão")}
 
-API da Wiize Core:
+API da WiizePay:
 - Base: ${EXT_API_BASE}
 - Autenticação: header "Authorization: Bearer <WIIZEPAY_SECRET_KEY>" (variável de ambiente do servidor; nunca no navegador).
 - Toda criação exige header "Idempotency-Key" (8–128 caracteres, único por pedido; repetir devolve o mesmo resultado).
@@ -95,7 +95,7 @@ API da Wiize Core:
     external_subscription_id?, success_url? (https), cancel_url? (https),
     customer: { name, document (CPF/CNPJ), email?, phone?, external_customer_id? } }
   Resposta: { id, charge_id, status, url, expires_at, external_customer_id, external_subscription_id }.
-  Redirecione o comprador para "url". Preço e tipo vêm do serviço na Wiize Core; não envie valor.
+  Redirecione o comprador para "url". Preço e tipo vêm do serviço na WiizePay; não envie valor.
 - Erros: ${EXT_DOCS_SNIPPETS.errors.replace(/\s+/g, " ")}
 
 Webhooks (avisos):
@@ -148,7 +148,7 @@ const TOOL_NOTES: Record<AiToolId, string> = {
 /** Prompt completo e seguro para a ferramenta escolhida. Nunca inclui chaves reais. */
 export function buildToolPrompt(tool: AiToolId, env: "test" | "live" = "test") {
   const prefix = env === "live" ? "sk_live_" : "sk_test_";
-  return `Integre este projeto à API de billing da Wiize Core (checkout hospedado, cobranças, assinaturas e webhooks).
+  return `Integre este projeto à API de billing da WiizePay (checkout hospedado, cobranças, assinaturas e webhooks).
 ${TOOL_NOTES[tool]}
 
 REGRAS
@@ -168,7 +168,7 @@ Cabeçalhos: Idempotency-Key (8–128 caracteres [A-Za-z0-9_.:-], estável por p
 Corpo: { service_id (uuid), payment_method? ("pix"|"boleto"|"credit_card"), installments? (2–21),
   external_subscription_id?, success_url? (https, domínio público), cancel_url? (https),
   customer: { name, document (CPF/CNPJ válido), email?, phone?, external_customer_id? } }
-Não envie valor: o preço vem do serviço cadastrado na Wiize Core.
+Não envie valor: o preço vem do serviço cadastrado na WiizePay.
 Resposta: { id, object:"checkout_session", livemode, sandbox?, charge_id, status, url, expires_at, external_customer_id, external_subscription_id, request_id }
 Redirecione o comprador para "url". Mesma Idempotency-Key + mesmo corpo = mesma sessão; corpo diferente = 409.
 

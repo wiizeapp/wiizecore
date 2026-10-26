@@ -31,7 +31,7 @@ export async function verifyActivationFee(admin:Admin,tenantId:string) {
    const {data:changed,error:confirmError}=await admin.rpc('activation_confirm_fee',{_id:row.id,_provider:row.provider_payment_id,_cents:1990});
    if(confirmError) throw new Error('O pagamento está em conferência. Não pague novamente.');
    const {notifyTenant}=await import('./notify.server');
-   await notifyTenant(admin,{tenantId,kind:'activation.payment_confirmed',title:'Pagamento confirmado',body:'Agora você pode concluir seu cadastro e enviar a documentação necessária.',link:'/ativacao',dedupeKey:`activation.fee:${row.id}`,email:{subject:'WiizeCore — Pagamento confirmado'}});
+   await notifyTenant(admin,{tenantId,kind:'activation.payment_confirmed',title:'Pagamento confirmado',body:'Agora você pode concluir seu cadastro e enviar a documentação necessária.',link:'/ativacao',dedupeKey:`activation.fee:${row.id}`,email:{subject:'WiizePay — Pagamento confirmado'}});
    const {logAudit}=await import('./audit.server');
    if(changed) await logAudit(admin,{tenantId,action:'activation.fee_confirmed',resource:'activation_fee',resourceId:row.id});
    return {...row,status:'confirmed'};

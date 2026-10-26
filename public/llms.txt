@@ -1,28 +1,28 @@
-# Wiize Core
+# WiizePay
 
 > Plataforma de software que integra pagamentos, cobranças, clientes, contratos e gestão financeira para prestadores de serviços.
 
-A Wiize Core não é banco nem instituição de pagamento. O processamento dos pagamentos é feito pela infraestrutura parceira Asaas. Não há mensalidade; as taxas por pagamento recebido estão na página de taxas. Contato oficial: wiizepay@gmail.com.
+A WiizePay não é banco nem instituição de pagamento. O processamento dos pagamentos é feito pela infraestrutura parceira Asaas. Não há mensalidade; as taxas por pagamento recebido estão na página de taxas. Contato oficial: wiizepay@gmail.com.
 
 ## Pages
 
-- [Início](https://wiizecore.com/): Visão geral da plataforma.
-- [Sobre a Wiize Core](https://wiizecore.com/sobre): Propósito, público e infraestrutura.
-- [Taxas](https://wiizecore.com/taxas): Tabela oficial de tarifas e simulador.
-- [Cobranças e pagamentos](https://wiizecore.com/cobrancas-e-pagamentos): Pix, boleto, cartão e acompanhamento.
-- [Gestão financeira](https://wiizecore.com/gestao-financeira): Entradas, saídas e resultado do mês.
-- [Gestão de clientes](https://wiizecore.com/gestao-de-clientes): Clientes, contratos e histórico.
-- [Central do cliente](https://wiizecore.com/portal-do-cliente): Portal para o cliente final.
-- [Perguntas frequentes](https://wiizecore.com/perguntas-frequentes): Respostas diretas.
-- [Suporte](https://wiizecore.com/suporte): Canal oficial de atendimento.
+- [Início](https://wiizepay.com/): Visão geral da plataforma.
+- [Sobre a WiizePay](https://wiizepay.com/sobre): Propósito, público e infraestrutura.
+- [Taxas](https://wiizepay.com/taxas): Tabela oficial de tarifas e simulador.
+- [Cobranças e pagamentos](https://wiizepay.com/cobrancas-e-pagamentos): Pix, boleto, cartão e acompanhamento.
+- [Gestão financeira](https://wiizepay.com/gestao-financeira): Entradas, saídas e resultado do mês.
+- [Gestão de clientes](https://wiizepay.com/gestao-de-clientes): Clientes, contratos e histórico.
+- [Central do cliente](https://wiizepay.com/portal-do-cliente): Portal para o cliente final.
+- [Perguntas frequentes](https://wiizepay.com/perguntas-frequentes): Respostas diretas.
+- [Suporte](https://wiizepay.com/suporte): Canal oficial de atendimento.
 
 ## API para desenvolvedores
 
-- [Documentação da API](https://wiizecore.com/desenvolvedores): Autenticação, checkout, cobranças, assinaturas, webhooks e testes.
-- [Documentação completa em texto](https://wiizecore.com/llms-api.txt): Versão para ferramentas de IA, com endpoints, campos, erros e eventos.
+- [Documentação da API](https://wiizepay.com/desenvolvedores): Autenticação, checkout, cobranças, assinaturas, webhooks e testes.
+- [Documentação completa em texto](https://wiizepay.com/llms-api.txt): Versão para ferramentas de IA, com endpoints, campos, erros e eventos.
 
 ## Optional
 
-- [Termos de uso](https://wiizecore.com/termos-de-uso)
-- [Política de privacidade](https://wiizecore.com/politica-de-privacidade)
-- [Prazos](https://wiizecore.com/prazos)
+- [Termos de uso](https://wiizepay.com/termos-de-uso)
+- [Política de privacidade](https://wiizepay.com/politica-de-privacidade)
+- [Prazos](https://wiizepay.com/prazos)

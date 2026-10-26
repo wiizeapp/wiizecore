@@ -87,7 +87,7 @@ function PolicyDialog({ tenantId, onClose }: { tenantId: string; onClose: () => 
                 <SelectContent><SelectItem value="none">Nenhuma</SelectItem><SelectItem value="fixed">Valor fixo</SelectItem><SelectItem value="percent">Porcentagem</SelectItem></SelectContent></Select></div>
             {v.default_deduction_type !== "none" ? <div><Label>Valor</Label><Input inputMode="decimal" value={v.default_deduction_value} onChange={(e) => set({ default_deduction_value: e.target.value.replace(/[^\d.,]/g, "") })} /></div> : null}
           </div>
-          <p className="text-xs text-muted-foreground">A taxa Wiize Core da venda não é devolvida no reembolso e não existe taxa extra para reembolsar.</p>
+          <p className="text-xs text-muted-foreground">A taxa WiizePay da venda não é devolvida no reembolso e não existe taxa extra para reembolsar.</p>
           <Button className="w-full" disabled={m.isPending} onClick={() => m.mutate()}>Salvar política</Button>
         </div>
       </DialogContent>

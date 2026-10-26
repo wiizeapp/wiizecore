@@ -22,9 +22,9 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/_authenticated/recebiveis")({
   head: () => ({
     meta: [
-      { title: "Recebíveis — Wiize Core" },
+      { title: "Recebíveis — WiizePay" },
       { name: "description", content: "Quem pagou, quem está em aberto e quem está inadimplente, com filtros e exportação para Excel." },
-      { property: "og:title", content: "Recebíveis — Wiize Core" },
+      { property: "og:title", content: "Recebíveis — WiizePay" },
       { property: "og:description", content: "Controle de pagos, em aberto e inadimplentes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

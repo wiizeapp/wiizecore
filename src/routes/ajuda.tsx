@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { PublicPage } from "@/components/public-site";
@@ -7,6 +8,7 @@ import { useHasSession } from "@/components/help/help-parts";
 // Ações (sugestões/avaliações) continuam exigindo login no servidor.
 export const Route = createFileRoute("/ajuda")({
   component: HelpLayout,
+  head: () => pageHead({ path: "/ajuda", title: "Central de Ajuda | WiizePay", description: "Encontre respostas sobre cobranças, recebimentos, contratos e sua conta WiizePay." }),
 });
 
 function HelpLayout() {

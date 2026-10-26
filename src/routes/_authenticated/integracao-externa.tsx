@@ -20,7 +20,7 @@ import { EXT_API_BASE } from "@/lib/ext-docs";
 import { createExtIntegration, listExtIntegrations, rotateExtKey, setExtIntegrationStatus } from "@/lib/ext-integrations.functions";
 
 export const Route = createFileRoute("/_authenticated/integracao-externa")({
-  head: () => ({ meta: [{ title: "API e desenvolvedores — Wiize Core" }, { name: "description", content: "Chaves de API, webhooks, testes e registros da integração com a Wiize Core." }, { property: "og:title", content: "API e desenvolvedores — Wiize Core" }, { property: "og:description", content: "Chaves de API, webhooks, testes e registros da integração com a Wiize Core." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  head: () => ({ meta: [{ title: "API e desenvolvedores — WiizePay" }, { name: "description", content: "Chaves de API, webhooks, testes e registros da integração com a WiizePay." }, { property: "og:title", content: "API e desenvolvedores — WiizePay" }, { property: "og:description", content: "Chaves de API, webhooks, testes e registros da integração com a WiizePay." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Page,
 });
 
@@ -72,7 +72,7 @@ function Page() {
           <div className="max-w-2xl space-y-3">
             <EnvBadge env={env} />
             <h1 className="font-display text-3xl font-semibold tracking-tight">{t("API e desenvolvedores")}</h1>
-            <p className="text-sm text-muted-foreground">{t("Crie chaves e webhooks para o seu sistema cobrar pela Wiize Core. Troque entre Teste e Produção no menu lateral.")}</p>
+            <p className="text-sm text-muted-foreground">{t("Crie chaves e webhooks para o seu sistema cobrar pela WiizePay. Troque entre Teste e Produção no menu lateral.")}</p>
             <code className="inline-block rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">{EXT_API_BASE}</code>
           </div>
           <div className="flex flex-wrap gap-2">

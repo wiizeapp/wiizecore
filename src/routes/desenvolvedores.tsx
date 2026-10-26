@@ -11,7 +11,7 @@ import { EXT_API_BASE } from "@/lib/ext-docs";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/desenvolvedores")({
-  head: () => pageHead({ path: "/desenvolvedores", title: "Documentação da API — Wiize Core", description: "Documentação completa da API da Wiize Core: autenticação, checkout, cobranças, assinaturas, webhooks e testes.", ogDescription: "Integre cobranças e assinaturas ao seu sistema com a API da Wiize Core.", breadcrumb: [{ name: "Desenvolvedores", path: "/desenvolvedores" }] }),
+  head: () => pageHead({ path: "/desenvolvedores", title: "Documentação da API — WiizePay", description: "Documentação completa da API da WiizePay: autenticação, checkout, cobranças, assinaturas, webhooks e testes.", ogDescription: "Integre cobranças e assinaturas ao seu sistema com a API da WiizePay.", breadcrumb: [{ name: "Desenvolvedores", path: "/desenvolvedores" }] }),
   component: DocsPage,
 });
 

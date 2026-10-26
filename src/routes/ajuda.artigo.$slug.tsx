@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/format";
 
 export const Route = createFileRoute("/ajuda/artigo/$slug")({
   loader: ({ params }) => { const a = articleBySlug(params.slug); if (!a) throw notFound(); return { article: a, category: categoryById(a.category)! }; },
-  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.article.title ?? "Artigo"} | Central de Ajuda Wiize Core` }, { name: "description", content: loaderData?.article.summary ?? "" }, { property: "og:title", content: `${loaderData?.article.title ?? "Artigo"} | Central de Ajuda Wiize Core` }, { property: "og:description", content: loaderData?.article.summary ?? "" }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
+  head: ({ loaderData }) => ({ meta: [{ title: `${loaderData?.article.title ?? "Artigo"} | Central de Ajuda WiizePay` }, { name: "description", content: loaderData?.article.summary ?? "" }, { property: "og:title", content: `${loaderData?.article.title ?? "Artigo"} | Central de Ajuda WiizePay` }, { property: "og:description", content: loaderData?.article.summary ?? "" }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },] }),
   component: ArticlePage,
 });
 

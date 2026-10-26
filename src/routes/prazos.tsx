@@ -7,7 +7,7 @@ import { PublicPage } from "@/components/public-site";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/prazos")({
-  head: () => pageHead({ path: "/prazos", title: "Prazos de recebimento — Wiize Core", description: "Consulte prazos de recebimento, antecipação e processamento de saques no Wiize Core.", ogDescription: "Previsões de recebimento, análise de antecipação e etapas de saques por Pix.", breadcrumb: [{ name: "Prazos", path: "/prazos" }] }),
+  head: () => pageHead({ path: "/prazos", title: "Prazos de recebimento — WiizePay", description: "Consulte prazos de recebimento, antecipação e processamento de saques no WiizePay.", ogDescription: "Previsões de recebimento, análise de antecipação e etapas de saques por Pix.", breadcrumb: [{ name: "Prazos", path: "/prazos" }] }),
   component: PrazosPage,
 });
 
@@ -25,7 +25,7 @@ function PrazosPage() {
   return (
     <PublicPage>
       <main>
-         <section className="resource-hero border-b border-border"><div className="section-shell flex flex-col items-center py-16 text-center lg:py-24"><span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary"><CalendarClock className="size-3.5" />{ui("Prazos Wiize Core")}</span><h1 className="hero-title mt-6 max-w-5xl text-3xl [text-wrap:wrap] font-semibold leading-tight sm:text-6xl"><span className="block">{heroLead}{heroHighlight ? "," : ""}</span>{heroHighlight ? <span className="hero-shine block">{heroHighlight}</span> : null}</h1><p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">{ui("Consulte previsões de liberação, análise de antecipação e processamento de saques por Pix.")}</p></div></section>
+         <section className="resource-hero border-b border-border"><div className="section-shell flex flex-col items-center py-16 text-center lg:py-24"><span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary"><CalendarClock className="size-3.5" />{ui("Prazos WiizePay")}</span><h1 className="hero-title mt-6 max-w-5xl text-3xl [text-wrap:wrap] font-semibold leading-tight sm:text-6xl"><span className="block">{heroLead}{heroHighlight ? "," : ""}</span>{heroHighlight ? <span className="hero-shine block">{heroHighlight}</span> : null}</h1><p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">{ui("Consulte previsões de liberação, análise de antecipação e processamento de saques por Pix.")}</p></div></section>
 
         <section className="section-shell py-16 lg:py-20">
            <p className="text-xs font-bold uppercase text-primary">{ui("Recebimentos")}</p><h2 className="mt-2 text-3xl font-semibold sm:text-4xl">{ui("Quando cada pagamento fica disponível.")}</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{ui("Os prazos começam após a confirmação do pagamento e seguem as regras de dias úteis indicadas.")}</p>

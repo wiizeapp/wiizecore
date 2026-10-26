@@ -116,7 +116,7 @@ export async function buildReceiptPdf(r: ReceiptData) {
   row("Valor", brl(r.amount));
   hr(y + 14);
 
-  // Rodapé: logo do checkout + "processado por Wiize Core"
+  // Rodapé: logo do checkout + "processado por WiizePay"
   let fy = 40;
   if (r.logoUrl) {
     try {
@@ -131,7 +131,7 @@ export async function buildReceiptPdf(r: ReceiptData) {
     } catch { /* logo opcional */ }
   }
   hr(fy + 16);
-  const foot = "Plataforma Wiize Core · Serviços financeiros Asaas";
+  const foot = "Plataforma WiizePay · Serviços financeiros Asaas";
   text(foot, (595 - font.widthOfTextAtSize(foot, 9)) / 2, fy, 9, font, muted);
   const em = `Emitido em ${fmtDate(new Date().toISOString())}`;
   text(em, (595 - font.widthOfTextAtSize(safe(em), 8)) / 2, fy - 13, 8, font, muted);

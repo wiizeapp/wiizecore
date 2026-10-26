@@ -56,7 +56,7 @@ export const Route = createFileRoute("/api/public/wiize/callback")({
           const me = meSchema.parse(await meRes.json());
 
           if (st.purpose === "login") {
-            // Só entra quem já tem conta Wiize Core com o mesmo e-mail; não cria contas automaticamente.
+            // Só entra quem já tem conta WiizePay com o mesmo e-mail; não cria contas automaticamente.
             const { data: profile } = await db.from("profiles").select("id").ilike("email", me.email).maybeSingle();
             if (!profile) return back(origin, "/auth?wiize=sem-conta");
             const { data: link, error } = await db.auth.admin.generateLink({ type: "magiclink", email: me.email, options: { redirectTo: `${origin}/painel` } });

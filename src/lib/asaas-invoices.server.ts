@@ -248,7 +248,7 @@ export async function issueInvoice(admin: AdminClient, input: IssueInput) {
   const body: Record<string, unknown> = {
     ...input.providerTarget,
     serviceDescription: input.description.slice(0, 2000),
-    observations: (input.observations ?? "").slice(0, 2000) || "Nota emitida pelo Wiize Core.",
+    observations: (input.observations ?? "").slice(0, 2000) || "Nota emitida pelo WiizePay.",
     externalReference: row.id,
     value: input.value,
     deductions: 0,
@@ -298,7 +298,7 @@ export async function ensureInvoiceWebhook(admin: AdminClient, tenantId: string,
 
 /**
  * Taxa por nota autorizada (platform_settings.invoice_fee_amount): o emissor desconta R$ 0,49 direto da subconta;
- * os R$ 2,00 da Wiize Core são transferidos da subconta para a conta principal. Uma única vez por nota.
+ * os R$ 2,00 da WiizePay são transferidos da subconta para a conta principal. Uma única vez por nota.
  */
 export async function chargeInvoiceFee(admin: AdminClient, invoiceId: string, tenantId: string) {
   const { data: margin, error } = await admin.rpc("charge_invoice_fee" as never, { _invoice_id: invoiceId } as never);
@@ -309,7 +309,7 @@ export async function chargeInvoiceFee(admin: AdminClient, invoiceId: string, te
   const prov = await getTenantProvider(admin, tenantId);
   if (!walletId || !prov) return;
   try {
-    const t = await prov.provider.createTransfer({ value: wiize, walletId, description: `Taxa Wiize Core — nota fiscal ${invoiceId}` });
+    const t = await prov.provider.createTransfer({ value: wiize, walletId, description: `Taxa WiizePay — nota fiscal ${invoiceId}` });
     await admin.from("invoices").update({ fee_transfer_id: t.id } as never).eq("id", invoiceId);
   } catch (e) {
     await admin.from("audit_logs").insert({

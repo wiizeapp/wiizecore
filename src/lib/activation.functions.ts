@@ -15,7 +15,7 @@ async function ownerMembership(context: Ctx) {
   return data as { tenant_id: string; role: string };
 }
 function assertManager(role: string) {
-  if (!["owner", "admin"].includes(role)) throw new Error("Somente proprietários e administradores podem ativar o Wiize Core.");
+  if (!["owner", "admin"].includes(role)) throw new Error("Somente proprietários e administradores podem ativar o WiizePay.");
 }
 async function ensureRow(admin: any, tenantId: string) {
   await (await import("./activation-fee.server")).assertActivationPaid(admin, tenantId);
@@ -74,7 +74,7 @@ export const saveActivationDraft = createServerFn({ method: "POST" })
       const doc = String((data.personType === "company" ? data.form.cnpj : data.form.cpf) ?? "").replace(/\D/g, "");
       if (doc.length >= 11) {
         const { data: used } = await (admin.rpc as any)("document_in_use", { _tenant_id: m.tenant_id, _document: doc });
-        if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta Wiize Core. Use um documento que ainda não tenha conta.");
+        if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
       }
     }
     const next = row.status === "action_required" ? "action_required" : "in_progress";
@@ -95,7 +95,7 @@ export const saveActivationDraft = createServerFn({ method: "POST" })
     if (Object.keys(patch).length) {
       const { error } = await admin.from("tenants").update(patch as never).eq("id", m.tenant_id);
       if (error) {
-        if (error.code === "23505") throw new Error("Este CPF/CNPJ já está vinculado a outra conta Wiize Core. Use um documento que ainda não tenha conta.");
+        if (error.code === "23505") throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
         console.error("sync empresa", error.message);
       }
     }
@@ -138,7 +138,7 @@ export const submitActivation = createServerFn({ method: "POST" })
     {
       const doc = (row.person_type === "company" ? f["cnpj"] : f["cpf"]) ?? "";
       const { data: used } = await (admin.rpc as any)("document_in_use", { _tenant_id: m.tenant_id, _document: doc });
-      if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta Wiize Core. Use um documento que ainda não tenha conta.");
+      if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta WiizePay. Use um documento que ainda não tenha conta.");
     }
     if (!BRAZIL_STATES.some(([uf]) => uf === (f["state"] ?? "").toUpperCase())) throw new Error("Selecione um Estado válido.");
     const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id).is("superseded_at", null);
@@ -166,7 +166,7 @@ export const submitActivation = createServerFn({ method: "POST" })
     await notifyTenant(admin, {
       tenantId: m.tenant_id, kind: "activation.submitted", link: "/ativacao", dedupeKey: `activation.submitted:${m.tenant_id}:${sub?.submitted_at ?? acceptedAt}`,
       title: "Cadastro enviado para análise", body: "Seus dados foram enviados ao Asaas. A análise costuma levar até 3 dias úteis e avisaremos aqui e por e-mail.",
-      email: { subject: "Wiize Core — Cadastro enviado para análise" },
+      email: { subject: "WiizePay — Cadastro enviado para análise" },
     });
     const { sendActivationToProvider } = await import("./asaas-onboarding.server");
     await sendActivationToProvider(admin, m.tenant_id, context.userId, getRequestHeader("origin") ?? null);
@@ -194,7 +194,7 @@ export const refreshActivationStatus = createServerFn({ method: "POST" })
 async function requireAdmin(context: Ctx) {
   await (await import("./admin-session.server")).assertAdminPage(context);
   const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
-  if (!data) throw new Error("Acesso restrito à equipe Wiize Core.");
+  if (!data) throw new Error("Acesso restrito à equipe WiizePay.");
   const { assertTwoFactor } = await import("./finance.server");
   assertTwoFactor(context.claims);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

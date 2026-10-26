@@ -26,7 +26,7 @@ export async function alertSecurityIncident(
       dedupeKey: alertDedupeKey(category, origin, when),
       email: {
         to: SECURITY_ALERT_RECIPIENT,
-        subject: `${guide.urgent ? "[URGENTE] " : ""}Alerta de segurança Wiize Core: ${guide.title}`,
+        subject: `${guide.urgent ? "[URGENTE] " : ""}Alerta de segurança WiizePay: ${guide.title}`,
         title: guide.title,
         intro: guide.what,
         lines: [

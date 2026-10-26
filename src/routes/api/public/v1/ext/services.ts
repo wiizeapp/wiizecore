@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-/** GET /api/public/v1/ext/services — serviços ativos da empresa (preço definido na Wiize Core). Exige services:read. */
+/** GET /api/public/v1/ext/services — serviços ativos da empresa (preço definido na WiizePay). Exige services:read. */
 export const Route = createFileRoute("/api/public/v1/ext/services")({
   server: {
     handlers: {

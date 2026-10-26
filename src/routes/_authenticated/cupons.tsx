@@ -19,9 +19,9 @@ import { listCoupons, saveCoupon, setCouponStatus } from "@/lib/coupons.function
 export const Route = createFileRoute("/_authenticated/cupons")({
   head: () => ({
     meta: [
-      { title: "Cupons & Incentivos — Wiize Core" },
+      { title: "Cupons & Incentivos — WiizePay" },
       { name: "description", content: "Crie e acompanhe cupons de desconto usados no checkout da sua empresa." },
-      { property: "og:title", content: "Cupons de desconto — Wiize Core" },
+      { property: "og:title", content: "Cupons de desconto — WiizePay" },
       { property: "og:description", content: "Cupons exclusivos da sua empresa no checkout." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

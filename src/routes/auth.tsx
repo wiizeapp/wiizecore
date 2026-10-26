@@ -35,7 +35,7 @@ export const Route = createFileRoute("/auth")({
     modo: search["modo"] === "criar" ? "criar" : "entrar",
     next: safeNext(search["next"]),
   }),
-  head: () => pageHead({ path: "/auth", title: "Entrar na Wiize Core", description: "Acesse sua conta Wiize Core para gerenciar cobranças, contratos e saldo.", ogDescription: "Acesse sua conta Wiize Core.", breadcrumb: [{ name: "Entrar", path: "/auth" }] }),
+  head: () => pageHead({ path: "/auth", title: "Entrar na WiizePay", description: "Acesse sua conta WiizePay para gerenciar cobranças, contratos e saldo.", ogDescription: "Acesse sua conta WiizePay.", breadcrumb: [{ name: "Entrar", path: "/auth" }] }),
   component: AuthPage,
 });
 
@@ -218,7 +218,7 @@ function AuthPage() {
       <div className="surface-panel relative w-full max-w-full min-w-0 rounded-2xl p-5 shadow-float sm:max-w-md sm:p-9">
         <header className="mb-5 flex flex-col items-center text-center sm:mb-8">
           <Link to="/" aria-label={ui("Ir para a página inicial")}><Brand /></Link>
-          <h1 className="mt-4 text-xl font-semibold leading-snug sm:mt-6 sm:text-2xl">{ui("Bem-vindo à Wiize Core")}</h1>
+          <h1 className="mt-4 text-xl font-semibold leading-snug sm:mt-6 sm:text-2xl">{ui("Bem-vindo à WiizePay")}</h1>
         </header>
 
         {mfaFactor ? (
