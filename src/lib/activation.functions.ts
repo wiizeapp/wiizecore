@@ -18,6 +18,7 @@ function assertManager(role: string) {
   if (!["owner", "admin"].includes(role)) throw new Error("Somente proprietários e administradores podem ativar o Wiize Core.");
 }
 async function ensureRow(admin: any, tenantId: string) {
+  await (await import("./activation-fee.server")).assertActivationPaid(admin, tenantId);
   await admin.from("payment_activations").upsert({ tenant_id: tenantId }, { onConflict: "tenant_id", ignoreDuplicates: true });
   const { data } = await admin.from("payment_activations").select("*").eq("tenant_id", tenantId).single();
   // Cadastros antigos em texto são criptografados na primeira leitura, sem perder dados.
@@ -107,6 +108,7 @@ export const uploadActivationDocument = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const m = await ownerMembership(context as Ctx); assertManager(m.role);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+    await (await import("./activation-fee.server")).assertActivationPaid(admin, m.tenant_id);
     const { storeActivationDocument } = await import("./activation-upload.server");
     await storeActivationDocument(admin, m.tenant_id, context.userId, data);
     const { data: connection } = await admin.from("provider_connections").select("id").eq("tenant_id", m.tenant_id).eq("provider", "asaas").limit(1).maybeSingle();
@@ -180,6 +182,7 @@ export const refreshActivationStatus = createServerFn({ method: "POST" })
     const { consumeRateLimit } = await import("./audit.server");
     const limit = await consumeRateLimit(admin, { scope: "activation_sync", identifier: m.tenant_id, maxAttempts: 10, windowSeconds: 600, blockSeconds: 600 });
     if (!limit.allowed) throw new Error("Aguarde alguns minutos para atualizar de novo.");
+    await (await import("./activation-fee.server")).assertActivationPaid(admin, m.tenant_id);
     const { pushDocuments, syncProviderOnboarding } = await import("./asaas-onboarding.server");
     try { await pushDocuments(admin, m.tenant_id); } catch (e) { throw new Error(e instanceof Error ? e.message : "Não foi possível enviar os documentos."); }
     const r = await syncProviderOnboarding(admin, m.tenant_id);
