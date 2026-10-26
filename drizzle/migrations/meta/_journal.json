@@ -267,6 +267,13 @@
       "when": 1793018045729,
       "tag": "0037_operation_preferences",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793019185939,
+      "tag": "0038_retire_unused_columns",
+      "breakpoints": true
     }
   ]
 }
