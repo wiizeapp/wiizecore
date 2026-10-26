@@ -1,6 +1,6 @@
 # Roadmap
 
-- [x] Rebranding WiizePay: marca visível, traduções, e-mails novos, documentação pública e endereços de produção; integrações e histórico preservados, 86 testes aprovados, oito páginas públicas e área da conta sem nome antigo no texto, navegação de cadastro e celular conferidos. Configurações externas e homologação formal permanecem pendentes; instruções em docs/wiizepay-rebranding.md.
+- [x] Rebranding WiizePay: marca visível, traduções, e-mails novos, imagem ilustrativa, documentação pública e endereços de produção; integrações e histórico preservados, 86 testes aprovados, oito páginas públicas e boas-vindas autenticadas sem nome antigo, navegação de cadastro e celular conferidos. Painel completo aguarda pesquisa do usuário; configurações externas e homologação formal permanecem pendentes; instruções em docs/wiizepay-rebranding.md.
 - [ ] Conectar wiizepay.com e publicar: depende de confirmação dos registros do domínio e publicação pelo usuário.
 
 - [x] Auditar e planejar taxa única de ativação de produção de R$ 19,90 via Pix Asaas; plano aprovado conceitualmente.
