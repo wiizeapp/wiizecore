@@ -413,39 +413,66 @@ export type Database = {
       audit_logs: {
         Row: {
           action: string
+          category: string | null
+          correlation_id: string | null
           created_at: string
+          external_event_id: string | null
           id: string
+          idempotency_key: string | null
           ip_address: string | null
           metadata: Json
+          origin: string | null
+          prev_hash: string | null
           resource: string | null
           resource_id: string | null
           result: string
+          risk: string | null
+          row_hash: string | null
+          seq: number
           tenant_id: string | null
           user_agent: string | null
           user_id: string | null
         }
         Insert: {
           action: string
+          category?: string | null
+          correlation_id?: string | null
           created_at?: string
+          external_event_id?: string | null
           id?: string
+          idempotency_key?: string | null
           ip_address?: string | null
           metadata?: Json
+          origin?: string | null
+          prev_hash?: string | null
           resource?: string | null
           resource_id?: string | null
           result?: string
+          risk?: string | null
+          row_hash?: string | null
+          seq?: never
           tenant_id?: string | null
           user_agent?: string | null
           user_id?: string | null
         }
         Update: {
           action?: string
+          category?: string | null
+          correlation_id?: string | null
           created_at?: string
+          external_event_id?: string | null
           id?: string
+          idempotency_key?: string | null
           ip_address?: string | null
           metadata?: Json
+          origin?: string | null
+          prev_hash?: string | null
           resource?: string | null
           resource_id?: string | null
           result?: string
+          risk?: string | null
+          row_hash?: string | null
+          seq?: never
           tenant_id?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -7569,6 +7596,21 @@ export type Database = {
           _status: string
         }
         Returns: undefined
+      }
+      audit_row_digest: {
+        Args: {
+          _prev: string
+          r: Database["public"]["Tables"]["audit_logs"]["Row"]
+        }
+        Returns: string
+      }
+      audit_verify_chain: {
+        Args: { _limit?: number }
+        Returns: {
+          broken_seq: number
+          checked: number
+          legacy: number
+        }[]
       }
       can_receive_payments: { Args: { _tenant_id: string }; Returns: boolean }
       cancel_withdrawal: {

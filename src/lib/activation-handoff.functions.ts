@@ -1,12 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { activationFormSchema } from "./activation-validation";
 
 /** O QR Code e o acesso no celular valem 15 minutos no total, contados da geração. */
 const TOKEN_TTL_MS = 15 * 60 * 1000;
 
-export const createActivationHandoff = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
+export const createActivationHandoff = createServerFn({ method: "POST" }).middleware([requireMfaAuth]).handler(async ({ context }) => {
   const { data: member } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
   if (!member || !["owner", "admin"].includes(member.role)) throw new Error("Você não tem permissão para gerar este acesso.");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -23,7 +23,7 @@ export const createActivationHandoff = createServerFn({ method: "POST" }).middle
 });
 
 /** Computador consulta se o celular já concluiu, para atualizar a tela sozinho. */
-export const getActivationHandoffStatus = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth])
+export const getActivationHandoffStatus = createServerFn({ method: "POST" }).middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ token: z.string().min(20).max(100) }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: member } = await context.supabase.from("tenant_members").select("tenant_id").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();

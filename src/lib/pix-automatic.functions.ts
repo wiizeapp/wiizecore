@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string };
@@ -36,7 +36,7 @@ function friendly(e: unknown) {
 }
 
 export const createPixAutomatic = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ customerId: z.string().uuid(), serviceId: z.string().uuid(), startOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(), customAmount: z.number().positive().max(1000000).nullable().optional(), frequency: z.enum(["weekly", "biweekly", "monthly", "quarterly", "semiannual", "yearly"]).nullable().optional() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin", "finance"]);
@@ -144,7 +144,7 @@ async function generateDueCharges(admin: Admin, tenantId: string, provider: any,
 }
 
 export const listPixAutomatic = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await requireMembership(context, ["owner", "admin", "finance", "viewer"]);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -174,7 +174,7 @@ export const listPixAutomatic = createServerFn({ method: "POST" })
   });
 
 export const cancelPixAutomatic = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);

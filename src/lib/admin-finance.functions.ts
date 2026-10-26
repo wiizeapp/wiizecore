@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
 
@@ -30,7 +30,7 @@ const empty = (): Totals => ({ volume: 0, count: 0, fees: 0, providerCost: 0, an
  * Custos = taxas pagas ao provedor. Receita líquida = bruta − custos.
  */
 export const getAdminFinance = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { start: string; end: string; prevStart: string; granularity: "hour" | "day" }) =>
     z.object({ start: z.string().datetime(), end: z.string().datetime(), prevStart: z.string().datetime(), granularity: z.enum(["hour", "day"]) }).parse(i))
   .handler(async ({ data, context }) => {

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: any; userId: string };
@@ -42,7 +42,7 @@ async function rpc(name: string, args: Record<string, unknown>) {
 /* ------------------------------ Cartões ------------------------------ */
 
 export const getCards = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const ctx = context as unknown as Ctx;
     const m = await membership(ctx);
@@ -98,7 +98,7 @@ async function checkAccount(ctx: Ctx, tenant: string, id: string | null) {
 }
 
 export const saveCard = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => cardSchema.extend({ id: z.string().uuid().optional() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -114,7 +114,7 @@ export const saveCard = createServerFn({ method: "POST" })
   });
 
 export const addCardPurchase = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({
     card_id: z.string().uuid(), description: z.string().trim().min(1).max(120), amount: money, purchased_on: date,
     installments: z.number().int().min(1).max(48), category_id: z.string().uuid().nullable(), idempotency_key: z.string().min(16).max(80),
@@ -131,7 +131,7 @@ export const addCardPurchase = createServerFn({ method: "POST" })
   });
 
 export const cancelCardPurchase = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ purchase_id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -142,7 +142,7 @@ export const cancelCardPurchase = createServerFn({ method: "POST" })
   });
 
 export const payInvoice = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ invoice_id: z.string().uuid(), account_id: z.string().uuid(), paid_on: date }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -155,7 +155,7 @@ export const payInvoice = createServerFn({ method: "POST" })
 /* --------------------------- Movimentações --------------------------- */
 
 export const createTransfer = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ from: z.string().uuid(), to: z.string().uuid(), amount: money, date, description: z.string().trim().max(120).default("") }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -167,7 +167,7 @@ export const createTransfer = createServerFn({ method: "POST" })
 
 /** Cancela (pendente) ou estorna (pago). Transferências são desfeitas nos dois lados; nada é apagado. */
 export const cancelEntry = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -178,7 +178,7 @@ export const cancelEntry = createServerFn({ method: "POST" })
   });
 
 export const getAccountStatement = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ account_id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -191,7 +191,7 @@ export const getAccountStatement = createServerFn({ method: "GET" })
   });
 
 export const setAccountArchived = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), archived: z.boolean() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -204,7 +204,7 @@ export const setAccountArchived = createServerFn({ method: "POST" })
 /* ----------------------------- Categorias ----------------------------- */
 
 export const setCategoryFlags = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), archived: z.boolean().optional(), is_default: z.boolean().optional() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -222,7 +222,7 @@ export const setCategoryFlags = createServerFn({ method: "POST" })
 
 /** Move as movimentações para outra categoria (ou "sem categoria") e depois exclui. */
 export const moveAndDeleteCategory = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), target_id: z.string().uuid().nullable() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -243,7 +243,7 @@ const SUGGESTED: Record<"in" | "out", Record<string, string[]>> = {
 
 /** Cria a estrutura sugerida, pulando o que já existe (idempotente). */
 export const seedSuggestedCategories = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const ctx = context as unknown as Ctx;
     const m = await membership(ctx, true);

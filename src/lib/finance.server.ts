@@ -80,7 +80,7 @@ export function assertTwoFactor(claims: unknown) {
   }
 }
 
-/** 2FA opcional para usuários: se a pessoa ativou o autenticador, a sessão precisa estar confirmada (aal2). */
+/** 2FA obrigatório para todos: a sessão precisa estar confirmada (aal2). Nome mantido por compatibilidade. */
 export async function assertTwoFactorIfEnrolled(claims: unknown, userId: string) {
   const aal = (claims as { aal?: string } | null)?.aal;
   if (aal === "aal2") return;

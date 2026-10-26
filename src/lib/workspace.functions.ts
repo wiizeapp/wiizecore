@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 export type Workspace = {
@@ -26,7 +26,7 @@ export type Workspace = {
  * configurações. Toda a criação acontece no servidor.
  */
 export const ensureWorkspace = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { companyName?: string; fullName?: string } | undefined) => input ?? {})
   .handler(async ({ data, context }): Promise<Workspace> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -136,7 +136,7 @@ export const ensureWorkspace = createServerFn({ method: "POST" })
 
 /** Atualiza os dados da empresa. Exige papel de proprietário ou administrador. */
 export const updateCompany = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { name: string; legalName?: string; document?: string; phone?: string; email?: string; zipCode?: string; address?: string; addressNumber?: string; complement?: string; district?: string; city?: string; state?: string; companyType?: string; incomeValue?: number | null }) => {
     const name = input.name?.trim();
     if (!name || name.length < 2) throw new Error("Informe o nome da empresa.");
@@ -202,7 +202,7 @@ export const updateCompany = createServerFn({ method: "POST" })
 
 /** Registra o acesso atual (dispositivo/IP) para a tela de sessões. */
 export const registerSession = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { requestInfo } = await import("./audit.server");

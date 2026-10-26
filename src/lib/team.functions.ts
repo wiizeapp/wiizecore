@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, logSecurityEvent } from "./audit.server";
 import { ALL_PERMISSIONS, effectivePermissions, isCritical, type TeamRole } from "./permissions";
 
@@ -66,11 +67,11 @@ function assertRoleGrant(granterRole: TeamRole, target: TeamRole) {
 }
 
 export const getMyAccess = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => loadAccess(context.userId));
 
 export const listTeam = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const access = await requirePerm(context.userId, "team.view");
     const db = await admin();
@@ -123,7 +124,7 @@ export const listTeam = createServerFn({ method: "GET" })
   });
 
 export const createInvite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { email: string; fullName?: string; role: TeamRole; customRoleId?: string | null; permissions?: string[] }) => {
     const email = i.email?.trim().toLowerCase();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Informe um e-mail válido.");
@@ -176,7 +177,7 @@ export const createInvite = createServerFn({ method: "POST" })
   });
 
 export const resendInvite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { id: string }) => ({ id: String(i.id) }))
   .handler(async ({ data, context }) => {
     const access = await requirePerm(context.userId, "team.manage");
@@ -196,7 +197,7 @@ export const resendInvite = createServerFn({ method: "POST" })
   });
 
 export const cancelInvite = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { id: string }) => ({ id: String(i.id) }))
   .handler(async ({ data, context }) => {
     const access = await requirePerm(context.userId, "team.manage");
@@ -294,7 +295,7 @@ function assertCanManage(me: { role: TeamRole; memberId: string }, target: { rol
 }
 
 export const updateMember = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { memberId: string; role: TeamRole; customRoleId?: string | null; permissions?: string[] }) => {
     if (!["admin", "finance", "viewer"].includes(i.role)) throw new Error("Cargo inválido.");
     return { memberId: String(i.memberId), role: i.role, customRoleId: i.customRoleId || null, permissions: i.permissions ?? [] };
@@ -319,7 +320,7 @@ export const updateMember = createServerFn({ method: "POST" })
   });
 
 export const setMemberStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { memberId: string; active: boolean }) => ({ memberId: String(i.memberId), active: Boolean(i.active) }))
   .handler(async ({ data, context }) => {
     const me = await requirePerm(context.userId, "team.manage");
@@ -336,7 +337,7 @@ export const setMemberStatus = createServerFn({ method: "POST" })
   });
 
 export const saveCustomRole = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { id?: string | null; name: string; description?: string; permissions: string[] }) => {
     const name = i.name?.trim();
     if (!name || name.length < 2) throw new Error("Informe o nome do cargo.");
@@ -356,7 +357,7 @@ export const saveCustomRole = createServerFn({ method: "POST" })
   });
 
 export const deleteCustomRole = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { id: string }) => ({ id: String(i.id) }))
   .handler(async ({ data, context }) => {
     const me = await requirePerm(context.userId, "team.manage");
@@ -368,7 +369,7 @@ export const deleteCustomRole = createServerFn({ method: "POST" })
 
 /** Sinal periódico: marca online e registra página e tempo ativo. */
 export const trackActivity = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { path: string; seconds: number }) => ({
     path: String(i.path ?? "/").slice(0, 200),
     seconds: Math.max(0, Math.min(120, Math.round(Number(i.seconds) || 0))),
@@ -385,7 +386,7 @@ export const trackActivity = createServerFn({ method: "POST" })
   });
 
 export const getMemberDetail = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { memberId: string }) => ({ memberId: String(i.memberId) }))
   .handler(async ({ data, context }) => {
     const me = await requirePerm(context.userId, "team.view");
@@ -415,7 +416,7 @@ export const getMemberDetail = createServerFn({ method: "GET" })
   });
 
 export const listTeamAudit = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const me = await requirePerm(context.userId, "audit.view");
     const db = await admin();

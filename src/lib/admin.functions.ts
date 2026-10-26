@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
@@ -20,14 +20,14 @@ async function requireAdmin(context: Ctx) {
 }
 
 export const getAdminStatus = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => ({ isAdmin: await isPlatformAdmin(context as Ctx) }));
 
 const num = (v: unknown) => Number(v ?? 0);
 
 
 export const getAdminOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const [{ data: tenants }, { data: wallets }, { data: fees }, { data: txs }, { data: settings }, { data: pendingW }, { data: payFees }, { data: antFees }] =
@@ -88,7 +88,7 @@ export const getAdminOverview = createServerFn({ method: "GET" })
   });
 
 export const listAdminWithdrawals = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { sealLegacyBankAccounts, openBank } = await import("./bank-account-crypto.server");
@@ -131,7 +131,7 @@ const reviewSchema = z.object({
 });
 
 export const reviewWithdrawal = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => reviewSchema.parse(input))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);
@@ -236,7 +236,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
 const EDITABLE = ["minimum_withdrawal_amount", "withdrawal_fee_amount", "pix_daily_limit"] as const;
 
 export const updatePlatformSetting = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) =>
     z
       .object({ key: z.enum(EDITABLE), value: z.number().min(0).max(100000), financialPassword: z.string().min(1).max(200) })
@@ -264,7 +264,7 @@ export const updatePlatformSetting = createServerFn({ method: "POST" })
 
 /** Contas das empresas: saldo real no provedor x saldo no sistema, e divergências de valores. */
 export const getTenantAccounts = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { getTenantProvider } = await import("./billing.server");
@@ -294,7 +294,7 @@ export const getTenantAccounts = createServerFn({ method: "GET" })
 
 /** Painel de uma empresa: saldo, cobranças e antecipações (somente leitura). */
 export const getTenantDetail = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ tenantId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);
@@ -357,7 +357,7 @@ export const getTenantDetail = createServerFn({ method: "GET" })
 
 /** Conferência extrato x carteira por empresa (somente leitura, admin + 2FA). */
 export const getWalletConsistency = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data, error } = await admin.rpc("wallet_consistency_report" as never);

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 import { summarize } from "./financial-summary";
 
@@ -10,7 +10,7 @@ async function db() {
 
 /** Números da Integração Externa: só cobranças criadas pela API, sempre da empresa do usuário. */
 export const getExtOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const a = await loadAccess(context.userId);
     const d = await db();
@@ -38,7 +38,7 @@ export const getExtOverview = createServerFn({ method: "GET" })
 
 /** Registros: avisos enviados ao sistema do cliente, com filtros e páginas. Corpo do aviso não é exposto aqui. */
 export const listExtLogs = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({
     page: z.number().int().min(0).max(500).default(0),
     status: z.enum(["all", "pending", "delivered", "failed"]).default("all"),

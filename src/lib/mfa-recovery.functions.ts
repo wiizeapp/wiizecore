@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { consumeRateLimit, logAudit, logSecurityEvent } from "./audit.server";
 import { assertStrongPassword } from "./password-policy";
 
@@ -179,7 +180,7 @@ async function emailMap(admin: Admin) {
 }
 
 export const listRecoveryRequests = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data } = await admin.from("mfa_recovery_requests").select("*").order("created_at", { ascending: false }).limit(100);
@@ -188,7 +189,7 @@ export const listRecoveryRequests = createServerFn({ method: "GET" })
   });
 
 export const reviewRecoveryRequest = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { id: string; approve: boolean; note: string }) =>
     z.object({ id: z.string().uuid(), approve: z.boolean(), note: z.string().trim().min(5).max(500) }).parse(i))
   .handler(async ({ data, context }) => {
@@ -214,7 +215,7 @@ export const reviewRecoveryRequest = createServerFn({ method: "POST" })
 
 /** Painel do Admin: volume dos clientes separado da receita Wiize Core. */
 export const getAdminConsole = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { days: number }) => z.object({ days: z.number().int().min(1).max(365) }).parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);
@@ -260,7 +261,7 @@ export const getAdminConsole = createServerFn({ method: "GET" })
   });
 
 export const listAdminUsers = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const users = await emailMap(admin);
@@ -285,7 +286,7 @@ export const listAdminUsers = createServerFn({ method: "GET" })
   });
 
 export const listAuditLogs = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: { q?: string }) => z.object({ q: z.string().max(80).optional() }).parse(i))
   .handler(async ({ data, context }) => {
     const admin = await requireAdmin(context as Ctx);

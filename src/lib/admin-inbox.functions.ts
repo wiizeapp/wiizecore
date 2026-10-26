@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: { rpc: (fn: string, args: Record<string, unknown>) => any }; userId: string; claims: unknown };
 
@@ -14,7 +14,7 @@ async function requireAdmin(context: Ctx) {
 }
 
 export const listInboundEmails = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const { data, error } = await admin.from("inbound_emails").select("*").order("received_at", { ascending: false }).limit(200);
@@ -26,7 +26,7 @@ export const listInboundEmails = createServerFn({ method: "GET" })
   });
 
 export const markInboundEmailRead = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const admin = await requireAdmin(context as Ctx);

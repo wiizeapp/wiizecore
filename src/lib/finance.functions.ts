@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string };
@@ -24,7 +24,7 @@ const FINANCE = ["owner", "admin", "finance"];
  * O saldo só é liberado quando o provedor confirma o recebimento. Idempotente.
  */
 export const syncBalances = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await requireMembership(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -61,7 +61,7 @@ const bankSchema = z.object({
 });
 
 export const addBankAccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => bankSchema.parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, ["owner", "admin"]);
@@ -134,7 +134,7 @@ const withdrawalErrors: Record<string, string> = {
 
 /** Limites de saque da empresa: limite diário Pix, quanto já foi usado hoje e quanto resta. */
 export const getAccountLimits = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await requireMembership(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -163,7 +163,7 @@ export const getAccountLimits = createServerFn({ method: "GET" })
   });
 
 export const requestWithdrawal = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => withdrawalSchema.parse(input))
   .handler(async ({ data, context }) => {
     // Saque é permissão crítica: só Proprietário e Admin (nunca colaborador financeiro).
@@ -220,7 +220,7 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
   });
 
 export const cancelWithdrawal = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ withdrawalId: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);

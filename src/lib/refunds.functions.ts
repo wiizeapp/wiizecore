@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: any; userId: string; claims?: unknown };
 const FINANCE = ["owner", "admin", "finance"];
@@ -28,7 +28,7 @@ const ERRORS: Record<string, string> = {
 
 /** Dados para o painel da cobrança: política, reembolsos e elegibilidade. */
 export const getRefundContext = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ paymentId: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -61,7 +61,7 @@ export const getRefundContext = createServerFn({ method: "GET" })
   });
 
 export const requestRefund = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({
     paymentId: z.string().uuid(),
     mode: z.enum(["net", "gross"]),
@@ -100,7 +100,7 @@ export const requestRefund = createServerFn({ method: "POST" })
   });
 
 export const listRefunds = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const ctx = context as unknown as Ctx;
     const m = await membership(ctx);
@@ -111,7 +111,7 @@ export const listRefunds = createServerFn({ method: "GET" })
   });
 
 export const saveRefundPolicy = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({
     window_days: z.number().int().min(1).max(30), allow_partial: z.boolean(), default_mode: z.enum(["net", "gross"]),
     default_deduction_type: z.enum(["none", "fixed", "percent"]), default_deduction_value: z.number().min(0).max(1e9),

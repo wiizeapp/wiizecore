@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 import { DEFAULT_STEPS, PLAN_CHANNELS, balanceLevel, planCost, sanitizeSteps, type DunningPlanCode } from "./dunning-rules";
 
@@ -34,7 +34,7 @@ async function loadCommon(admin: any, tenantId: string) {
 }
 
 export const getDunning = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
@@ -68,7 +68,7 @@ export const getDunning = createServerFn({ method: "GET" })
   });
 
 export const saveDunning = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     enabled: z.boolean(),
     paused: z.boolean(),
@@ -99,7 +99,7 @@ export const saveDunning = createServerFn({ method: "POST" })
   });
 
 export const setDunningOverride = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     customerId: z.string().uuid().optional(),
     contractId: z.string().uuid().optional(),
@@ -125,7 +125,7 @@ export const setDunningOverride = createServerFn({ method: "POST" })
   });
 
 export const listDunningTargets = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context as Ctx);
     const [{ data: customers }, { data: contracts }] = await Promise.all([
@@ -138,7 +138,7 @@ export const listDunningTargets = createServerFn({ method: "GET" })
 /* ---------------- Admin ---------------- */
 
 export const getDunningAdmin = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const admin = await requireAdmin(context as Ctx);
     const [{ data: s }, { data: plans }, { data: charges }, { data: tenants }] = await Promise.all([
@@ -171,7 +171,7 @@ export const getDunningAdmin = createServerFn({ method: "GET" })
 const money = z.number().min(0).max(100000);
 const cost = z.number().min(0).max(1000).nullable();
 export const saveDunningAdmin = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({
     recommended: money, alert: money, critical: money, minMarginPct: z.number().min(0).max(100),
     costs: z.object({ whatsapp: cost, sms: cost, email: cost, voice: cost }),
@@ -201,7 +201,7 @@ export const saveDunningAdmin = createServerFn({ method: "POST" })
 
 /** Plano de lembretes de uma cobrança específica (ou o padrão da empresa). */
 export const getChargeDunningPlan = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({ chargeGroupId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx);
@@ -215,7 +215,7 @@ export const getChargeDunningPlan = createServerFn({ method: "POST" })
 
 /** Troca o plano de uma cobrança já criada. Exige senha financeira; diferença cai no financeiro. */
 export const changeChargeDunningPlan = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => z.object({
     chargeGroupId: z.string().uuid(),
     plan: z.enum(["essential", "smart", "intensive"]),

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: { from: (t: string) => any }; userId: string; claims?: unknown };
 const FINANCE = ["owner", "admin", "finance"];
@@ -28,7 +28,7 @@ async function authorizeCoproduction(context: Ctx, password: string, purpose: st
 
 /** Duas listas: coproduções que minha empresa criou e as que minha empresa participa. Campos mínimos. */
 export const listCoproductions = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await membership(context);
     const admin = await adminDb();
@@ -59,7 +59,7 @@ export const listCoproductions = createServerFn({ method: "GET" })
 
 /** Convite visto pelo coprodutor: apenas o necessário (sem CPF, endereço ou documentos). */
 export const getCoproductionInvite = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const m = await membership(context);
@@ -79,7 +79,7 @@ export const getCoproductionInvite = createServerFn({ method: "GET" })
   });
 
 export const respondCoproduction = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), accept: z.boolean(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
     const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.respond");
@@ -118,7 +118,7 @@ export const respondCoproduction = createServerFn({ method: "POST" })
 
 /** Principal cancela a configuração (só sem nenhum pagamento confirmado). Nada é apagado. */
 export const cancelCoproduction = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
     const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.cancel");
@@ -149,7 +149,7 @@ export const cancelCoproduction = createServerFn({ method: "POST" })
 
 /** Tenta de novo registrar a divisão no Asaas quando a primeira tentativa falhou. */
 export const retryCoproductionSplit = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
     const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.retry");

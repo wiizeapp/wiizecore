@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 type Ctx = { supabase: any; userId: string };
 const WRITE = ["owner", "admin", "finance"];
@@ -25,7 +25,7 @@ const AUTO_LABEL: Record<string, string> = {
 };
 
 export const getGestao = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -78,7 +78,7 @@ export const getGestao = createServerFn({ method: "GET" })
 
 /** Sugere categoria e conta a partir do último lançamento com descrição parecida. */
 export const suggestEntry = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ q: z.string().trim().min(2).max(80), direction: z.enum(["in", "out"]) }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -105,7 +105,7 @@ const entrySchema = z.object({
 });
 
 export const createEntry = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => entrySchema.parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -134,7 +134,7 @@ export const createEntry = createServerFn({ method: "POST" })
   });
 
 export const setEntryStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), paid: z.boolean() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -149,7 +149,7 @@ export const setEntryStatus = createServerFn({ method: "POST" })
   });
 
 export const deleteEntry = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -161,7 +161,7 @@ export const deleteEntry = createServerFn({ method: "POST" })
   });
 
 export const createAccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ name: z.string().trim().min(1).max(60), kind: z.enum(["bank", "cash", "wallet", "credit_card"]), opening_balance: z.number().min(-1e10).max(1e10), institution_code: z.string().trim().min(2).max(40) }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -173,7 +173,7 @@ export const createAccount = createServerFn({ method: "POST" })
   });
 
 export const updateAccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), name: z.string().trim().min(1).max(60), kind: z.enum(["bank", "cash", "wallet", "credit_card"]), opening_balance: z.number().min(-1e10).max(1e10), institution_code: z.string().trim().min(2).max(40) }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -185,7 +185,7 @@ export const updateAccount = createServerFn({ method: "POST" })
   });
 
 export const createCategory = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ name: z.string().trim().min(1).max(60), direction: z.enum(["in", "out"]), parent_id: z.string().uuid().nullable().default(null) }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -200,7 +200,7 @@ export const createCategory = createServerFn({ method: "POST" })
   });
 
 export const updateCategory = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), name: z.string().trim().min(1).max(60), direction: z.enum(["in", "out"]), parent_id: z.string().uuid().nullable() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
@@ -217,7 +217,7 @@ export const updateCategory = createServerFn({ method: "POST" })
   });
 
 export const deleteCategory = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;

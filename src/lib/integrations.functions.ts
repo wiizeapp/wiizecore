@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 
 /** Status da conexão do Wiize CRM com a empresa do usuário (derivado dos tokens OAuth). */
 export const getIntegrations = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const access = await loadAccess(context.userId);
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
@@ -30,7 +30,7 @@ export const getIntegrations = createServerFn({ method: "GET" })
 
 /** Cancela a conexão: revoga todos os acessos do Wiize a esta empresa. */
 export const disconnectWiizeCrm = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const access = await loadAccess(context.userId);
     if (access.role !== "owner" && access.role !== "admin") throw new Error("Somente o dono ou administrador pode cancelar integrações.");

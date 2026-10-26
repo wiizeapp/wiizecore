@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, consumeRateLimit, requestInfo } from "./audit.server";
 import { contractEvent } from "./contracts.functions";
 
@@ -20,7 +20,7 @@ function b64ToBytes(b64: string) {
 
 /** Importa o texto de um Google Docs compartilhado como "qualquer pessoa com o link". */
 export const importGoogleDoc = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { url: string }) => {
     const m = /docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]{20,})/.exec(input.url ?? "");
     if (!m) throw new Error("Cole o link de um documento do Google Docs.");
@@ -40,7 +40,7 @@ export const importGoogleDoc = createServerFn({ method: "POST" })
 
 /** Guarda o arquivo original da versão atual (PDF, Word ou Google Docs). */
 export const attachContractFile = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; fileName: string; format: "pdf" | "docx" | "gdoc"; base64?: string | null }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     if (!["pdf", "docx", "gdoc"].includes(input.format)) throw new Error("Formato não suportado.");
@@ -87,7 +87,7 @@ export const attachContractFile = createServerFn({ method: "POST" })
 
 /** Adiciona testemunha, signatário ou aprovador. */
 export const addContractSigner = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; name: string; email?: string | null; document?: string | null; role: "witness" | "signer" | "approver" }) => {
     const name = input.name?.trim();
     if (!input.contractId) throw new Error("Contrato inválido.");
@@ -119,7 +119,7 @@ export const addContractSigner = createServerFn({ method: "POST" })
   });
 
 export const removeContractSigner = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { signerId: string }) => {
     if (!input.signerId) throw new Error("Inválido.");
     return input;
@@ -142,7 +142,7 @@ export const removeContractSigner = createServerFn({ method: "POST" })
 
 /** Gera link individual de assinatura (vale 7 dias). O token só é mostrado agora. */
 export const createSignerLink = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { signerId: string }) => {
     if (!input.signerId) throw new Error("Inválido.");
     return input;
@@ -182,7 +182,7 @@ export const createSignerLink = createServerFn({ method: "POST" })
 
 /** PDF do contrato para a empresa (prévia ou versão final assinada). */
 export const downloadContractPdf = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; origin: string; bare?: boolean }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return { contractId: input.contractId, origin: input.origin, bare: input.bare === true };
@@ -356,7 +356,7 @@ const KEY_RE = /^(provider|customer|signer:[0-9a-f-]{36})$/;
 
 /** PDF original enviado (sem página de assinaturas), para posicionar os campos. */
 export const getOriginalContractPdf = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return input;
@@ -377,7 +377,7 @@ export const getOriginalContractPdf = createServerFn({ method: "POST" })
 
 /** Substitui todos os campos de assinatura da versão atual. */
 export const saveSignatureFields = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; fields: FieldInput[] }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     if (!Array.isArray(input.fields) || input.fields.length > 200) throw new Error("Campos inválidos.");
@@ -414,7 +414,7 @@ export const saveSignatureFields = createServerFn({ method: "POST" })
 
 /** Exclui um rascunho (só enquanto ninguém assinou). */
 export const deleteContractDraft = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return input;
@@ -437,7 +437,7 @@ export const deleteContractDraft = createServerFn({ method: "POST" })
 
 /** Busca um PDF (ou Google Docs, convertido em PDF) pelo link do Drive, usando a conta conectada da empresa. */
 export const fetchDriveLinkFile = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { url: string }) => {
     if (typeof input.url !== "string" || input.url.length > 500) throw new Error("Link inválido.");
     return input;

@@ -281,6 +281,13 @@
       "when": 1793034800740,
       "tag": "0039_revoke_anon_mfa_satisfied",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793036161112,
+      "tag": "0040_mandatory_mfa_and_audit_integrity",
+      "breakpoints": true
     }
   ]
 }

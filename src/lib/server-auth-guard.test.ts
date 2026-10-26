@@ -13,6 +13,8 @@ const PUBLIC_ALLOWED: Record<string, string[]> = {
   "contract-links.functions.ts": ["*"],
   "pix-automatic.functions.ts": ["*"],
   "team.functions.ts": ["getInvite"],
+  // Antes do login não há sessão: só grava referência pseudônima, limitado por IP.
+  "auth-events.functions.ts": ["recordLoginFailure"],
   "wiize-integration.functions.ts": ["startWiizeLogin"],
   // Portal: protegido por sessão própria do cliente (e-mail + documento, hash, 30 min).
   "portal.functions.ts": ["*"],

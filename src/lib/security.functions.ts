@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { assertStrongPassword } from "./password-policy";
 import { consumeRateLimit, logAudit, logSecurityEvent, resetRateLimit } from "./audit.server";
 
@@ -8,7 +9,7 @@ function assertStrongFinancialPassword(value: string) {
 }
 
 export const getSecurityStatus = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [{ data: credential }, { count: unusedCodes }] = await Promise.all([
@@ -34,7 +35,7 @@ export const getSecurityStatus = createServerFn({ method: "GET" })
 
 /** Cria ou troca a senha financeira. Nunca guardamos o valor em texto puro. */
 export const setFinancialPassword = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { newPassword: string; currentPassword?: string }) => {
     assertStrongFinancialPassword(input.newPassword ?? "");
     return { newPassword: input.newPassword, currentPassword: input.currentPassword ?? null };
@@ -100,7 +101,7 @@ export const setFinancialPassword = createServerFn({ method: "POST" })
  * Bloqueia o sistema por 60 minutos após 3 tentativas erradas.
  */
 export const verifyFinancialPassword = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { password: string; purpose?: string }) => ({
     password: input.password ?? "",
     purpose: input.purpose ?? "generic",
@@ -114,7 +115,7 @@ export const verifyFinancialPassword = createServerFn({ method: "POST" })
 
 /** Emite o único código reserva da conta. O valor só é devolvido nesta chamada. */
 export const generateRecoveryCodes = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { hashSecretValue, randomRecoveryCode } = await import("./crypto.server");

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 
 const params = z.object({
   response_type: z.string().max(20).optional(),
@@ -24,7 +24,7 @@ async function ctx(userId: string) {
 
 /** Detalhes da tela de consentimento. Só dono/admin da empresa pode autorizar. */
 export const getAuthorizeDetails = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => params.parse(d))
   .handler(async ({ data, context }) => {
     const s = await import("./wiize-pay-oauth.server");
@@ -43,7 +43,7 @@ export const getAuthorizeDetails = createServerFn({ method: "POST" })
 
 /** Aprovar ou negar. Revalida tudo no servidor; o código dura 60 s e é guardado só como hash. */
 export const decideAuthorize = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => params.extend({ approve: z.boolean() }).parse(d))
   .handler(async ({ data, context }) => {
     const s = await import("./wiize-pay-oauth.server");
@@ -74,7 +74,7 @@ export const decideAuthorize = createServerFn({ method: "POST" })
 
 /** Admin da plataforma (com 2FA) cria ou gira o segredo do Wiize. O segredo aparece uma única vez. */
 export const provisionWiizeClient = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "platform_admin" });
     if (!isAdmin) throw new Error("Acesso negado.");

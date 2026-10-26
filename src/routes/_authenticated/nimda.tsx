@@ -27,7 +27,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatBRL, formatDate } from "@/lib/format";
 import { AiReconciliation } from "@/components/ai-reconciliation";
 import { AdminActivations } from "@/components/admin-activations";
-import { AdminAudit, AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-console";
+import { AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-console";
+import { AdminAuditSecurity } from "@/components/admin/admin-audit-security";
 
 export const Route = createFileRoute("/_authenticated/nimda")({
   head: () => ({
@@ -318,7 +319,7 @@ function AdminContent() {
     caixa: <AdminInbox />,
     sugestoes: <AdminSuggestions />,
     suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da Wiize Core."),
-    auditoria: <div className="surface-panel p-4"><AdminAudit /></div>,
+    auditoria: <AdminAuditSecurity />,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,
     permissoes: soon("Permissões", "Hoje existe um único papel administrativo, com verificação em duas etapas obrigatória. Papéis separados (financeiro, suporte, leitura) virão numa próxima etapa."),
     admins: <div className="surface-panel p-4"><AdminUsers /></div>,

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 import { EXT_SCOPES, maskSecret, sanitizeScopes } from "./ext-keys";
 
@@ -42,7 +42,7 @@ async function audit(tenantId: string, userId: string, action: string, metadata:
 }
 
 export const listExtIntegrations = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const access = await loadAccess(context.userId);
     const d = await db();
@@ -62,7 +62,7 @@ export const listExtIntegrations = createServerFn({ method: "GET" })
   });
 
 export const createExtIntegration = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ name: z.string().trim().min(2).max(80), environment: z.enum(["test", "live"]), scopes: z.array(z.string()).max(20), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);
@@ -85,7 +85,7 @@ async function ownIntegration(tenantId: string, id: string) {
 }
 
 export const rotateExtKey = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);
@@ -100,7 +100,7 @@ export const rotateExtKey = createServerFn({ method: "POST" })
   });
 
 export const setExtIntegrationStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["active", "suspended", "revoked"]), financialPassword: z.string().min(1).max(128).optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const access = await requireManager(context.userId, context.claims);

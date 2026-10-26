@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 async function memberTenant(supabase: { from: (t: string) => any }, userId: string, roles: string[]) {
@@ -29,7 +29,7 @@ export async function contractEvent(
 
 /** Arquiva ou restaura um contrato. */
 export const archiveContract = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; archived: boolean }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     return { contractId: input.contractId, archived: Boolean(input.archived) };
@@ -77,7 +77,7 @@ export function contractPeriod(startsOn?: string | null, endsOn?: string | null,
 
 /** Edita informações de um rascunho. */
 export const updateContractDraft = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; title: string; amount?: number | null; startsOn?: string | null; endsOn?: string | null; durationMonths?: number | null }) => {
     const title = input.title?.trim();
     if (!input.contractId) throw new Error("Contrato inválido.");
@@ -99,7 +99,7 @@ export const updateContractDraft = createServerFn({ method: "POST" })
   });
 
 export const createContract = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator(
     (input: {
       title: string;
@@ -222,7 +222,7 @@ export const createContract = createServerFn({ method: "POST" })
 
 /** Salva uma nova versão do texto. Versões anteriores permanecem intactas. */
 export const createContractVersion = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; body: string }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     const body = input.body?.trim();
@@ -277,7 +277,7 @@ export const createContractVersion = createServerFn({ method: "POST" })
 
 /** Assinatura do prestador: exige senha financeira e registra IP e dispositivo. */
 export const signContractAsProvider = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { contractId: string; financialPassword: string; signerName: string; signature: unknown }) => {
     if (!input.contractId) throw new Error("Contrato inválido.");
     if (!input.financialPassword) throw new Error("Informe a senha financeira.");
@@ -349,7 +349,7 @@ export const signContractAsProvider = createServerFn({ method: "POST" })
 
 /** Histórico de auditoria da empresa (apenas proprietário e administrador). */
 export const listAuditLogs = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data: membership } = await context.supabase
       .from("tenant_members")

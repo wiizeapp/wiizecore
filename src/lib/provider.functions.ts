@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, logSecurityEvent } from "./audit.server";
 import { z } from "zod";
 
@@ -18,7 +18,7 @@ async function requireFinanceMembership(supabase: { from: (t: string) => any }, 
 }
 
 export const getProviderConnection = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const { data: membership } = await context.supabase
       .from("tenant_members")
@@ -44,7 +44,7 @@ const onboardingSchema = z.object({ financialPassword: z.string().min(1).max(200
 
 /** Cria a subconta da empresa a partir da conta principal Wiize Core. A chave retornada pelo Asaas é cifrada imediatamente. */
 export const createAsaasSubaccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: unknown) => onboardingSchema.parse(input))
   .handler(async ({ data, context }) => {
     const membership = await requireFinanceMembership(context.supabase, context.userId);
@@ -117,7 +117,7 @@ export const createAsaasSubaccount = createServerFn({ method: "POST" })
   });
 
 export const refreshAsaasSubaccountStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const membership = await requireFinanceMembership(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

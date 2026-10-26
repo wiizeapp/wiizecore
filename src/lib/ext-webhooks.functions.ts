@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 import { EXT_EVENTS, sanitizeEvents } from "./ext-webhooks";
 
@@ -38,7 +38,7 @@ async function newSecret() {
 }
 
 export const listExtWebhooks = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ integrationId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await loadAccess(context.userId);
@@ -52,7 +52,7 @@ export const listExtWebhooks = createServerFn({ method: "GET" })
   });
 
 export const createExtWebhook = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ integrationId: z.string().uuid(), url: z.string().max(500), events: z.array(z.string()).max(30), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);
@@ -76,7 +76,7 @@ async function ownEndpoint(tenantId: string, id: string) {
 }
 
 export const rotateExtWebhookSecret = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth]).inputValidator((d: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(128) }).parse(d))
+  .middleware([requireMfaAuth]).inputValidator((d: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(128) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);
     await financialPassword(context.userId, data.financialPassword, "ext_webhook.rotate");
@@ -87,7 +87,7 @@ export const rotateExtWebhookSecret = createServerFn({ method: "POST" })
   });
 
 export const setExtWebhookStatus = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), action: z.enum(["enable", "disable", "delete"]) }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);
@@ -100,7 +100,7 @@ export const setExtWebhookStatus = createServerFn({ method: "POST" })
 
 /** Envia na hora um evento de teste ou reenvia uma entrega existente. */
 export const sendExtWebhook = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((d: unknown) => z.object({ endpointId: z.string().uuid(), deliveryId: z.string().uuid().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const a = await manager(context.userId, context.claims);

@@ -1,4 +1,5 @@
 import { getRequestHeader } from "@tanstack/react-start/server";
+import { categoryFor, cleanText, riskFor, safeId, sanitizeMetadata, type AuditCategory, type AuditOrigin, type AuditRisk } from "./audit-policy";
 
 export type RequestContextInfo = { ip: string | null; userAgent: string | null };
 
@@ -15,6 +16,11 @@ export function requestInfo(): RequestContextInfo {
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
+/**
+ * Grava um evento de auditoria (somente servidor). Os metadados são limpos antes de gravar.
+ * Nunca lança erro: uma falha de registro não pode interromper nem repetir uma operação financeira.
+ * A falha vira um evento de segurança para investigação.
+ */
 export async function logAudit(
   admin: AdminClient,
   entry: {
@@ -25,20 +31,51 @@ export async function logAudit(
     resourceId?: string | null;
     result?: "success" | "failure" | "blocked";
     metadata?: Record<string, unknown>;
+    category?: AuditCategory;
+    origin?: AuditOrigin;
+    risk?: AuditRisk;
+    correlationId?: string | null;
+    idempotencyKey?: string | null;
+    externalEventId?: string | null;
   },
 ) {
   const { ip, userAgent } = requestInfo();
-  await admin.from("audit_logs").insert({
-    tenant_id: entry.tenantId ?? null,
-    user_id: entry.userId ?? null,
-    action: entry.action,
-    resource: entry.resource ?? null,
-    resource_id: entry.resourceId ?? null,
-    result: entry.result ?? "success",
-    ip_address: ip,
-    user_agent: userAgent,
-    metadata: (entry.metadata ?? {}) as never,
-  });
+  const result = entry.result ?? "success";
+  const action = cleanText(entry.action, 80);
+  let correlation = safeId(entry.correlationId, 80);
+  if (!correlation) {
+    try { correlation = safeId(getRequestHeader("x-request-id"), 80) ?? safeId(getRequestHeader("cf-ray"), 80); } catch { correlation = null; }
+  }
+  try {
+    const { error } = await admin.from("audit_logs").insert({
+      tenant_id: entry.tenantId ?? null,
+      user_id: entry.userId ?? null,
+      action,
+      resource: entry.resource ? cleanText(entry.resource, 80) : null,
+      resource_id: entry.resourceId ? cleanText(entry.resourceId, 120) : null,
+      result,
+      ip_address: ip ? cleanText(ip, 64) : null,
+      user_agent: userAgent ? cleanText(userAgent, 300) : null,
+      metadata: (sanitizeMetadata(entry.metadata ?? {}) ?? {}) as never,
+      category: entry.category ?? categoryFor(action),
+      origin: entry.origin ?? "backend",
+      risk: entry.risk ?? riskFor(action, result),
+      correlation_id: correlation,
+      idempotency_key: safeId(entry.idempotencyKey),
+      external_event_id: safeId(entry.externalEventId),
+    });
+    if (error) throw error;
+  } catch (e) {
+    console.error("[audit] falha ao registrar evento", action, (e as { code?: string })?.code ?? "");
+    try {
+      await admin.from("security_events").insert({
+        event_type: "audit.write_failed", severity: "warning", user_id: entry.userId ?? null, tenant_id: entry.tenantId ?? null,
+        metadata: { action } as never,
+      });
+    } catch {
+      // Sem segundo destino disponível: segue sem interromper a operação.
+    }
+  }
 }
 
 export async function logSecurityEvent(
@@ -59,7 +96,7 @@ export async function logSecurityEvent(
     severity: entry.severity ?? "info",
     ip_address: ip,
     user_agent: userAgent,
-    metadata: (entry.metadata ?? {}) as never,
+    metadata: (sanitizeMetadata(entry.metadata ?? {}) ?? {}) as never,
   });
   if (entry.severity && entry.severity !== "info") {
     const { alertSecurityIncident } = await import("./security-alerts.server");

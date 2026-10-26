@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
 
 async function member(supabase: { from: (t: string) => any }, userId: string, roles: string[]) {
@@ -11,7 +11,7 @@ async function member(supabase: { from: (t: string) => any }, userId: string, ro
 }
 
 export const getDriveStatus = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await member(context.supabase, context.userId, ["owner", "admin", "finance", "viewer"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -21,7 +21,7 @@ export const getDriveStatus = createServerFn({ method: "GET" })
   });
 
 export const startDriveConnect = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .inputValidator((input: { origin: string }) => input)
   .handler(async ({ data, context }) => {
     const m = await member(context.supabase, context.userId, ["owner", "admin"]);
@@ -33,7 +33,7 @@ export const startDriveConnect = createServerFn({ method: "POST" })
   });
 
 export const disconnectDrive = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireMfaAuth])
   .handler(async ({ context }) => {
     const m = await member(context.supabase, context.userId, ["owner", "admin"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
