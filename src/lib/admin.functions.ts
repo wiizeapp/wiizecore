@@ -139,7 +139,7 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
     await assertFinancialPassword(admin, context.userId, data.financialPassword, `admin.withdrawal.${data.decision}`);
     const { data: wd } = await admin
       .from("withdrawals")
-      .select("id, tenant_id, requested_by, amount, fee_amount, net_amount, status, bank_accounts(holder_name, holder_document, bank_code, agency, account_number, account_type, pix_key, sensitive_enc)")
+      .select("id, tenant_id, provider_connection_id, requested_by, amount, fee_amount, net_amount, status, bank_accounts(holder_name, holder_document, bank_code, agency, account_number, account_type, pix_key, sensitive_enc)")
       .eq("id", data.withdrawalId)
       .maybeSingle();
     if (!wd) throw new Error("Saque não encontrado.");
@@ -156,7 +156,8 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
       if (!bank) throw new Error("Conta bancária do saque não encontrada.");
       if (!bank.pix_key) throw new Error("A conta de saque não tem chave Pix. Saques são feitos somente via Pix.");
       const { getTenantProvider } = await import("./billing.server");
-      const conn = await getTenantProvider(admin, wd.tenant_id);
+      if (!wd.provider_connection_id) throw new Error("A origem deste saque precisa ser conferida antes de continuar.");
+      const conn = await getTenantProvider(admin, wd.tenant_id, wd.provider_connection_id);
       if (!conn) throw new Error("Conta de pagamentos da empresa não encontrada.");
       const failAndRefund = async (why: string) => {
         await rpc("cancel_withdrawal", { _tenant_id: wd.tenant_id, _withdrawal_id: wd.id, _reason: why });
@@ -195,9 +196,8 @@ export const reviewWithdrawal = createServerFn({ method: "POST" })
         await admin.from("withdrawals").update({ provider_transfer_id: transfer.id, provider_status: transfer.status ?? "requested", transfer_reference: transfer.id }).eq("id", wd.id);
       } catch (e) {
         await logAudit(admin, { userId: context.userId, tenantId: wd.tenant_id, action: "withdrawal.pix", resource: "withdrawal", resourceId: wd.id, result: "failure", metadata: { error: String((e as Error).message ?? e), fee_kept_in_subaccount: fee } });
-        // Pix recusado: libera a reserva para nova tentativa manual.
-        await admin.from("withdrawals").update({ status: "in_analysis", updated_at: new Date().toISOString() }).eq("id", wd.id).eq("status", "processing").is("provider_transfer_id", null);
-        throw new Error(`O Pix não foi enviado: ${(e as Error).message}. Confira no Asaas antes de aprovar novamente.`);
+        // Timeout is not a rejection: retain the reservation until provider reconciliation.
+        throw new Error("Não foi possível confirmar o envio do Pix. O saque permanece reservado para conferência no Asaas.");
       }
     }
     const { error } =

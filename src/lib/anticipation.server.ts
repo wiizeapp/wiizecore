@@ -6,6 +6,7 @@
  */
 import { anticipationEventToStatus } from "./asaas.server";
 import { getTenantProvider } from "./billing.server";
+import { getPaymentProvider } from "./financial-origin.server";
 import { calculateAnticipationFromConfig, decimalToCents } from "./fee-engine.server";
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
@@ -56,11 +57,13 @@ export async function checkAnticipationEligibility(admin: AdminClient, tenantId:
   if (!p) return { eligibility: no("Recebível não encontrado."), payment: null, prov: null };
   const local = localEligibility(p);
   if (local) return { eligibility: local, payment: p, prov: null };
-  const prov = await getTenantProvider(admin, tenantId);
+  const prov = await getPaymentProvider(admin, tenantId, paymentId);
   if (!prov) return { eligibility: no("Conta de pagamentos não conectada."), payment: p, prov: null };
   let remote;
   try {
-    remote = await prov.provider.getPayment(p.provider_payment_id!);
+    if (!p.provider_payment_id) return { eligibility: no("Recebível não encontrado."), payment: p, prov };
+    remote = await prov.provider.getPayment(p.provider_payment_id);
+    if (remote.id !== p.provider_payment_id) throw new Error("provider_payment_mismatch");
   } catch {
     return { eligibility: no("Não foi possível confirmar a elegibilidade agora. Tente novamente."), payment: p, prov };
   }
@@ -123,7 +126,7 @@ export async function simulateAnticipationFor(admin: AdminClient, tenantId: stri
 /** Webhook RECEIVABLE_ANTICIPATION_* — idempotente por id do evento. */
 export async function processAnticipationWebhook(
   admin: AdminClient,
-  event: { id: string; tenant_id: string; event_type: string; external_event_id: string; payload: Record<string, any> },
+  event: { id: string; tenant_id: string; provider_connection_id: string; event_type: string; external_event_id: string; payload: Record<string, any> },
 ) {
   const done = async (status: "processed" | "discarded", msg: string | null = null) =>
     admin.from("webhook_events").update({ processing_status: status, error_message: msg, processed_at: new Date().toISOString() }).eq("id", event.id).then(() => undefined);
@@ -131,7 +134,7 @@ export async function processAnticipationWebhook(
   if (!ant?.id) { await done("discarded", "Evento sem antecipação"); return; }
   const { data: req } = await admin
     .from("anticipation_requests").select("id, tenant_id, wiize_fee_amount, payment_id")
-    .eq("provider", "asaas").eq("provider_anticipation_id", ant.id).eq("tenant_id", event.tenant_id).maybeSingle();
+    .eq("provider", "asaas").eq("provider_connection_id", event.provider_connection_id).eq("provider_anticipation_id", ant.id).eq("tenant_id", event.tenant_id).maybeSingle();
   if (!req) { await done("discarded", "Antecipação desconhecida"); return; }
   if (typeof ant.fee === "number") {
     await admin.from("anticipation_requests").update({
@@ -181,11 +184,12 @@ export async function flagAnticipationImpact(admin: AdminClient, paymentId: stri
 
 /** Transfere a margem Wiize Core da subconta para a conta principal (uma vez). */
 async function collectMargin(admin: AdminClient, requestId: string) {
-  const { data: r } = await admin.from("anticipation_requests").select("tenant_id, wiize_margin_amount, margin_transfer_id").eq("id", requestId).single();
+  const { data: r } = await admin.from("anticipation_requests").select("tenant_id, payment_id, wiize_margin_amount, margin_transfer_id").eq("id", requestId).single();
   const margin = Number(r?.wiize_margin_amount ?? 0);
   const walletId = process.env["ASAAS_MASTER_WALLET_ID"];
   if (!r || r.margin_transfer_id || margin <= 0 || !walletId) return;
-  const prov = await getTenantProvider(admin, r.tenant_id);
+  if (!r.payment_id) return;
+  const prov = await getPaymentProvider(admin, r.tenant_id, r.payment_id);
   if (!prov) return;
   try {
     const t = await prov.provider.createTransfer({ value: margin, walletId, description: "Margem Wiize Core — antecipação" });
