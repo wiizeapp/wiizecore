@@ -91,6 +91,7 @@ import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
 import { Route as AjudaArtigoSlugRouteImport } from './routes/ajuda.artigo.$slug'
 import { Route as ApiPublicCronNotificationsRouteImport } from './routes/api/public/cron/notifications'
+import { Route as ApiPublicCronPldRouteImport } from './routes/api/public/cron/pld'
 import { Route as ApiPublicExtDeliverRouteImport } from './routes/api/public/ext/deliver'
 import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/public/google-drive/callback'
 import { Route as ApiPublicOauthRevokeRouteImport } from './routes/api/public/oauth/revoke'
@@ -534,6 +535,11 @@ const ApiPublicCronNotificationsRoute =
     path: '/api/public/cron/notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCronPldRoute = ApiPublicCronPldRouteImport.update({
+  id: '/api/public/cron/pld',
+  path: '/api/public/cron/pld',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicExtDeliverRoute = ApiPublicExtDeliverRouteImport.update({
   id: '/api/public/ext/deliver',
   path: '/api/public/ext/deliver',
@@ -714,6 +720,7 @@ export interface FileRoutesByFullPath {
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
+  '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
@@ -814,6 +821,7 @@ export interface FileRoutesByTo {
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
+  '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
@@ -917,6 +925,7 @@ export interface FileRoutesById {
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
+  '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
   '/api/public/google-drive/callback': typeof ApiPublicGoogleDriveCallbackRoute
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
@@ -1020,6 +1029,7 @@ export interface FileRouteTypes {
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais/'
     | '/api/public/cron/notifications'
+    | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
@@ -1120,6 +1130,7 @@ export interface FileRouteTypes {
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais'
     | '/api/public/cron/notifications'
+    | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
@@ -1222,6 +1233,7 @@ export interface FileRouteTypes {
     | '/ajuda/artigo/$slug'
     | '/_authenticated/notas-fiscais/'
     | '/api/public/cron/notifications'
+    | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
     | '/api/public/google-drive/callback'
     | '/api/public/oauth/revoke'
@@ -1290,6 +1302,7 @@ export interface RootRouteChildren {
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
+  ApiPublicCronPldRoute: typeof ApiPublicCronPldRoute
   ApiPublicExtDeliverRoute: typeof ApiPublicExtDeliverRoute
   ApiPublicGoogleDriveCallbackRoute: typeof ApiPublicGoogleDriveCallbackRoute
   ApiPublicOauthRevokeRoute: typeof ApiPublicOauthRevokeRoute
@@ -1884,6 +1897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCronNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/pld': {
+      id: '/api/public/cron/pld'
+      path: '/api/public/cron/pld'
+      fullPath: '/api/public/cron/pld'
+      preLoaderRoute: typeof ApiPublicCronPldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/ext/deliver': {
       id: '/api/public/ext/deliver'
       path: '/api/public/ext/deliver'
@@ -2178,6 +2198,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
+  ApiPublicCronPldRoute: ApiPublicCronPldRoute,
   ApiPublicExtDeliverRoute: ApiPublicExtDeliverRoute,
   ApiPublicGoogleDriveCallbackRoute: ApiPublicGoogleDriveCallbackRoute,
   ApiPublicOauthRevokeRoute: ApiPublicOauthRevokeRoute,
