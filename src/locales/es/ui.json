@@ -5728,5 +5728,16 @@
   "Aguardando pagamento...": "Esperando el pago...",
   "Taxa única, cobrada uma vez por empresa. Após o envio dos documentos, não é reembolsável, pois o valor custeia a abertura da conta, a análise de documentos e a ativação da infraestrutura de pagamentos. O pagamento não garante aprovação.": "Tarifa única, cobrada una vez por empresa. Tras el envío de documentos no es reembolsable, ya que cubre la apertura de la cuenta, el análisis de documentos y la activación de la infraestructura de pagos. El pago no garantiza aprobación.",
   "Li e concordo com as condições da taxa de ativação, incluindo a não devolução após o envio dos documentos, os": "He leído y acepto las condiciones de la tarifa de activación, incluida la no devolución tras el envío de documentos, los",
-  "Política de Reembolso": "Política de Reembolso"
+  "Política de Reembolso": "Política de Reembolso",
+  "Teste à vontade": "Prueba libremente",
+  "Crie cobranças, links e checkouts no modo de teste.": "Crea cobros, enlaces y checkouts en modo de prueba.",
+  "Simule pagamentos": "Simula pagos",
+  "Veja todo o fluxo funcionando, sem dinheiro real.": "Ve todo el flujo funcionando, sin dinero real.",
+  "Aviso no lançamento": "Aviso en el lanzamiento",
+  "Você recebe um e-mail assim que a produção for liberada.": "Recibirás un correo cuando se libere producción.",
+  "Versão beta": "Versión beta",
+  "A conta de produção chega em breve": "La cuenta de producción llega pronto",
+  "A WiizeCore está na versão beta. Por enquanto, é possível apenas testar e simular pagamentos. Em breve vamos liberar o acesso à conta de produção para você receber de verdade.": "WiizeCore está en versión beta. Por ahora solo es posible probar y simular pagos. Pronto liberaremos el acceso a la cuenta de producción para que recibas pagos reales.",
+  "Fique tranquilo:": "Tranquilo:",
+  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "en cuanto lo liberemos, recibirás un aviso aquí y en tu correo."
 }

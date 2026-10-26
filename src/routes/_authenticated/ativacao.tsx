@@ -457,3 +457,37 @@ function Documents({ company, docs, errors, only }: { company: boolean; docs: { 
     </div>
   );
 }
+
+function BetaNotice() {
+  const { t } = useTranslation("ui");
+  const items = [
+    { icon: BadgeCheck, title: t("Teste à vontade"), text: t("Crie cobranças, links e checkouts no modo de teste.") },
+    { icon: RefreshCw, title: t("Simule pagamentos"), text: t("Veja todo o fluxo funcionando, sem dinheiro real.") },
+    { icon: Clock, title: t("Aviso no lançamento"), text: t("Você recebe um e-mail assim que a produção for liberada.") },
+  ];
+  return (
+    <div className="mx-auto max-w-3xl py-6">
+      <div className="relative overflow-hidden rounded-3xl border bg-card p-8 shadow-sm sm:p-10">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />{t("Versão beta")}
+        </span>
+        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{t("A conta de produção chega em breve")}</h1>
+        <p className="mt-3 max-w-xl text-base text-muted-foreground">{t("A WiizeCore está na versão beta. Por enquanto, é possível apenas testar e simular pagamentos. Em breve vamos liberar o acesso à conta de produção para você receber de verdade.")}</p>
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {items.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="rounded-2xl border bg-background/60 p-4">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Icon className="h-4 w-4" /></div>
+              <p className="mt-3 text-sm font-semibold text-foreground">{title}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-foreground"><strong>{t("Fique tranquilo:")}</strong> {t("assim que liberarmos, você recebe um aviso aqui e no seu e-mail.")}</p>
+          <Button asChild variant="outline" size="sm"><Link to="/">{t("Voltar ao painel")}</Link></Button>
+        </div>
+      </div>
+    </div>
+  );
+}
