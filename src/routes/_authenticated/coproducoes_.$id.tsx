@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useState } from "react";
+import { SecureActionDialog } from "@/components/developer/secure-action-dialog";
 import { PageHeader } from "@/components/app-shell";
 import { ErrorState, ListSkeleton } from "@/components/states";
 import { StatusBadge } from "@/components/ds";
@@ -32,9 +34,10 @@ function Invite() {
   const qc = useQueryClient();
   const get = useServerFn(getCoproductionInvite);
   const respond = useServerFn(respondCoproduction);
+  const [accept, setAccept] = useState<boolean | null>(null);
   const q = useQuery({ queryKey: ["coproduction-invite", id], queryFn: () => get({ data: { id } }) });
   const m = useMutation({
-    mutationFn: (accept: boolean) => respond({ data: { id, accept } }),
+    mutationFn: (data: { accept: boolean; financialPassword: string }) => respond({ data: { id, ...data } }),
     onSuccess: (r) => { toast.success(r.status === "accepted" ? ui("Coprodução aceita.") : ui("Convite recusado.")); void qc.invalidateQueries({ queryKey: ["coproduction-invite", id] }); void qc.invalidateQueries({ queryKey: ["coproductions"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -57,12 +60,16 @@ function Invite() {
         <p className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">{ui("A divisão será aplicada sobre o valor líquido efetivamente recebido em cada pagamento, após as taxas aplicáveis. Parcelas não pagas não geram valor. Estimativa de participação: os valores reais aparecem depois de cada pagamento confirmado.")}</p>
         {d.canRespond ? (
           <div className="mt-4 flex gap-2">
-            <Button variant="outline" className="flex-1" disabled={m.isPending} onClick={() => m.mutate(false)}>{ui("Recusar")}</Button>
-            <Button className="flex-1" disabled={m.isPending} onClick={() => m.mutate(true)}>{ui("Aceitar coprodução")}</Button>
+            <Button variant="outline" className="flex-1" disabled={m.isPending} onClick={() => setAccept(false)}>{ui("Recusar")}</Button>
+            <Button className="flex-1" disabled={m.isPending} onClick={() => setAccept(true)}>{ui("Aceitar coprodução")}</Button>
           </div>
         ) : null}
       </section>
       <Button asChild variant="ghost"><Link to="/coproducoes">{ui("Ver minhas coproduções")}</Link></Button>
+      <SecureActionDialog open={accept !== null} onOpenChange={(v) => !v && setAccept(null)} title={ui(accept ? "Aceitar coprodução" : "Recusar")} confirmLabel={ui("Confirmar")} needsPassword requiredMfa onConfirm={async ({ password }) => {
+        if (accept === null) return;
+        await m.mutateAsync({ accept, financialPassword: password });
+      }} />
     </div>
   );
 }
