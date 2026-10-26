@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Brand } from "@/components/brand";
 import { useTranslation } from "react-i18next";
 import { useServerFn } from "@tanstack/react-start";
+import { recordAuthEvent, recordLoginFailure } from "@/lib/auth-events.functions";
 import { recoverWithCode } from "@/lib/mfa-recovery.functions";
 import { applyOAuthUiTheme, themeFromOAuthReturnPath } from "@/lib/oauth-ui-theme";
 import { readTheme } from "@/lib/theme";
@@ -60,6 +61,8 @@ function AuthPage() {
   const [mfaBackup, setMfaBackup] = useState(false);
   const [mfaBusy, setMfaBusy] = useState(false);
   const recover = useServerFn(recoverWithCode);
+  const authEvent = useServerFn(recordAuthEvent);
+  const loginFailure = useServerFn(recordLoginFailure);
 
   useEffect(() => {
     if (loading || !session) return;
@@ -88,7 +91,11 @@ function AuthPage() {
         goAfter();
       } else {
         const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: mfaFactor, code: mfaCode.trim() });
-        if (error) throw new Error(ui("Código inválido. Tente novamente."));
+        if (error) {
+          void authEvent({ data: { kind: "mfa.verify_failed" } }).catch(() => null);
+          throw new Error(ui("Código inválido. Tente novamente."));
+        }
+        void authEvent({ data: { kind: "auth.login_success" } }).catch(() => null);
         goAfter();
       }
     } catch (e) {
@@ -116,6 +123,7 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       setBusyAction(null);
+      void loginFailure({ data: { email: email.trim() } }).catch(() => null);
       toast.error(
         error.message.includes("Invalid login")
           ? ui("E-mail ou senha incorretos.")

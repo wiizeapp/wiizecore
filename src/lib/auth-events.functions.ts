@@ -33,14 +33,14 @@ export const recordLoginFailure = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { consumeRateLimit, logAudit, logSecurityEvent, requestInfo } = await import("./audit.server");
-    const { hashSecretValue } = await import("./crypto.server");
+    const { createHash } = await import("node:crypto");
     const ip = requestInfo().ip ?? "unknown";
     const limit = await consumeRateLimit(supabaseAdmin, { scope: "login_failure_log", identifier: ip, maxAttempts: 20, windowSeconds: 600, blockSeconds: 900 });
     if (!limit.allowed) {
       await logSecurityEvent(supabaseAdmin, { eventType: "auth.login_bruteforce_suspected", severity: "warning" });
       return { ok: false };
     }
-    const emailRef = hashSecretValue(`login:${data.email}`).slice(0, 16);
-    await logAudit(supabaseAdmin, { action: "auth.login_failed", result: "failure", origin: "ui", metadata: { email_ref: emailRef } });
+    const subjectRef = createHash("sha256").update(`wiize-login:${data.email}`).digest("hex").slice(0, 16);
+    await logAudit(supabaseAdmin, { action: "auth.login_failed", result: "failure", origin: "ui", metadata: { subject_ref: subjectRef } });
     return { ok: true };
   });
