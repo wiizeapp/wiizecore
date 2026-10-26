@@ -64,7 +64,7 @@ function maskIp(ip: string | null) {
 }
 
 function present(r: Record<string, any>) {
-  return { ...r, ip_address: maskIp(r.ip_address), metadata: sanitizeMetadata(r.metadata ?? {}) };
+  return { ...r, ip_address: maskIp(r["ip_address"]), metadata: sanitizeMetadata(r["metadata"] ?? {}) };
 }
 
 export const listAuditEvents = createServerFn({ method: "POST" })
