@@ -47,14 +47,14 @@ export function WithdrawalTwoFactorCard() {
           <div>
             <h2 className="font-semibold">Código 2FA para saques</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Opcional. Quando ligado, todo saque pede a senha financeira e o código do autenticador.
+              Todo saque exige senha financeira e verificação em duas etapas.
             </p>
             {!hasFactor && mfa ? <p className="mt-2 text-xs text-muted-foreground">Ative a verificação em duas etapas abaixo para poder ligar esta opção.</p> : null}
           </div>
         </div>
         <Switch
           checked={pending ?? enabled}
-          disabled={!sec || !hasFactor || mut.isPending}
+          disabled
           onCheckedChange={(v) => setPending(v === enabled ? null : v)}
           aria-label="Exigir código 2FA para saques"
         />
