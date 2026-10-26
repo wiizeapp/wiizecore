@@ -101,38 +101,6 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
     }
   }
 
-  async function legacyUnused() {
-    setSaving(true);
-    try {
-      const s = (k: OnboardingKey) => (typeof answers[k] === "string" ? (answers[k] as string) : null);
-      await saveFn({ data: {
-        role: s("role"), business_type: s("business_type"), team_size: s("team_size"), biggest_challenge: s("biggest_challenge"),
-        monthly_revenue: s("monthly_revenue"), goal_90d: s("goal_90d"), acquisition_source: s("acquisition_source"),
-        payment_methods: Array.isArray(answers.payment_methods) ? answers.payment_methods : [],
-      } });
-      toast.success(ui("Obrigado! Sua Wiize Core está pronta."));
-      qc.setQueryData(["my-onboarding"], { done: true });
-    } catch (e) {
-      toast.error(e instanceof Error ? ui(e.message) : ui("Não foi possível salvar suas respostas."));
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function skip() {
-    setSaving(true);
-    try {
-      await skipFn();
-      toast.success(ui("Onboarding pulado. Você pode continuar na Wiize Core."));
-      qc.setQueryData(["my-onboarding"], { done: true });
-      setDismissed(true);
-    } catch (e) {
-      toast.error(e instanceof Error ? ui(e.message) : ui("Não foi possível pular o onboarding."));
-    } finally {
-      setSaving(false);
-    }
-  }
-
   return (
     <div className="onboarding-shell fixed inset-0 z-[100] flex min-h-dvh flex-col overflow-y-auto bg-background text-foreground">
       <header className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-6">
