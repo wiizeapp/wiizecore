@@ -1,28 +1,19 @@
-# Correção dos webhooks Resend
+# Auditoria técnica — WiizeCore Global (Rapyd) sem mexer na operação Brasil (Asaas)
 
-## Falhas reproduzidas
-- O endereço informado, `https://wiizecore.com/api/public/webhooks/resend-inbound`, responde com **308** e redireciona para `www.wiizecore.com`.
-- Um aviso de diagnóstico assinado com a configuração disponível foi **recusado com 401** no endereço com www e **aceito com 200** no endereço Lovable. Isso indica configurações diferentes entre os ambientes, mas ainda não confirma qual segredo está cadastrado em cada webhook do Resend.
-- O código atual pode salvar uma mensagem vazia quando a busca do conteúdo falha, impedindo sua recuperação nas novas tentativas.
-- As novas imagens confirmam falhas repetidas de email.sent, email.delivered e email.received; não mostram a resposta de uma tentativa individual. O acesso ao Resend foi recusado, e não foi possível consultar seus cadastros diretamente.
+Esta etapa é só de auditoria. Nada no sistema será alterado: nem código, nem banco, nem segredos, nem integrações. Nenhuma cobrança ou saque será feito.
 
-## Fase 1 — Correção e testes
-- Preservar o endereço da rota e a exigência de assinatura válida.
-- Usar uma biblioteca compatível com o padrão de assinatura do Resend em vez da verificação manual, com testes de assinatura válida, inválida, expirada e múltiplas assinaturas.
-- Impedir o salvamento de mensagens incompletas quando a busca no Resend falhar; responder com erro temporário para permitir nova tentativa.
-- Confirmar mensagens já salvas sem repetir o processamento; manter isolamento por empresa.
-- Registrar erros úteis sem conteúdo de e-mails, destinatários ou segredos.
-- Testar essas situações sem enviar e-mails, alterar pagamentos ou inserir mensagens fictícias em produção.
+## O que vou fazer
+1. **Mapear a operação brasileira atual (só leitura)**: clientes, cobranças, tentativas de pagamento, cartão, Pix automático, lembretes, cupons, coproduções, antecipação, saldos, saques, estornos, notas fiscais, ativação da conta, taxas, permissões, painel admin, API externa e avisos (webhooks). Listar telas, arquivos, tabelas e configurações que dependem do Asaas.
+2. **Pesquisar a documentação pública da Rapyd**: contas de empresas (onboarding/KYB), cobranças em várias moedas, carteiras e saldos, split, saques, estornos, chargebacks, assinatura dos avisos e sandbox. Cada recurso será classificado como: confirmado / depende de aprovação comercial / não confirmado / não suportado, com link da fonte.
+3. **Montar a proposta**: seletor Brasil/Global no topo do painel (só muda o que é exibido; o servidor decide e confere a permissão), separação de dados por operação, moedas e saldos sem misturar, taxas por moeda, saques, notas fiscais, webhooks e conciliação, admin sem poder de "aprovar na mão", riscos de segurança e contabilidade.
+4. **Plano em fases e plano de testes**, sempre começando por sandbox e testes automáticos, com a operação brasileira testada como regressão em todas as fases.
+5. **Lista de perguntas** que precisam de resposta antes do desenvolvimento (contrato com a Rapyd, países, moedas, quem é o titular da conta, nota fiscal no exterior etc.).
 
-## Fase 2 — Ajuste do serviço publicado
-- Orientar o cadastro do endereço direto, sem redirecionamento: `https://www.wiizecore.com/api/public/webhooks/resend-inbound`.
-- Conferir a configuração de assinatura na Vercel e no Resend. Cada cadastro de webhook pode ter seu próprio segredo; não compartilhar um único segredo entre cadastros distintos sem verificar isso.
-- Identificar se os dois cadastros são duplicados ou atendem ambientes diferentes antes de reativá-los.
-- Após disponibilizar a correção no site e alinhar as configurações, reativar os cadastros necessários e reenviar uma entrega real que falhou; confirmar que a mensagem aparece na plataforma.
-
-## Dependências para concluir
-A reativação e a confirmação real dependem de acesso autorizado ao Resend e à configuração da Vercel, ou das ações do usuário nesses serviços. Não é necessário enviar segredos pelo chat. Sem essas etapas, a correção do código não será apresentada como solução completa em produção.
+## O que você recebe
+- Um relatório em PDF (e uma cópia em Markdown) nos Arquivos, seguindo exatamente os 16 itens pedidos no documento. Cada recomendação traz motivo, impacto, arquivos envolvidos e riscos.
+- Um resumo curto aqui no chat.
 
 ## Detalhes técnicos
-- Mudanças limitadas ao recebimento Resend em `src/routes/api/public/webhooks/resend-inbound.ts`, auxiliares e testes específicos em `src/lib`, e documentação de configuração.
-- Nenhuma mudança nos webhooks financeiros Asaas/Wiize, status de pagamentos, regras de cobrança ou páginas públicas.
+- Leitura de `src/lib/asaas*.server.ts`, `billing.server.ts`, `charges-core.server.ts`, `payment-attempts.server.ts`, `fee-engine.server.ts`, rotas `src/routes/api/public/**`, `app-shell.tsx`, `dev-environment.ts`, e consulta somente leitura da estrutura do banco (colunas, RLS, funções).
+- A pesquisa da Rapyd será feita por subagente com fontes citadas; o que não estiver na documentação será marcado como "não confirmado", nunca assumido.
+- Nenhum arquivo do projeto será editado; os arquivos gerados ficam apenas nos Arquivos (fora do sistema).
