@@ -114,8 +114,8 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
           <Button variant="ghost" size="sm" onClick={() => void signOut()}>{ui("Sair")}</Button>
         </div>
       </header>
-      <main className="flex flex-1 items-center justify-center px-5 pb-14">
-        <div className="surface-panel w-full max-w-md space-y-5 p-6 sm:p-8">
+      <main className="flex flex-1 items-center justify-center px-5 pb-8">
+        <div className={`surface-panel w-full space-y-5 p-6 sm:p-8 ${backup ? "max-w-md" : "max-w-4xl"}`}>
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><ShieldCheck className="h-5 w-5" /></span>
             <h1 className="font-display text-xl font-bold">{backup ? ui("Seu código reserva") : ui("Proteja sua conta")}</h1>
@@ -130,57 +130,57 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
               </label>
               <Button className="w-full" disabled={!saved} onClick={() => { void authEvent({ data: { kind: "mfa.recovery_saved" } }).catch(() => null); finish(); }}>{ui("Continuar")}</Button>
             </>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a WiizeCore.")}</p>
-              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                <p className="flex items-center gap-2 text-sm font-semibold"><Lock className="h-4 w-4 text-primary" />{ui("Por que ativar?")}</p>
-                <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
-                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.")}</li>
-                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Protege seu saldo, saques e os dados dos seus clientes.")}</li>
-                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Segue o padrão de segurança exigido por instituições financeiras.")}</li>
-                </ul>
-              </div>
-              {enrollment ? (
-                <ol className="space-y-5">
+          ) : enrollment ? (
+            <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a WiizeCore.")}</p>
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                  <p className="flex items-center gap-2 text-sm font-semibold"><Lock className="h-4 w-4 text-primary" />{ui("Por que ativar?")}</p>
+                  <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                    <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.")}</li>
+                    <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Protege seu saldo, saques e os dados dos seus clientes.")}</li>
+                    <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Segue o padrão de segurança exigido por instituições financeiras.")}</li>
+                  </ul>
+                </div>
+                <ol className="space-y-4">
                   <Step n={1} title={ui("Instale um aplicativo autenticador")}>
                     <p>{ui("Use o Google Authenticator, Microsoft Authenticator ou outro de sua preferência. Eles são gratuitos na loja do seu celular.")}</p>
                   </Step>
                   <Step n={2} title={ui("Leia o QR Code com o aplicativo")}>
                     <p>{ui("No aplicativo, toque em adicionar conta e aponte a câmera para o código abaixo.")}</p>
-                    <div className="mt-3 flex justify-center">
-                      <img
-                        src={enrollment.qr.startsWith("data:") ? enrollment.qr : `data:image/svg+xml;utf8,${encodeURIComponent(enrollment.qr)}`}
-                        alt={ui("QR Code para o aplicativo autenticador")}
-                        className="h-44 w-44 rounded-xl border border-border bg-white p-2 shadow-sm"
-                      />
-                    </div>
-                    <p className="mt-3 text-xs">{ui("Não consegue ler? Digite esta chave no aplicativo:")}</p>
-                    <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2">
-                      <span className="flex-1 select-all break-all font-mono text-xs text-foreground">{enrollment.secret}</span>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => { void navigator.clipboard.writeText(enrollment.secret).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }}>
-                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copied ? ui("Copiado!") : ui("Copiar")}
-                      </Button>
-                    </div>
                   </Step>
                   <Step n={3} title={ui("Digite o código de 6 dígitos")}>
                     <p>{ui("Informe o número que aparece no aplicativo. Ele muda a cada 30 segundos.")}</p>
-                    <form onSubmit={confirm} className="mt-3 space-y-4">
-                      <div className="flex justify-center">
-                        <InputOTP id="mfa-setup-code" maxLength={6} value={code} onChange={(v) => setCode(v.replace(/\D/g, ""))} autoFocus inputMode="numeric" autoComplete="one-time-code" aria-label={ui("Código de 6 dígitos")}>
-                          <InputOTPGroup className="gap-2">
-                            {[0, 1, 2, 3, 4, 5].map((i) => <InputOTPSlot key={i} index={i} className="h-12 w-11 rounded-lg border text-lg font-semibold first:rounded-lg last:rounded-lg" />)}
-                          </InputOTPGroup>
-                        </InputOTP>
-                      </div>
-                      <Button className="w-full" disabled={busy || code.length !== 6}>{busy ? <Loader2 className="animate-spin" /> : null}{ui("Confirmar e ativar")}</Button>
-                    </form>
                   </Step>
                 </ol>
-              ) : (
-                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" aria-label={ui("Carregando...")} /></div>
-              )}
-            </>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-border bg-muted/40 p-5">
+                <img
+                  src={enrollment.qr.startsWith("data:") ? enrollment.qr : `data:image/svg+xml;utf8,${encodeURIComponent(enrollment.qr)}`}
+                  alt={ui("QR Code para o aplicativo autenticador")}
+                  className="h-40 w-40 rounded-xl border border-border bg-white p-2 shadow-sm"
+                />
+                <div className="flex w-full items-center gap-2 rounded-lg border border-border bg-background px-3 py-1.5">
+                  <span className="flex-1 select-all break-all font-mono text-xs text-foreground">{enrollment.secret}</span>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => { void navigator.clipboard.writeText(enrollment.secret).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }}>
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copied ? ui("Copiado!") : ui("Copiar")}
+                  </Button>
+                </div>
+                <form onSubmit={confirm} className="w-full space-y-3">
+                  <p className="text-center text-sm font-medium">{ui("Código de 6 dígitos")}</p>
+                  <div className="flex justify-center">
+                    <InputOTP id="mfa-setup-code" maxLength={6} value={code} onChange={(v) => setCode(v.replace(/\D/g, ""))} autoFocus inputMode="numeric" autoComplete="one-time-code" aria-label={ui("Código de 6 dígitos")}>
+                      <InputOTPGroup className="gap-2">
+                        {[0, 1, 2, 3, 4, 5].map((i) => <InputOTPSlot key={i} index={i} className="h-12 w-11 rounded-lg border bg-background text-lg font-semibold first:rounded-lg last:rounded-lg" />)}
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                  <Button className="w-full" disabled={busy || code.length !== 6}>{busy ? <Loader2 className="animate-spin" /> : null}{ui("Confirmar e ativar")}</Button>
+                </form>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" aria-label={ui("Carregando...")} /></div>
           )}
         </div>
       </main>
