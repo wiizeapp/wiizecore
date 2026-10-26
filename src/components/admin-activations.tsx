@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";
+import { ActivationFeeTable } from "@/components/admin/activation-fee-table";
 
 const FIELD: Record<string, string> = {
   fullName: "Nome", cpf: "CPF", birthDate: "Nascimento", email: "E-mail", phone: "Celular", zipCode: "CEP", address: "Endereço", number: "Número",
@@ -29,6 +30,7 @@ export function AdminActivations() {
   const count = (s: string[]) => data.filter((r) => s.includes(r.status)).length;
   return (
     <div className="space-y-4">
+      <ActivationFeeTable />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[["Aguardando análise", count(queue)], ["Ação necessária", count(["action_required"])], ["Aprovadas", count(["approved"])], ["Recusadas/suspensas", count(["rejected", "suspended"])]].map(([l, v]) => (
           <div key={l as string} className="rounded-lg border p-4"><p className="text-xs text-muted-foreground">{l}</p><p className="text-2xl font-semibold">{v}</p></div>

@@ -10,6 +10,7 @@ export const createActivationHandoff = createServerFn({ method: "POST" }).middle
   const { data: member } = await context.supabase.from("tenant_members").select("tenant_id, role").eq("user_id", context.userId).eq("status", "active").limit(1).maybeSingle();
   if (!member || !["owner", "admin"].includes(member.role)) throw new Error("Você não tem permissão para gerar este acesso.");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await (await import("./activation-fee.server")).assertActivationPaid(supabaseAdmin, member.tenant_id);
   const { randomToken, randomNumericCode, tokenFingerprint, hashSecretValue } = await import("./crypto.server");
   const { requestInfo, logSecurityEvent } = await import("./audit.server");
   await supabaseAdmin.from("activation_mobile_handoffs").update({ revoked_at: new Date().toISOString() }).eq("tenant_id", member.tenant_id).is("revoked_at", null);
@@ -52,6 +53,7 @@ export const verifyActivationHandoff = createServerFn({ method: "POST" })
       if (row) await supabaseAdmin.from("activation_mobile_handoffs").update({ attempts: Math.min(10, Number(row.attempts ?? 0) + 1), revoked_at: Number(row.attempts ?? 0) >= 4 ? new Date().toISOString() : null }).eq("id", row.id);
       throw new Error("Este QR Code é inválido, expirou ou já foi usado. Gere um novo no computador.");
     }
+    await (await import("./activation-fee.server")).assertActivationPaid(supabaseAdmin, row.tenant_id);
     const sessionToken = randomToken(32);
     // A sessão termina junto com o QR Code: nunca passa dos 15 minutos.
     const sessionExpiresAt = row.expires_at;
@@ -65,6 +67,7 @@ async function resolveSession(sessionToken: string) {
   const { tokenFingerprint } = await import("./crypto.server");
   const { data: row } = await supabaseAdmin.from("activation_mobile_handoffs").select("*").eq("session_token_hash", tokenFingerprint(sessionToken)).maybeSingle();
   if (!row || row.revoked_at || row.used_at || !row.session_expires_at || new Date(row.session_expires_at) <= new Date()) throw new Error("Este QR Code expirou. Gere um novo no computador.");
+  await (await import("./activation-fee.server")).assertActivationPaid(supabaseAdmin, row.tenant_id);
   return { admin: supabaseAdmin, row };
 }
 

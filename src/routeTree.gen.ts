@@ -90,6 +90,7 @@ import { Route as AuthenticatedNotasFiscaisIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authenticated/notas-fiscais.$id'
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
 import { Route as AjudaArtigoSlugRouteImport } from './routes/ajuda.artigo.$slug'
+import { Route as ApiPublicCronActivationFeeRouteImport } from './routes/api/public/cron/activation-fee'
 import { Route as ApiPublicCronNotificationsRouteImport } from './routes/api/public/cron/notifications'
 import { Route as ApiPublicCronPldRouteImport } from './routes/api/public/cron/pld'
 import { Route as ApiPublicExtDeliverRouteImport } from './routes/api/public/ext/deliver'
@@ -97,6 +98,7 @@ import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/p
 import { Route as ApiPublicOauthRevokeRouteImport } from './routes/api/public/oauth/revoke'
 import { Route as ApiPublicOauthTokenRouteImport } from './routes/api/public/oauth/token'
 import { Route as ApiPublicV1CustomersRouteImport } from './routes/api/public/v1/customers'
+import { Route as ApiPublicWebhooksActivationFeeRouteImport } from './routes/api/public/webhooks/activation-fee'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 import { Route as ApiPublicWebhooksResendInboundRouteImport } from './routes/api/public/webhooks/resend-inbound'
 import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/public/wiize-pay/deliver'
@@ -529,6 +531,12 @@ const AjudaArtigoSlugRoute = AjudaArtigoSlugRouteImport.update({
   path: '/artigo/$slug',
   getParentRoute: () => AjudaRoute,
 } as any)
+const ApiPublicCronActivationFeeRoute =
+  ApiPublicCronActivationFeeRouteImport.update({
+    id: '/api/public/cron/activation-fee',
+    path: '/api/public/cron/activation-fee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronNotificationsRoute =
   ApiPublicCronNotificationsRouteImport.update({
     id: '/api/public/cron/notifications',
@@ -566,6 +574,12 @@ const ApiPublicV1CustomersRoute = ApiPublicV1CustomersRouteImport.update({
   path: '/api/public/v1/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksActivationFeeRoute =
+  ApiPublicWebhooksActivationFeeRouteImport.update({
+    id: '/api/public/webhooks/activation-fee',
+    path: '/api/public/webhooks/activation-fee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
   id: '/api/public/webhooks/asaas',
   path: '/api/public/webhooks/asaas',
@@ -719,6 +733,7 @@ export interface FileRoutesByFullPath {
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -726,6 +741,7 @@ export interface FileRoutesByFullPath {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -820,6 +836,7 @@ export interface FileRoutesByTo {
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -827,6 +844,7 @@ export interface FileRoutesByTo {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -924,6 +942,7 @@ export interface FileRoutesById {
   '/_authenticated/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -931,6 +950,7 @@ export interface FileRoutesById {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -1028,6 +1048,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais/'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1035,6 +1056,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1129,6 +1151,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1136,6 +1159,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1232,6 +1256,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/_authenticated/notas-fiscais/'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1239,6 +1264,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1301,6 +1327,7 @@ export interface RootRouteChildren {
   TesteCheckoutTokenRoute: typeof TesteCheckoutTokenRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
+  ApiPublicCronActivationFeeRoute: typeof ApiPublicCronActivationFeeRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
   ApiPublicCronPldRoute: typeof ApiPublicCronPldRoute
   ApiPublicExtDeliverRoute: typeof ApiPublicExtDeliverRoute
@@ -1308,6 +1335,7 @@ export interface RootRouteChildren {
   ApiPublicOauthRevokeRoute: typeof ApiPublicOauthRevokeRoute
   ApiPublicOauthTokenRoute: typeof ApiPublicOauthTokenRoute
   ApiPublicV1CustomersRoute: typeof ApiPublicV1CustomersRoute
+  ApiPublicWebhooksActivationFeeRoute: typeof ApiPublicWebhooksActivationFeeRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
   ApiPublicWebhooksResendInboundRoute: typeof ApiPublicWebhooksResendInboundRoute
   ApiPublicWiizePayDeliverRoute: typeof ApiPublicWiizePayDeliverRoute
@@ -1890,6 +1918,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AjudaArtigoSlugRouteImport
       parentRoute: typeof AjudaRoute
     }
+    '/api/public/cron/activation-fee': {
+      id: '/api/public/cron/activation-fee'
+      path: '/api/public/cron/activation-fee'
+      fullPath: '/api/public/cron/activation-fee'
+      preLoaderRoute: typeof ApiPublicCronActivationFeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/notifications': {
       id: '/api/public/cron/notifications'
       path: '/api/public/cron/notifications'
@@ -1937,6 +1972,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/v1/customers'
       fullPath: '/api/public/v1/customers'
       preLoaderRoute: typeof ApiPublicV1CustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/activation-fee': {
+      id: '/api/public/webhooks/activation-fee'
+      path: '/api/public/webhooks/activation-fee'
+      fullPath: '/api/public/webhooks/activation-fee'
+      preLoaderRoute: typeof ApiPublicWebhooksActivationFeeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/webhooks/asaas': {
@@ -2197,6 +2239,7 @@ const rootRouteChildren: RootRouteChildren = {
   TesteCheckoutTokenRoute: TesteCheckoutTokenRoute,
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
+  ApiPublicCronActivationFeeRoute: ApiPublicCronActivationFeeRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
   ApiPublicCronPldRoute: ApiPublicCronPldRoute,
   ApiPublicExtDeliverRoute: ApiPublicExtDeliverRoute,
@@ -2204,6 +2247,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicOauthRevokeRoute: ApiPublicOauthRevokeRoute,
   ApiPublicOauthTokenRoute: ApiPublicOauthTokenRoute,
   ApiPublicV1CustomersRoute: ApiPublicV1CustomersRoute,
+  ApiPublicWebhooksActivationFeeRoute: ApiPublicWebhooksActivationFeeRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
   ApiPublicWebhooksResendInboundRoute: ApiPublicWebhooksResendInboundRoute,
   ApiPublicWiizePayDeliverRoute: ApiPublicWiizePayDeliverRoute,

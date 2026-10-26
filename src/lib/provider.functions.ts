@@ -54,66 +54,10 @@ export const createAsaasSubaccount = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await assertFinancialPassword(supabaseAdmin, context.userId, data.financialPassword, "provider.subaccount.create");
 
-    const { data: existing } = await supabaseAdmin.from("provider_connections").select("id, subaccount_id, status").eq("tenant_id", membership.tenant_id).eq("provider", "asaas").limit(1).maybeSingle();
-    if (existing?.subaccount_id) throw new Error("Esta empresa já possui uma subconta de pagamentos.");
-    const { data: tenant } = await supabaseAdmin.from("tenants").select("*").eq("id", membership.tenant_id).single();
-    if (!tenant) throw new Error("Empresa não encontrada.");
-    const required = [tenant.name, tenant.email, tenant.document, tenant.phone, tenant.zip_code, tenant.address, tenant.address_number, tenant.district, tenant.city, tenant.state, tenant.income_value];
-    if (required.some((value) => value == null || String(value).trim() === "")) {
-      throw new Error("Complete os dados cadastrais e o endereço da empresa antes de continuar.");
-    }
-    const document = tenant.document;
-    const phone = tenant.phone;
-    const zipCode = tenant.zip_code;
-    if (!document || !phone || !zipCode) throw new Error("Complete CPF/CNPJ, telefone e CEP antes de continuar.");
+    const { ensureSubaccount } = await import("./asaas-onboarding.server");
+    await ensureSubaccount(supabaseAdmin, membership.tenant_id, context.userId, null);
+    return { status: "pending_review" as const, webhookError: null };
 
-    const masterKey = process.env['ASAAS_MASTER_API_KEY'];
-    const environment = (process.env['ASAAS_ENVIRONMENT'] === 'production' ? 'production' : 'sandbox') as 'sandbox' | 'production';
-    if (!masterKey) throw new Error("A conta principal da Wiize Core ainda não foi configurada.");
-    const { AsaasProvider } = await import("./asaas.server");
-    const { encryptSecret } = await import("./crypto.server");
-    const { onlyDigits } = await import("./format");
-    const provider = new AsaasProvider(masterKey, environment);
-    const created = await provider.createSubaccount({
-      name: tenant.legal_name || tenant.name,
-      email: tenant.email,
-      cpfCnpj: onlyDigits(document),
-      companyType: tenant.company_type || undefined,
-      phone: onlyDigits(phone),
-      mobilePhone: onlyDigits(phone),
-      address: tenant.address,
-      addressNumber: tenant.address_number,
-      complement: tenant.complement || undefined,
-      province: tenant.district,
-      postalCode: onlyDigits(zipCode),
-      incomeValue: Number(tenant.income_value),
-    });
-    const now = new Date().toISOString();
-    const { error } = await supabaseAdmin.from("provider_connections").upsert({
-      tenant_id: membership.tenant_id,
-      provider: "asaas",
-      environment,
-      api_key_ciphertext: encryptSecret(created.apiKey),
-      provider_account_id: created.id,
-      subaccount_id: created.id,
-      wallet_id: created.walletId,
-      status: "connected",
-      onboarding_status: "pending_review",
-      last_checked_at: now,
-      updated_at: now,
-    }, { onConflict: "tenant_id,provider,environment" });
-    if (error) throw new Error("Não foi possível concluir o cadastro da conta de pagamentos.");
-    let webhookError: string | null = null;
-    try {
-      const { registerTenantWebhook } = await import("./webhook-setup.server");
-      const { getRequestHeader } = await import("@tanstack/react-start/server");
-      await registerTenantWebhook(supabaseAdmin, membership.tenant_id, getRequestHeader("origin") ?? null, context.userId);
-    } catch (error) {
-      webhookError = error instanceof Error ? error.message : "Não foi possível registrar o webhook.";
-    }
-    await logAudit(supabaseAdmin, { tenantId: membership.tenant_id, userId: context.userId, action: "provider.subaccount.created", resource: "provider_connections", metadata: { environment, webhookPending: Boolean(webhookError) } });
-    await logSecurityEvent(supabaseAdmin, { tenantId: membership.tenant_id, userId: context.userId, eventType: "provider.subaccount.created", metadata: { environment } });
-    return { status: "pending_review" as const, webhookError };
   });
 
 export const refreshAsaasSubaccountStatus = createServerFn({ method: "POST" })

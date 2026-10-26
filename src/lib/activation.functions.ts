@@ -18,6 +18,7 @@ function assertManager(role: string) {
   if (!["owner", "admin"].includes(role)) throw new Error("Somente proprietários e administradores podem ativar o Wiize Core.");
 }
 async function ensureRow(admin: any, tenantId: string) {
+  await (await import("./activation-fee.server")).assertActivationPaid(admin, tenantId);
   await admin.from("payment_activations").upsert({ tenant_id: tenantId }, { onConflict: "tenant_id", ignoreDuplicates: true });
   const { data } = await admin.from("payment_activations").select("*").eq("tenant_id", tenantId).single();
   // Cadastros antigos em texto são criptografados na primeira leitura, sem perder dados.
@@ -44,7 +45,7 @@ export const getActivation = createServerFn({ method: "GET" })
       } catch (e) { console.error("sync ativação", e instanceof Error ? e.message : "x"); }
     }
     const [{ data: docs }, { data: events }] = await Promise.all([
-      admin.from("activation_documents").select("id, kind, mime_type, size_bytes, created_at").eq("tenant_id", m.tenant_id).order("created_at"),
+      admin.from("activation_documents").select("id, kind, mime_type, size_bytes, created_at").eq("tenant_id", m.tenant_id).is("superseded_at", null).order("created_at"),
       admin.from("activation_events").select("to_status, message, created_at").eq("tenant_id", m.tenant_id).order("created_at", { ascending: false }).limit(20),
     ]);
     return {
@@ -107,6 +108,7 @@ export const uploadActivationDocument = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const m = await ownerMembership(context as Ctx); assertManager(m.role);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+    await (await import("./activation-fee.server")).assertActivationPaid(admin, m.tenant_id);
     const { storeActivationDocument } = await import("./activation-upload.server");
     await storeActivationDocument(admin, m.tenant_id, context.userId, data);
     const { data: connection } = await admin.from("provider_connections").select("id").eq("tenant_id", m.tenant_id).eq("provider", "asaas").limit(1).maybeSingle();
@@ -139,7 +141,7 @@ export const submitActivation = createServerFn({ method: "POST" })
       if (used) throw new Error("Este CPF/CNPJ já está vinculado a outra conta Wiize Core. Use um documento que ainda não tenha conta.");
     }
     if (!BRAZIL_STATES.some(([uf]) => uf === (f["state"] ?? "").toUpperCase())) throw new Error("Selecione um Estado válido.");
-    const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id);
+    const { data: documents } = await admin.from("activation_documents").select("kind").eq("tenant_id", m.tenant_id).is("superseded_at", null);
     const have = new Set((documents ?? []).map((document: { kind: string }) => document.kind));
     const required = REQUIRED_DOCS[row.person_type as "individual" | "company"] ?? REQUIRED_DOCS.individual;
     if (required.some((kind) => !have.has(kind))) throw new Error("Envie todos os documentos obrigatórios.");
@@ -180,6 +182,7 @@ export const refreshActivationStatus = createServerFn({ method: "POST" })
     const { consumeRateLimit } = await import("./audit.server");
     const limit = await consumeRateLimit(admin, { scope: "activation_sync", identifier: m.tenant_id, maxAttempts: 10, windowSeconds: 600, blockSeconds: 600 });
     if (!limit.allowed) throw new Error("Aguarde alguns minutos para atualizar de novo.");
+    await (await import("./activation-fee.server")).assertActivationPaid(admin, m.tenant_id);
     const { pushDocuments, syncProviderOnboarding } = await import("./asaas-onboarding.server");
     try { await pushDocuments(admin, m.tenant_id); } catch (e) { throw new Error(e instanceof Error ? e.message : "Não foi possível enviar os documentos."); }
     const r = await syncProviderOnboarding(admin, m.tenant_id);

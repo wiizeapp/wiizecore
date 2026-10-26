@@ -1,6 +1,9 @@
 # Roadmap
 
-- [ ] Auditar e planejar taxa única de ativação de produção de R$ 19,90 via Pix Asaas, preservando testes gratuitos e bloqueando cadastro/documentos/subconta antes do pagamento.
+- [x] Auditar e planejar taxa única de ativação de produção de R$ 19,90 via Pix Asaas; plano aprovado conceitualmente.
+- [ ] Garantir bloqueio em todas as entradas/RPCs/storage, criação durável nos dois caminhos, transição sem exceção dos três cadastros, validação Asaas e testes de concorrência/timeout/falha de banco com resultados evidenciados.
+- [x] Implementar primeira etapa: taxa dedicada, gates servidor/RPC/storage, checkout, claims duráveis compartilhados e histórico documental; migrations 0044/0045, três cadastros preservados, consulta sandbox 200/wallet correspondente e produção 401.
+- [ ] Concluir ativação e homologação: sessão autorizada indisponível, webhook principal sem configuração, production não autenticada, termos sem validação; recuperação de key subconta, vencimento/reembolso e testes integrados ainda pendentes. Cobrança desativada; relatório em docs/ativacao-producao-entrega.md.
 - [ ] Implementar fluxo aprovado, confirmação financeira, idempotência, reconciliação, telas/Admin/notificações, testes e documentação; nenhuma cobrança ou publicação automática.
 
 - [x] Preparar plano de controles próprios PLD: alertas de movimentação suspeita, casos no Admin, criptografia e desbloqueio temporário por 2FA + senha financeira.

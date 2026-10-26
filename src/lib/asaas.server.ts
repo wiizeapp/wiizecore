@@ -187,6 +187,7 @@ export class AsaasProvider implements PaymentProvider {
   private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
     const response = await fetch(`${ASAAS_BASE_URLS[this.environment]}${path}`, {
       method,
+      signal: AbortSignal.timeout(20000),
       headers: {
         access_token: this.apiKey,
         accept: "application/json",
@@ -200,7 +201,7 @@ export class AsaasProvider implements PaymentProvider {
       // Só status e códigos de erro; o corpo pode conter dados pessoais. IDs no caminho são omitidos.
       let errCodes = "";
       try { errCodes = ((JSON.parse(text) as { errors?: { code?: string }[] }).errors ?? []).map((e) => e.code).filter(Boolean).join(","); } catch { /* não-JSON */ }
-      console.error(`Asaas ${method} ${path.split("?")[0]!.replace(/\/[A-Za-z0-9_-]{8,}/g, "/:id")} falhou [${response.status}]${errCodes ? ` códigos: ${errCodes}` : ""}`);
+      console.error(`Asaas ${method} ${(path.split("?")[0] ?? "").replace(/\/[A-Za-z0-9_-]{8,}/g, "/:id")} falhou [${response.status}]${errCodes ? ` códigos: ${errCodes}` : ""}`);
       let message = "O provedor de pagamentos recusou a operação.";
       try {
         const parsed = JSON.parse(text) as { errors?: { description?: string }[] };

@@ -1,3 +1,5 @@
+import { ActivationFeeCheckout } from "@/components/activation-fee-checkout";
+import { getActivationFee } from "@/lib/activation-fee.functions";
 import { PartnerNotice } from "@/components/partner-notice";
 import { createFileRoute } from "@tanstack/react-router";
 import { TableRowsSkeleton, TableStateRow, ErrorState, ListSkeleton } from "@/components/states";
@@ -45,8 +47,13 @@ type Form = Record<string, string>;
 const EDITABLE = ["not_started", "draft", "in_progress", "action_required"];
 
 function AtivacaoPage() {
+  const feeFn = useServerFn(getActivationFee);
+  const fee = useQuery({queryKey:["activation-fee"],queryFn:()=>feeFn(),staleTime:0});
   const fetchA = useServerFn(getActivation);
-  const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
+  const { data, isError, refetch, isFetchedAfterMount } = useQuery({ queryKey: ["activation"], enabled: fee.data?.status === "confirmed", queryFn: () => fetchA(), refetchOnMount: "always", staleTime: 0, gcTime: 0 });
+  if(fee.isError) return <ErrorState onRetry={()=>fee.refetch()}/>;
+  if(!fee.data) return <ListSkeleton rows={3}/>;
+  if(fee.data.status!=="confirmed") return <ActivationFeeCheckout/>;
   return (
     <div>
       <PartnerNotice storageKey="activation-asaas-v2" title="Como funciona a análise da sua conta">

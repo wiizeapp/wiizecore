@@ -36,6 +36,9 @@ function money(v?: string | null) {
 
 /** Cria a subconta no Asaas com os dados do cadastro de ativação, se ainda não existir. */
 export async function ensureSubaccount(admin: Admin, tenantId: string, userId: string, origin: string | null) {
+  await (await import("./activation-fee.server")).assertActivationPaid(admin, tenantId);
+  const { data: readiness } = await admin.from("payment_activations").select("status,submitted_at").eq("tenant_id",tenantId).single();
+  if (!readiness?.submitted_at || !["submitted","under_review","action_required","approved"].includes(readiness.status)) throw new Error("Conclua o cadastro e os documentos antes de criar a conta.");
   const { data: existing } = await admin.from("provider_connections").select("id, subaccount_id").eq("tenant_id", tenantId).eq("provider", "asaas").limit(1).maybeSingle();
   if (existing?.subaccount_id) return;
   const { data: act } = await admin.from("payment_activations").select("person_type, form_data, form_enc").eq("tenant_id", tenantId).single();
@@ -45,6 +48,8 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
   const environment = (process.env["ASAAS_ENVIRONMENT"] === "production" ? "production" : "sandbox") as "sandbox" | "production";
   if (!masterKey) throw new Error("A conta principal da Wiize Core ainda não foi configurada.");
+  const {data:paidFee,error:feeError}=await admin.from("activation_fee_payments").select("environment").eq("tenant_id",tenantId).eq("status","confirmed").single();
+  if(feeError || paidFee?.environment!==environment) throw new Error("O pagamento deve ser confirmado no mesmo ambiente da ativação.");
   const { AsaasProvider } = await import("./asaas.server");
   const { encryptSecret } = await import("./crypto.server");
   const master = new AsaasProvider(masterKey, environment);
@@ -54,7 +59,20 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
   const { DEPLOY_CONFIG } = await import("./deploy-config");
   const { createHmac } = await import("crypto");
   const signupEmail = `conta-${createHmac("sha256", "wiizepay-signup-email").update(tenantId).digest("hex").slice(0, 12)}@${DEPLOY_CONFIG.providerSignupEmailDomain}`;
-  const created = await master.createSubaccount({
+  const { data: operation, error: operationError } = await admin.rpc("activation_claim_operation", { _tenant:tenantId,_kind:"subaccount",_environment:environment,_reference:`subaccount:${tenantId}:${environment}` });
+  if(operationError || !operation) throw new Error("Não foi possível preparar a criação da conta.");
+  let created: {id:string;apiKey:string;walletId:string};
+  const op = operation as {claimed:boolean;id:string;state:string;result_enc?:string};
+  if(!op.claimed) {
+    if(op.result_enc) created=JSON.parse((await import("./crypto.server")).decryptSecret(op.result_enc));
+    else {
+      const {activationLookup}=await import("./activation-fee.server");
+      const found=await activationLookup(`/accounts?email=${encodeURIComponent(signupEmail)}&limit=100`);
+      if(found.data?.length) await admin.from("activation_provider_operations").update({state:"uncertain",provider_id:found.data[0].id}).eq("id",op.id);
+      throw new Error("A criação está em conferência. Não solicite uma nova conta.");
+    }
+  } else { try {
+  created = await master.createSubaccount({
     name: company ? (f["legalName"] || tenant?.legal_name || tenant?.name) : (f["fullName"] || tenant?.name),
     email: signupEmail,
     cpfCnpj: company ? digits(f["cnpj"]) : digits(f["cpf"]),
@@ -63,8 +81,11 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
     phone, mobilePhone: phone,
     address: f["address"], addressNumber: f["number"], complement: f["complement"] || undefined,
     province: f["district"], postalCode: digits(f["zipCode"]), city: f["city"], state: f["state"],
-    incomeValue: money(f["monthlyRevenue"]) || Number(tenant?.income_value ?? 0) || 1000,
+    incomeValue: money(f["monthlyRevenue"]) || Number(tenant?.income_value ?? 0),
   });
+  const {error:saveOperationError}=await admin.from("activation_provider_operations").update({state:"created",provider_id:created.id,result_enc:encryptSecret(JSON.stringify(created)),updated_at:new Date().toISOString()}).eq("id",op.id);
+  if(saveOperationError) throw new Error("A criação está em conferência.");
+  } catch { await admin.from("activation_provider_operations").update({state:"uncertain"}).eq("id",op.id);throw new Error("A criação está em conferência. Não solicite uma nova conta."); } }
   const now = new Date().toISOString();
   const { error } = await admin.from("provider_connections").upsert({
     tenant_id: tenantId, provider: "asaas", environment,
@@ -80,7 +101,7 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
     console.error("webhook da subconta pendente", e instanceof Error ? e.message : "x");
   }
   const { logAudit } = await import("./audit.server");
-  await logAudit(admin, { tenantId, userId, action: "provider.subaccount.created", resource: "provider_connections", metadata: { environment, source: "activation", signupEmail } });
+  await logAudit(admin, { tenantId, userId, action: "provider.subaccount.created", resource: "provider_connections", metadata: { environment, source: "activation" } });
 }
 
 /** Quais arquivos do cadastro atendem cada tipo de documento pedido pelo Asaas. */
@@ -95,6 +116,7 @@ function kindsFor(group: AsaasDocumentGroup, company: boolean): string[] {
 
 /** Envia ao Asaas os documentos pendentes ou recusados que a Wiize Core já tem. */
 export async function pushDocuments(admin: Admin, tenantId: string) {
+  await (await import("./activation-fee.server")).assertActivationPaid(admin,tenantId);
   const { getTenantProvider } = await import("./billing.server");
   const conn = await getTenantProvider(admin, tenantId);
   if (!conn) return;
@@ -107,7 +129,7 @@ export async function pushDocuments(admin: Admin, tenantId: string) {
   for (const group of res.data ?? []) {
     if (!["PENDING", "REJECTED", "NOT_SENT"].includes(group.status) || group.onboardingUrl) continue;
     for (const kind of kindsFor(group, act?.person_type === "company")) {
-      const doc = (docs ?? []).find((d: { kind: string }) => d.kind === kind);
+      const doc = (docs ?? []).filter((d: { kind: string }) => d.kind === kind).sort((a: {created_at:string},b: {created_at:string})=>b.created_at.localeCompare(a.created_at))[0];
       if (!doc) continue;
       const key = `${group.id}:${kind}`;
       // Reenvia só se o arquivo mudou ou o Asaas recusou.
