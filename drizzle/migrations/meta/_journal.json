@@ -295,6 +295,13 @@
       "when": 1793040549746,
       "tag": "0041_admin_page_sessions_and_pld_cases",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1793040955264,
+      "tag": "0042_pld_explicit_privileges_and_atomic_rules",
+      "breakpoints": true
     }
   ]
 }
