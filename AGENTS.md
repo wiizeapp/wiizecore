@@ -41,3 +41,4 @@
 - PLD uses isolated encrypted case/rule modules, append-only case history and Decimal rules; observation never alters financial operations. Why: review indicators must not become payment authorization or accusations.
 - PLD observation reads money as decimal strings through a service-only RPC and runs outside payment handlers; automatic batches require cron authentication and explicitly enabled rule versions. Why: preserve precision and keep review failures separate from money movement.
 - Scoped rules: `src/components/AGENTS.md` (illustrations/attribution), `src/lib/AGENTS.md` (fees, help, env URLs, analytics).
+- Production activation uses a dedicated fee record, server/RPC/storage gates and durable provider-operation claims; both subaccount paths call the same onboarding helper. Uncertain external creation is reconciled, never blindly repeated. Why: prevent unpaid KYC costs and duplicate external accounts.

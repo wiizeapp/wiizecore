@@ -50,7 +50,7 @@ export const prepareActivationPix=createServerFn({method:'POST'}).middleware([re
  }
  const customer=row.provider_customer_id ?? await obtain('fee_customer',()=>master.provider.createCustomer({name:data.name,cpfCnpj:data.document,email:data.email,externalReference:reference,notificationDisabled:true}),`/customers?externalReference=${encodeURIComponent(reference)}`);
  const payment=row.provider_payment_id ?? await obtain('fee_payment',()=>master.provider.createPayment({customer,billingType:'PIX',value:19.90,dueDate:new Date(Date.now()+86400000).toISOString().slice(0,10),externalReference:reference,description:'Taxa única de ativação WiizeCore'}),`/payments?externalReference=${encodeURIComponent(reference)}&customer=${encodeURIComponent(customer)}`);
- const {error:updateError}=await admin.from('activation_fee_payments').update({provider_customer_id:customer,provider_payment_id:payment,status:'pending'}).eq('id',row.id);
+ const {error:updateError}=await admin.from('activation_fee_payments').update({provider_customer_id:customer,provider_payment_id:payment,status:'pending'}).eq('id',row.id).neq('status','confirmed');
  if(updateError) throw new Error('A cobrança está em conferência. Não pague novamente.');
  return {paid:false,qr:await master.provider.getPixQrCode(payment)};
 });
