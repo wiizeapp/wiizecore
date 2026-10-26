@@ -130,7 +130,7 @@ function ConfirmDialog({ sim, onClose }: { sim: Sim; onClose: () => void }) {
   const [key] = useState(() => crypto.randomUUID());
   const confirm = useMutation({
     mutationFn: async () => {
-      await ensureTwoFactor(code);
+      await ensureTwoFactor(code, true);
       return request({ data: { paymentId: sim.paymentId, expectedNet: sim.netAmount, financialPassword: password, idempotencyKey: key } });
     },
     onSuccess: () => { toast.success("Antecipação enviada ao Asaas. Avisaremos quando o crédito for confirmado."); qc.invalidateQueries({ queryKey: ["receivables"] }); onClose(); },

@@ -433,8 +433,8 @@ export const getPaymentInstructions = createServerFn({ method: "POST" })
     if (!payment?.provider_payment_id) throw new Error("Pagamento indisponível.");
     if (!["awaiting_payment", "overdue", "created"].includes(payment.status)) throw new Error("Este pagamento não está em aberto.");
 
-    const { getTenantProvider } = await import("./billing.server");
-    const conn = await getTenantProvider(admin, link.tenant_id);
+    const { getPaymentProvider } = await import("./financial-origin.server");
+    const conn = await getPaymentProvider(admin, link.tenant_id, payment.id);
     if (!conn) throw new Error("Pagamento temporariamente indisponível.");
     if (!(await (await import("./activation.server")).canReceivePayments(admin, link.tenant_id))) throw new Error("Pagamento temporariamente indisponível.");
 
@@ -581,8 +581,8 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     const holderDoc = data.holderDocument || (customer.document ?? "").replace(/\D/g, "");
     if (!holderDoc) throw new Error("Informe o CPF ou CNPJ do titular do cartão.");
 
-    const { getTenantProvider } = await import("./billing.server");
-    const conn = await getTenantProvider(admin, link.tenant_id);
+    const { getPaymentProvider } = await import("./financial-origin.server");
+    const conn = await getPaymentProvider(admin, link.tenant_id, payment.id);
     if (!conn) throw new Error("Pagamento temporariamente indisponível.");
     if (!(await (await import("./activation.server")).canReceivePayments(admin, link.tenant_id))) throw new Error("Pagamento temporariamente indisponível.");
 

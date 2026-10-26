@@ -123,6 +123,7 @@ export async function switchPaymentAttempt(
   const { data: latest } = await admin.from("payment_attempts").select("attempt_number").eq("payment_id", p.id).order("attempt_number", { ascending: false }).limit(1).maybeSingle();
   input = { ...input, idempotencyKey: `s${latest?.attempt_number ?? 0}_${input.method}${input.keySuffix ? `_${input.keySuffix}` : ""}` };
   const { data: same } = await admin.from("payment_attempts").select("id, status").eq("payment_id", p.id).eq("idempotency_key", input.idempotencyKey).maybeSingle();
+  if (same?.status === "pending") throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
   if (same && same.status !== "failed") return { attemptId: same.id, reused: true };
 
   const reactivating = input.reason === "reactivation";
@@ -167,7 +168,7 @@ export async function switchPaymentAttempt(
   catch { return fail("A origem desta cobrança precisa ser conferida antes de continuar."); }
   const masterWalletId = process.env["ASAAS_MASTER_WALLET_ID"];
   if (!conn || !masterWalletId) return fail("Pagamento temporariamente indisponível.");
-  const { data: customer } = await admin.from("customers").select("provider_customer_id").eq("id", p.customer_id ?? "").eq("tenant_id", p.tenant_id).maybeSingle();
+  const { data: customer } = await admin.from("customer_provider_links").select("provider_customer_id").eq("customer_id", p.customer_id ?? "").eq("tenant_id", p.tenant_id).eq("provider_connection_id", conn.connection.id).maybeSingle();
   if (!customer?.provider_customer_id) return fail("Cadastro do cliente incompleto para esta operação.");
 
   // Nunca substitui uma tentativa que o provedor já confirmou.
@@ -217,7 +218,9 @@ export async function switchPaymentAttempt(
       ...extras,
     });
   } catch (e) {
-    return fail(e instanceof Error ? e.message : "O provedor recusou a nova forma de pagamento.");
+    // A network timeout may have created a remote charge; never permit a blind retry.
+    await admin.from("payment_attempts").update({ error_message: "provider_creation_uncertain" }).eq("id", pending.id);
+    throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
   }
 
   // Persist the remote ID before cancellation; uncertainty must retain the blocking pending attempt.
@@ -272,6 +275,7 @@ export async function switchPaymentAttempt(
 export async function isSupersededProviderPayment(admin: Admin, tenantId: string, connectionId: string, providerPaymentId: string) {
   const { data, error } = await admin.from("payment_attempts").select("status, tenant_id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_payment_id", providerPaymentId).maybeSingle();
   if (error) throw new Error("attempt_lookup_failed");
+  if (data?.status === "pending") throw new Error("attempt_activation_pending");
   return data && ["superseded", "failed", "cancelled"].includes(data.status) ? data : null;
 }
 

@@ -9,9 +9,9 @@ import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
  * Confirmação segura dentro da página (sem window.prompt/confirm, que o navegador pode bloquear).
  * Pede senha financeira (opcional) e o código de 2 etapas quando a pessoa tem 2FA ativo.
  */
-export function SecureActionDialog({ open, onOpenChange, title, description, confirmLabel, destructive, needsPassword, children, canConfirm = true, onConfirm }: {
+export function SecureActionDialog({ open, onOpenChange, title, description, confirmLabel, destructive, needsPassword, requiredMfa = false, children, canConfirm = true, onConfirm }: {
   open: boolean; onOpenChange: (v: boolean) => void; title: string; description?: string; confirmLabel: string;
-  destructive?: boolean; needsPassword?: boolean; children?: ReactNode; canConfirm?: boolean;
+  destructive?: boolean; needsPassword?: boolean; requiredMfa?: boolean; children?: ReactNode; canConfirm?: boolean;
   onConfirm: (v: { password: string }) => Promise<void>;
 }) {
   const { t } = useTranslation("ui");
@@ -29,7 +29,7 @@ export function SecureActionDialog({ open, onOpenChange, title, description, con
   const submit = async (e: React.FormEvent) => {
     e.preventDefault(); setBusy(true); setError(null);
     try {
-      if (needOtp) await ensureTwoFactor(otp);
+      await ensureTwoFactor(otp, requiredMfa);
       await onConfirm({ password });
       onOpenChange(false);
     } catch (err) {

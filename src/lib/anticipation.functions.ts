@@ -79,8 +79,8 @@ export const requestAnticipation = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const m = await membership(context as Ctx, FINANCE);
-    const { assertTwoFactorIfEnrolled, assertFinancialPassword } = await import("./finance.server");
-    await assertTwoFactorIfEnrolled(context.claims, context.userId);
+    const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
+    assertTwoFactor(context.claims);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     await assertFinancialPassword(admin, context.userId, data.financialPassword, "anticipation.request");
     await (await import("./activation.server")).assertCanReceivePayments(admin, m.tenant_id);
@@ -105,11 +105,12 @@ export const requestAnticipation = createServerFn({ method: "POST" })
     if (error) throw new Error("Já existe uma antecipação em andamento para este recebível.");
     await admin.from("payments").update({ anticipation_status: "pending" }).eq("id", s.paymentId);
 
-    const { getTenantProvider } = await import("./billing.server");
-    const prov = await getTenantProvider(admin, m.tenant_id);
-    const { data: pay } = await admin.from("payments").select("provider_payment_id").eq("id", s.paymentId).single();
+    const { getPaymentProvider } = await import("./financial-origin.server");
+    const prov = await getPaymentProvider(admin, m.tenant_id, s.paymentId);
+    const { data: pay } = await admin.from("payments").select("provider_payment_id").eq("id", s.paymentId).eq("tenant_id", m.tenant_id).single();
     try {
-      const ant = await prov!.provider.createAnticipation({ payment: pay!.provider_payment_id });
+      if (!prov || !pay?.provider_payment_id) throw new Error("Pagamento temporariamente indisponível.");
+      const ant = await prov.provider.createAnticipation({ payment: pay.provider_payment_id });
       await admin.from("anticipation_requests").update({
         provider_anticipation_id: ant.id, provider_status: ant.status ?? "PENDING", status: "processing", processed_at: new Date().toISOString(),
         ...(typeof ant.fee === "number" ? { provider_fee_amount: ant.fee, wiize_margin_amount: Math.round((s.wiizeFee - ant.fee) * 100) / 100 } : {}),

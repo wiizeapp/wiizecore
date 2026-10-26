@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-type Ctx = { supabase: { from: (t: string) => any }; userId: string };
+type Ctx = { supabase: { from: (t: string) => any }; userId: string; claims?: unknown };
 const FINANCE = ["owner", "admin", "finance"];
 
 async function membership(context: Ctx) {
@@ -13,6 +13,17 @@ async function membership(context: Ctx) {
 async function adminDb() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
+}
+
+async function authorizeCoproduction(context: Ctx, password: string, purpose: string) {
+  const m = await membership(context);
+  if (!FINANCE.includes(m.role)) throw new Error("Você não tem permissão para esta operação.");
+  await (await import("./member-access.server")).requireModulePerm(context.userId, "charges.create");
+  const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
+  assertTwoFactor(context.claims);
+  const admin = await adminDb();
+  await assertFinancialPassword(admin, context.userId, password, purpose);
+  return { m, admin };
 }
 
 /** Duas listas: coproduções que minha empresa criou e as que minha empresa participa. Campos mínimos. */
@@ -69,10 +80,11 @@ export const getCoproductionInvite = createServerFn({ method: "GET" })
 
 export const respondCoproduction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), accept: z.boolean() }).parse(i))
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), accept: z.boolean(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
-    const a = (await adminDb()) as any;
-    const { data: part } = await a.from("payment_coproduction_participants").select("*, payment_coproductions(id, tenant_id, status, version)").eq("coproduction_id", data.id).eq("participant_user_id", context.userId).maybeSingle();
+    const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.respond");
+    const a = admin as any;
+    const { data: part } = await a.from("payment_coproduction_participants").select("*, payment_coproductions(id, tenant_id, status, version)").eq("coproduction_id", data.id).eq("participant_tenant_id", m.tenant_id).eq("participant_user_id", context.userId).maybeSingle();
     // O aceite só vale para a conta autenticada que foi convidada.
     if (!part || part.status !== "pending" || part.payment_coproductions.status !== "pending") throw new Error("Este convite não está mais disponível.");
     const now = new Date().toISOString();
@@ -107,25 +119,25 @@ export const respondCoproduction = createServerFn({ method: "POST" })
 /** Principal cancela a configuração (só sem nenhum pagamento confirmado). Nada é apagado. */
 export const cancelCoproduction = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
-    const m = await membership(context);
-    if (!FINANCE.includes(m.role)) throw new Error("Você não tem permissão para esta operação.");
-    const a = (await adminDb()) as any;
+    const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.cancel");
+    const a = admin as any;
     const { data: cp } = await a.from("payment_coproductions").select("id, tenant_id, charge_group_id, status, split_applied_at").eq("id", data.id).eq("tenant_id", m.tenant_id).maybeSingle();
     if (!cp || cp.status === "cancelled") throw new Error("Coprodução não encontrada.");
-    const { count } = await a.from("payments").select("id", { count: "exact", head: true }).eq("charge_group_id", cp.charge_group_id).in("status", ["paid", "refunded", "processing", "in_analysis"]);
+    const { count, error: countError } = await a.from("payments").select("id", { count: "exact", head: true }).eq("tenant_id", m.tenant_id).eq("charge_group_id", cp.charge_group_id).in("status", ["paid", "refunded", "processing", "in_analysis"]);
+    if (countError) throw new Error("Não foi possível conferir os pagamentos desta coprodução.");
     if ((count ?? 0) > 0) throw new Error("Já existe pagamento nesta cobrança. A coprodução não pode mais ser cancelada; o histórico fica preservado.");
     const now = new Date().toISOString();
     await a.from("payment_coproductions").update({ status: "cancelled", cancelled_at: now, updated_at: now }).eq("id", cp.id);
     await a.from("payment_coproduction_participants").update({ status: "cancelled", updated_at: now }).eq("coproduction_id", cp.id).in("status", ["pending", "accepted"]);
     // Se a divisão já estava no Asaas, volta a deixar só a taxa Wiize Core nas parcelas abertas.
     if (cp.split_applied_at) {
-      const { getTenantProvider } = await import("./billing.server");
+      const { getPaymentProvider } = await import("./financial-origin.server");
       const { splitFor } = await import("./coproduction.server");
-      const conn = await getTenantProvider(a, cp.tenant_id);
-      const { data: rows } = await a.from("payments").select("provider_payment_id, gross_amount, platform_fee_amount").eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
+      const { data: rows } = await a.from("payments").select("id, provider_payment_id, gross_amount, platform_fee_amount").eq("tenant_id", cp.tenant_id).eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
       for (const r of rows ?? []) {
+        const conn = await getPaymentProvider(admin, cp.tenant_id, r.id);
         await conn?.provider.updatePayment(r.provider_payment_id, { split: await splitFor(a, cp.charge_group_id, Number(r.gross_amount), Number(r.platform_fee_amount ?? 0)) }).catch((e) => console.error("coproduction unsplit", e instanceof Error ? e.message : "x"));
       }
     }
@@ -138,11 +150,10 @@ export const cancelCoproduction = createServerFn({ method: "POST" })
 /** Tenta de novo registrar a divisão no Asaas quando a primeira tentativa falhou. */
 export const retryCoproductionSplit = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(i))
   .handler(async ({ data, context }) => {
-    const m = await membership(context);
-    if (!FINANCE.includes(m.role)) throw new Error("Você não tem permissão para esta operação.");
-    const a = (await adminDb()) as any;
+    const { m, admin } = await authorizeCoproduction(context, data.financialPassword, "coproduction.retry");
+    const a = admin as any;
     const { data: cp } = await a.from("payment_coproductions").select("id").eq("id", data.id).eq("tenant_id", m.tenant_id).eq("status", "active").maybeSingle();
     if (!cp) throw new Error("Coprodução não encontrada.");
     const { applySplitToOpenPayments } = await import("./coproduction.server");

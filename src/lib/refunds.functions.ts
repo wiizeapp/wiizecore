@@ -77,8 +77,8 @@ export const requestRefund = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const ctx = context as unknown as Ctx;
     const m = await membership(ctx, true);
-    const { assertTwoFactorIfEnrolled, assertFinancialPassword } = await import("./finance.server");
-    await assertTwoFactorIfEnrolled(ctx.claims as never, ctx.userId);
+    const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
+    assertTwoFactor(ctx.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { consumeRateLimit } = await import("./audit.server");
     const rl = await consumeRateLimit(supabaseAdmin, { scope: "refund", identifier: ctx.userId, maxAttempts: 10, windowSeconds: 3600, blockSeconds: 3600 });

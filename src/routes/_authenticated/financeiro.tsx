@@ -10,6 +10,7 @@ import { addBankAccount, cancelWithdrawal, requestWithdrawal, syncBalances } fro
 import { getWithdrawalSecurity } from "@/lib/withdrawal-security.functions";
 import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { Button } from "@/components/ui/button";
+import { SecureActionDialog } from "@/components/developer/secure-action-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -145,9 +146,10 @@ function Financeiro() {
 
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [bankOpen, setBankOpen] = useState(false);
+  const [cancelId, setCancelId] = useState<string | null>(null);
   const cancel = useServerFn(cancelWithdrawal);
   const cancelMut = useMutation({
-    mutationFn: (id: string) => cancel({ data: { withdrawalId: id } }),
+    mutationFn: (data: { withdrawalId: string; financialPassword: string }) => cancel({ data }),
     onSuccess: () => {
       toast.success("Saque cancelado e valor devolvido ao saldo.");
       void qc.invalidateQueries();
@@ -270,7 +272,7 @@ function Financeiro() {
                   <TableCell className="numeric-tabular text-right">{formatBRL(w.net_amount)}</TableCell>
                   <TableCell className="text-right">
                     {w.status === "requested" || w.status === "in_analysis" ? (
-                      <Button size="sm" variant="ghost" disabled={cancelMut.isPending} onClick={() => cancelMut.mutate(w.id)}>
+                      <Button size="sm" variant="ghost" disabled={cancelMut.isPending} onClick={() => setCancelId(w.id)}>
                         Cancelar
                       </Button>
                     ) : null}
@@ -317,6 +319,10 @@ function Financeiro() {
         fee={fee}
       />
       <BankDialog open={bankOpen} onOpenChange={setBankOpen} />
+      <SecureActionDialog open={Boolean(cancelId)} onOpenChange={(v) => !v && setCancelId(null)} title={ui("Cancelar saque")} confirmLabel={ui("Confirmar")} needsPassword requiredMfa destructive onConfirm={async ({ password }) => {
+        if (!cancelId) return;
+        await cancelMut.mutateAsync({ withdrawalId: cancelId, financialPassword: password });
+      }} />
     </div>
   );
 }
@@ -454,7 +460,7 @@ function BankDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: b
 
   const mut = useMutation({
     mutationFn: async () => {
-      await ensureTwoFactor(code);
+      await ensureTwoFactor(code, true);
       return add({ data: { ...form, holderDocument: form.holderDocument.replace(/\D/g, ""), financialPassword: password, confirmedOwnership: agree } });
     },
     onSuccess: () => {

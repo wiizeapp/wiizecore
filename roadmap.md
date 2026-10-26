@@ -1,8 +1,9 @@
 # Roadmap
 
-- [ ] Resolver pendências B–G da auditoria de segurança: isolamento dos avisos por empresa/conexão, senha financeira nas coproduções/cancelamento de saque, troca de pagamento bloqueada em falha do provedor, 2FA nas operações financeiras e contador atômico.
-- [ ] Fase 2 Global: base aditiva de operação/moeda/conexão, vínculos de clientes e saldos isolados; Brasil permanece BRL/Asaas, sem ativar Rapyd.
-- [ ] Verificar regressões e documentar arquivos alterados; pagamentos/estornos/saques reais dependem de ambiente de teste autorizado do provedor.
+- [x] Implementar proteções B–G: avisos autenticados isolados por empresa/conexão, senha financeira nas coproduções/cancelamento de saque, troca bloqueada em falha do provedor, AAL2 obrigatório e contador serializado no banco; reservas mantidas em respostas incertas.
+- [x] Fase 2 Global: base aditiva de operação/moeda/conexão, vínculos de clientes e saldos isolados/desativados; Brasil permanece BRL/Asaas, sem ativar Rapyd. Estrutura e restrições conferidas no banco.
+- [x] Executar regressões e documentar arquivos alterados; 292 testes aprovados, aviso sem token rejeitado (401), acesso protegido redireciona ao login.
+- [ ] Conferir telas financeiras autenticadas e concorrência real no banco: sessão da conta solicitante indisponível; pagamentos/estornos/saques completos dependem de conta de teste autorizada. Sete pagamentos históricos sem conexão Asaas identificável permanecem bloqueados para conferência da origem; não atribuir outra conta automaticamente.
 
 - [x] Corrigir recebimento Resend: assinatura padronizada, falhas de consulta sem salvar mensagens vazias, repetição idempotente e erros sem dados privados; 24 testes aprovados, endpoint local aceita eventos assinados ignorados (200) e rejeita sem assinatura (401), compilação OK.
 - [ ] Concluir recuperação Resend em produção: implantar na Vercel, usar endereço www sem redirecionamento, alinhar segredo do cadastro correto, identificar duplicados, reativar e reenviar mensagem real com conferência na caixa de entrada. Bloqueado por acesso/configuração externa Resend/Vercel; conexão foi recusada, imagens não mostram resposta individual. Passos em docs/resend-webhooks.md.

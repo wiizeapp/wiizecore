@@ -40,7 +40,8 @@ describe("tentativas de burlar o sistema", () => {
   });
 
   it("aviso de pagamento duplicado não é processado de novo", () => {
-    expect(webhook).toMatch(/external_event_id: parsed\.id/);
+    expect(webhook).toMatch(/scopedProviderEventId\(matched\.id, parsed\.id\)/);
+    expect(webhook).toMatch(/external_event_id: externalId/);
     expect(webhook).toMatch(/processing_status === "processed"/);
     expect(webhook).toMatch(/"duplicate", \{ status: 200 \}/);
   });

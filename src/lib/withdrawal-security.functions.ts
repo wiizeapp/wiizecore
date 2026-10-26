@@ -11,7 +11,7 @@ export const getWithdrawalSecurity = createServerFn({ method: "GET" })
       .select("withdrawal_2fa_required, updated_at")
       .eq("user_id", context.userId)
       .maybeSingle();
-    return { required: data?.withdrawal_2fa_required === true, updatedAt: data?.updated_at ?? null };
+    return { required: true, updatedAt: data?.updated_at ?? null };
   });
 
 /** Liga/desliga a exigência. Sempre pede senha financeira e sessão confirmada com 2FA (aal2). */
@@ -21,6 +21,7 @@ export const setWithdrawalSecurity = createServerFn({ method: "POST" })
     z.object({ required: z.boolean(), financialPassword: z.string().min(1).max(200) }).parse(input),
   )
   .handler(async ({ data, context }) => {
+    if (!data.required) throw new Error("A verificação em duas etapas é obrigatória para saques.");
     const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
     assertTwoFactor(context.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

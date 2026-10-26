@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/app-shell";
 import { EmptyState, ErrorState, ListSkeleton } from "@/components/states";
 import { StatusBadge } from "@/components/ds";
 import { Button } from "@/components/ui/button";
+import { SecureActionDialog } from "@/components/developer/secure-action-dialog";
 import { formatBRL } from "@/lib/format";
 import { CP_STATUS } from "@/lib/coproduction-labels";
 import { cancelCoproduction, listCoproductions, retryCoproductionSplit } from "@/lib/coproductions.functions";
@@ -53,10 +54,11 @@ function Page() {
   const cancel = useServerFn(cancelCoproduction);
   const retry = useServerFn(retryCoproductionSplit);
   const [tab, setTab] = useState<"created" | "participating">("created");
+  const [action, setAction] = useState<{ id: string; retry: boolean } | null>(null);
   const q = useQuery({ queryKey: ["coproductions"], queryFn: () => list() });
   const done = () => void qc.invalidateQueries({ queryKey: ["coproductions"] });
-  const cancelMut = useMutation({ mutationFn: (id: string) => cancel({ data: { id } }), onSuccess: () => { toast.success(ui("Coprodução cancelada.")); done(); }, onError: (e: Error) => toast.error(e.message) });
-  const retryMut = useMutation({ mutationFn: (id: string) => retry({ data: { id } }), onSuccess: () => { toast.success(ui("Divisão registrada no processador.")); done(); }, onError: (e: Error) => toast.error(e.message) });
+  const cancelMut = useMutation({ mutationFn: (data: { id: string; financialPassword: string }) => cancel({ data }), onSuccess: () => { toast.success(ui("Coprodução cancelada.")); done(); }, onError: (e: Error) => toast.error(e.message) });
+  const retryMut = useMutation({ mutationFn: (data: { id: string; financialPassword: string }) => retry({ data }), onSuccess: () => { toast.success(ui("Divisão registrada no processador.")); done(); }, onError: (e: Error) => toast.error(e.message) });
 
   return (
     <div className="space-y-6">
@@ -84,8 +86,8 @@ function Page() {
                 <Installments list={c.installments} />
                 {c.splitError && c.status === "active" ? <p className="mt-2 text-xs text-destructive">{ui("O processador ainda não registrou a divisão. O pagamento segue bloqueado.")}</p> : null}
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {c.status === "active" && c.splitError ? <Button size="sm" onClick={() => retryMut.mutate(c.id)} disabled={retryMut.isPending}>{ui("Tentar novamente")}</Button> : null}
-                  {c.status !== "cancelled" && !c.installments.some((i: Inst) => i.status === "paid") ? <Button size="sm" variant="outline" onClick={() => { if (confirm(ui("Cancelar esta coprodução? Para dividir de novo, crie uma nova cobrança."))) cancelMut.mutate(c.id); }} disabled={cancelMut.isPending}>{ui("Cancelar coprodução")}</Button> : null}
+                  {c.status === "active" && c.splitError ? <Button size="sm" onClick={() => setAction({ id: c.id, retry: true })} disabled={retryMut.isPending}>{ui("Tentar novamente")}</Button> : null}
+                  {c.status !== "cancelled" && !c.installments.some((i: Inst) => i.status === "paid") ? <Button size="sm" variant="outline" onClick={() => setAction({ id: c.id, retry: false })} disabled={cancelMut.isPending}>{ui("Cancelar coprodução")}</Button> : null}
                 </div>
               </article>
             ))}
@@ -107,6 +109,11 @@ function Page() {
           ))}
         </div>
       )}
+      <SecureActionDialog open={Boolean(action)} onOpenChange={(v) => !v && setAction(null)} title={ui(action?.retry ? "Tentar novamente" : "Cancelar coprodução")} confirmLabel={ui("Confirmar")} needsPassword requiredMfa destructive={!action?.retry} onConfirm={async ({ password }) => {
+        if (!action) return;
+        const data = { id: action.id, financialPassword: password };
+        if (action.retry) await retryMut.mutateAsync(data); else await cancelMut.mutateAsync(data);
+      }} />
     </div>
   );
 }

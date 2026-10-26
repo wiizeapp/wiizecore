@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ExternalLink, Mail, MapPin, Phone, RotateCcw, UserRound } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { getRefundContext, requestRefund } from "@/lib/refunds.functions";
+import { ensureTwoFactor } from "@/lib/mfa-step-up";
 import { supabase } from "@/integrations/supabase/client";
 import { formatBRL, formatDate, formatDateTime, formatDocument } from "@/lib/format";
 import { paymentMethodLabels, paymentStatusLabels } from "@/lib/labels";
@@ -184,6 +185,7 @@ function RefundDialog({ paymentId, ctx, onClose }: { paymentId: string; ctx: any
   const [reason, setReason] = useState("");
   const [step, setStep] = useState<"form" | "confirm">("form");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [key] = useState(() => crypto.randomUUID());
   const eligible = mode === "gross" ? ctx.eligibleGross : ctx.eligibleNet;
   const base = kind === "total" ? eligible : Math.min(parse(amount), eligible);
@@ -191,7 +193,10 @@ function RefundDialog({ paymentId, ctx, onClose }: { paymentId: string; ctx: any
   const final = Math.max(0, Math.round((base - ded) * 100) / 100);
   const valid = base > 0 && final > 0 && reason.trim().length >= 3 && (ded === 0 || dReason.trim());
   const m = useMutation({
-    mutationFn: () => req({ data: { paymentId, mode, kind, amount: kind === "partial" ? base : undefined, deductionType: dType, deductionValue: dType === "none" ? 0 : parse(dValue), deductionReason: dReason || undefined, reason, financialPassword: password, idempotencyKey: key } }),
+    mutationFn: async () => {
+      await ensureTwoFactor(code, true);
+      return req({ data: { paymentId, mode, kind, amount: kind === "partial" ? base : undefined, deductionType: dType, deductionValue: dType === "none" ? 0 : parse(dValue), deductionReason: dReason || undefined, reason, financialPassword: password, idempotencyKey: key } });
+    },
     onSuccess: (r) => {
       if (r.status === "failed") toast.error(r.failure ?? "O reembolso não foi realizado.");
       else toast.success(r.status === "completed" ? "Reembolso concluído." : "Reembolso enviado. Avisaremos quando for concluído.");
@@ -244,6 +249,7 @@ function RefundDialog({ paymentId, ctx, onClose }: { paymentId: string; ctx: any
             <Summary base={base} ded={ded} final={final} />
             <p className="rounded-lg bg-warning/10 p-3 text-xs text-warning">Depois de enviado ao processador, o reembolso não pode ser desfeito.</p>
             <div><Label>Senha financeira</Label><Input type="password" autoFocus value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+            <div><Label>Código do autenticador</Label><Input inputMode="numeric" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} /></div>
             <div className="flex gap-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setStep("form")}>Voltar</Button>
               <Button type="submit" className="flex-1" disabled={!password || m.isPending}>{m.isPending ? "Enviando..." : `Reembolsar ${formatBRL(final)}`}</Button>
