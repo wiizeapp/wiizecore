@@ -123,6 +123,7 @@ export async function switchPaymentAttempt(
   const { data: latest } = await admin.from("payment_attempts").select("attempt_number").eq("payment_id", p.id).order("attempt_number", { ascending: false }).limit(1).maybeSingle();
   input = { ...input, idempotencyKey: `s${latest?.attempt_number ?? 0}_${input.method}${input.keySuffix ? `_${input.keySuffix}` : ""}` };
   const { data: same } = await admin.from("payment_attempts").select("id, status").eq("payment_id", p.id).eq("idempotency_key", input.idempotencyKey).maybeSingle();
+  if (same?.status === "pending") throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
   if (same && same.status !== "failed") return { attemptId: same.id, reused: true };
 
   const reactivating = input.reason === "reactivation";
@@ -217,7 +218,9 @@ export async function switchPaymentAttempt(
       ...extras,
     });
   } catch (e) {
-    return fail(e instanceof Error ? e.message : "O provedor recusou a nova forma de pagamento.");
+    // A network timeout may have created a remote charge; never permit a blind retry.
+    await admin.from("payment_attempts").update({ error_message: "provider_creation_uncertain" }).eq("id", pending.id);
+    throw new Error("A alteração precisa ser conferida antes de tentar novamente.");
   }
 
   // Persist the remote ID before cancellation; uncertainty must retain the blocking pending attempt.
