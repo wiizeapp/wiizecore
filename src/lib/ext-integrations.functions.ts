@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 import { EXT_SCOPES, maskSecret, sanitizeScopes } from "./ext-keys";
 

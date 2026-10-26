@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { loadAccess } from "./team.functions";
 
 /** Status da conexão do Wiize CRM com a empresa do usuário (derivado dos tokens OAuth). */
