@@ -7898,6 +7898,36 @@ export type Database = {
         Returns: number
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      pld_create_alert: {
+        Args: {
+          _enc: string
+          _id: string
+          _rule: string
+          _source: string
+          _tenant: string
+        }
+        Returns: boolean
+      }
+      pld_create_rule: {
+        Args: {
+          _actor: string
+          _code: string
+          _enabled: boolean
+          _enc: string
+          _id: string
+          _version: number
+        }
+        Returns: undefined
+      }
+      pld_observation_sources: {
+        Args: {
+          _end: string
+          _previous: string
+          _start: string
+          _tenant: string
+        }
+        Returns: Json
+      }
       pld_update_case: {
         Args: {
           _action: string

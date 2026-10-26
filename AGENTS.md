@@ -39,4 +39,5 @@
 - Read subdirectories' scoped `AGENTS.md` before edits.
 - Administrative data requires `assertAdminPage` after the platform role/MFA checks; only the minimal status and fresh-unlock endpoints are exempt. The page proof is volatile, bound to server-side session/credential state, and never persisted by the browser. Why: closing or reopening the Admin must require both factors again.
 - PLD uses isolated encrypted case/rule modules, append-only case history and Decimal rules; observation never alters financial operations. Why: review indicators must not become payment authorization or accusations.
+- PLD observation reads money as decimal strings through a service-only RPC and runs outside payment handlers; automatic batches require cron authentication and explicitly enabled rule versions. Why: preserve precision and keep review failures separate from money movement.
 - Scoped rules: `src/components/AGENTS.md` (illustrations/attribution), `src/lib/AGENTS.md` (fees, help, env URLs, analytics).

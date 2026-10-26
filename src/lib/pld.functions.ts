@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireMfaAuth } from "./mfa-middleware";
-import { assertPldDecision, evaluatePldRule, pldOutcome, pldParameters, pldRuleCode, pldStatus, type PldParameters } from "./pld-rules";
+import { assertPldDecision, pldOutcome, pldParameters, pldRuleCode, pldStatus } from "./pld-rules";
 
 export const listPldCases = createServerFn({ method: "POST" }).middleware([requireMfaAuth])
   .inputValidator(i => z.object({ status: pldStatus.optional(), tenantId: z.string().uuid().optional(), priority: z.enum(["low","medium","high"]).optional(), assignedTo: z.string().uuid().optional(), rule: pldRuleCode.optional(), from: z.string().datetime().optional(), page: z.number().int().min(0).max(1000).default(0) }).parse(i))
@@ -80,7 +80,7 @@ export const savePldRule = createServerFn({ method: "POST" }).middleware([requir
     if (error) throw new Error("Não foi possível carregar os dados.");
     const version = (last?.version ?? 0) + 1, id = crypto.randomUUID();
     const { encryptPld } = await import("./pld-crypto.server");
-    const { error: insertError } = await admin.from("pld_rule_versions").insert({ id, rule_code: data.code, version, enabled: data.enabled, created_by: context.userId, parameters_enc: encryptPld({ parameters: data.parameters, justification: data.justification }, `rule:${id}`, key) });
+    const { error: insertError } = await admin.rpc("pld_create_rule", { _id:id,_code:data.code,_version:version,_enabled:data.enabled,_actor:context.userId,_enc:encryptPld({ parameters: data.parameters, justification: data.justification }, `rule:${id}`, key) });
     if (insertError) throw new Error("Não foi possível salvar a regra. Atualize e tente novamente.");
     const { logAudit } = await import("./audit.server");
     await logAudit(admin, { userId: context.userId, action: "pld.rule_version_created", resource: "pld_rule", resourceId: id, metadata: { version, enabled: data.enabled } });
@@ -97,35 +97,6 @@ export const runPldObservation = createServerFn({ method: "POST" }).middleware([
     if (!limit.allowed) throw new Error("Muitas consultas seguidas. Aguarde um pouco e tente novamente.");
     const key = process.env["WIIZEPAY_ENCRYPTION_KEY"] ?? process.env["WISE_PAY_ENCRYPTION_KEY"];
     if (!key) throw new Error("Conteúdo protegido indisponível.");
-    const { data: versions, error } = await admin.from("pld_rule_versions").select("*").order("version", { ascending: false });
-    if (error) throw new Error("Não foi possível carregar os dados.");
-    const latest = new Map<string, NonNullable<typeof versions>[number]>();
-    for (const v of versions ?? []) if (!latest.has(v.rule_code)) latest.set(v.rule_code, v);
-    let created = 0, insufficient = 0;
-    const { encryptPld, decryptPld } = await import("./pld-crypto.server");
-    const { tokenFingerprint } = await import("./crypto.server");
-    for (const rule of latest.values()) {
-      if (!rule.enabled) continue;
-      const stored = decryptPld(rule.parameters_enc, `rule:${rule.id}`, key) as { parameters: PldParameters };
-      const p = pldParameters.parse(stored.parameters), code = pldRuleCode.parse(rule.rule_code);
-      const end = new Date(); end.setUTCHours(0,0,0,0);
-      const start = new Date(end.getTime() - p.windowDays * 86400000), prev = new Date(start.getTime() - p.windowDays * 86400000);
-      const [{ data: payments, error: payError }, { data: withdrawals, error: wError }, { data: refunds, error: rError }] = await Promise.all([
-        admin.from("payments").select("id,gross_amount,paid_at,last_provider_event_id,provider_payment_id,provider_connection_id,status").eq("tenant_id", data.tenantId).eq("provider", "asaas").gte("paid_at", prev.toISOString()).lt("paid_at", end.toISOString()).limit(10001),
-        admin.from("withdrawals").select("id,amount,requested_at").eq("tenant_id", data.tenantId).not("status","in","(failed,cancelled)").gte("requested_at",start.toISOString()).lt("requested_at",end.toISOString()).limit(10001),
-        admin.from("refunds").select("id,refund_amount,completed_at").eq("tenant_id", data.tenantId).eq("status","completed").gte("completed_at",start.toISOString()).lt("completed_at",end.toISOString()).limit(10001),
-      ]);
-      if (payError || wError || rError || (payments?.length ?? 0)>10000 || (withdrawals?.length ?? 0)>10000 || (refunds?.length ?? 0)>10000) throw new Error("Dados insuficientes ou volume acima do limite de análise. Reduza o período.");
-      const rows = (payments ?? []).filter(r => r.paid_at).map(r => ({ id:r.id,amount:String(r.gross_amount),paidAt:r.paid_at ?? "",providerConfirmed:Boolean(r.provider_payment_id && r.provider_connection_id && r.last_provider_event_id && ["paid","refunded"].includes(r.status)) }));
-      const result = evaluatePldRule(code,p,rows.filter(r => r.paidAt>=start.toISOString()),rows.filter(r => r.paidAt<start.toISOString()),(withdrawals ?? []).map(r => ({ id:r.id,amount:String(r.amount),requestedAt:r.requested_at })),(refunds ?? []).map(r => ({ id:r.id,amount:String(r.refund_amount),completedAt:r.completed_at ?? "" })));
-      if (!result.sufficient) insufficient++;
-      if (!result.matched) continue;
-      const id = crypto.randomUUID(), sourceKey = tokenFingerprint(`${data.tenantId}:${rule.id}:${end.toISOString()}`);
-      const content = encryptPld({ reason: "Indicador de movimentação para análise humana", ...result, rule: code, ruleVersion:rule.version, source:"asaas_confirmed_records", from:start.toISOString(),to:end.toISOString() }, `${data.tenantId}:${id}`,key);
-      const { data: inserted, error: insertError } = await admin.from("pld_cases").upsert({ id,tenant_id:data.tenantId,rule_version_id:rule.id,source_key:sourceKey,content_enc:content },{ onConflict:"source_key",ignoreDuplicates:true }).select("id");
-      if (insertError) throw new Error("Não foi possível registrar o alerta.");
-      created += inserted?.length ?? 0;
-    }
-    await logAudit(admin,{ userId:context.userId,tenantId:data.tenantId,action:"pld.observation_completed",metadata:{ created,insufficient } });
-    return { created,insufficient };
+    const { observePldTenant } = await import("./pld-observation.server");
+    return observePldTenant(admin, data.tenantId, key, context.userId);
   });
