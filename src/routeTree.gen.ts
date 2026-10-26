@@ -90,6 +90,7 @@ import { Route as AuthenticatedNotasFiscaisIndexRouteImport } from './routes/_au
 import { Route as AuthenticatedNotasFiscaisIdRouteImport } from './routes/_authenticated/notas-fiscais.$id'
 import { Route as AuthenticatedNotasFiscaisConfiguracoesRouteImport } from './routes/_authenticated/notas-fiscais.configuracoes'
 import { Route as AjudaArtigoSlugRouteImport } from './routes/ajuda.artigo.$slug'
+import { Route as ApiPublicCronActivationFeeRouteImport } from './routes/api/public/cron/activation-fee'
 import { Route as ApiPublicCronNotificationsRouteImport } from './routes/api/public/cron/notifications'
 import { Route as ApiPublicCronPldRouteImport } from './routes/api/public/cron/pld'
 import { Route as ApiPublicExtDeliverRouteImport } from './routes/api/public/ext/deliver'
@@ -530,6 +531,12 @@ const AjudaArtigoSlugRoute = AjudaArtigoSlugRouteImport.update({
   path: '/artigo/$slug',
   getParentRoute: () => AjudaRoute,
 } as any)
+const ApiPublicCronActivationFeeRoute =
+  ApiPublicCronActivationFeeRouteImport.update({
+    id: '/api/public/cron/activation-fee',
+    path: '/api/public/cron/activation-fee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronNotificationsRoute =
   ApiPublicCronNotificationsRouteImport.update({
     id: '/api/public/cron/notifications',
@@ -726,6 +733,7 @@ export interface FileRoutesByFullPath {
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -828,6 +836,7 @@ export interface FileRoutesByTo {
   '/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/notas-fiscais': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -933,6 +942,7 @@ export interface FileRoutesById {
   '/_authenticated/notas-fiscais/configuracoes': typeof AuthenticatedNotasFiscaisConfiguracoesRoute
   '/ajuda/artigo/$slug': typeof AjudaArtigoSlugRoute
   '/_authenticated/notas-fiscais/': typeof AuthenticatedNotasFiscaisIndexRoute
+  '/api/public/cron/activation-fee': typeof ApiPublicCronActivationFeeRoute
   '/api/public/cron/notifications': typeof ApiPublicCronNotificationsRoute
   '/api/public/cron/pld': typeof ApiPublicCronPldRoute
   '/api/public/ext/deliver': typeof ApiPublicExtDeliverRoute
@@ -1038,6 +1048,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais/'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1140,6 +1151,7 @@ export interface FileRouteTypes {
     | '/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/notas-fiscais'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1244,6 +1256,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notas-fiscais/configuracoes'
     | '/ajuda/artigo/$slug'
     | '/_authenticated/notas-fiscais/'
+    | '/api/public/cron/activation-fee'
     | '/api/public/cron/notifications'
     | '/api/public/cron/pld'
     | '/api/public/ext/deliver'
@@ -1314,6 +1327,7 @@ export interface RootRouteChildren {
   TesteCheckoutTokenRoute: typeof TesteCheckoutTokenRoute
   VerificarCodeRoute: typeof VerificarCodeRoute
   VerificarIndexRoute: typeof VerificarIndexRoute
+  ApiPublicCronActivationFeeRoute: typeof ApiPublicCronActivationFeeRoute
   ApiPublicCronNotificationsRoute: typeof ApiPublicCronNotificationsRoute
   ApiPublicCronPldRoute: typeof ApiPublicCronPldRoute
   ApiPublicExtDeliverRoute: typeof ApiPublicExtDeliverRoute
@@ -1904,6 +1918,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AjudaArtigoSlugRouteImport
       parentRoute: typeof AjudaRoute
     }
+    '/api/public/cron/activation-fee': {
+      id: '/api/public/cron/activation-fee'
+      path: '/api/public/cron/activation-fee'
+      fullPath: '/api/public/cron/activation-fee'
+      preLoaderRoute: typeof ApiPublicCronActivationFeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/notifications': {
       id: '/api/public/cron/notifications'
       path: '/api/public/cron/notifications'
@@ -2218,6 +2239,7 @@ const rootRouteChildren: RootRouteChildren = {
   TesteCheckoutTokenRoute: TesteCheckoutTokenRoute,
   VerificarCodeRoute: VerificarCodeRoute,
   VerificarIndexRoute: VerificarIndexRoute,
+  ApiPublicCronActivationFeeRoute: ApiPublicCronActivationFeeRoute,
   ApiPublicCronNotificationsRoute: ApiPublicCronNotificationsRoute,
   ApiPublicCronPldRoute: ApiPublicCronPldRoute,
   ApiPublicExtDeliverRoute: ApiPublicExtDeliverRoute,
