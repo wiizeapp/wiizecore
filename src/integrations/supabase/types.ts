@@ -22,6 +22,7 @@ export type Database = {
           mime_type: string
           size_bytes: number
           storage_path: string
+          superseded_at: string | null
           tenant_id: string
           uploaded_by: string | null
         }
@@ -32,6 +33,7 @@ export type Database = {
           mime_type: string
           size_bytes: number
           storage_path: string
+          superseded_at?: string | null
           tenant_id: string
           uploaded_by?: string | null
         }
@@ -42,6 +44,7 @@ export type Database = {
           mime_type?: string
           size_bytes?: number
           storage_path?: string
+          superseded_at?: string | null
           tenant_id?: string
           uploaded_by?: string | null
         }
