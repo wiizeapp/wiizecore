@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
+import { scopedProviderEventId } from "@/lib/financial-scope";
 
 const payloadSchema = z
   .object({
@@ -39,8 +40,9 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
         const { tokenFingerprint } = await import("@/lib/crypto.server");
         const { data: conn } = await admin
           .from("provider_connections")
-          .select("tenant_id, webhook_token_ciphertext")
+          .select("id, tenant_id, webhook_token_ciphertext")
           .eq("provider", "asaas")
+          .eq("status", "connected")
           .eq("webhook_token_hash", tokenFingerprint(token))
           .not("webhook_token_ciphertext", "is", null);
         const matched = (conn ?? []).find((c) => {
@@ -52,14 +54,16 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
         });
         if (!matched) return new Response("Unauthorized", { status: 401 });
         const tenantId = matched.tenant_id;
+        const externalId = scopedProviderEventId(matched.id, parsed.id);
 
         const { data: inserted, error } = await admin
           .from("webhook_events")
           .insert({
             provider: "asaas",
-            external_event_id: parsed.id,
+            external_event_id: externalId,
             event_type: parsed.event,
             tenant_id: tenantId,
+            provider_connection_id: matched.id,
             payload: parsed as never,
             payload_hash: createHash("sha256").update(raw).digest("hex"),
           })
@@ -68,12 +72,15 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
 
         let eventId = inserted?.id;
         if (error) {
+          if (error.code !== "23505") return new Response("error", { status: 503 });
           // Evento repetido (idempotência): reprocessa apenas se ainda não foi concluído.
           const { data: existing } = await admin
             .from("webhook_events")
             .select("id, processing_status")
             .eq("provider", "asaas")
-            .eq("external_event_id", parsed.id)
+            .eq("tenant_id", tenantId)
+            .eq("provider_connection_id", matched.id)
+            .eq("external_event_id", externalId)
             .maybeSingle();
           if (!existing) return new Response("error", { status: 500 });
           if (existing.processing_status === "processed" || existing.processing_status === "discarded") {
@@ -82,7 +89,12 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
           eventId = existing.id;
         }
 
-        await processWebhookEvent(admin, eventId!);
+        if (!eventId) return new Response("error", { status: 503 });
+        try {
+          await processWebhookEvent(admin, eventId);
+        } catch {
+          return new Response("retry", { status: 503 });
+        }
         return new Response("ok", { status: 200 });
       },
     },

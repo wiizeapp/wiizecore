@@ -2,19 +2,23 @@ import { DEPLOY_CONFIG } from "./deploy-config";
 import { AsaasProvider, billingTypeToMethod, eventToStatus, type ProviderPayment } from "./asaas.server";
 import { decryptSecret } from "./crypto.server";
 import { calculatePaymentFee, type FeeMethod } from "./fee-engine.server";
+import { scopedProviderEventId } from "./financial-scope";
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
-export async function getTenantProvider(admin: AdminClient, tenantId: string) {
-  const { data } = await admin
+export async function getTenantProvider(admin: AdminClient, tenantId: string, connectionId?: string) {
+  let query = admin
     .from("provider_connections")
     .select("id, environment, api_key_ciphertext, status, webhook_token_ciphertext, webhook_id, wallet_id")
     .eq("tenant_id", tenantId)
     .eq("provider", "asaas")
-    .eq("status", "connected")
+    .eq("status", "connected");
+  if (connectionId) query = query.eq("id", connectionId);
+  const { data, error } = await query
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+  if (error) throw new Error("Não foi possível conferir a conta de pagamentos.");
   if (!data?.api_key_ciphertext) return null;
   const environment = data.environment as "sandbox" | "production";
   return {
@@ -52,36 +56,21 @@ export async function computePlatformFeeDetails(
 
 type WebhookPayload = { id?: string; event?: string; dateCreated?: string; payment?: ProviderPayment & Record<string, unknown> };
 
-/** Descobre a qual empresa pertence o evento — antes de qualquer processamento. */
-export async function resolveWebhookTenant(admin: AdminClient, payload: WebhookPayload): Promise<string | null> {
-  const p = payload.payment;
-  if (!p?.id) return null;
-  const { data: byId } = await admin.from("payments").select("tenant_id").eq("provider", "asaas").eq("provider_payment_id", p.id).maybeSingle();
-  if (byId) return byId.tenant_id;
-  const { data: attempt } = await admin.from("payment_attempts").select("tenant_id").eq("provider_payment_id", p.id).maybeSingle();
-  if (attempt) return attempt.tenant_id;
-  if (p.installment) {
-    const { data } = await admin.from("payments").select("tenant_id").eq("provider_installment_id", p.installment).limit(1).maybeSingle();
-    if (data) return data.tenant_id;
-  }
-  if (p.subscription) {
-    const { data } = await admin.from("subscriptions").select("tenant_id").eq("provider_subscription_id", p.subscription).maybeSingle();
-    if (data) return data.tenant_id;
-  }
-  return null;
-}
-
-async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: ProviderPayment) {
-  const { data: existing } = await admin.from("payments").select("id").eq("provider", "asaas").eq("provider_payment_id", p.id).maybeSingle();
+export async function findOrCreatePayment(admin: AdminClient, tenantId: string, connectionId: string, p: ProviderPayment) {
+  const { data: existing, error: existingError } = await admin.from("payments").select("id")
+    .eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider", "asaas").eq("provider_payment_id", p.id).maybeSingle();
+  if (existingError) throw new Error("payment_lookup_failed");
   if (existing) return existing.id;
 
   // Primeira cobrança de uma recorrência cujo registro local ainda aguarda o ID do provedor.
   if (p.subscription) {
-    const { data: sub } = await admin.from("subscriptions").select("id").eq("tenant_id", tenantId).eq("provider_subscription_id", p.subscription).maybeSingle();
+    const { data: sub, error: subError } = await admin.from("subscriptions").select("id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_subscription_id", p.subscription).maybeSingle();
+    if (subError) throw new Error("subscription_lookup_failed");
     if (sub) {
-      const { data: placeholder } = await admin.from("payments").select("id").eq("subscription_id", sub.id).is("provider_payment_id", null).limit(1).maybeSingle();
+      const { data: placeholder } = await admin.from("payments").select("id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("subscription_id", sub.id).is("provider_payment_id", null).limit(1).maybeSingle();
       if (placeholder) {
-        await admin.from("payments").update({ provider_payment_id: p.id, status: "awaiting_payment", ...(p.dueDate ? { due_on: p.dueDate } : {}) }).eq("id", placeholder.id);
+        const { data: attached, error } = await admin.from("payments").update({ provider_payment_id: p.id, status: "awaiting_payment", ...(p.dueDate ? { due_on: p.dueDate } : {}) }).eq("id", placeholder.id).eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).is("provider_payment_id", null).select("id").maybeSingle();
+        if (error || !attached) throw new Error("payment_attach_failed");
         return placeholder.id;
       }
     }
@@ -93,19 +82,21 @@ async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: Prov
       .from("payments")
       .select("id")
       .eq("tenant_id", tenantId)
+      .eq("provider_connection_id", connectionId)
       .eq("provider_installment_id", p.installment)
       .eq("installment_number", p.installmentNumber)
       .is("provider_payment_id", null)
       .limit(1)
       .maybeSingle();
     if (installmentPlaceholder) {
-      await admin.from("payments").update({
+      const { data: attached, error } = await admin.from("payments").update({
         provider_payment_id: p.id,
         status: "awaiting_payment",
         ...(p.dueDate ? { due_on: p.dueDate } : {}),
         ...(p.invoiceUrl ? { invoice_url: p.invoiceUrl } : {}),
         ...(p.bankSlipUrl ? { bank_slip_url: p.bankSlipUrl } : {}),
-      }).eq("id", installmentPlaceholder.id).eq("tenant_id", tenantId);
+      }).eq("id", installmentPlaceholder.id).eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).is("provider_payment_id", null).select("id").maybeSingle();
+      if (error || !attached) throw new Error("payment_attach_failed");
       return installmentPlaceholder.id;
     }
   }
@@ -117,12 +108,12 @@ async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: Prov
   } | null = null;
   const cols = "charge_group_id, customer_id, service_id, contract_id, subscription_id, description, installment_count";
   if (p.installment) {
-    const { data } = await admin.from("payments").select(cols).eq("tenant_id", tenantId).eq("provider_installment_id", p.installment).limit(1).maybeSingle();
+    const { data } = await admin.from("payments").select(cols).eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_installment_id", p.installment).limit(1).maybeSingle();
     sibling = data;
   } else if (p.subscription) {
-    const { data: sub } = await admin.from("subscriptions").select("id").eq("tenant_id", tenantId).eq("provider_subscription_id", p.subscription).maybeSingle();
+    const { data: sub } = await admin.from("subscriptions").select("id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider_subscription_id", p.subscription).maybeSingle();
     if (sub) {
-      const { data } = await admin.from("payments").select(cols).eq("subscription_id", sub.id).limit(1).maybeSingle();
+      const { data } = await admin.from("payments").select(cols).eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("subscription_id", sub.id).limit(1).maybeSingle();
       sibling = data;
     }
   }
@@ -134,6 +125,7 @@ async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: Prov
     .from("payments")
     .insert({
       tenant_id: tenantId,
+      provider_connection_id: connectionId,
       charge_group_id: sibling.charge_group_id,
       customer_id: sibling.customer_id,
       service_id: sibling.service_id,
@@ -162,8 +154,9 @@ async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: Prov
     .select("id")
     .single();
   if (error) {
+    if (error.code !== "23505") throw new Error("payment_insert_failed");
     // Corrida com outro evento do mesmo pagamento: usa o registro já criado.
-    const { data } = await admin.from("payments").select("id").eq("provider", "asaas").eq("provider_payment_id", p.id).maybeSingle();
+    const { data } = await admin.from("payments").select("id").eq("tenant_id", tenantId).eq("provider_connection_id", connectionId).eq("provider", "asaas").eq("provider_payment_id", p.id).maybeSingle();
     return data?.id ?? null;
   }
   return inserted.id;
@@ -172,18 +165,22 @@ async function findOrCreatePayment(admin: AdminClient, tenantId: string, p: Prov
 /** Processa um evento já autenticado e registrado. Idempotente. */
 export async function processWebhookEvent(admin: AdminClient, eventId: string) {
   const { data: event } = await admin.from("webhook_events").select("*").eq("id", eventId).single();
-  if (!event || !event.tenant_id) return;
+  if (!event || !event.tenant_id) throw new Error("event_scope_missing");
   if (event.processing_status === "processed" || event.processing_status === "discarded") return;
+  if (!event.provider_connection_id) throw new Error("event_origin_ambiguous");
+  const connectionId = event.provider_connection_id;
+  const connection = await getTenantProvider(admin, event.tenant_id, connectionId);
+  if (!connection) throw new Error("event_connection_unavailable");
 
   // Trava atômica: só um processo por vez assume o evento. "processing" travado há mais de 2 min pode ser retomado.
   const staleBefore = new Date(Date.now() - 120_000).toISOString();
   const { data: claimed } = await admin
     .from("webhook_events")
-    .update({ processing_status: "processing" })
+    .update({ processing_status: "processing", processing_started_at: new Date().toISOString() })
     .eq("id", eventId)
-    .or(`processing_status.in.(received,failed),and(processing_status.eq.processing,received_at.lt.${staleBefore})`)
+    .or(`processing_status.in.(received,failed),and(processing_status.eq.processing,processing_started_at.lt.${staleBefore})`)
     .select("id");
-  if (!claimed?.length) return;
+  if (!claimed?.length) throw new Error("event_busy");
   try {
     const payload = event.payload as WebhookPayload;
     if (event.event_type.startsWith("ACCOUNT_STATUS_")) {
@@ -205,7 +202,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     const p = payload.payment;
     if (p?.id && ["PAYMENT_REFUNDED", "PAYMENT_PARTIALLY_REFUNDED", "PAYMENT_REFUND_IN_PROGRESS", "PAYMENT_REFUND_DENIED"].includes(event.event_type)) {
       const { handleRefundWebhook } = await import("./refunds.server");
-      if (await handleRefundWebhook(admin, event.tenant_id, p.id, event.event_type, event.external_event_id)) {
+      if (await handleRefundWebhook(admin, event.tenant_id, p.id, event.event_type, event.external_event_id, connectionId)) {
         await admin.from("webhook_events").update({ processing_status: "processed", error_message: null, processed_at: new Date().toISOString() }).eq("id", eventId);
         return;
       }
@@ -217,12 +214,12 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     }
     {
       const { isSupersededProviderPayment } = await import("./payment-attempts.server");
-      if (await isSupersededProviderPayment(admin, p.id)) {
+      if (await isSupersededProviderPayment(admin, event.tenant_id, connectionId, p.id)) {
         await admin.from("webhook_events").update({ processing_status: "discarded", error_message: "Tentativa substituída", processed_at: new Date().toISOString() }).eq("id", eventId);
         return;
       }
     }
-    const paymentId = await findOrCreatePayment(admin, event.tenant_id, p);
+    const paymentId = await findOrCreatePayment(admin, event.tenant_id, connectionId, p);
     if (!paymentId) {
       await admin.from("webhook_events").update({ processing_status: "discarded", error_message: "Pagamento desconhecido", processed_at: new Date().toISOString() }).eq("id", eventId);
       return;
@@ -238,7 +235,6 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       .maybeSingle();
     const providerCustomerId = (paymentOwner?.customers as { provider_customer_id?: string | null } | null)?.provider_customer_id;
     if (providerCustomerId) {
-      const connection = await getTenantProvider(admin, event.tenant_id);
       if (connection) {
         const { applyDunning } = await import("./dunning.server");
         await applyDunning(admin, connection.provider, { tenantId: event.tenant_id, paymentId, providerCustomerId })
@@ -248,7 +244,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
 
     const method = billingTypeToMethod(p.billingType);
     const providerEventAt = payload.dateCreated ?? p.dateCreated ?? event.received_at;
-    const { data: currentPayment } = await admin.from("payments").select("last_provider_event_at").eq("id", paymentId).single();
+    const { data: currentPayment } = await admin.from("payments").select("last_provider_event_at").eq("id", paymentId).eq("tenant_id", event.tenant_id).eq("provider_connection_id", connectionId).single();
     if (currentPayment?.last_provider_event_at && new Date(providerEventAt) < new Date(currentPayment.last_provider_event_at)) {
       await admin.from("webhook_events").update({ processing_status: "discarded", error_message: "Evento anterior ao último processado", processed_at: new Date().toISOString() }).eq("id", eventId);
       return;
@@ -263,7 +259,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
          last_provider_event_id: event.external_event_id,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", paymentId);
+      .eq("id", paymentId).eq("tenant_id", event.tenant_id).eq("provider_connection_id", connectionId);
 
     const raw = p as Record<string, unknown>;
     const paidDate = (raw["clientPaymentDate"] ?? raw["paymentDate"] ?? raw["confirmedDate"]) as string | undefined;
@@ -278,7 +274,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       args._paid_at = paidDate ? new Date(`${paidDate}T12:00:00-03:00`).toISOString() : new Date().toISOString();
       if (providerFee != null) args._provider_fee = providerFee;
       const { calculateEstimatedAvailability } = await import("./settlement-rules");
-      const { data: meta } = await admin.from("payments").select("method, installment_number, installment_count, created_at").eq("id", paymentId).single();
+      const { data: meta } = await admin.from("payments").select("method, installment_number, installment_count, created_at").eq("id", paymentId).eq("tenant_id", event.tenant_id).eq("provider_connection_id", connectionId).single();
       const est = calculateEstimatedAvailability({
         paymentMethod: method ?? meta?.method ?? null,
         paymentDate: meta?.created_at ?? null,
@@ -315,7 +311,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     // Linha do tempo da cobrança e estado da tentativa confirmada pelo provedor.
     try {
       const attemptStatus = status === "paid" ? "paid" : status === "failed" ? "failed" : status === "cancelled" ? "cancelled" : null;
-      if (attemptStatus) await admin.from("payment_attempts").update({ status: attemptStatus }).eq("provider_payment_id", p.id).eq("status", "active");
+      if (attemptStatus) await admin.from("payment_attempts").update({ status: attemptStatus }).eq("tenant_id", event.tenant_id).eq("provider_connection_id", connectionId).eq("provider_payment_id", p.id).eq("status", "active");
       const { logChargeEvent } = await import("./payment-attempts.server");
       await logChargeEvent(admin, { tenantId: event.tenant_id, paymentId, type: `provider.${status}`, metadata: { event: event.event_type } });
     } catch (e) {
@@ -337,7 +333,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     try {
       const { enqueueWiizeChargeEvent } = await import("./wiize-pay-oauth.server");
       await enqueueWiizeChargeEvent(admin, paymentId, status);
-      const { data: grp } = await admin.from("payments").select("charge_group_id").eq("id", paymentId).maybeSingle();
+      const { data: grp } = await admin.from("payments").select("charge_group_id").eq("id", paymentId).eq("tenant_id", event.tenant_id).maybeSingle();
       if (grp?.charge_group_id) {
         const { enqueueWiizeSaleEvent, triggerForStatus } = await import("./wiize-sale-sync.server");
         await enqueueWiizeSaleEvent(admin, event.tenant_id, grp.charge_group_id, triggerForStatus(status));
@@ -364,6 +360,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
         error_message: error instanceof Error ? error.message.slice(0, 500) : "Erro desconhecido",
       })
       .eq("id", eventId);
+    throw new Error("event_processing_failed");
   }
 }
 
@@ -373,7 +370,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
  */
 export async function reimburseProviderFee(admin: AdminClient, paymentId: string) {
   const { data: p } = await admin.from("payments")
-    .select("tenant_id, provider_fee_amount, provider_fee_covered_amount, provider_fee_reimbursement_id")
+    .select("tenant_id, provider_connection_id, provider_fee_amount, provider_fee_covered_amount, provider_fee_reimbursement_id")
     .eq("id", paymentId).single();
   // Só devolve a parte do custo real que a divisão da cobrança ainda não cobriu.
   const { reimbursementCents } = await import("./provider-fee-quote");
@@ -385,7 +382,9 @@ export async function reimburseProviderFee(admin: AdminClient, paymentId: string
     return;
   }
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
-  const { data: conn } = await admin.from("provider_connections").select("wallet_id").eq("tenant_id", p.tenant_id).eq("provider", "asaas").eq("status", "connected").limit(1).maybeSingle();
+  const { getPaymentProvider } = await import("./financial-origin.server");
+  const original = await getPaymentProvider(admin, p.tenant_id, paymentId);
+  const conn = original?.connection;
   if (!masterKey || !conn?.wallet_id) return;
   // Trava otimista: marca antes para impedir duplicidade em eventos simultâneos.
   const { data: locked } = await admin.from("payments").update({ provider_fee_reimbursement_id: "pending" })
@@ -432,7 +431,8 @@ const PROVIDER_STATUS_TO_EVENT: Record<string, string> = {
  * Cobre avisos perdidos (ex.: webhook ainda não registrado). Nunca usa dados do navegador.
  */
 export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId: string, paymentId: string) {
-  const conn = await getTenantProvider(admin, tenantId);
+  const { getPaymentProvider } = await import("./financial-origin.server");
+  const conn = await getPaymentProvider(admin, tenantId, paymentId);
   if (!conn) throw new Error("Conta de pagamentos não ativada.");
   const { data: row } = await admin
     .from("payments")
@@ -445,25 +445,30 @@ export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId:
   await checkPaymentDivergence(admin, tenantId, paymentId, remote);
   const eventType = PROVIDER_STATUS_TO_EVENT[String(remote.status)];
   if (!eventType) return { status: "unchanged" as const };
-  const externalId = `reconcile:${row.provider_payment_id}:${remote.status}`;
+  if (remote.id !== row.provider_payment_id) throw new Error("provider_payment_mismatch");
+  const externalId = scopedProviderEventId(conn.connection.id, `reconcile:${row.provider_payment_id}:${remote.status}`);
   const payload = { id: externalId, event: eventType, dateCreated: new Date().toISOString(), payment: remote };
-  const { data: inserted } = await admin
+  const { data: inserted, error: insertError } = await admin
     .from("webhook_events")
     .insert({
       provider: "asaas",
       external_event_id: externalId,
       event_type: eventType,
       tenant_id: tenantId,
+      provider_connection_id: conn.connection.id,
       payload: payload as never,
     })
     .select("id")
     .maybeSingle();
   let eventId = inserted?.id;
   if (!eventId) {
+    if (insertError?.code !== "23505") throw new Error("event_insert_failed");
     const { data: existing } = await admin
       .from("webhook_events")
       .select("id, processing_status")
       .eq("provider", "asaas")
+      .eq("tenant_id", tenantId)
+      .eq("provider_connection_id", conn.connection.id)
       .eq("external_event_id", externalId)
       .maybeSingle();
     if (!existing || existing.processing_status === "processed" || existing.processing_status === "discarded") {
@@ -477,7 +482,7 @@ export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId:
 
 /** Conferência: compara valor bruto e taxa Wiize Core com o registrado no provedor. */
 export async function checkPaymentDivergence(admin: AdminClient, tenantId: string, paymentId: string, remote: ProviderPayment) {
-  const { data: p } = await admin.from("payments").select("gross_amount, platform_fee_amount, provider_fee_covered_amount").eq("id", paymentId).maybeSingle();
+  const { data: p } = await admin.from("payments").select("gross_amount, platform_fee_amount, provider_fee_covered_amount").eq("id", paymentId).eq("tenant_id", tenantId).maybeSingle();
   if (!p) return;
   const r = remote as ProviderPayment & Record<string, unknown>;
   const issues: { kind: string; expected: number; actual: number }[] = [];
