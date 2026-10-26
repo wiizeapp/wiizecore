@@ -89,9 +89,7 @@ export async function splitFor(admin: Admin, chargeGroupId: string, gross: numbe
 export async function applySplitToOpenPayments(admin: Admin, coproductionId: string) {
   const { data: cp } = await db(admin).from("payment_coproductions").select("id, tenant_id, charge_group_id, status").eq("id", coproductionId).single();
   if (!cp || cp.status !== "active") return;
-  const { getTenantProvider } = await import("./billing.server");
-  const conn = await getTenantProvider(admin, cp.tenant_id);
-  if (!conn) throw new Error("Conta de pagamentos não ativada.");
+  const { getPaymentProvider } = await import("./financial-origin.server");
   const { data: rows } = await admin.from("payments").select("id, provider_payment_id, gross_amount, platform_fee_amount, status").eq("tenant_id", cp.tenant_id).eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
   const errors: string[] = [];
   // Recorrência: a divisão vai na assinatura do Asaas, então todo novo ciclo já nasce dividido.
@@ -100,6 +98,9 @@ export async function applySplitToOpenPayments(admin: Admin, coproductionId: str
   if (sub?.provider_subscription_id) {
     try {
       const ref = rows?.[0];
+      if (!ref) throw new Error("Cobrança não encontrada.");
+      const conn = await getPaymentProvider(admin, cp.tenant_id, ref.id);
+      if (!conn) throw new Error("Conta de pagamentos não ativada.");
       const fee = Number(ref?.platform_fee_amount ?? 0);
       const split = await splitFor(admin, cp.charge_group_id, Number(ref?.gross_amount ?? sub.amount), fee);
       await conn.provider.updateSubscription(sub.provider_subscription_id, { split, updatePendingPayments: true });
@@ -109,8 +110,10 @@ export async function applySplitToOpenPayments(admin: Admin, coproductionId: str
   }
   for (const r of rows ?? []) {
     try {
+      const conn = await getPaymentProvider(admin, cp.tenant_id, r.id);
+      if (!conn || !r.provider_payment_id) throw new Error("Conta de pagamentos não ativada.");
       const split = await splitFor(admin, cp.charge_group_id, Number(r.gross_amount), Number(r.platform_fee_amount ?? 0));
-      await conn.provider.updatePayment(r.provider_payment_id!, { split });
+      await conn.provider.updatePayment(r.provider_payment_id, { split });
     } catch (e) {
       errors.push(e instanceof Error ? e.message.slice(0, 200) : "erro");
     }
@@ -131,8 +134,8 @@ export async function recordSplitFromProvider(admin: Admin, paymentId: string, r
   if (!cp || !cp.parts.length) return;
   let split = (remote?.["split"] as { walletId?: string; totalValue?: number; fixedValue?: number; status?: string }[] | undefined) ?? null;
   if (!split?.length && p.provider_payment_id) {
-    const { getTenantProvider } = await import("./billing.server");
-    const conn = await getTenantProvider(admin, p.tenant_id);
+    const { getPaymentProvider } = await import("./financial-origin.server");
+    const conn = await getPaymentProvider(admin, p.tenant_id, p.id);
     const fresh = conn ? ((await conn.provider.getPayment(p.provider_payment_id)) as unknown as Record<string, unknown>) : null;
     split = (fresh?.["split"] as typeof split) ?? null;
   }
@@ -185,8 +188,8 @@ export async function syncRefundsFromProvider(admin: Admin, paymentId: string, c
   if (!p?.provider_payment_id) return 0;
   const { data: splits } = await db(admin).from("coproduction_splits").select("participant_id").eq("payment_id", paymentId);
   if (!splits?.length) return 0;
-  const { getTenantProvider } = await import("./billing.server");
-  const conn = await getTenantProvider(admin, p.tenant_id);
+  const { getPaymentProvider } = await import("./financial-origin.server");
+  const conn = await getPaymentProvider(admin, p.tenant_id, p.id);
   if (!conn) return 0;
   const remote = (await conn.provider.getPayment(p.provider_payment_id)) as unknown as Record<string, unknown>;
   const remoteSplit = (remote["split"] as { id?: string; walletId?: string }[] | undefined) ?? [];

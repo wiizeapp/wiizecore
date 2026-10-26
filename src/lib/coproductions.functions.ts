@@ -133,11 +133,11 @@ export const cancelCoproduction = createServerFn({ method: "POST" })
     await a.from("payment_coproduction_participants").update({ status: "cancelled", updated_at: now }).eq("coproduction_id", cp.id).in("status", ["pending", "accepted"]);
     // Se a divisão já estava no Asaas, volta a deixar só a taxa Wiize Core nas parcelas abertas.
     if (cp.split_applied_at) {
-      const { getTenantProvider } = await import("./billing.server");
+      const { getPaymentProvider } = await import("./financial-origin.server");
       const { splitFor } = await import("./coproduction.server");
-      const conn = await getTenantProvider(a, cp.tenant_id);
-      const { data: rows } = await a.from("payments").select("provider_payment_id, gross_amount, platform_fee_amount").eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
+      const { data: rows } = await a.from("payments").select("id, provider_payment_id, gross_amount, platform_fee_amount").eq("tenant_id", cp.tenant_id).eq("charge_group_id", cp.charge_group_id).in("status", ["created", "awaiting_payment", "overdue"]).not("provider_payment_id", "is", null);
       for (const r of rows ?? []) {
+        const conn = await getPaymentProvider(admin, cp.tenant_id, r.id);
         await conn?.provider.updatePayment(r.provider_payment_id, { split: await splitFor(a, cp.charge_group_id, Number(r.gross_amount), Number(r.platform_fee_amount ?? 0)) }).catch((e) => console.error("coproduction unsplit", e instanceof Error ? e.message : "x"));
       }
     }
