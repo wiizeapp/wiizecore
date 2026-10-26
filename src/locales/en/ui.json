@@ -5699,5 +5699,16 @@
   "Aguardando pagamento...": "Waiting for payment...",
   "Taxa única, cobrada uma vez por empresa. Após o envio dos documentos, não é reembolsável, pois o valor custeia a abertura da conta, a análise de documentos e a ativação da infraestrutura de pagamentos. O pagamento não garante aprovação.": "One-time fee, charged once per company. After documents are submitted it is non-refundable, as it covers account opening, document review and payment infrastructure activation. Payment does not guarantee approval.",
   "Li e concordo com as condições da taxa de ativação, incluindo a não devolução após o envio dos documentos, os": "I have read and agree to the activation fee conditions, including no refund after documents are submitted, the",
-  "Política de Reembolso": "Refund Policy"
+  "Política de Reembolso": "Refund Policy",
+  "Teste à vontade": "Test freely",
+  "Crie cobranças, links e checkouts no modo de teste.": "Create charges, links and checkouts in test mode.",
+  "Simule pagamentos": "Simulate payments",
+  "Veja todo o fluxo funcionando, sem dinheiro real.": "See the whole flow working, with no real money.",
+  "Aviso no lançamento": "Launch notice",
+  "Você recebe um e-mail assim que a produção for liberada.": "You'll get an email as soon as production is released.",
+  "Versão beta": "Beta version",
+  "A conta de produção chega em breve": "Your production account is coming soon",
+  "A WiizeCore está na versão beta. Por enquanto, é possível apenas testar e simular pagamentos. Em breve vamos liberar o acesso à conta de produção para você receber de verdade.": "WiizeCore is in beta. For now you can only test and simulate payments. Soon we will open access to the production account so you can receive real payments.",
+  "Fique tranquilo:": "Don't worry:",
+  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "as soon as we release it, you'll be notified here and by email."
 }
