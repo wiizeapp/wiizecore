@@ -17,7 +17,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/app-shell";
 import { getAdminOverview, getAdminStatus, getTenantAccounts, getTenantDetail, listAdminWithdrawals, reviewWithdrawal, updatePlatformSetting } from "@/lib/admin.functions";
-import { ensureTwoFactor, getMfaState } from "@/lib/mfa-step-up";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +29,7 @@ import { AdminActivations } from "@/components/admin-activations";
 import { AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-console";
 import { AdminAuditSecurity } from "@/components/admin/admin-audit-security";
 import { AdminUnlockGate } from "@/components/admin/admin-unlock-gate";
+import { AdminPld } from "@/components/admin/admin-pld";
 
 export const Route = createFileRoute("/_authenticated/nimda")({
   head: () => ({
@@ -289,6 +289,7 @@ function AdminContent() {
     sugestoes: <AdminSuggestions />,
     suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da Wiize Core."),
     auditoria: <AdminAuditSecurity />,
+    pld: <AdminPld />,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,
     permissoes: soon("Permissões", "Hoje existe um único papel administrativo, com verificação em duas etapas obrigatória. Papéis separados (financeiro, suporte, leitura) virão numa próxima etapa."),
     admins: <div className="surface-panel p-4"><AdminUsers /></div>,
