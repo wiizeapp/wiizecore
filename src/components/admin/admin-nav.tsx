@@ -45,7 +45,7 @@ export const ADMIN_GROUPS: { id: string; label: string; icon: typeof Users; item
     { id: "caixa", label: "Caixa de entrada", icon: Inbox },
     { id: "sugestoes", label: "Sugestões de usuários", icon: Lightbulb },
     { id: "suporte", label: "Suporte", icon: LifeBuoy },
-    { id: "auditoria", label: "Logs e auditoria", icon: ShieldCheck },
+    { id: "auditoria", label: "Auditoria e Segurança", icon: ShieldCheck },
   ] },
   { id: "administracao", label: "Administração", icon: Settings, items: [
     { id: "configuracoes", label: "Configurações", icon: Settings },
