@@ -2,12 +2,12 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useTranslation } from "react-i18next";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Check, Copy, Loader2, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/useAuth";
 import { generateRecoveryCodes, recordMfaChange } from "@/lib/security.functions";
@@ -43,6 +43,7 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
   const [backup, setBackup] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [done, setDone] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const needsSetup = data && !data.verified && !done;
 
@@ -131,28 +132,51 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
             </>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a Wiize Core.")}</p>
-              <ol className="space-y-1 text-sm">
-                <li>{ui("1. Instale um aplicativo autenticador (Google Authenticator, Microsoft Authenticator ou similar).")}</li>
-                <li>{ui("2. Leia o QR Code ou digite a chave abaixo.")}</li>
-                <li>{ui("3. Digite o código de 6 dígitos que aparece no aplicativo.")}</li>
-              </ol>
+              <p className="text-sm text-muted-foreground">{ui("A verificação em duas etapas é obrigatória para usar a WiizeCore.")}</p>
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <p className="flex items-center gap-2 text-sm font-semibold"><Lock className="h-4 w-4 text-primary" />{ui("Por que ativar?")}</p>
+                <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.")}</li>
+                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Protege seu saldo, saques e os dados dos seus clientes.")}</li>
+                  <li className="flex gap-2"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />{ui("Segue o padrão de segurança exigido por instituições financeiras.")}</li>
+                </ul>
+              </div>
               {enrollment ? (
-                <>
-                  <img
-                    src={enrollment.qr.startsWith("data:") ? enrollment.qr : `data:image/svg+xml;utf8,${encodeURIComponent(enrollment.qr)}`}
-                    alt={ui("QR Code para o aplicativo autenticador")}
-                    className="mx-auto h-44 w-44 rounded-lg bg-card p-2"
-                  />
-                  <div className="text-xs text-muted-foreground">
-                    {ui("Chave para digitar no aplicativo")}: <span className="select-all break-all font-mono text-foreground">{enrollment.secret}</span>
-                  </div>
-                  <form onSubmit={confirm} className="space-y-3">
-                    <label className="block text-sm font-medium" htmlFor="mfa-setup-code">{ui("Código de 6 dígitos")}</label>
-                    <Input id="mfa-setup-code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} autoFocus />
-                    <Button className="w-full" disabled={busy || code.length !== 6}>{busy ? <Loader2 className="animate-spin" /> : null}{ui("Confirmar e ativar")}</Button>
-                  </form>
-                </>
+                <ol className="space-y-5">
+                  <Step n={1} title={ui("Instale um aplicativo autenticador")}>
+                    <p>{ui("Use o Google Authenticator, Microsoft Authenticator ou outro de sua preferência. Eles são gratuitos na loja do seu celular.")}</p>
+                  </Step>
+                  <Step n={2} title={ui("Leia o QR Code com o aplicativo")}>
+                    <p>{ui("No aplicativo, toque em adicionar conta e aponte a câmera para o código abaixo.")}</p>
+                    <div className="mt-3 flex justify-center">
+                      <img
+                        src={enrollment.qr.startsWith("data:") ? enrollment.qr : `data:image/svg+xml;utf8,${encodeURIComponent(enrollment.qr)}`}
+                        alt={ui("QR Code para o aplicativo autenticador")}
+                        className="h-44 w-44 rounded-xl border border-border bg-white p-2 shadow-sm"
+                      />
+                    </div>
+                    <p className="mt-3 text-xs">{ui("Não consegue ler? Digite esta chave no aplicativo:")}</p>
+                    <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-2">
+                      <span className="flex-1 select-all break-all font-mono text-xs text-foreground">{enrollment.secret}</span>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => { void navigator.clipboard.writeText(enrollment.secret).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }}>
+                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}{copied ? ui("Copiado!") : ui("Copiar")}
+                      </Button>
+                    </div>
+                  </Step>
+                  <Step n={3} title={ui("Digite o código de 6 dígitos")}>
+                    <p>{ui("Informe o número que aparece no aplicativo. Ele muda a cada 30 segundos.")}</p>
+                    <form onSubmit={confirm} className="mt-3 space-y-4">
+                      <div className="flex justify-center">
+                        <InputOTP id="mfa-setup-code" maxLength={6} value={code} onChange={(v) => setCode(v.replace(/\D/g, ""))} autoFocus inputMode="numeric" autoComplete="one-time-code" aria-label={ui("Código de 6 dígitos")}>
+                          <InputOTPGroup className="gap-2">
+                            {[0, 1, 2, 3, 4, 5].map((i) => <InputOTPSlot key={i} index={i} className="h-12 w-11 rounded-lg border text-lg font-semibold first:rounded-lg last:rounded-lg" />)}
+                          </InputOTPGroup>
+                        </InputOTP>
+                      </div>
+                      <Button className="w-full" disabled={busy || code.length !== 6}>{busy ? <Loader2 className="animate-spin" /> : null}{ui("Confirmar e ativar")}</Button>
+                    </form>
+                  </Step>
+                </ol>
               ) : (
                 <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" aria-label={ui("Carregando...")} /></div>
               )}
@@ -161,6 +185,18 @@ export function MandatoryMfaGate({ children }: { children: ReactNode }) {
         </div>
       </main>
     </div>
+  );
+}
+
+function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{n}</span>
+      <div className="min-w-0 flex-1 text-sm text-muted-foreground">
+        <p className="mb-1 font-semibold text-foreground">{title}</p>
+        {children}
+      </div>
+    </li>
   );
 }
 
