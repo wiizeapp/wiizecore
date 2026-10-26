@@ -1,4 +1,5 @@
 import { getSecurityStatus } from "@/lib/security.functions";
+import { ActivationProductionIndicator } from "@/components/activation-production-indicator";
 import { Plug, Percent, Palette, FolderOpen, TicketPercent, Handshake, KeyRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getMyAccess, trackActivity } from "@/lib/team.functions";
@@ -380,7 +381,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Badge variant="outline" className="hidden sm:inline-flex">{ui("Senha financeira pendente")}</Badge>
             ) : null}
             <PrivacyToggle />
-            {workspace?.tenantId ? <NotificationsBell tenantId={workspace.tenantId} /> : null}
+            {workspace?.tenantId ? <><ActivationProductionIndicator /><NotificationsBell tenantId={workspace.tenantId} /></> : null}
             <Button asChild size="sm" className="gap-1.5">
               <Link to="/cobrancas" search={{ nova: true }}><Plus className="size-4" />{ui("Criar cobrança")}</Link>
             </Button>
