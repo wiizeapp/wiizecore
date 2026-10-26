@@ -1,14 +1,11 @@
-import { assertBrasilScope } from "./financial-scope";
-
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 /** Never substitute a payment's original account with the latest connected account. */
 export async function getPaymentProvider(admin: Admin, tenantId: string, paymentId: string) {
   const { data: p, error } = await admin.from("payments")
-    .select("id, provider_connection_id, operation, currency")
+    .select("id, provider_connection_id")
     .eq("tenant_id", tenantId).eq("id", paymentId).maybeSingle();
   if (error || !p) throw new Error("Cobrança não encontrada.");
-  assertBrasilScope(p);
   const { getTenantProvider } = await import("./billing.server");
   if (p.provider_connection_id) return getTenantProvider(admin, tenantId, p.provider_connection_id);
   const { data: connections, error: connectionError } = await admin.from("provider_connections")

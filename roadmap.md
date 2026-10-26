@@ -1,7 +1,6 @@
 # Roadmap
 
 - [x] Implementar proteções B–G: avisos autenticados isolados por empresa/conexão, senha financeira nas coproduções/cancelamento de saque, troca bloqueada em falha do provedor, AAL2 obrigatório e contador serializado no banco; reservas mantidas em respostas incertas.
-- [x] Fase 2 Global: base aditiva de operação/moeda/conexão, vínculos de clientes e saldos isolados/desativados; Brasil permanece BRL/Asaas, sem ativar Rapyd. Estrutura e restrições conferidas no banco.
 - [x] Executar regressões e documentar arquivos alterados; 292 testes aprovados, aviso sem token rejeitado (401), acesso protegido redireciona ao login.
 - [ ] Conferir telas financeiras autenticadas e concorrência real no banco: sessão da conta solicitante indisponível; pagamentos/estornos/saques completos dependem de conta de teste autorizada. Sete pagamentos históricos sem conexão Asaas identificável permanecem bloqueados para conferência da origem; não atribuir outra conta automaticamente.
 
@@ -161,5 +160,3 @@
 
 - [ ] Analytics fases 2–5 (funil, eventos do servidor/receita, painel Admin, testes/docs) — plano aprovado 2026-10-19
 
-- [x] Fase 3 Global: seletor Brasil/Global no topo salvo no servidor por usuário/empresa; Global mostra área vazia e bloqueada, sem alterar dados financeiros; 2 testes.
-- [ ] Fase 4 Global (Rapyd sandbox): depende das chaves de teste da Rapyd e das respostas sobre modelo contratado, países e moedas.

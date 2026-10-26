@@ -2,7 +2,6 @@
 
 - Financial records bind to their original provider connection via `financial-origin.server.ts`; authenticated Asaas event IDs are namespaced by connection and all external-ID queries scope tenant and connection. Why: prevent cross-account processing and silent use of a replacement account.
 - Financial-password counters are serialized by `record_financial_password_check`; money-routing confirmations require server AAL2 and financial password. Payment-attempt activation uses a locked database RPC; uncertain provider cancellation/transfer keeps its reservation. Why: prevent lost increments, bypasses and duplicate money movement.
-- Global foundation is storage-only and disabled; existing monetary rows remain Brasil/BRL and `wallets` remains their sole balance source. Why: avoid mixing currencies or activating a provider before approval.
 
 - Resend inbound uses `resend-inbound.server.ts` with Standard Webhooks verification over the raw body; acknowledge only stored messages, retry failed fetches, and log codes/status only. Why: avoid forged events, lost content and private email leaks.
 
