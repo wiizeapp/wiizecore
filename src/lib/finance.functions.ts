@@ -181,12 +181,6 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
     });
     if (!rl.allowed) throw new Error("Muitas tentativas de saque. Tente novamente mais tarde.");
     await assertFinancialPassword(supabaseAdmin, context.userId, data.financialPassword, "withdrawal.request");
-    // 2FA extra no saque é escolha do usuário; quando ligado, o servidor exige sessão confirmada (aal2).
-    const { data: sec } = await supabaseAdmin.from("user_security_settings").select("withdrawal_2fa_required").eq("user_id", context.userId).maybeSingle();
-    if (sec?.withdrawal_2fa_required && (context.claims as { aal?: string } | null)?.aal !== "aal2") {
-      await logAudit(supabaseAdmin, { userId: context.userId, tenantId: m.tenant_id, action: "withdrawal.request", result: "failure", metadata: { reason: "2fa_required" } });
-      throw new Error("Confirme o código da verificação em duas etapas para sacar.");
-    }
     const { data: id, error } = await (supabaseAdmin.rpc as any)("request_withdrawal", {
       _tenant_id: m.tenant_id,
       _user_id: context.userId,
@@ -227,10 +221,13 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
 
 export const cancelWithdrawal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ withdrawalId: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ withdrawalId: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(input))
   .handler(async ({ data, context }) => {
     const m = await requireMembership(context, FINANCE);
+    const { assertTwoFactor, assertFinancialPassword } = await import("./finance.server");
+    assertTwoFactor(context.claims);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await assertFinancialPassword(supabaseAdmin, context.userId, data.financialPassword, "withdrawal.cancel");
     const { error } = await (supabaseAdmin.rpc as any)("cancel_withdrawal", {
       _tenant_id: m.tenant_id,
       _withdrawal_id: data.withdrawalId,
