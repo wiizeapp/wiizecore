@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Planejar controles próprios PLD: alertas de movimentação suspeita, casos no Admin, criptografia e desbloqueio temporário por 2FA + senha financeira; implementação depende de aprovação do plano.
+
 - [x] Implementar proteções B–G: avisos autenticados isolados por empresa/conexão, senha financeira nas coproduções/cancelamento de saque, troca bloqueada em falha do provedor, AAL2 obrigatório e contador serializado no banco; reservas mantidas em respostas incertas.
 - [x] Executar regressões e documentar arquivos alterados; 292 testes aprovados, aviso sem token rejeitado (401), acesso protegido redireciona ao login.
 - [ ] Conferir telas financeiras autenticadas e concorrência real no banco: sessão da conta solicitante indisponível; pagamentos/estornos/saques completos dependem de conta de teste autorizada. Sete pagamentos históricos sem conexão Asaas identificável permanecem bloqueados para conferência da origem; não atribuir outra conta automaticamente.
