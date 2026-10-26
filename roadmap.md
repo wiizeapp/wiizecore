@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Rebranding completo WiizePay: marca visível, traduções, e-mails, documentação pública e endereços de produção; preservar integrações e histórico.
+- [ ] Conectar wiizepay.com e publicar: depende de confirmação dos registros do domínio e publicação pelo usuário.
+
 - [x] Auditar e planejar taxa única de ativação de produção de R$ 19,90 via Pix Asaas; plano aprovado conceitualmente.
 - [ ] Garantir bloqueio em todas as entradas/RPCs/storage, criação durável nos dois caminhos, transição sem exceção dos três cadastros, validação Asaas e testes de concorrência/timeout/falha de banco com resultados evidenciados.
 - [x] Implementar primeira etapa: taxa dedicada, gates servidor/RPC/storage, checkout, claims duráveis compartilhados e histórico documental; migrations 0044/0045, três cadastros preservados, consulta sandbox 200/wallet correspondente e produção 401.
