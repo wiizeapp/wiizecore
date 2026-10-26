@@ -1,8 +1,9 @@
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
+import confetti from 'canvas-confetti';
 import {useServerFn} from '@tanstack/react-start';
 import {useQueryClient} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
-import {ArrowLeft,ArrowRight,Building2,Headphones,Infinity,ScanFace,Check,Copy,FileCheck2,Lock,QrCode,RefreshCw,Rocket,ShieldCheck,Zap} from 'lucide-react';
+import {Loader2,PartyPopper,ArrowLeft,ArrowRight,Building2,Headphones,Infinity,ScanFace,Check,Copy,FileCheck2,Lock,QrCode,RefreshCw,Rocket,ShieldCheck,Zap} from 'lucide-react';
 import {prepareActivationPix,refreshActivationFee} from '@/lib/activation-fee.functions';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
@@ -10,6 +11,16 @@ import {Label} from '@/components/ui/label';
 import {Checkbox} from '@/components/ui/checkbox';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {Brand} from '@/components/brand';
+
+function celebrate(){
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ const end=Date.now()+3000;
+ const frame=()=>{if(Date.now()>end) return;
+  confetti({particleCount:3,angle:60,spread:55,startVelocity:60,origin:{x:0,y:0.6},zIndex:200});
+  confetti({particleCount:3,angle:120,spread:55,startVelocity:60,origin:{x:1,y:0.6},zIndex:200});
+  requestAnimationFrame(frame);};
+ frame();
+}
 
 function Price(){
  const {t}=useTranslation('ui');
@@ -28,6 +39,14 @@ export function ActivationFeeCheckout(){
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[name,setName]=useState(''),[document,setDocument]=useState(''),[email,setEmail]=useState(''),[accepted,setAccepted]=useState(false),[copied,setCopied]=useState(false);
  const [step,setStep]=useState<'intro'|'form'>('intro');
  const [qr,setQr]=useState<{encodedImage:string;payload:string}|null>(null);
+ const [paid,setPaid]=useState(false);
+ async function check(manual:boolean){
+  if(manual){setBusy(true);setError('');}
+  try{const r=await refresh();if(r.status==='confirmed'){setPaid(true);celebrate();}else if(manual) setError(t('Pagamento ainda pendente.'));}
+  catch(e){if(manual) setError(e instanceof Error?t(e.message):t('Não foi possível consultar a ativação.'));}
+  finally{if(manual) setBusy(false);}
+ }
+ useEffect(()=>{if(!open||!qr||paid) return;const id=window.setInterval(()=>void check(false),6000);return ()=>window.clearInterval(id);},[open,qr,paid]);
  const benefits=[
   {icon:Zap,title:t('Receba de verdade'),text:t('Cobranças reais por Pix, boleto e cartão.')},
   {icon:FileCheck2,title:t('Cadastro guiado'),text:t('Envie seus dados e documentos com segurança.')},
@@ -61,22 +80,29 @@ export function ActivationFeeCheckout(){
   </div>
 
   <Dialog open={open} onOpenChange={setOpen}>
-   <DialogContent className="max-w-md max-h-[92vh] overflow-y-auto">
-    <div className="space-y-5">
+   <DialogContent className="max-w-md max-h-[92vh] overflow-y-auto overflow-x-hidden">
+    <div className="min-w-0 space-y-5">
      <Brand className="shrink-0"/>
      <div className="flex gap-1.5" aria-hidden>{[0,1,2].map(i=><span key={i} className={`h-1 flex-1 rounded-full ${i<=(qr?2:step==='form'?1:0)?'bg-primary':'bg-muted'}`}/>)}</div>
      <DialogHeader className="space-y-2 text-left">
       <DialogTitle className="font-display text-xl">{t(qr?'Conclua o pagamento da ativação':step==='form'?'Dados do pagador':'Leve sua conta WiizeCore para produção')}</DialogTitle>
       <DialogDescription>{t(qr?'Escaneie o QR Code no app do seu banco':step==='form'?'Informe apenas os dados do pagador. O cadastro de produção começa após a confirmação do Pix.':'Abra e verifique sua conta de recebimentos. A aprovação final é da instituição parceira.')}</DialogDescription>
      </DialogHeader>
-     {qr ? <div className="space-y-4">
-      <img className="mx-auto size-52 rounded-xl border border-border bg-white p-2" src={`data:image/png;base64,${qr.encodedImage}`} alt={t('QR Code Pix')}/>
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-3 py-1.5">
-       <span className="flex-1 truncate font-mono text-xs" aria-label={t('Código Pix copia e cola')}>{qr.payload}</span>
-       <Button size="sm" variant="ghost" onClick={async()=>{await navigator.clipboard.writeText(qr.payload);setCopied(true);}}>{copied?<Check className="size-4"/>:<Copy className="size-4"/>}{t(copied?'Código copiado':'Copiar código Pix')}</Button>
+     {paid ? <div className="space-y-5 py-2 text-center">
+      <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/15 text-primary"><PartyPopper className="size-8"/></div>
+      <div className="space-y-1.5"><p className="font-display text-xl font-bold">{t('Pagamento confirmado!')}</p><p className="text-sm text-muted-foreground">{t('Deu tudo certo. Agora envie seus dados e documentos para concluir a ativação da sua conta.')}</p></div>
+      <Button className="w-full" size="lg" onClick={()=>{setOpen(false);void qc.invalidateQueries();}}>{t('Enviar documentos')}<ArrowRight className="size-4"/></Button>
+     </div> : qr ? <div className="min-w-0 space-y-4">
+      <div className="relative mx-auto w-fit rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent p-3">
+       <div className="rounded-xl bg-white p-3 shadow-lg"><img className="size-48" src={qr.encodedImage.startsWith('data:')?qr.encodedImage:`data:image/png;base64,${qr.encodedImage}`} alt={t('QR Code Pix')}/></div>
       </div>
-      <p className="text-xs text-muted-foreground">{t('A confirmação pode levar alguns instantes. Não pague novamente.')}</p>
-      <Button className="w-full" disabled={busy} onClick={async()=>{setBusy(true);setError('');try{const r=await refresh();if(r.status==='confirmed'){await qc.invalidateQueries();setOpen(false);}else setError(t('Pagamento ainda pendente.'));}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível consultar a ativação.'));}finally{setBusy(false);}}}><RefreshCw className="size-4"/>{t('Consultar pagamento')}</Button>
+      <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground"><Loader2 className="size-3.5 animate-spin text-primary"/>{t('Aguardando pagamento...')}</p>
+      <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-muted px-3 py-1.5">
+       <span className="min-w-0 flex-1 truncate font-mono text-xs" aria-label={t('Código Pix copia e cola')}>{qr.payload}</span>
+       <Button size="sm" variant="ghost" className="shrink-0" onClick={async()=>{await navigator.clipboard.writeText(qr.payload);setCopied(true);}}>{copied?<Check className="size-4"/>:<Copy className="size-4"/>}{t(copied?'Código copiado':'Copiar código Pix')}</Button>
+      </div>
+      <Button className="w-full" variant="outline" disabled={busy} onClick={()=>void check(true)}><RefreshCw className="size-4"/>{t('Consultar pagamento')}</Button>
+      <p className="text-center text-[11px] text-muted-foreground">{t('A confirmação pode levar alguns instantes. Não pague novamente.')}</p>
      </div> : step==='intro' ? <div className="space-y-5">
       <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent p-5"><Price/></div>
       <div className="grid grid-cols-2 gap-2">
@@ -84,7 +110,7 @@ export function ActivationFeeCheckout(){
       </div>
       <Button className="w-full" size="lg" onClick={()=>setStep('form')}>{t('Avançar')}<ArrowRight className="size-4"/></Button>
       <Button className="w-full" variant="ghost" onClick={()=>setOpen(false)}>{t('Agora não')}</Button>
-     </div> : <form className="space-y-4" onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');try{const r=await prepare({data:{name,document:document.replace(/\D/g,''),email,accepted:true}});if(r.paid){await qc.invalidateQueries();setOpen(false);}else setQr(r.qr);}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível preparar a ativação.'));}finally{setBusy(false);}}}>
+     </div> : <form className="space-y-4" onSubmit={async e=>{e.preventDefault();setBusy(true);setError('');try{const r=await prepare({data:{name,document:document.replace(/\D/g,''),email,accepted:true}});if(r.paid){setPaid(true);celebrate();}else setQr(r.qr);}catch(e){setError(e instanceof Error?t(e.message):t('Não foi possível preparar a ativação.'));}finally{setBusy(false);}}}>
       <div className="space-y-1.5"><Label htmlFor="payer-name">{t('Nome do pagador')}</Label><Input id="payer-name" value={name} onChange={e=>setName(e.target.value)} required minLength={3} maxLength={150}/></div>
       <div className="space-y-1.5"><Label htmlFor="payer-doc">CPF/CNPJ</Label><Input id="payer-doc" inputMode="numeric" value={document} onChange={e=>setDocument(e.target.value.replace(/\D/g,''))} required pattern="[0-9]{11}|[0-9]{14}" maxLength={14}/></div>
       <div className="space-y-1.5"><Label htmlFor="payer-email">E-mail</Label><Input id="payer-email" type="email" value={email} onChange={e=>setEmail(e.target.value)} required maxLength={200}/></div>
