@@ -80,7 +80,7 @@ export const savePldRule = createServerFn({ method: "POST" }).middleware([requir
     if (error) throw new Error("Não foi possível carregar os dados.");
     const version = (last?.version ?? 0) + 1, id = crypto.randomUUID();
     const { encryptPld } = await import("./pld-crypto.server");
-    const { error: insertError } = await admin.from("pld_rule_versions").insert({ id, rule_code: data.code, version, enabled: data.enabled, created_by: context.userId, parameters_enc: encryptPld({ parameters: data.parameters, justification: data.justification }, `rule:${id}`, key) });
+    const { error: insertError } = await admin.rpc("pld_create_rule", { _id:id,_code:data.code,_version:version,_enabled:data.enabled,_actor:context.userId,_enc:encryptPld({ parameters: data.parameters, justification: data.justification }, `rule:${id}`, key) });
     if (insertError) throw new Error("Não foi possível salvar a regra. Atualize e tente novamente.");
     const { logAudit } = await import("./audit.server");
     await logAudit(admin, { userId: context.userId, action: "pld.rule_version_created", resource: "pld_rule", resourceId: id, metadata: { version, enabled: data.enabled } });
@@ -122,9 +122,9 @@ export const runPldObservation = createServerFn({ method: "POST" }).middleware([
       if (!result.matched) continue;
       const id = crypto.randomUUID(), sourceKey = tokenFingerprint(`${data.tenantId}:${rule.id}:${end.toISOString()}`);
       const content = encryptPld({ reason: "Indicador de movimentação para análise humana", ...result, rule: code, ruleVersion:rule.version, source:"asaas_confirmed_records", from:start.toISOString(),to:end.toISOString() }, `${data.tenantId}:${id}`,key);
-      const { data: inserted, error: insertError } = await admin.from("pld_cases").upsert({ id,tenant_id:data.tenantId,rule_version_id:rule.id,source_key:sourceKey,content_enc:content },{ onConflict:"source_key",ignoreDuplicates:true }).select("id");
+      const { data: inserted, error: insertError } = await admin.rpc("pld_create_alert", { _id:id,_tenant:data.tenantId,_rule:rule.id,_source:sourceKey,_enc:content });
       if (insertError) throw new Error("Não foi possível registrar o alerta.");
-      created += inserted?.length ?? 0;
+      created += inserted ? 1 : 0;
     }
     await logAudit(admin,{ userId:context.userId,tenantId:data.tenantId,action:"pld.observation_completed",metadata:{ created,insufficient } });
     return { created,insufficient };
