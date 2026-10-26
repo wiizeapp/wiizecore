@@ -1,5 +1,6 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { getAdminProof } from "./admin-unlock-state";
 
 // Páginas públicas (checkout e portal do cliente) não usam login da empresa;
 // pular a leitura da sessão evita esperas longas ao abrir essas páginas.
@@ -28,7 +29,8 @@ export const attachBearer = createMiddleware({ type: "function" })
       new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000)),
     ]).catch(() => null);
     const token = session?.access_token;
-    return next({ headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    const proof = getAdminProof();
+    return next({ headers: token ? { Authorization: `Bearer ${token}`, ...(proof ? { "x-wiize-admin-proof": proof } : {}) } : {} });
   })
   .server(async ({ next, serverFnMeta }) => {
     const { getRequestHeader } = await import("@tanstack/react-start/server");
