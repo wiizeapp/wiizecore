@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { ONBOARDING_STEPS, type OnboardingIcon, type OnboardingKey } from "@/lib/onboarding-options";
 import { getMyOnboarding, saveOnboarding } from "@/lib/onboarding.functions";
 
@@ -36,6 +37,7 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
   const qc = useQueryClient();
   const getFn = useServerFn(getMyOnboarding);
   const saveFn = useServerFn(saveOnboarding);
+  const { signOut } = useAuth();
   const { data, isError, refetch } = useQuery({ queryKey: ["my-onboarding"], queryFn: () => getFn(), staleTime: 0, refetchOnMount: "always" });
   const [stage, setStage] = useState<"welcome" | "questions">("welcome");
   const [i, setI] = useState(0);
@@ -105,6 +107,10 @@ export function OnboardingGate({ children }: { children: ReactNode }) {
     <div className="onboarding-shell fixed inset-0 z-[100] flex min-h-dvh flex-col overflow-y-auto bg-background text-foreground">
       <header className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-6">
         <Brand className="shrink-0" />
+        <div className="flex items-center gap-3 text-sm sm:order-last">
+          <a href="/suporte" className="text-muted-foreground underline-offset-4 hover:underline">{ui("Precisa de ajuda?")}</a>
+          <Button variant="ghost" size="sm" onClick={() => void signOut()}>{ui("Sair")}</Button>
+        </div>
         {stage === "questions" ? (
           <div className="hidden items-center gap-3 text-xs text-muted-foreground sm:flex">
             <span>{i + 1} {ui("de")} {ONBOARDING_STEPS.length}</span>
