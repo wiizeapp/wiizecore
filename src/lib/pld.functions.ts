@@ -64,7 +64,7 @@ export const updatePldCase = createServerFn({ method: "POST" }).middleware([requ
     if (error || !row) throw new Error("Caso não encontrado.");
     const { encryptPld } = await import("./pld-crypto.server");
     const enc = encryptPld({ note: data.note, outcome: data.outcome, status: data.status, previousStatus: row.status }, `${row.tenant_id}:${data.id}`, key);
-    const { error: updateError } = await admin.rpc("pld_update_case", { _id: data.id, _revision: data.revision, _actor: context.userId, _status: data.status, _assigned: data.assignToMe ? context.userId : row.assigned_to, _content_enc: enc, _action: row.status === "closed" && data.status !== "closed" ? "reopened" : "reviewed" });
+    const { error: updateError } = await admin.rpc("pld_update_case", { _id: data.id, _revision: data.revision, _actor: context.userId, _status: data.status, _assigned: data.assignToMe ? context.userId : row.assigned_to ?? context.userId, _content_enc: enc, _action: row.status === "closed" && data.status !== "closed" ? "reopened" : "reviewed" });
     if (updateError) throw new Error("O caso mudou ou não pôde ser salvo. Atualize e tente novamente.");
     return { ok: true };
   });
