@@ -97,6 +97,7 @@ import { Route as ApiPublicGoogleDriveCallbackRouteImport } from './routes/api/p
 import { Route as ApiPublicOauthRevokeRouteImport } from './routes/api/public/oauth/revoke'
 import { Route as ApiPublicOauthTokenRouteImport } from './routes/api/public/oauth/token'
 import { Route as ApiPublicV1CustomersRouteImport } from './routes/api/public/v1/customers'
+import { Route as ApiPublicWebhooksActivationFeeRouteImport } from './routes/api/public/webhooks/activation-fee'
 import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 import { Route as ApiPublicWebhooksResendInboundRouteImport } from './routes/api/public/webhooks/resend-inbound'
 import { Route as ApiPublicWiizePayDeliverRouteImport } from './routes/api/public/wiize-pay/deliver'
@@ -566,6 +567,12 @@ const ApiPublicV1CustomersRoute = ApiPublicV1CustomersRouteImport.update({
   path: '/api/public/v1/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksActivationFeeRoute =
+  ApiPublicWebhooksActivationFeeRouteImport.update({
+    id: '/api/public/webhooks/activation-fee',
+    path: '/api/public/webhooks/activation-fee',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
   id: '/api/public/webhooks/asaas',
   path: '/api/public/webhooks/asaas',
@@ -726,6 +733,7 @@ export interface FileRoutesByFullPath {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -827,6 +835,7 @@ export interface FileRoutesByTo {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -931,6 +940,7 @@ export interface FileRoutesById {
   '/api/public/oauth/revoke': typeof ApiPublicOauthRevokeRoute
   '/api/public/oauth/token': typeof ApiPublicOauthTokenRoute
   '/api/public/v1/customers': typeof ApiPublicV1CustomersRoute
+  '/api/public/webhooks/activation-fee': typeof ApiPublicWebhooksActivationFeeRoute
   '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
   '/api/public/webhooks/resend-inbound': typeof ApiPublicWebhooksResendInboundRoute
   '/api/public/wiize-pay/deliver': typeof ApiPublicWiizePayDeliverRoute
@@ -1035,6 +1045,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1136,6 +1147,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1239,6 +1251,7 @@ export interface FileRouteTypes {
     | '/api/public/oauth/revoke'
     | '/api/public/oauth/token'
     | '/api/public/v1/customers'
+    | '/api/public/webhooks/activation-fee'
     | '/api/public/webhooks/asaas'
     | '/api/public/webhooks/resend-inbound'
     | '/api/public/wiize-pay/deliver'
@@ -1308,6 +1321,7 @@ export interface RootRouteChildren {
   ApiPublicOauthRevokeRoute: typeof ApiPublicOauthRevokeRoute
   ApiPublicOauthTokenRoute: typeof ApiPublicOauthTokenRoute
   ApiPublicV1CustomersRoute: typeof ApiPublicV1CustomersRoute
+  ApiPublicWebhooksActivationFeeRoute: typeof ApiPublicWebhooksActivationFeeRoute
   ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
   ApiPublicWebhooksResendInboundRoute: typeof ApiPublicWebhooksResendInboundRoute
   ApiPublicWiizePayDeliverRoute: typeof ApiPublicWiizePayDeliverRoute
@@ -1939,6 +1953,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1CustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/activation-fee': {
+      id: '/api/public/webhooks/activation-fee'
+      path: '/api/public/webhooks/activation-fee'
+      fullPath: '/api/public/webhooks/activation-fee'
+      preLoaderRoute: typeof ApiPublicWebhooksActivationFeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/asaas': {
       id: '/api/public/webhooks/asaas'
       path: '/api/public/webhooks/asaas'
@@ -2204,6 +2225,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicOauthRevokeRoute: ApiPublicOauthRevokeRoute,
   ApiPublicOauthTokenRoute: ApiPublicOauthTokenRoute,
   ApiPublicV1CustomersRoute: ApiPublicV1CustomersRoute,
+  ApiPublicWebhooksActivationFeeRoute: ApiPublicWebhooksActivationFeeRoute,
   ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
   ApiPublicWebhooksResendInboundRoute: ApiPublicWebhooksResendInboundRoute,
   ApiPublicWiizePayDeliverRoute: ApiPublicWiizePayDeliverRoute,
