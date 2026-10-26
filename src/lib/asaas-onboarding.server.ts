@@ -48,6 +48,8 @@ export async function ensureSubaccount(admin: Admin, tenantId: string, userId: s
   const masterKey = process.env["ASAAS_MASTER_API_KEY"];
   const environment = (process.env["ASAAS_ENVIRONMENT"] === "production" ? "production" : "sandbox") as "sandbox" | "production";
   if (!masterKey) throw new Error("A conta principal da Wiize Core ainda não foi configurada.");
+  const {data:paidFee,error:feeError}=await admin.from("activation_fee_payments").select("environment").eq("tenant_id",tenantId).eq("status","confirmed").single();
+  if(feeError || paidFee?.environment!==environment) throw new Error("O pagamento deve ser confirmado no mesmo ambiente da ativação.");
   const { AsaasProvider } = await import("./asaas.server");
   const { encryptSecret } = await import("./crypto.server");
   const master = new AsaasProvider(masterKey, environment);

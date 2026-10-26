@@ -28,16 +28,19 @@ export async function verifyActivationFee(admin:Admin,tenantId:string) {
  if(!walletInfo.data?.some((w:{id:string})=>w.id===row.origin_wallet_id)) throw new Error('A conta de origem precisa de conferência.');
  const remote=await activationLookup(`/payments/${encodeURIComponent(row.provider_payment_id)}`);
  if(validActivationPayment(remote,{id:row.provider_payment_id,customer:row.provider_customer_id,reference:row.reference})) {
-   const {error:confirmError}=await admin.rpc('activation_confirm_fee',{_id:row.id,_provider:row.provider_payment_id,_cents:1990});
+   const {data:changed,error:confirmError}=await admin.rpc('activation_confirm_fee',{_id:row.id,_provider:row.provider_payment_id,_cents:1990});
    if(confirmError) throw new Error('O pagamento está em conferência. Não pague novamente.');
    const {notifyTenant}=await import('./notify.server');
    await notifyTenant(admin,{tenantId,kind:'activation.payment_confirmed',title:'Pagamento confirmado',body:'Agora você pode concluir seu cadastro e enviar a documentação necessária.',link:'/ativacao',dedupeKey:`activation.fee:${row.id}`,email:{subject:'WiizeCore — Pagamento confirmado'}});
    const {logAudit}=await import('./audit.server');
-   await logAudit(admin,{tenantId,action:'activation.fee_confirmed',resource:'activation_fee',resourceId:row.id});
+   if(changed) await logAudit(admin,{tenantId,action:'activation.fee_confirmed',resource:'activation_fee',resourceId:row.id});
    return {...row,status:'confirmed'};
  }
  if(['REFUNDED','REFUND_REQUESTED','REFUND_IN_PROGRESS'].includes(remote.status)) {
-   await admin.from('activation_fee_payments').update({status:remote.status==='REFUNDED'?'refunded':'refund_pending',updated_at:new Date().toISOString()}).eq('id',row.id);
+   const next=remote.status==='REFUNDED'?'refunded':'refund_pending';
+   const {error:refundError}=await admin.from('activation_fee_payments').update({status:next,updated_at:new Date().toISOString()}).eq('id',row.id);
+   if(refundError) throw new Error('O pagamento está em conferência. Não pague novamente.');
+   return {...row,status:next};
  }
  return row;
 }
