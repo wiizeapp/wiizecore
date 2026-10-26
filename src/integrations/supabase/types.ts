@@ -155,6 +155,72 @@ export type Database = {
           },
         ]
       }
+      admin_page_sessions: {
+        Row: {
+          auth_session_id: string
+          credential_updated_at: string
+          expires_at: string
+          id: string
+          issued_at: string
+          last_activity_at: string
+          proof_hash: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_session_id: string
+          credential_updated_at: string
+          expires_at?: string
+          id?: string
+          issued_at?: string
+          last_activity_at?: string
+          proof_hash: string
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_session_id?: string
+          credential_updated_at?: string
+          expires_at?: string
+          id?: string
+          issued_at?: string
+          last_activity_at?: string
+          proof_hash?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_unlock_challenges: {
+        Row: {
+          auth_session_id: string
+          consumed_at: string | null
+          created_at: string
+          factor_id: string
+          id: string
+          provider_challenge_id: string
+          user_id: string
+        }
+        Insert: {
+          auth_session_id: string
+          consumed_at?: string | null
+          created_at?: string
+          factor_id: string
+          id?: string
+          provider_challenge_id: string
+          user_id: string
+        }
+        Update: {
+          auth_session_id?: string
+          consumed_at?: string | null
+          created_at?: string
+          factor_id?: string
+          id?: string
+          provider_challenge_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       anticipation_fee_settings: {
         Row: {
           active: boolean
@@ -5353,6 +5419,128 @@ export type Database = {
         }
         Relationships: []
       }
+      pld_case_events: {
+        Row: {
+          action: string
+          actor_id: string
+          case_id: string
+          content_enc: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          case_id: string
+          content_enc: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          case_id?: string
+          content_enc?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pld_case_events_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "pld_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pld_cases: {
+        Row: {
+          assigned_to: string | null
+          content_enc: string
+          created_at: string
+          id: string
+          priority: string
+          revision: number
+          rule_version_id: string | null
+          source_key: string
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          content_enc: string
+          created_at?: string
+          id?: string
+          priority?: string
+          revision?: number
+          rule_version_id?: string | null
+          source_key: string
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          content_enc?: string
+          created_at?: string
+          id?: string
+          priority?: string
+          revision?: number
+          rule_version_id?: string | null
+          source_key?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pld_cases_rule_version_id_fkey"
+            columns: ["rule_version_id"]
+            isOneToOne: false
+            referencedRelation: "pld_rule_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pld_cases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pld_rule_versions: {
+        Row: {
+          created_at: string
+          created_by: string
+          enabled: boolean
+          id: string
+          parameters_enc: string
+          rule_code: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          enabled?: boolean
+          id?: string
+          parameters_enc: string
+          rule_code: string
+          version: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          id?: string
+          parameters_enc?: string
+          rule_code?: string
+          version?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -7554,6 +7742,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_page_unlocked: { Args: never; Returns: boolean }
       admin_review_activation: {
         Args: {
           _admin_id: string
@@ -7709,6 +7898,18 @@ export type Database = {
         Returns: number
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      pld_update_case: {
+        Args: {
+          _action: string
+          _actor: string
+          _assigned: string
+          _content_enc: string
+          _id: string
+          _revision: number
+          _status: string
+        }
+        Returns: number
+      }
       record_financial_password_check: {
         Args: { _expected_hash: string; _user_id: string; _valid: boolean }
         Returns: Json
