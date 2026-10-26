@@ -5725,5 +5725,8 @@
   "Pagamento confirmado!": "¡Pago confirmado!",
   "Deu tudo certo. Agora envie seus dados e documentos para concluir a ativação da sua conta.": "Todo salió bien. Ahora envía tus datos y documentos para completar la activación de tu cuenta.",
   "Enviar documentos": "Enviar documentos",
-  "Aguardando pagamento...": "Esperando el pago..."
+  "Aguardando pagamento...": "Esperando el pago...",
+  "Taxa única, cobrada uma vez por empresa. Após o envio dos documentos, não é reembolsável, pois o valor custeia a abertura da conta, a análise de documentos e a ativação da infraestrutura de pagamentos. O pagamento não garante aprovação.": "Tarifa única, cobrada una vez por empresa. Tras el envío de documentos no es reembolsable, ya que cubre la apertura de la cuenta, el análisis de documentos y la activación de la infraestructura de pagos. El pago no garantiza aprobación.",
+  "Li e concordo com as condições da taxa de ativação, incluindo a não devolução após o envio dos documentos, os": "He leído y acepto las condiciones de la tarifa de activación, incluida la no devolución tras el envío de documentos, los",
+  "Política de Reembolso": "Política de Reembolso"
 }

@@ -5696,5 +5696,8 @@
   "Pagamento confirmado!": "Payment confirmed!",
   "Deu tudo certo. Agora envie seus dados e documentos para concluir a ativação da sua conta.": "All set. Now send your data and documents to complete your account activation.",
   "Enviar documentos": "Send documents",
-  "Aguardando pagamento...": "Waiting for payment..."
+  "Aguardando pagamento...": "Waiting for payment...",
+  "Taxa única, cobrada uma vez por empresa. Após o envio dos documentos, não é reembolsável, pois o valor custeia a abertura da conta, a análise de documentos e a ativação da infraestrutura de pagamentos. O pagamento não garante aprovação.": "One-time fee, charged once per company. After documents are submitted it is non-refundable, as it covers account opening, document review and payment infrastructure activation. Payment does not guarantee approval.",
+  "Li e concordo com as condições da taxa de ativação, incluindo a não devolução após o envio dos documentos, os": "I have read and agree to the activation fee conditions, including no refund after documents are submitted, the",
+  "Política de Reembolso": "Refund Policy"
 }
