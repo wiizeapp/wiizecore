@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ArrowDownLeft, ArrowUpRight, BarChart3, BatteryFull, Bell, Briefcase, CalendarDays, Check, CheckCircle2, Clock3, CreditCard, Download, FileCheck2, FileText, Filter, Landmark, Lock, Mail, Palette, Phone, Plus, QrCode, Receipt, RefreshCw, Search, Send, ShieldCheck, Signal, Sparkles, Users, TrendingUp, Upload, Wallet, Wifi } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import brandLogoUrl from "@/assets/wiizepay-logo-v2.png";
 
 type Icon = typeof Wallet;
 
