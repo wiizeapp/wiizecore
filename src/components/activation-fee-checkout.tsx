@@ -1,5 +1,4 @@
 import {useEffect,useState} from 'react';
-import confetti from 'canvas-confetti';
 import {useServerFn} from '@tanstack/react-start';
 import {useQueryClient} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
@@ -12,13 +11,32 @@ import {Checkbox} from '@/components/ui/checkbox';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {Brand} from '@/components/brand';
 
+// Self-contained confetti (no external package) so production builds never miss a dependency.
 function celebrate(){
- if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ if(typeof window==='undefined'||window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+ const canvas=document.createElement('canvas');
+ const ctx=canvas.getContext('2d'); if(!ctx) return;
+ Object.assign(canvas.style,{position:'fixed',inset:'0',width:'100%',height:'100%',pointerEvents:'none',zIndex:'200'});
+ document.body.appendChild(canvas);
+ const dpr=window.devicePixelRatio||1;
+ const resize=()=>{canvas.width=window.innerWidth*dpr;canvas.height=window.innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);};
+ resize();
+ const root=getComputedStyle(document.documentElement);
+ const colors=['--primary','--accent','--chart-1','--chart-2','--chart-3'].map(v=>root.getPropertyValue(v).trim()).filter(Boolean);
+ const palette=colors.length?colors:['currentColor'];
+ type P={x:number;y:number;vx:number;vy:number;r:number;s:number;rot:number;vr:number;c:string};
+ const parts:P[]=[];
+ const spawn=(fromLeft:boolean)=>{for(let i=0;i<3;i++){const ang=(fromLeft?-60:-120)*Math.PI/180+(Math.random()-0.5)*0.96;const sp=10+Math.random()*6;
+  parts.push({x:fromLeft?0:window.innerWidth,y:window.innerHeight*0.6,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,r:0,s:5+Math.random()*5,rot:Math.random()*6,vr:(Math.random()-0.5)*0.3,c:palette[Math.floor(Math.random()*palette.length)]??'currentColor'});}};
  const end=Date.now()+3000;
- const frame=()=>{if(Date.now()>end) return;
-  confetti({particleCount:3,angle:60,spread:55,startVelocity:60,origin:{x:0,y:0.6},zIndex:200});
-  confetti({particleCount:3,angle:120,spread:55,startVelocity:60,origin:{x:1,y:0.6},zIndex:200});
-  requestAnimationFrame(frame);};
+ const frame=()=>{
+  if(Date.now()<end){spawn(true);spawn(false);}
+  ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+  for(const p of parts){p.vy+=0.35;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+   ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();}
+  for(let i=parts.length-1;i>=0;i--){const p=parts[i];if(p&&p.y>window.innerHeight+20) parts.splice(i,1);}
+  if(Date.now()<end||parts.length) requestAnimationFrame(frame); else canvas.remove();
+ };
  frame();
 }
 
