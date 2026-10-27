@@ -60,7 +60,7 @@ function AppShell({ active, title, subtitle, action, children }: { active: strin
   return (
     <div className="feature-demo-window grid h-full w-full grid-cols-1 overflow-hidden rounded-xl border border-border bg-background text-left shadow-float sm:grid-cols-[8rem_minmax(0,1fr)]">
       <aside className="hidden min-h-0 flex-col gap-1 border-r border-border bg-card p-2.5 sm:flex">
-        <div className="mb-2 flex items-center gap-1.5 px-1"><span className="grid size-5 place-items-center rounded-md bg-primary text-[9px] font-bold text-primary-foreground">W</span><span className="text-[10px] font-bold">WiizePay</span></div>
+        <div className="mb-2 flex items-center gap-1.5 px-1"><img src={brandLogoUrl} alt="WiizePay" className="size-5 shrink-0 rounded-sm" /><span className="whitespace-nowrap font-brand text-[10px] font-bold leading-none">Wiize<span style={{ color: "var(--brand-pay)" }}>Pay</span></span></div>
         {nav.map(([I, l]) => <div key={l} className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-[9px] font-medium ${l === active ? "bg-accent text-primary" : "text-muted-foreground"}`}><I className="size-3 shrink-0" /><span className="truncate">{t(l)}</span></div>)}
       </aside>
       <div className="flex min-h-0 min-w-0 flex-col">
