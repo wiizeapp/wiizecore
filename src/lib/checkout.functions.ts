@@ -601,7 +601,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       if (fresh?.provider_payment_id) payment.provider_payment_id = fresh.provider_payment_id;
     }
 
-    const threeDs = (await import("./threeds.server")).isCheckoutThreeDsEnabled();
+    const threeDs = await (await import("./threeds.server")).checkoutThreeDsAllowed(admin);
     const body: Record<string, unknown> = {
       creditCard: { holderName: data.holderName, number: data.number, expiryMonth: data.expiryMonth, expiryYear: data.expiryYear, ccv: data.ccv },
       creditCardHolderInfo: {
@@ -622,7 +622,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
           colorDepth: device.colorDepth,
           screenHeight: device.screenHeight,
           screenWidth: device.screenWidth,
-          timezone: device.timezoneHours,
+          timeZoneOffset: device.timezoneHours,
           language: device.language,
           userAgent: device.userAgent,
           remoteIp: requestInfo().ip ?? undefined,
@@ -645,7 +645,8 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       let providerStatus: string | null = null;
       try {
         const current = await conn.provider.getPayment(payment.provider_payment_id);
-        providerStatus = typeof (current as { status?: string }).status === "string" ? (current as { status?: string }).status! : null;
+        const consultedStatus = (current as { status?: string }).status;
+        providerStatus = typeof consultedStatus === "string" ? consultedStatus : null;
       } catch { /* sem consulta, segue com a recusa genérica */ }
       await trackEvent(admin, link, "card_declined");
       await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_declined", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4), providerStatus } });
