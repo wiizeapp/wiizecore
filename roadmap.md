@@ -173,3 +173,6 @@
 
 - [ ] Analytics fases 2–5 (funil, eventos do servidor/receita, painel Admin, testes/docs) — plano aprovado 2026-10-19
 
+- [ ] 3DS2 e Central de Contestações Asaas — plano aprovado como base 2026-10-29 com ajustes do usuário; começar pela fundação (banco + webhooks); 3DS só concluído após validação real na conta de produção.
+  - Ajustes exigidos: parâmetros/eventos só da documentação oficial Asaas; fluxos parcelado e recorrente separados; 3DS desligado por padrão via configuração; mapear eventos oficiais completos e registrar desconhecidos para diagnóstico (sem descarte silencioso); defesa só marcada como enviada após confirmação da API; RLS/tenant/idempotência/auditoria; apresentar arquivos, migrações e testes antes de alterar o checkout.
+
