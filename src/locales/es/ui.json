@@ -5838,5 +5838,17 @@
   "Não foi possível consultar as empresas agora.": "No se pueden consultar las empresas ahora.",
   "Não foi possível consultar o histórico agora.": "No se puede consultar el historial ahora.",
   "A liberação depende da configuração do ambiente e da habilitação Asaas.": "La liberación depende de la configuración del entorno y la habilitación Asaas.",
-  "Não foi possível atualizar o controle 3DS.": "No se puede actualizar el control 3DS."
+  "Não foi possível atualizar o controle 3DS.": "No se puede actualizar el control 3DS.",
+  "Homologação em produção pendente": "Validación en producción pendiente",
+  "Uma verificação a mais. Uma decisão mais segura.": "Una verificación más. Una decisión más segura.",
+  "A integração preparada pela WiizePay conecta o pagamento à autenticação do banco emissor. Quando habilitada, o banco pode verificar a identidade do comprador antes de seguir com a transação.": "La integración preparada por WiizePay conecta el pago a la autenticación del banco emisor. Cuando está habilitada, el banco puede verificar la identidad del comprador antes de continuar.",
+  "Infraestrutura financeira Asaas. Controle e acompanhamento WiizePay.": "Infraestructura financiera Asaas. Control y seguimiento WiizePay.",
+  "Verificação pelo emissor": "Verificación del emisor",
+  "O banco pode solicitar uma confirmação adicional ao comprador. O retorno da verificação não aprova o pagamento sozinho.": "El banco puede solicitar una confirmación adicional al comprador. El retorno de la verificación no aprueba el pago por sí solo.",
+  "Menos exposição à fraude": "Menor exposición al fraude",
+  "Uma camada adicional para reduzir o risco de uso indevido do cartão, conforme as regras da bandeira, do emissor e do Asaas.": "Una capa adicional para reducir el uso indebido de tarjetas según las reglas de la red, del emisor y de Asaas.",
+  "Defesa bem acompanhada": "Defensa con seguimiento",
+  "Dados oficiais, prazos e documentos reunidos na Central de Contestações. Enviar uma defesa não garante a reversão da disputa.": "Datos oficiales, plazos y documentos en la Central de Disputas. Presentar una defensa no garantiza la reversión.",
+  "Integração preparada. Ativação condicionada.": "Integración preparada. Activación condicionada.",
+  "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "Ninguna capa elimina el fraude ni garantiza ausencia de pérdidas. Confirmar el pago no demuestra autenticación 3DS; la protección depende de la transacción y las reglas aplicables."
 }

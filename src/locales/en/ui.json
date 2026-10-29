@@ -5809,5 +5809,17 @@
   "Não foi possível consultar as empresas agora.": "Unable to load companies now.",
   "Não foi possível consultar o histórico agora.": "Unable to load history now.",
   "A liberação depende da configuração do ambiente e da habilitação Asaas.": "Release requires environment configuration and Asaas enablement.",
-  "Não foi possível atualizar o controle 3DS.": "Unable to update 3DS control."
+  "Não foi possível atualizar o controle 3DS.": "Unable to update 3DS control.",
+  "Homologação em produção pendente": "Production validation pending",
+  "Uma verificação a mais. Uma decisão mais segura.": "One more verification. A safer decision.",
+  "A integração preparada pela WiizePay conecta o pagamento à autenticação do banco emissor. Quando habilitada, o banco pode verificar a identidade do comprador antes de seguir com a transação.": "WiizePay’s prepared integration connects payment to card issuer authentication. Once enabled, the bank can verify the buyer’s identity before proceeding.",
+  "Infraestrutura financeira Asaas. Controle e acompanhamento WiizePay.": "Asaas financial infrastructure. WiizePay control and tracking.",
+  "Verificação pelo emissor": "Issuer verification",
+  "O banco pode solicitar uma confirmação adicional ao comprador. O retorno da verificação não aprova o pagamento sozinho.": "The bank may request extra verification from the buyer. Returning from verification does not approve payment on its own.",
+  "Menos exposição à fraude": "Less exposure to fraud",
+  "Uma camada adicional para reduzir o risco de uso indevido do cartão, conforme as regras da bandeira, do emissor e do Asaas.": "An additional layer to reduce card misuse risk, subject to card network, issuer and Asaas rules.",
+  "Defesa bem acompanhada": "Track your defense",
+  "Dados oficiais, prazos e documentos reunidos na Central de Contestações. Enviar uma defesa não garante a reversão da disputa.": "Official data, deadlines and documents in the Dispute Center. Submitting a defense does not guarantee dispute reversal.",
+  "Integração preparada. Ativação condicionada.": "Integration prepared. Conditional activation.",
+  "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "No layer eliminates fraud or guarantees zero losses. Payment confirmation is not proof of 3DS authentication; protection depends on the transaction and applicable rules."
 }
