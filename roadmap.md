@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Reteste de segurança solicitado no roteiro enviado — preparar matriz dos 15 tópicos e executar somente testes isolados com dados fictícios; sem alterações no banco compartilhado, publicação ou chamadas financeiras reais. Provas A/B completas, e-mail, provedores e restauração dependem de isolamento verificável; apresentar plano antes da execução.
+
 - [x] Assinatura de contratos — nascimento, confirmação financeira do prestador/código de e-mail dos demais nas quatro entradas; evidência criptografada, certificado privado e conclusão atômica/imutável. Plano aprovado e migrations 0053–0056 aplicadas no banco compartilhado; 469 regressões/19 testes de serviços aprovados, 22 reais ignorados; SQL isolado incluindo concorrência passou, links inválidos recusados e compilação OK. Sem publicação/envio real/assinatura real.
 - [ ] Assinatura de contratos — validar entrega real, telas preenchidas e PDF final nos quatro caminhos: depende de contrato/destinatário de teste autorizados e sessão MFA/senha financeira. Publicação/Vercel não autorizadas; versão antiga não pode concluir novas assinaturas até atualizar. Esquema completo/A-B/Drive seguem pendentes; detalhes em docs/contract-signature-confirmation.md.
 
