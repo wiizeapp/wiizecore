@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, CreditCard, Loader2, LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { payCheckoutWithCard } from "@/lib/checkout.functions";
+import { getTurnstileSiteKey, payCheckoutWithCard } from "@/lib/checkout.functions";
+import { TurnstileWidget } from "./turnstile-widget";
+import { TURNSTILE_ACTION_CARD } from "@/lib/turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +28,12 @@ export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: 
   const [holderDocument, setHolderDocument] = useState("");
   const [done, setDone] = useState(false);
   const [challengeUrl, setChallengeUrl] = useState<string | null>(null);
+  const fetchSiteKey = useServerFn(getTurnstileSiteKey);
+  const siteKeyQ = useQuery({ queryKey: ["turnstile-site-key"], queryFn: () => fetchSiteKey(), staleTime: Infinity });
+  const siteKey = siteKeyQ.data?.siteKey ?? null;
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
+  const [captchaError, setCaptchaError] = useState(false);
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -39,8 +47,9 @@ export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: 
         language: navigator.language || "pt-BR",
         userAgent: navigator.userAgent,
       };
-      return pay({ data: { token, paymentId, holderName, number, expiryMonth: mm ?? "", expiryYear: yy ? `20${yy}` : "", ccv, holderDocument: sameHolder ? "" : holderDocument, deviceInfo } });
+      return pay({ data: { token, paymentId, holderName, number, expiryMonth: mm ?? "", expiryYear: yy ? `20${yy}` : "", ccv, holderDocument: sameHolder ? "" : holderDocument, deviceInfo, turnstileToken: captcha ?? undefined } });
     },
+    onSettled: () => setCaptchaReset((n) => n + 1),
     onSuccess: (r) => {
       setNumber(""); setCcv(""); setExpiry("");
       // O banco pediu verificação: o cliente é levado à página segura oficial do desafio.
@@ -74,7 +83,7 @@ export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: 
     );
   }
 
-  const ready = holderName.trim().length >= 3 && number.replace(/\D/g, "").length >= 13 && expiry.length === 5 && ccv.length >= 3 && (sameHolder || holderDocument.replace(/\D/g, "").length >= 11);
+  const ready = holderName.trim().length >= 3 && number.replace(/\D/g, "").length >= 13 && expiry.length === 5 && ccv.length >= 3 && (sameHolder || holderDocument.replace(/\D/g, "").length >= 11) && !!captcha;
 
   return (
     <form className="space-y-5 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6" autoComplete="on" onSubmit={(e) => { e.preventDefault(); if (ready) mutation.mutate(); }}>
@@ -95,6 +104,12 @@ export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: 
       </div>
       <label className="flex cursor-pointer items-start gap-2.5 rounded-lg bg-muted/40 p-3.5 text-sm leading-5"><Checkbox className="mt-0.5" checked={sameHolder} onCheckedChange={(c) => setSameHolder(c === true)} />O titular do cartão sou eu (mesmo CPF/CNPJ da cobrança)</label>
       {!sameHolder ? <div className="space-y-1.5"><Label htmlFor="cc-doc">CPF ou CNPJ do titular</Label><Input id="cc-doc" className="h-11" inputMode="numeric" value={holderDocument} onChange={(e) => setHolderDocument(e.target.value.replace(/\D/g, "").slice(0, 14))} /></div> : null}
+      {siteKey ? (
+        <TurnstileWidget siteKey={siteKey} action={TURNSTILE_ACTION_CARD} resetKey={captchaReset} onToken={(t) => { setCaptcha(t); if (t) setCaptchaError(false); }} onError={() => setCaptchaError(true)} />
+      ) : null}
+      {captchaError || (siteKeyQ.isSuccess && !siteKey) ? (
+        <p className="text-center text-xs text-destructive" role="alert">{ui("Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.")}</p>
+      ) : null}
       <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={disabled || !ready || mutation.isPending}>
         {mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <LockKeyhole className="size-4" />}
         {mutation.isPending ? "Processando…" : `Pagar ${formatBRL(amount)}`}
