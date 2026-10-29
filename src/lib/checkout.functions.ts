@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { assertCheckoutReady, checkoutReadiness } from "./checkout-readiness.server";
 
 const tokenSchema = z.string().min(20).max(100).regex(/^[A-Za-z0-9_-]+$/);
 
@@ -144,6 +145,7 @@ export const getCheckout = createServerFn({ method: "GET" })
     const coproductionPending = await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, groupId);
     const { canSwitch, quote, allowedMethods } = await import("./payment-attempts.server");
     const [appearanceRow, pendingContract] = await Promise.all([appearancePromise, pendingContractPromise]);
+    const paymentReady = await checkoutReadiness(admin, link);
     const methodCache = new Map<string, Promise<Awaited<ReturnType<typeof allowedMethods>>>>();
     const methodsFor = (payment: (typeof fullRows)[number]) => {
       if (!payment.service_id) return allowedMethods(admin, payment as never);
@@ -208,8 +210,8 @@ export const getCheckout = createServerFn({ method: "GET" })
           method: p.method,
           installmentNumber: p.installment_number,
           installmentCount: p.installment_count,
-          invoiceUrl: coproductionPending ? null : p.invoice_url,
-          bankSlipUrl: coproductionPending ? null : p.bank_slip_url,
+          invoiceUrl: coproductionPending || !paymentReady ? null : p.invoice_url,
+          bankSlipUrl: coproductionPending || !paymentReady ? null : p.bank_slip_url,
           paidAt: p.paid_at,
           finePercent: Number(p.fine_percent ?? 0),
           interestPercent: Number(p.interest_percent ?? 0),
@@ -238,6 +240,7 @@ export const switchCheckoutMethod = createServerFn({ method: "POST" })
     if (resolved.state !== "ok") throw new Error("Link indisponível.");
     if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     const { link } = resolved;
+    await assertCheckoutReady(admin, link);
     const { consumeRateLimit } = await import("./audit.server");
     const limit = await consumeRateLimit(admin, { scope: "checkout_switch", identifier: data.paymentId, maxAttempts: 6, windowSeconds: 900, blockSeconds: 900 });
     if (!limit.allowed) throw new Error("Muitas alterações seguidas. Aguarde alguns minutos.");
@@ -262,6 +265,7 @@ async function couponContext(admin: AdminClient, token: string, paymentId: strin
   const resolved = await resolveLink(admin, token);
   if (resolved.state !== "ok") throw new Error("Link indisponível.");
   const { link } = resolved;
+  await assertCheckoutReady(admin, link);
   // A empresa e o cliente vêm do link e da cobrança; nada enviado pelo navegador é usado como autoridade.
   const { data: payment } = await admin.from("payments").select("id, tenant_id, customer_id, method, status, provider_installment_id, subscription_id, provider_payment_id").eq("id", paymentId).eq("tenant_id", link.tenant_id).eq("charge_group_id", link.charge_group_id!).maybeSingle();
   if (!payment) throw new Error("Pagamento indisponível.");
@@ -370,6 +374,7 @@ export const signCheckoutContract = createServerFn({ method: "POST" })
     const { link } = resolved;
     const linkedContractId = link.contract_id as string;
     const linkedCustomerId = link.customer_id as string;
+    await assertCheckoutReady(admin, link, false);
     const { data: contract } = await admin
       .from("contracts")
       .select("id, status, current_version, customer_id, customers(document)")
@@ -423,6 +428,7 @@ export const getPaymentInstructions = createServerFn({ method: "POST" })
     if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     if (resolved.linkExpired) throw new Error("Cobrança expirada. Use “Regularizar cobrança” para continuar.");
     const { link } = resolved;
+    await assertCheckoutReady(admin, link);
     const { data: payment } = await admin
       .from("payments")
       .select("id, provider_payment_id, status, charge_group_id, tenant_id")
@@ -455,6 +461,7 @@ export const getPaymentInstructions = createServerFn({ method: "POST" })
 
 const customerDataSchema = z.object({
   token: tokenSchema,
+  termsAccepted: z.literal(true),
   email: z.string().trim().email("E-mail inválido").max(160),
   phone: z.string().regex(/^\d{10,11}$/, "Telefone com DDD, só números"),
   zipCode: z.string().regex(/^\d{8}$/, "CEP com 8 dígitos"),
@@ -517,7 +524,12 @@ export const updateCheckoutCustomer = createServerFn({ method: "POST" })
       resource: "customer",
       resourceId: link.customer_id,
     });
-    await trackEvent(admin, link, "data_confirmed", { termsAccepted: true });
+    // Consent is an authorization prerequisite, not best-effort analytics.
+    const { error: confirmError } = await admin.from("checkout_events").insert({
+      tenant_id: link.tenant_id, customer_id: link.customer_id, charge_group_id: link.charge_group_id,
+      payment_link_id: link.id, event: "data_confirmed", metadata: { termsAccepted: data.termsAccepted },
+    });
+    if (confirmError) throw new Error("Não foi possível salvar seus dados.");
     return { ok: true };
   });
 
@@ -568,6 +580,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     if (resolved.state !== "ok") throw new Error("Link indisponível.");
     if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     const { link } = resolved;
+    await assertCheckoutReady(admin, link);
     const { consumeRateLimit, requestInfo, logAudit } = await import("./audit.server");
     // Limites somados: por cobrança, por link e por IP confiável. Criar outra cobrança
     // não zera o contador do mesmo visitante nem do mesmo link.

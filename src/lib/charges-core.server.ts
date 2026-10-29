@@ -90,12 +90,15 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     // Idempotência: mesma chave devolve a mesma cobrança.
     const { data: existing } = await admin
       .from("payments")
-      .select("charge_group_id")
+      .select("charge_group_id, customer_id, service_id, contract_id, provider_payment_id, status")
       .eq("tenant_id", tenantId)
       .eq("idempotency_key", data.idempotencyKey)
       .maybeSingle();
     if (existing) {
-      const link = await issueLink(admin, { tenantId, chargeGroupId: existing.charge_group_id, customerId: data.customerId, serviceId: data.serviceId, contractId: data.contractId ?? null, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
+      // Retain uncertain provider work: a missing remote id never permits recreation.
+      if (!existing.provider_payment_id || existing.status === "created") throw new Error("Cobrança em conferência. Aguarde a confirmação antes de tentar novamente.");
+      if (existing.customer_id !== data.customerId || existing.service_id !== data.serviceId || existing.contract_id !== (data.contractId ?? null)) throw new Error("Chave de operação já utilizada com outros dados.");
+      const link = await issueLink(admin, { tenantId, chargeGroupId: existing.charge_group_id, customerId: existing.customer_id, serviceId: existing.service_id, contractId: existing.contract_id, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
       return { chargeGroupId: existing.charge_group_id, token: link.token };
     }
 
@@ -418,10 +421,10 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
         }
       }
     } catch (error) {
-      await admin.from("payments").delete().eq("charge_group_id", chargeGroupId).is("provider_payment_id", null);
-      if (subscriptionRowId) await admin.from("subscriptions").update({ active: false }).eq("id", subscriptionRowId);
-      await logAudit(admin, { tenantId, userId: userId, action: "charge.create", resource: "payments", result: "failure", metadata: { serviceType: service.type } });
-      throw error instanceof Error ? error : new Error("Falha ao criar a cobrança.");
+      // Even a timeout may follow successful external creation. Keep the original
+      // placeholder, key and subscription reference until official reconciliation.
+      await logAudit(admin, { tenantId, userId, action: "charge.create_outcome_unknown", resource: "payments", resourceId: chargeGroupId, result: "failure", metadata: { serviceType: service.type, subscriptionId: subscriptionRowId } });
+      throw new Error("Cobrança em conferência. Aguarde a confirmação antes de tentar novamente.");
     }
 
     // Snapshot por parcela: valor do serviço e custo estimado do provedor na data da criação.
