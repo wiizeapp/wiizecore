@@ -1,5 +1,3 @@
-import type { eventToStatus } from "./asaas.server";
-
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 // As tabelas de contestação foram criadas pela migração 0046; enquanto os tipos
@@ -174,6 +172,3 @@ export async function processChargebackWebhook(
   });
   return true;
 }
-
-// Referência de tipo para manter o conversor de eventos como fonte única de status.
-export type { eventToStatus as _eventToStatus } from "./asaas.server";
