@@ -1,6 +1,6 @@
 # WiizePay — auditoria de segurança e correções
 
-Data: 29/10/2026. Etapa entregue: diagnóstico e correções locais verificáveis. **Não é liberação de produção nem pentest independente.** Análise aprofundada da plataforma iniciada e ainda pendente de resultado ao elaborar este relatório.
+Data: 29/10/2026. Etapa entregue: diagnóstico e correções locais verificáveis. **Não é liberação de produção nem pentest independente.** Análise aprofundada concluída sobre a versão anterior às alterações, com dois avisos: fórmulas em planilhas exportadas e destino livre para importação de logotipo. Ambos tratados nesta etapa; isso não substitui nova análise do código atualizado.
 
 ## Resumo executivo
 Foram encontrados problemas comprovados no código de recuperação MFA, delegação de permissões, sequência obrigatória de checkout, persistência de resultados financeiros e idempotência externa. Foram corrigidos sem executar pagamentos, alterar clientes/saldos, aplicar migrações ou publicar. A revisão do banco conectado confirmou RLS nas 144 tabelas públicas e cinco buckets privados; também confirmou exceções de acesso direto que precisam de correção avaliada separadamente. **RLS habilitado não equivale a permissões corretas.**
@@ -27,6 +27,8 @@ Nenhuma vulnerabilidade crítica foi comprovada nesta etapa; há riscos altos ai
 | MÉDIA | CSP de produção não permitia origem do Turnstile | Script, conexão e frame permitem somente `https://challenges.cloudflare.com`. **CORRIGIDO E TESTADO** na política; desafio real publicado **PENDENTE DE CONFIGURAÇÃO EXTERNA**. |
 | MÉDIA | Drive imprimia corpo de erro; webhook setup e erro global imprimiam exceções | Esses caminhos agora imprimem código constante/status, sem corpo/exceção. **CORRIGIDO, MAS NÃO TESTADO** com erros de provedores reais. Outros console paths não foram todos revisados. |
 | MÉDIA | Testes de isolamento interpretavam qualquer erro como lista vazia | Apenas recusa explícita 42501 em 401/403 conta; erro de serviço/tabela/sessão invalida teste. Escritas exigem `ISO_ISOLATED_CONFIRMED=yes`. **CORRIGIDO E TESTADO** no parser; 22 cenários reais continuam ignorados. |
+| MÉDIA | Análise aprofundada: `exportRows` exportava texto iniciado por fórmula sem neutralização | `safeSpreadsheetRows` protege textos nas três exportações, preservando números e totais internos. **CORRIGIDO E TESTADO** com prefixos =,+,-,@ e espaços/controles. Abrir o arquivo em Excel real não foi exercitado. |
+| MÉDIA | Análise aprofundada: `importCheckoutLogo` buscava destino escolhido livremente pelo administrador | Allowlist exata `CHECKOUT_LOGO_ALLOWED_HOSTS`, sem credenciais/portas alternativas/IP/redirect; timeout e leitura limitada mesmo sem Content-Length. **CORRIGIDO E TESTADO** em regras e leitura simulada. **PENDENTE DE CONFIGURAÇÃO EXTERNA:** sem lista aprovada a importação por URL é recusada; upload de arquivo continua disponível. Aprovar somente hosts controlados/confiáveis, nunca domínios arbitrários com DNS mutável. |
 | ALTA/MÉDIA | Scanner de dependências apontou versões vulneráveis | Atualizados lockfiles: seroval 1.7.3, js-yaml 4.3.2, source-map-js 1.2.2; Zod transitivo 4.6.7. Scanner deixou de apontar essas versões. **CORRIGIDO E TESTADO** por nova varredura e regressão; Zod direto 3.25.76 e XLSX 0.18.5 continuam pendentes. XLSX é usado para exportação, não leitura de planilhas neste inventário; isso não apaga o aviso. Migrar Zod principal exige revisão de compatibilidade; não atualizar cegamente. |
 | ALTA | Banco real permite INSERT/UPDATE/DELETE em `contract_links` e `finance_accounts/cards/categories/entries` para authenticated; policies por role/membership | Acesso pode contornar validações/auditoria do servidor em registros internos e emissão de links. **NÃO IMPLEMENTADO, COM JUSTIFICATIVA:** revogar no backend compartilhado exige avaliação e aprovação específica; nenhum acesso cruzado ou saque externo foi demonstrado. |
 | MÉDIA | Banco real: `service_checkout_links/versions` não têm policy restritiva MFA; SELECT de várias tabelas sensíveis usa membership sem módulo | **NÃO IMPLEMENTADO, COM JUSTIFICATIVA:** matriz de permissões precisa alinhar leitores reais antes de alteração compartilhada. Não confundir isolamento de empresa com autorização por módulo. |
@@ -37,6 +39,7 @@ Nenhuma vulnerabilidade crítica foi comprovada nesta etapa; há riscos altos ai
 - Alterados: `mfa-recovery.functions.ts`, `member-access.server.ts`, `team.functions.ts`, `checkout.functions.ts`, `charges-core.server.ts`, `ext-idempotency.server.ts`, `security-headers.ts`, `security-headers.test.ts`, `google-drive.server.ts`, `webhook-setup.server.ts`, `tenant-isolation.live.test.ts`, `src/start.ts`.
 - Rotas: `src/routes/pagar.$token.tsx`, `src/routes/api/public/v1/ext/checkout-sessions.ts`.
 - Traduções EN/ES, `AGENTS.md`, `roadmap.md`, `bun.lock`, `package-lock.json`; relatório e plano de auditoria.
+- Análise aprofundada: `spreadsheet-safety.ts`, `logo-import-policy.ts`, `export-logo-security.test.ts`, `checkout-appearance.functions.ts`, `src/components/admin/admin-finance.tsx` e rotas `extrato.tsx`/`recebiveis.tsx`.
 - **Nenhuma migração nova aplicada.** Nenhuma configuração Asaas/Cloudflare/Vercel alterada nesta auditoria. O ambiente Asaas efetivamente ativo não foi reconfirmado; não presumir isolamento por ser Sandbox.
 
 ## Testes e limites da evidência
@@ -47,6 +50,7 @@ Nenhuma vulnerabilidade crítica foi comprovada nesta etapa; há riscos altos ai
 5. POST `{}` sem autenticação para Asaas, taxa de ativação e Resend: **401 nos três endpoints**, sem segredo ou evento financeiro falso. Isso valida rejeição, não entrega autenticada/idempotência/ordenação completas.
 6. Build automático OK. Testes de MFA/Admin autenticado, convites A/B, pagamento, saque, estorno, concorrência de ledger e documentos privados **não executados** com sessões reais.
 7. Segredos nunca usados para testes ofensivos; nenhuma credencial rotacionada. Nenhum pagamento ou dado real alterado.
+8. Última revisão antes dos achados aprofundados: 463 aprovados / 22 ignorados. Resultado após os testes de exportação/importação é registrado abaixo na conclusão.
 
 ## Próxima mudança de banco — avaliação antes de aplicar
 Proposta: revogar somente escrita direta de authenticated/anon nos seis recursos acima, manter leitura legítima e service_role, preservar APIs/RPCs existentes; verificar se algum leitor/escritor do navegador depende de acesso direto. Em seguida adicionar MFA restritivo nas tabelas novas e alinhar leitura por módulo. Constraint composta de cargo deve abranger membros e convites após conferência dos dados.
@@ -76,7 +80,7 @@ Reservas de criação incerta não devem ser apagadas para destravar. Buscar ofi
 - [ ] Testar A/B reais, storage, MFA/Admin e jornadas financeiras isoladas.
 - [ ] Testar timeout aceito, salvamento parcial, repetição e ordenação com integração isolada.
 - [ ] Confirmar configurações de hospedagem, Auth, Asaas, CAPTCHA, alertas e backups.
-- [ ] Concluir análise aprofundada e revisar novos achados.
+- [x] Concluir análise aprofundada e tratar os dois avisos encontrados; nova análise pós-alteração ainda não executada.
 - [ ] Restauração isolada e pentest independente quando exigido.
 
 **Resultado: não pronta para liberação certificada; riscos altos e testes essenciais pendentes.**
