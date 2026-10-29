@@ -8294,6 +8294,19 @@ export type Database = {
         Args: { _reference: string; _reviewer: string; _withdrawal_id: string }
         Returns: undefined
       }
+      consume_rate_limit: {
+        Args: {
+          _block_seconds: number
+          _identifier: string
+          _max_attempts: number
+          _scope: string
+          _window_seconds: number
+        }
+        Returns: {
+          allowed: boolean
+          retry_after_seconds: number
+        }[]
+      }
       document_in_use: {
         Args: { _document: string; _tenant_id: string }
         Returns: boolean

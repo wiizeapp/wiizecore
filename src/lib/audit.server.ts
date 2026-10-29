@@ -121,49 +121,35 @@ export async function consumeRateLimit(
   admin: AdminClient,
   options: { scope: string; identifier: string; maxAttempts: number; windowSeconds: number; blockSeconds: number },
 ): Promise<{ allowed: boolean; retryAfterSeconds: number }> {
-  const now = new Date();
-  const { data: existing } = await admin
-    .from("rate_limits")
-    .select("id, attempts, window_started_at, blocked_until")
-    .eq("scope", options.scope)
-    .eq("identifier", options.identifier)
-    .maybeSingle();
-
-  if (existing?.blocked_until && new Date(existing.blocked_until) > now) {
-    const retry = Math.ceil((new Date(existing.blocked_until).getTime() - now.getTime()) / 1000);
-    return { allowed: false, retryAfterSeconds: retry };
-  }
-
-  if (!existing) {
-    await admin.from("rate_limits").insert({
-      scope: options.scope,
-      identifier: options.identifier,
-      attempts: 1,
-      window_started_at: now.toISOString(),
-    });
-    return { allowed: true, retryAfterSeconds: 0 };
-  }
-
-  const windowStart = new Date(existing.window_started_at);
-  const windowExpired = now.getTime() - windowStart.getTime() > options.windowSeconds * 1000;
-  const attempts = windowExpired ? 1 : existing.attempts + 1;
-  const shouldBlock = attempts > options.maxAttempts;
-
-  await admin
-    .from("rate_limits")
-    .update({
-      attempts: shouldBlock ? 0 : attempts,
-      window_started_at: windowExpired || shouldBlock ? now.toISOString() : existing.window_started_at,
-      blocked_until: shouldBlock ? new Date(now.getTime() + options.blockSeconds * 1000).toISOString() : null,
-    })
-    .eq("id", existing.id);
-
-  if (shouldBlock) {
+  // Contagem atômica no banco (trava de linha): tentativas simultâneas, mesmo em
+  // instâncias diferentes, nunca são contadas como uma só.
+  const { data, error } = await admin.rpc("consume_rate_limit", {
+    _scope: options.scope,
+    _identifier: options.identifier,
+    _max_attempts: options.maxAttempts,
+    _window_seconds: options.windowSeconds,
+    _block_seconds: options.blockSeconds,
+  });
+  const row = Array.isArray(data) ? data[0] : data;
+  // Falha segura: se o contador não responder, a ação não segue.
+  if (error || !row) return { allowed: false, retryAfterSeconds: 60 };
+  if (!row.allowed && row.retry_after_seconds === options.blockSeconds) {
     const { alertSecurityIncident } = await import("./security-alerts.server");
     await alertSecurityIncident(admin, { eventType: "rate_limit_blocked", severity: "warning", ip: requestInfo().ip, scope: options.scope });
-    return { allowed: false, retryAfterSeconds: options.blockSeconds };
   }
-  return { allowed: true, retryAfterSeconds: 0 };
+  return { allowed: !!row.allowed, retryAfterSeconds: row.retry_after_seconds ?? 0 };
+}
+
+/**
+ * Marca irreversível do cartão (HMAC com chave só do servidor), usada apenas para contar
+ * quantos cartões diferentes o mesmo visitante tenta. Nunca é guardada junto com o cartão
+ * nem exibida; sem a chave configurada, retorna null e a contagem por cartão é pulada.
+ */
+export async function cardFingerprint(cardNumber: string): Promise<string | null> {
+  const key = process.env["CARD_FINGERPRINT_KEY"];
+  if (!key || key.length < 32) return null;
+  const { createHmac } = await import("node:crypto");
+  return createHmac("sha256", key).update(`card:${cardNumber.replace(/\D/g, "")}`).digest("hex");
 }
 
 export async function resetRateLimit(admin: AdminClient, scope: string, identifier: string) {
