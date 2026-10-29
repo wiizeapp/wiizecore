@@ -4,6 +4,13 @@ import { canAssignCustomRole, canGrantBaseRole, scopedRolePermissions } from "./
 import { assertCheckoutReady, checkoutReadiness } from "./checkout-readiness.server";
 import { withIdempotency } from "./ext-idempotency.server";
 import type { ExtCtx } from "./ext-api.server";
+import { requireChargeSaved } from "./charge-save.server";
+
+describe("persistência do resultado do provedor", () => {
+  it("erro retornado pelo banco exige conferência", async () => await expect(requireChargeSaved(Promise.resolve({ data: null, error: { code: "failure" } }))).rejects.toThrow());
+  it("nenhuma linha gravada nunca conta como resultado persistido", async () => await expect(requireChargeSaved(Promise.resolve({ data: null, error: null }))).rejects.toThrow());
+  it("linha confirmada permite continuar", async () => await expect(requireChargeSaved(Promise.resolve({ data: { id: "payment" }, error: null }))).resolves.toBeUndefined());
+});
 
 type Result = { data: unknown; error: unknown };
 function mockDb(resolve: (table: string, filters: Record<string, unknown>, operation: string, value: unknown) => Result | Promise<Result>) {

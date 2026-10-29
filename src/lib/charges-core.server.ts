@@ -1,10 +1,7 @@
 import { logAudit } from "./audit.server";
+import { requireChargeSaved as requireSaved } from "./charge-save.server";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
-async function requireSaved(write: PromiseLike<{ error: unknown; data?: unknown }>) {
-  const result = await write;
-  if (result.error || !result.data) throw new Error("charge_save_incomplete");
-}
 const FINANCE = ["owner", "admin", "finance"];
 const round2 = (n: number) => Math.round(n * 100) / 100;
 const centsToAmount = (cents: number) => cents / 100;
