@@ -77,7 +77,7 @@ Reprodução das definições atuais, com restrições de saldo não negativo e 
 
 - Coprodução: split original R$ 100,00, estorno R$ 40,00 e pendente total R$ 260,00 (R$ 60,00 do split + R$ 200,00 não relacionados). A função atual liberou R$ 100,00 e deixou R$ 160,00 pendentes; o resultado correto seria R$ 60,00 disponíveis e R$ 200,00 pendentes. A repetição não movimentou novamente.
 - Antecipação: pagamento líquido R$ 100,00, reserva de estorno R$ 40,00, pendente total R$ 260,00 e taxa R$ 5,00. A função atual deixou R$ 160,00 pendentes e R$ 95,00 disponíveis, sem preservar a reserva na liberação. Repetições com o mesmo e outro ID de evento não cobraram novamente a taxa; isso comprova idempotência desse caso, não a correção da liberação.
-- **Esses são testes de reprodução das falhas existentes, não testes de aprovação de uma correção.** Nenhuma função candidata foi implantada/testada e nenhuma concorrência entre duas sessões foi executada. A admissão transacional compartilhada de estorno/antecipação ainda precisa ser projetada com o esquema completo e testada isoladamente.
+- A reprodução acima valida as falhas atuais. Depois foi testado um candidato separado, descrito abaixo. Nenhuma concorrência entre duas sessões foi executada. A admissão transacional compartilhada de estorno/antecipação ainda precisa ser projetada com o esquema completo e testada isoladamente.
 - Nenhum dado real, identidade, segredo ou chamada de provedor participou. O banco compartilhado permaneceu inalterado.
 
 Inventário dos escritores legítimos que impede revogação genérica:
@@ -91,3 +91,19 @@ Inventário dos escritores legítimos que impede revogação genérica:
 | `finance_cards` | `finance-ops.functions.ts`, cliente do usuário | Preservar cadastro/alteração legítimos; privilégio efetivo atual inclui DELETE |
 
 **Bloqueios restantes:** ambiente descartável com autenticação/arquivos e sessões A/B autorizadas; validação concorrente das funções financeiras; avaliação/reversão e autorização específica posterior para implantação no banco compartilhado; homologação externa e testes independentes. Não foram revogadas permissões nem alteradas regras financeiras no banco nesta fase.
+
+## Candidato de saldo — validado apenas no esquema mínimo
+
+`docs/migrations-pendentes/accounting-release-candidate.sql` é um **candidato não aplicado**, fora do histórico de migrações. Não está pronto para implantação: faltam admissão comum de estorno/antecipação, confirmação de reservas de estorno ativas/anteriores, ordem global de locks, custos do provedor, reconciliação externa e testes no esquema completo. Não aplicar manualmente por copiar este arquivo.
+
+Cinco grupos de verificações no PostgreSQL descartável passaram:
+
+1. Split de R$ 100 com R$ 40 estornados libera R$ 60 e preserva R$ 200 não relacionados; repetição libera zero.
+2. Pagamento principal ainda não liberado recusa release do split, sem alterar seu estado.
+3. Reserva de estorno de R$ 40 recusa conclusão de antecipação atomicamente: saldo, estado e taxa permanecem inalterados; confirmação externa incompatível precisaria de reconciliação, não repetição cega.
+4. Sem reserva, conclusão válida libera R$ 95 após taxa de R$ 5; repetições mantêm uma transação de taxa e uma notificação.
+5. Funções candidatas não permitem EXECUTE a usuários comuns/visitantes.
+
+Scripts reexecutáveis guardados em `scripts/security`; `run-accounting-fixture.py` sempre cria novo cluster temporário, usa ambiente sem PG* herdado, TCP desativado, socket privado, dados sintéticos e encerra o processo mesmo em falha. A execução completa de baseline e candidato terminou sem erro. Esses cinco grupos são adicionais aos 479 testes do aplicativo, não testes de RLS real, provedor ou concorrência.
+
+**Situação final desta fase:** primeiras barreiras de aplicativo corrigidas/testadas; falhas de saldo reproduzidas e candidato mínimo testado; banco conectado ainda usa funções anteriores. Fases de implantação e homologação integral seguem abertas, e a plataforma não deve ser declarada segura como um banco real.
