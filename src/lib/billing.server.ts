@@ -1,5 +1,6 @@
 import { DEPLOY_CONFIG } from "./deploy-config";
 import { AsaasProvider, billingTypeToMethod, eventToStatus, type ProviderPayment } from "./asaas.server";
+import { isChargebackEvent } from "./chargebacks.server";
 import { decryptSecret } from "./crypto.server";
 import { calculatePaymentFee, type FeeMethod } from "./fee-engine.server";
 import { scopedProviderEventId } from "./financial-scope";
@@ -209,6 +210,17 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     }
     const status = eventToStatus(event.event_type);
     if (!p?.id || !status) {
+      // Evento sem efeito mapeado: fica registrado para diagnóstico, nunca descartado em silêncio.
+      const { logAudit } = await import("./audit.server");
+      await logAudit(admin, {
+        tenantId: event.tenant_id,
+        action: "webhook.unmapped_event",
+        resource: "webhook_events",
+        resourceId: eventId,
+        result: "success",
+        metadata: { event: event.event_type, hasPayment: Boolean(p?.id) },
+        externalEventId: event.external_event_id,
+      });
       await admin.from("webhook_events").update({ processing_status: "discarded", processed_at: new Date().toISOString() }).eq("id", eventId);
       return;
     }
@@ -223,6 +235,19 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     if (!paymentId) {
       await admin.from("webhook_events").update({ processing_status: "discarded", error_message: "Pagamento desconhecido", processed_at: new Date().toISOString() }).eq("id", eventId);
       return;
+    }
+
+    // Central de contestações: registra o caso, o histórico e o aviso à empresa.
+    if (isChargebackEvent(event.event_type)) {
+      const { processChargebackWebhook } = await import("./chargebacks.server");
+      await processChargebackWebhook(admin, {
+        tenantId: event.tenant_id,
+        connectionId,
+        providerPaymentId: p.id,
+        eventType: event.event_type,
+        externalEventId: event.external_event_id,
+        paymentPayload: p as Record<string, unknown>,
+      });
     }
 
     // Cada parcela e cada ciclo recorrente é uma cobrança individual. A RPC
