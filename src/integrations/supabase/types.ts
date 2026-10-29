@@ -822,6 +822,187 @@ export type Database = {
           },
         ]
       }
+      chargeback_cases: {
+        Row: {
+          amount: number
+          created_at: string
+          dispute_deadline: string | null
+          id: string
+          internal_status: string
+          last_event: string | null
+          last_provider_event_id: string | null
+          payment_id: string | null
+          provider_chargeback_id: string | null
+          provider_connection_id: string | null
+          provider_payment_id: string
+          reason: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          dispute_deadline?: string | null
+          id?: string
+          internal_status?: string
+          last_event?: string | null
+          last_provider_event_id?: string | null
+          payment_id?: string | null
+          provider_chargeback_id?: string | null
+          provider_connection_id?: string | null
+          provider_payment_id: string
+          reason?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          dispute_deadline?: string | null
+          id?: string
+          internal_status?: string
+          last_event?: string | null
+          last_provider_event_id?: string | null
+          payment_id?: string | null
+          provider_chargeback_id?: string | null
+          provider_connection_id?: string | null
+          provider_payment_id?: string
+          reason?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chargeback_cases_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chargeback_cases_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chargeback_cases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chargeback_documents: {
+        Row: {
+          case_id: string
+          content_type: string
+          created_at: string
+          file_name: string
+          id: string
+          sent_at: string | null
+          size_bytes: number
+          status: string
+          storage_path: string
+          tenant_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          case_id: string
+          content_type: string
+          created_at?: string
+          file_name: string
+          id?: string
+          sent_at?: string | null
+          size_bytes: number
+          status?: string
+          storage_path: string
+          tenant_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          case_id?: string
+          content_type?: string
+          created_at?: string
+          file_name?: string
+          id?: string
+          sent_at?: string | null
+          size_bytes?: number
+          status?: string
+          storage_path?: string
+          tenant_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chargeback_documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "chargeback_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chargeback_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chargeback_events: {
+        Row: {
+          case_id: string
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+          metadata: Json
+          origin: string
+          tenant_id: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          origin?: string
+          tenant_id: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          origin?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chargeback_events_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "chargeback_cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chargeback_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkout_appearance_versions: {
         Row: {
           created_at: string
@@ -4880,6 +5061,101 @@ export type Database = {
           },
           {
             foreignKeyName: "payment_attempts_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_authentications: {
+        Row: {
+          attempts: number
+          auth_result: string | null
+          capture_status: string | null
+          completed_at: string | null
+          correlation_id: string
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          external_event_id: string | null
+          id: string
+          modality: string
+          payment_attempt_id: string | null
+          payment_id: string | null
+          provider_connection_id: string | null
+          provider_payment_id: string | null
+          started_at: string
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          auth_result?: string | null
+          capture_status?: string | null
+          completed_at?: string | null
+          correlation_id: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          external_event_id?: string | null
+          id?: string
+          modality?: string
+          payment_attempt_id?: string | null
+          payment_id?: string | null
+          provider_connection_id?: string | null
+          provider_payment_id?: string | null
+          started_at?: string
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          auth_result?: string | null
+          capture_status?: string | null
+          completed_at?: string | null
+          correlation_id?: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          external_event_id?: string | null
+          id?: string
+          modality?: string
+          payment_attempt_id?: string | null
+          payment_id?: string | null
+          provider_connection_id?: string | null
+          provider_payment_id?: string | null
+          started_at?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_authentications_payment_attempt_id_fkey"
+            columns: ["payment_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "payment_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_authentications_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_authentications_provider_connection_id_fkey"
+            columns: ["provider_connection_id"]
+            isOneToOne: false
+            referencedRelation: "provider_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_authentications_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
