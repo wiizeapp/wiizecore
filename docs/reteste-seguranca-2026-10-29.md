@@ -21,7 +21,7 @@ Esta etapa não alterou banco compartilhado, permissões, secrets, código de ne
 | E07 | Revisão adversarial de código e relatórios | Cadeias de alteração de destinatário/PDF, senha, versões e limites identificadas | Análise estática com reproduções específicas E02; restante explicitamente não executado |
 | E08 | Registro automático disponível | `build OK` após os testes adicionados | Compilação, não homologação financeira |
 
-Logs desta execução: `/tmp/wiize-retest/regressions.log`, `handlers-final.log`, `accounting.log`, `confirmation.log`, `dependencies.json`. São evidências temporárias locais, sem segredos intencionalmente registrados. Os resultados essenciais estão transcritos neste relatório; os testes ficam no projeto para repetição.
+Logs desta execução: `/tmp/wiize-retest/regressions-final.log`, `handlers-final.log`, `accounting.log`, `confirmation.log`, `dependencies.json`. São evidências temporárias locais, sem segredos intencionalmente registrados. Os resultados essenciais estão transcritos neste relatório; os testes ficam no projeto para repetição.
 
 ## 3. Vulnerabilidades e retestes individuais
 
@@ -128,6 +128,12 @@ E06: altos em `launch-editor`, `vite`, `xlsx`, `zod`; moderados em cadeia `drizz
 | 15 Aprovação final | Sem alto/crítico; isolamento/restore comprovados | F01–F04 e bloqueios permanecem | **REPROVADO / APROVAÇÃO NÃO CONCEDIDA** |
 
 ## 5. Assinatura com nascimento e código: conclusão específica
+
+### Referências oficiais Asaas verificadas
+
+- [Criação de webhook](https://docs.asaas.com/docs/create-new-webhook-via-api): `authToken` configurado é enviado no header `asaas-access-token`. Comparação em tempo constante é medida da aplicação, não requisito específico citado pela Asaas.
+- [FAQ de webhooks](https://docs.asaas.com/docs/webhooks-faq): entrega pode repetir eventos com o mesmo ID; falhas geram novas tentativas e a fila pode ser interrompida. Ordem depende de envio sequencial ou não sequencial.
+- [Recepção de eventos](https://docs.asaas.com/docs/receive-asaas-events-at-your-webhook-endpoint): identificar redelivery pelo ID e implementar idempotência. A leitura da documentação não comprova configuração da conta nem comportamento publicado.
 
 E04 comprovou em SQL isolado uma única assinatura/consumo diante de duas conclusões simultâneas, recusa de código errado/dados alterados/vencimento/replay, imutabilidade e privilégios privados. E02 comprovou bloqueios básicos com dependências simuladas. **Isso não basta para declarar o sistema inteiro correto:** F03 e F04 atingem os caminhos ao redor da confirmação. Entrega de e-mail, senha financeira/MFA reais, PDF e quatro telas em contrato válido ainda não foram homologados. Código por e-mail prova acesso à caixa postal; nascimento é declarado, não consulta oficial de identidade.
 
