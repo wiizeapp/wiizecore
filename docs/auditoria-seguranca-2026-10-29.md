@@ -84,3 +84,5 @@ Reservas de criação incerta não devem ser apagadas para destravar. Buscar ofi
 - [ ] Restauração isolada e pentest independente quando exigido.
 
 **Resultado: não pronta para liberação certificada; riscos altos e testes essenciais pendentes.**
+
+Conclusão da execução: **470 testes aprovados, 22 ignorados, 64 arquivos de teste aprovados e um ignorado**. Zero falhas nos testes executados. O erro de tipagem na exportação vazia foi corrigido após essa rodada e rechecado pelo build automático. Os dois avisos aprofundados foram tratados no código; não há homologação de produção nesta evidência.
