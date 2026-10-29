@@ -29,7 +29,7 @@ export function riskFor(action: string, result: "success" | "failure" | "blocked
   return "low";
 }
 
-const SECRET_KEY = /(pass(word)?|senha|secret|token|otp|totp|code|codigo|cvv|cvc|card_?number|pan|authorization|cookie|api_?key|private|jwt|session|signature|hash|enc)/i;
+const SECRET_KEY = /(birth.?date|nascimento|pass(word)?|senha|secret|token|otp|totp|code|codigo|cvv|cvc|card_?number|pan|authorization|cookie|api_?key|private|jwt|session|signature|hash|enc)/i;
 const MASK_KEY = /(cpf|cnpj|document|documento|tax_?id|email|phone|telefone|ip)/i;
 const MAX_DEPTH = 3;
 const MAX_KEYS = 30;
