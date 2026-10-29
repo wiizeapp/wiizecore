@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { signingIdentitySchema } from "./contract-signing-rules";
 import { createServerFn } from "@tanstack/react-start";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { contractEvent } from "./contracts.functions";
@@ -252,88 +254,9 @@ export const getPublicContract = createServerFn({ method: "GET" })
  * impressão digital da versão assinada, e atualiza a situação do contrato.
  */
 export const signContractAsCustomer = createServerFn({ method: "POST" })
-  .inputValidator((input: { token: string; signerName: string; signerDocument: string; signature: unknown }) => {
-    if (!input.token || input.token.length < 20) throw new Error("Link inválido.");
-    const signerName = input.signerName?.trim();
-    const signerDocument = input.signerDocument?.replace(/\D/g, "");
-    if (!signerName || signerName.length < 3) throw new Error("Informe o nome completo de quem assina.");
-    if (!signerDocument || (signerDocument.length !== 11 && signerDocument.length !== 14)) {
-      throw new Error("Informe um CPF ou CNPJ válido.");
-    }
-        return { token: input.token, signerName, signerDocument, signature: input.signature };
-  })
+  .inputValidator((input: unknown) => signingIdentitySchema.extend({ token: z.string().min(20).max(256), challengeId: z.string().uuid(), code: z.string().regex(/^\d{6}$/),  }).parse(input))
   .handler(async ({ data }) => {
-    const resolved = await resolvePublicLink(data.token);
-    if ("error" in resolved) throw new Error(resolved.error);
-    const { link } = resolved;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: contract } = await supabaseAdmin
-      .from("contracts")
-      .select("id, status, current_version, customer_id, customers(document)")
-      .eq("id", link.contract_id)
-      .eq("tenant_id", link.tenant_id)
-      .maybeSingle();
-    if (!contract) throw new Error("Contrato não encontrado.");
-    if (["cancelled", "expired"].includes(contract.status)) throw new Error("Este contrato não está disponível.");
-    if (contract.status === "signed") throw new Error("Este contrato já está assinado.");
-
-    const customer = contract.customers as { document?: string | null } | null;
-    const registered = (customer?.document ?? "").replace(/\D/g, "");
-    if (registered && registered !== data.signerDocument) {
-      await (await import("./audit.server")).logAudit(supabaseAdmin, {
-        tenantId: link.tenant_id,
-        action: "contract.sign_customer",
-        resource: "contracts",
-        resourceId: contract.id,
-        result: "failure",
-        metadata: { reason: "document_mismatch" },
-      });
-      throw new Error("O documento informado não confere com o cadastro deste contrato.");
-    }
-
-    const { data: version } = await supabaseAdmin
-      .from("contract_versions")
-      .select("id, content_hash")
-      .eq("contract_id", contract.id)
-      .eq("tenant_id", link.tenant_id)
-      .eq("version", contract.current_version)
-      .maybeSingle();
-    if (!version) throw new Error("Versão do contrato não encontrada.");
-
-    const { parseSignatureInput, signatureColumns } = await import("./contract-docs.server");
-    const sigCols = signatureColumns(parseSignatureInput(data.signature));
-    const { ip, userAgent } = (await import("./audit.server")).requestInfo();
-    const { error } = await supabaseAdmin.from("contract_signatures").upsert(
-      {
-        tenant_id: link.tenant_id,
-        contract_id: contract.id,
-        contract_version_id: version.id,
-        content_hash: version.content_hash,
-        signer_role: "customer",
-        signer_name: data.signerName,
-        signer_document: data.signerDocument,
-        ...sigCols,
-        ip_address: ip,
-        user_agent: userAgent,
-      },
-      { onConflict: "contract_version_id,signer_role" },
-    );
-    if (error) throw new Error("Não foi possível registrar a assinatura.");
-
-    const { recomputeContractStatus } = await import("./contract-docs.server");
-    const { fullySigned, status: newStatus } = await recomputeContractStatus(supabaseAdmin, contract.id, version.id);
-
-    await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "signed_customer", data.signerName, {}, ip);
-    if (fullySigned) await contractEvent(supabaseAdmin, link.tenant_id, contract.id, "completed", null);
-    await (await import("./contract-docs.server")).notifyContractSigned(supabaseAdmin, link.tenant_id, contract.id, data.signerName, fullySigned);
-    await (await import("./audit.server")).logAudit(supabaseAdmin, {
-      tenantId: link.tenant_id,
-      action: "contract.signed_by_customer",
-      resource: "contracts",
-      resourceId: contract.id,
-      metadata: { version: contract.current_version, content_hash: version.content_hash },
-    });
-
-    return { status: newStatus };
+    return (await import("./contract-signing.server")).finishPublicSigning(supabaseAdmin, { ...data, source: "customer" });
   });
+

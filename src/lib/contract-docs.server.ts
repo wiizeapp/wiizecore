@@ -79,7 +79,7 @@ class Writer {
 }
 
 export type SigField = { signerKey: string; page: number; x: number; y: number; w: number; h: number; kind?: "signature" | "initials" };
-export type CertSigner = { key?: string; role: string; name: string; document?: string | null; signedAt?: string | null; ip?: string | null; signatureImage?: string | null; initialsImage?: string | null };
+export type CertSigner = { key?: string; role: string; name: string; document?: string | null; signedAt?: string | null; ip?: string | null; signatureImage?: string | null; initialsImage?: string | null; birthDate?: string | null; authMethod?: string | null; verifiedAt?: string | null; evidenceId?: string | null };
 
 function maskDoc(d?: string | null) {
   const v = (d ?? "").replace(/\D/g, "");
@@ -261,7 +261,7 @@ async function drawCertificate(
   y -= 14;
 
   // Cartões em duas colunas
-  const gap = 12, cw = (W - M * 2 - gap) / 2, ch = 132;
+  const gap = 12, cw = (W - M * 2 - gap) / 2, ch = 178;
   for (let i = 0; i < input.signers.length; i++) {
     const col = i % 2;
     if (col === 0 && y - ch < 64) { header(false); }
@@ -293,6 +293,10 @@ async function drawCertificate(
     page.drawText(fitT(docStr ? `Documento ${docStr}` : "Documento não informado", 7.8, cw - 24), { x: x + 12, y: ly - 26, size: 7.8, font, color: grey });
     page.drawText(fitT(signed ? `Assinado em ${fmt(s.signedAt!)}` : "Assinatura pendente", 7.8, cw - 24), { x: x + 12, y: ly - 37, size: 7.8, font, color: signed ? brand : amber });
     if (signed && s.ip) page.drawText(fitT(`IP ${s.ip}`, 7.3, cw - 24), { x: x + 12, y: ly - 47, size: 7.3, font, color: grey });
+    if (signed && s.birthDate) page.drawText(`Nascimento informado: ${s.birthDate.split("-").reverse().join("/")}`, { x: x + 12, y: ly - 59, size: 7.3, font, color: grey });
+    if (signed) page.drawText(fitT(s.authMethod === "email_otp" ? "Confirmação: código por e-mail" : s.authMethod === "financial_password" ? "Confirmação: senha financeira" : "Registro anterior à confirmação adicional", 7.3, cw - 24), { x: x + 12, y: ly - 71, size: 7.3, font, color: grey });
+    if (signed && s.verifiedAt) page.drawText(fitT(`Confirmado: ${fmt(s.verifiedAt)}`, 7.3, cw - 24), { x: x + 12, y: ly - 83, size: 7.3, font, color: grey });
+    if (signed && s.evidenceId) page.drawText(fitT(`Evidência: ${s.evidenceId}`, 6.5, cw - 24), { x: x + 12, y: ly - 95, size: 6.5, font, color: grey });
     if (col === 1 || i === input.signers.length - 1) y -= ch + gap;
   }
 
@@ -387,7 +391,7 @@ export async function contractPdf(admin: Admin, contractId: string, origin: stri
   const { extra } = await requiredSigners(admin, contractId);
   const { data: rawFields } = await admin.from("contract_signature_fields").select("signer_key, page, x, y, w, h, kind").eq("contract_id", contractId).eq("version", contract.current_version);
   const fieldRows: SigField[] = ((rawFields ?? []) as any[]).map((f) => ({ signerKey: f.signer_key, page: f.page, x: Number(f.x), y: Number(f.y), w: Number(f.w), h: Number(f.h), kind: f.kind === "initials" ? "initials" : "signature" }));
-  const { data: sigs } = await admin.from("contract_signatures").select("signer_role, signer_name, signer_document, signed_at, ip_address, signature_image, initials_image").eq("contract_version_id", version.id);
+  const { data: sigs } = await admin.from("contract_signatures").select("signer_role, signer_name, signer_document, signed_at, ip_address, signature_image, initials_image, identity_enc, auth_method, verified_at, evidence_id").eq("contract_version_id", version.id).eq("tenant_id", contract.tenant_id).eq("content_hash", version.content_hash);
   const byRole = new Map(((sigs ?? []) as any[]).map((s) => [s.signer_role, s]));
   const tenantRow = contract.tenants as { name?: string; legal_name?: string | null } | null;
   const tenant = { company_name: tenantRow?.legal_name || tenantRow?.name };
@@ -397,6 +401,20 @@ export async function contractPdf(admin: Admin, contractId: string, origin: stri
     ...(customer ? [{ key: "customer", role: "customer", name: byRole.get("customer")?.signer_name ?? customer.name ?? "Contratante", document: byRole.get("customer")?.signer_document ?? customer.document, signedAt: byRole.get("customer")?.signed_at, ip: byRole.get("customer")?.ip_address, signatureImage: byRole.get("customer")?.signature_image, initialsImage: byRole.get("customer")?.initials_image }] : []),
     ...extra.map((e) => { const s = byRole.get(`signer:${e.id}`); return { key: `signer:${e.id}`, role: e.role, name: s?.signer_name ?? e.name, document: s?.signer_document ?? e.document, signedAt: s?.signed_at, ip: s?.ip_address, signatureImage: s?.signature_image, initialsImage: s?.initials_image }; }),
   ];
+
+  const { decryptSecret } = await import("./crypto.server");
+  for (const signer of certSigners) {
+    const record = byRole.get(signer.key);
+    if (!record) continue;
+    signer.authMethod = record.auth_method;
+    signer.verifiedAt = record.verified_at;
+    signer.evidenceId = record.evidence_id;
+    if (record.identity_enc) {
+      // Private PDF only; never included in public authenticity/progress responses.
+      const identity = JSON.parse(decryptSecret(record.identity_enc)) as { birthDate?: string };
+      signer.birthDate = identity.birthDate ?? null;
+    }
+  }
 
   const bytes = await buildContractPdf({
     title: contract.title,

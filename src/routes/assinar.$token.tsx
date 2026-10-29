@@ -1,3 +1,5 @@
+import { BirthDateField } from "@/components/contracts/birth-date-field";
+import { EmailSigningConfirmation, type EmailConfirmation } from "@/components/contracts/email-signing-confirmation";
 import { SealFooter } from "@/components/financial-provider";
 import { SigningProgress } from "@/components/contracts/signing-progress";
 import { createFileRoute } from "@tanstack/react-router";
@@ -41,6 +43,8 @@ function AssinarPage() {
   const [doc, setDoc] = useState("");
   const [ok, setOk] = useState(false);
   const [signature, setSignature] = useState<SignatureValue | null>(null);
+  const [birthDate, setBirthDate] = useState("");
+  const [proof, setProof] = useState<EmailConfirmation | null>(null);
 
   const pdfM = useMutation({
     mutationFn: () => pdf({ data: { token, origin: window.location.origin } }),
@@ -53,7 +57,7 @@ function AssinarPage() {
     onError: (e: Error) => toast.error(e.message),
   });
   const signM = useMutation({
-    mutationFn: () => sign({ data: { token, signerName: name, signerDocument: doc, accepted: ok, signature } }),
+    mutationFn: () => sign({ data: { token, signerName: name, signerDocument: doc, accepted: ok, signature, birthDate, challengeId: proof?.challengeId ?? "", code: proof?.code ?? "" } }),
     onSuccess: () => { toast.success("Assinatura registrada."); void q.refetch(); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -85,12 +89,14 @@ function AssinarPage() {
               <form className="surface-panel space-y-4 p-6" onSubmit={(e) => { e.preventDefault(); signM.mutate(); }}>
                 <div className="space-y-2"><Label htmlFor="n">Nome completo</Label><Input id="n" required value={name} onChange={(e) => setName(e.target.value)} /></div>
                 <div className="space-y-2"><Label htmlFor="d">CPF ou CNPJ</Label><Input id="d" required inputMode="numeric" value={doc} onChange={(e) => setDoc(e.target.value)} /></div>
-                <SignaturePad name={name || q.data.name} onChange={setSignature} />
+                <BirthDateField value={birthDate} onChange={setBirthDate} />
+      <SignaturePad name={name || q.data.name} onChange={setSignature} />
+      <EmailSigningConfirmation token={token} source="extra" signerName={name} signerDocument={doc} birthDate={birthDate} signature={signature} onChange={setProof} disabled={!ok} />
                 <label className="flex items-start gap-2 text-sm">
                   <input type="checkbox" className="mt-1 accent-primary" checked={ok} onChange={(e) => setOk(e.target.checked)} />
                   Li o documento e concordo em assiná-lo eletronicamente.
                 </label>
-                <Button type="submit" className="w-full" disabled={!ok || !signature || signM.isPending}>{signM.isPending ? "Assinando..." : "Assinar"}</Button>
+                <Button type="submit" className="w-full" disabled={!ok || !signature || !proof || !birthDate || signM.isPending}>{signM.isPending ? "Assinando..." : "Assinar"}</Button>
                 <p className="flex items-start gap-2 text-xs text-muted-foreground"><ShieldCheck className="mt-0.5 h-4 w-4 text-primary" />Registramos data, hora, IP, dispositivo e a impressão digital do documento.</p>
               </form>
             )}

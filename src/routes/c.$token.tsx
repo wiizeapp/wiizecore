@@ -1,3 +1,5 @@
+import { BirthDateField } from "@/components/contracts/birth-date-field";
+import { EmailSigningConfirmation, type EmailConfirmation } from "@/components/contracts/email-signing-confirmation";
 import { SealFooter } from "@/components/financial-provider";
 import { SignaturePad, type SignatureValue } from "@/components/contracts/signature-pad";
 import { SigningProgress } from "@/components/contracts/signing-progress";
@@ -41,6 +43,8 @@ function PublicContract() {
   const [done, setDone] = useState<string | null>(null);
   const [dl, setDl] = useState(false);
   const [signature, setSignature] = useState<SignatureValue | null>(null);
+  const [birthDate, setBirthDate] = useState("");
+  const [proof, setProof] = useState<EmailConfirmation | null>(null);
 
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["public-contract", token],
@@ -49,7 +53,7 @@ function PublicContract() {
   });
 
   const signMutation = useMutation({
-    mutationFn: () => sign({ data: { token, signerName, signerDocument, signature } }),
+    mutationFn: () => sign({ data: { token, signerName, signerDocument, signature, birthDate, challengeId: proof?.challengeId ?? "", code: proof?.code ?? "" } }),
     onSuccess: (result) => { setDone(result.status); void refetch(); },
     onError: () => setDone(null),
   });
@@ -165,7 +169,7 @@ function PublicContract() {
               {signMutation.error ? (
                 <p className="text-sm text-destructive">{signMutation.error.message}</p>
               ) : null}
-              <Button type="submit" className="w-full" disabled={signMutation.isPending || !signature}>
+              <Button type="submit" className="w-full" disabled={signMutation.isPending || !signature || !proof || !birthDate}>
                 {signMutation.isPending ? "Registrando…" : "Assinar contrato"}
               </Button>
             </form>
