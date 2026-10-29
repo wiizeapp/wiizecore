@@ -5823,5 +5823,14 @@
   "Dados oficiais, prazos e documentos reunidos na Central de Contestações. Enviar uma defesa não garante a reversão da disputa.": "Official data, deadlines and documents in the Dispute Center. Submitting a defense does not guarantee dispute reversal.",
   "Integração preparada. Ativação condicionada.": "Integration prepared. Conditional activation.",
   "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "No layer eliminates fraud or guarantees zero losses. Payment confirmation is not proof of 3DS authentication; protection depends on the transaction and applicable rules.",
-  "Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.": "Could not load the security check. Reload the page and try again."
+  "Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.": "Could not load the security check. Reload the page and try again.",
+  "Este link expirou ou já foi usado. Entre com seu e-mail para receber um novo.": "This link has expired or was already used. Sign in with your email to get a new one.",
+  "Este link não é válido. Entre com seu e-mail para receber um novo.": "This link is not valid. Sign in with your email to get a new one.",
+  "Informe seu e-mail.": "Enter your email.",
+  "Aguarde um minuto antes de pedir outro e-mail.": "Wait a minute before requesting another email.",
+  "Se houver uma conta aguardando confirmação, enviamos um novo e-mail.": "If an account is awaiting confirmation, we sent a new email.",
+  "Confirme seu e-mail antes de entrar. Você pode pedir um novo link abaixo.": "Confirm your email before signing in. You can request a new link below.",
+  "Não recebeu o e-mail de confirmação?": "Didn't get the confirmation email?",
+  "Reenviar e-mail de confirmação": "Resend confirmation email",
+  "Confirme seu e-mail para continuar.": "Confirm your email to continue."
 }
