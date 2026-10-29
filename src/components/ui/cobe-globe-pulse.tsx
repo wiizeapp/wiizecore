@@ -44,7 +44,7 @@ export function GlobePulse() {
         markers: [{ id: "brazil", location: [-23.55, -46.63], size: 0.045 }],
         opacity: 1,
       });
-      canvas.dataset.ready = "true";
+      canvas.dataset["ready"] = "true";
       resize.observe(canvas);
       let phi = 4.7;
       const animate = () => {
@@ -55,7 +55,7 @@ export function GlobePulse() {
       };
       animate();
     };
-    void start().catch(() => { canvas.dataset.ready = "unavailable"; });
+    void start().catch(() => { canvas.dataset["ready"] = "unavailable"; });
     return () => { stopped = true; cancelAnimationFrame(frame); resize.disconnect(); globe?.destroy(); };
   }, []);
   return <div className="secure-globe relative mx-auto aspect-square w-full max-w-[460px] select-none" aria-hidden="true">

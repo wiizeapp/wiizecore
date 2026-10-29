@@ -182,4 +182,4 @@
   - [ ] Validação final do módulo: bloqueada por ausência de sessão Admin autorizada e conta de produção Asaas habilitada com teste real autorizado; configuração Vercel não verificada/alterada. RLS com duas sessões, concorrência integrada e defesa real permanecem não validados; sandbox não substitui desafio real. Divergência de renderização observada no estado não encontrado do Admin sem sessão, sem dados privados expostos; fluxo Admin autenticado indisponível nesta sessão.
 
 
-- [ ] Apresentação profissional da seção 3D Secure: globo do anexo adaptado, hierarquia e benefícios; somente visual. Conferir telas e renderização.
+- [x] Apresentação profissional da seção 3D Secure: globo do anexo adaptado com destaque no Brasil, hierarquia e benefícios; somente visual. Telas larga/estreita sem overflow, globo visível e em movimento, abertura sem erros; pagamentos e configuração preservados.
