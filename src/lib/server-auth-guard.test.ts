@@ -8,6 +8,7 @@ import { join } from "node:path";
  */
 const PUBLIC_ALLOWED: Record<string, string[]> = {
   "checkout.functions.ts": ["*"],
+  "signup.functions.ts": ["signUpProtected"],
   "fees.functions.ts": ["*"],
   "contract-docs.functions.ts": ["getSignerView", "getSignerPdf", "signAsExtraSigner", "getCustomerPdf", "verifyContract"],
   "contract-links.functions.ts": ["*"],
