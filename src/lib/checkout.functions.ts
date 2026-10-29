@@ -601,7 +601,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       if (fresh?.provider_payment_id) payment.provider_payment_id = fresh.provider_payment_id;
     }
 
-    const threeDs = (await import("./threeds.server")).isCheckoutThreeDsEnabled();
+    const threeDs = await (await import("./threeds.server")).checkoutThreeDsAllowed(admin);
     const body: Record<string, unknown> = {
       creditCard: { holderName: data.holderName, number: data.number, expiryMonth: data.expiryMonth, expiryYear: data.expiryYear, ccv: data.ccv },
       creditCardHolderInfo: {

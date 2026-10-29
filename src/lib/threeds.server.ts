@@ -14,6 +14,12 @@ export function isCheckoutThreeDsEnabled(env: NodeJS.ProcessEnv = process.env): 
   return env["CHECKOUT_3DS_ENABLED"] === "true";
 }
 
+export async function checkoutThreeDsAllowed(admin: AdminClient): Promise<boolean> {
+  if (!isCheckoutThreeDsEnabled()) return false;
+  const { data, error } = await admin.from("checkout_3ds_control").select("allowed").eq("id", "checkout").maybeSingle();
+  return !error && data?.allowed === true;
+}
+
 /**
  * Cada cobrança tem sua própria autenticação: parcelada e recorrente nunca
  * reutilizam a autenticação de outra compra. Renovações recorrentes são cobradas
@@ -143,7 +149,7 @@ export async function syncAuthFromWebhook(
       .maybeSingle();
     if (!row) return;
     const current = row as { id: string; status: string; external_event_id: string | null };
-    if (input.externalEventId && current.external_event_id === input.externalEventId) return;
+  if (input.externalEventId && current.external_event_id === input.externalEventId) return;
     await db
       .from("payment_authentications")
       .update({
@@ -153,7 +159,8 @@ export async function syncAuthFromWebhook(
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
-      .eq("tenant_id", input.tenantId);
+      .eq("tenant_id", input.tenantId)
+      .in("status", ["started", "challenge_redirected", "returned"]);
   } catch (e) {
     console.error("3ds auth sync", e instanceof Error ? e.message : "falhou");
   }
