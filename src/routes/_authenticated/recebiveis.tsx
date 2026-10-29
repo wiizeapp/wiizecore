@@ -161,7 +161,8 @@ function Recebiveis() {
         money = ["Valor", "Taxas", "Líquido"];
       }
       await exportAuth({ data: { kind, filters: { view, from, to, customer, method, q }, rows: rows.length } });
-      const ws = XLSX.utils.json_to_sheet(rows);
+      const { safeSpreadsheetRows } = await import("@/lib/spreadsheet-safety");
+      const ws = XLSX.utils.json_to_sheet(safeSpreadsheetRows(rows));
       const headers = rows.length ? Object.keys(rows[0]!) : ["Sem dados"];
       if (rows.length) {
         const n = rows.length;

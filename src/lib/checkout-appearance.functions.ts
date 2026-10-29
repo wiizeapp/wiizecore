@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { appearanceSchema, contrastIssues } from "./checkout-appearance";
+import { approvedLogoUrl, boundedImageBytes } from "./logo-import-policy";
 
 type Ctx = { supabase: any; userId: string };
 const EDITORS = ["owner", "admin"];
@@ -104,16 +105,6 @@ export const uploadCheckoutLogo = createServerFn({ method: "POST" })
     return stored;
   });
 
-function allowedRemoteUrl(value: string) {
-  const url = new URL(value);
-  if (url.protocol !== "https:") throw new Error("Use um endereço HTTPS para a logo.");
-  const host = url.hostname.toLowerCase();
-  if (host === "localhost" || host.endsWith(".local") || host.endsWith(".internal") || /^\d+\.\d+\.\d+\.\d+$/.test(host) || host.includes(":")) {
-    throw new Error("Este endereço de logo não é permitido.");
-  }
-  return url;
-}
-
 /** Importa uma logo HTTPS para o armazenamento privado; o checkout não depende do endereço externo. */
 export const importCheckoutLogo = createServerFn({ method: "POST" })
   .middleware([requireMfaAuth])
@@ -122,14 +113,14 @@ export const importCheckoutLogo = createServerFn({ method: "POST" })
     const ctx = context as Ctx;
     const m = await membership(ctx);
     if (!EDITORS.includes(m.role)) throw new Error("Somente dono ou administrador pode alterar o checkout.");
-    const url = allowedRemoteUrl(data.url);
-    const response = await fetch(url, { redirect: "error", headers: { accept: "image/png,image/jpeg,image/webp" } });
+    const url = approvedLogoUrl(data.url, process.env["CHECKOUT_LOGO_ALLOWED_HOSTS"]);
+    const response = await fetch(url, { redirect: "error", signal: AbortSignal.timeout(10000), headers: { accept: "image/png,image/jpeg,image/webp" } });
     if (!response.ok) throw new Error("Não foi possível baixar a logo desse endereço.");
     const contentLength = Number(response.headers.get("content-length") ?? 0);
     if (contentLength > MAX_BYTES) throw new Error("A imagem desse endereço é maior que 2 MB.");
     const contentType = (response.headers.get("content-type") ?? "").split(";")[0] ?? "";
     if (!TYPES[contentType]) throw new Error("O endereço deve apontar para PNG, JPG ou WebP.");
-    const bytes = new Uint8Array(await response.arrayBuffer());
+    const bytes = await boundedImageBytes(response, MAX_BYTES);
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const stored = await storeLogo(admin, m.tenant_id, bytes, contentType);
     await auditLogo(admin, m.tenant_id, ctx.userId, "checkout_logo.imported", stored.logoPath);
