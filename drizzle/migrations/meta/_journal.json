@@ -330,6 +330,13 @@
       "when": 1793279448266,
       "tag": "0046_chargebacks_and_payment_authentications",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1793279557887,
+      "tag": "0047_chargeback_defense_guards",
+      "breakpoints": true
     }
   ]
 }

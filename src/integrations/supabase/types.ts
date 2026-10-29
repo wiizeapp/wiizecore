@@ -826,6 +826,9 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          defense_claim: string | null
+          defense_sent_at: string | null
+          defense_state: string
           dispute_deadline: string | null
           id: string
           internal_status: string
@@ -837,12 +840,16 @@ export type Database = {
           provider_payment_id: string
           reason: string | null
           status: string
+          synced_at: string | null
           tenant_id: string
           updated_at: string
         }
         Insert: {
           amount?: number
           created_at?: string
+          defense_claim?: string | null
+          defense_sent_at?: string | null
+          defense_state?: string
           dispute_deadline?: string | null
           id?: string
           internal_status?: string
@@ -854,12 +861,16 @@ export type Database = {
           provider_payment_id: string
           reason?: string | null
           status?: string
+          synced_at?: string | null
           tenant_id: string
           updated_at?: string
         }
         Update: {
           amount?: number
           created_at?: string
+          defense_claim?: string | null
+          defense_sent_at?: string | null
+          defense_state?: string
           dispute_deadline?: string | null
           id?: string
           internal_status?: string
@@ -871,6 +882,7 @@ export type Database = {
           provider_payment_id?: string
           reason?: string | null
           status?: string
+          synced_at?: string | null
           tenant_id?: string
           updated_at?: string
         }
@@ -8253,6 +8265,10 @@ export type Database = {
         Returns: undefined
       }
       charge_invoice_fee: { Args: { _invoice_id: string }; Returns: number }
+      claim_chargeback_defense: {
+        Args: { p_case: string; p_claim: string; p_tenant: string }
+        Returns: boolean
+      }
       complete_withdrawal: {
         Args: { _reference: string; _reviewer: string; _withdrawal_id: string }
         Returns: undefined
@@ -8344,6 +8360,20 @@ export type Database = {
         Returns: number
       }
       mfa_satisfied: { Args: never; Returns: boolean }
+      mutate_chargeback_document: {
+        Args: {
+          p_action: string
+          p_case: string
+          p_document: string
+          p_mime?: string
+          p_name?: string
+          p_path?: string
+          p_size?: number
+          p_tenant: string
+          p_user: string
+        }
+        Returns: boolean
+      }
       pld_create_alert: {
         Args: {
           _enc: string
