@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatBRL } from "@/lib/format";
 import { frequencyLabels } from "@/lib/labels";
 import { FinancialIdentity, FinancialSupport } from "@/components/financial-provider";
+import { CHECKOUT_SERVICE_FIELDS } from "@/lib/checkout-resume";
+import { useCheckoutDraft } from "@/hooks/use-checkout-draft";
+import { useCheckoutReturn } from "@/hooks/use-checkout-return";
 
 export const Route = createFileRoute("/checkout/$token")({
   head: () => ({
@@ -37,8 +40,9 @@ function OpenCheckout() {
   const fetchInfo = useServerFn(getServiceCheckout);
   const start = useServerFn(startServiceCheckout);
   const choose = useServerFn(chooseServiceCheckoutMethod);
-  const info = useQuery({ queryKey: ["open-checkout", token], queryFn: () => fetchInfo({ data: { token } }) });
-  const [form, setForm] = useState({ name: "", document: "", email: "", phone: "" });
+  const info = useQuery({ queryKey: ["open-checkout", token], queryFn: () => fetchInfo({ data: { token } }), refetchOnWindowFocus: "always", refetchOnReconnect: "always" });
+  useCheckoutReturn(info.refetch);
+  const [form, setForm, clearDraft] = useCheckoutDraft(token, "service", CHECKOUT_SERVICE_FIELDS, { name: "", document: "", email: "", phone: "" });
   const [session, setSession] = useState<string | null>(null);
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [method, setMethod] = useState("");
@@ -108,7 +112,7 @@ function OpenCheckout() {
               {method !== "credit_card" && Number(n) > 1 ? <p className="text-xs text-muted-foreground">{t("Uma cobrança nova é enviada a cada mês.")}</p> : null}
             </div>
           ) : null}
-          <Button className="w-full" disabled={busy || !method} onClick={() => void run(async () => { const r = await choose({ data: { token, session, method, installments: Number(n) } }); window.location.assign(r.payUrl); })}>{t("Ir para o pagamento")}</Button>
+          {resumeUrl ? <Button asChild className="w-full"><a href={resumeUrl} onClick={clearDraft}>{t("Continuar cobrança existente")}</a></Button> : <Button className="w-full" disabled={busy || !method} onClick={() => void run(async () => { const r = await choose({ data: { token, session, method, installments: Number(n) } }); clearDraft(); window.location.assign(r.payUrl); })}>{t("Ir para o pagamento")}</Button>}
           <Button type="button" variant="ghost" className="w-full" onClick={() => setSession(null)}>{t("Voltar")}</Button>
         </div>
       )}

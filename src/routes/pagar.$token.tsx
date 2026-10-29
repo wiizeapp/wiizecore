@@ -19,6 +19,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { SignaturePad, type SignatureValue } from "@/components/contracts/signature-pad";
 import { CardPaymentForm } from "@/components/checkout/card-payment-form";
 import { CheckoutBrandHeader, CheckoutProgress, CheckoutStageHeader, CheckoutTermsPanel, CheckoutTrustFooter, checkoutAppearanceVars } from "@/components/checkout/checkout-presentation";
+import { CHECKOUT_CUSTOMER_FIELDS, checkoutPollInterval } from "@/lib/checkout-resume";
+import { useCheckoutDraft } from "@/hooks/use-checkout-draft";
+import { useCheckoutReturn } from "@/hooks/use-checkout-return";
 
 export const Route = createFileRoute("/pagar/$token")({
   head: () => ({
@@ -58,18 +61,27 @@ function Checkout() {
   const fetchInstructions = useServerFn(getPaymentInstructions);
   const [method, setMethod] = useState<"pix" | "boleto" | "credit_card" | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const loadedInstructions = useRef<string | null>(null);
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["checkout", token],
     queryFn: () => fetchCheckout({ data: { token } }),
     refetchInterval: (q) => {
       const d = q.state.data;
       if (d?.state !== "ok") return false;
-      return d.payments.some((p) => OPEN.includes(p.status)) ? 8000 : false;
+      return checkoutPollInterval(d.payments);
     },
+    refetchOnWindowFocus: "always",
+    refetchOnReconnect: "always",
     retry: false,
   });
+  useCheckoutReturn(refetch);
+  useEffect(() => {
+    if (data?.state !== "ok" || !data.dataConfirmed) return;
+    try { sessionStorage.removeItem(`wiizepay:checkout-draft:customer:${token}`); } catch { /* Optional draft. */ }
+  }, [data?.state, data?.state === "ok" && data.dataConfirmed, token]);
 
   const switchFn = useServerFn(switchCheckoutMethod);
   const [changing, setChanging] = useState(false);
@@ -106,11 +118,11 @@ function Checkout() {
     if (chosen !== "pix" && chosen !== "boleto" && chosen !== "credit_card") return;
     setMethod(chosen);
     const instructionKey = `${automaticPayment.id}:${chosen}`;
-    if ((chosen === "pix" || chosen === "boleto") && loadedInstructions.current !== instructionKey) {
+    if (data?.state === "ok" && data.dataConfirmed && !data.pendingContract && (chosen === "pix" || chosen === "boleto") && loadedInstructions.current !== instructionKey) {
       loadedInstructions.current = instructionKey;
       instructions.mutate({ paymentId: automaticPayment.id, kind: chosen });
     }
-  }, [automaticPayment?.id, automaticPayment?.method]);
+  }, [automaticPayment?.id, automaticPayment?.method, data?.state === "ok" && data.dataConfirmed, data?.state === "ok" && data.pendingContract]);
 
   // Retorno do desafio 3DS do banco: mostra "confirmando" até o webhook oficial atualizar a cobrança.
   const notify3ds = useServerFn(notifyCheckout3dsReturn);
@@ -122,18 +134,22 @@ function Checkout() {
     if (params.get("verificacao-cartao") !== "retorno") return;
     handled3dsReturn.current = true;
     setVerifyingCard(true);
+  }, []);
+  useEffect(() => {
+    if (!verifyingCard || data?.state !== "ok" || checkoutPollInterval(data.payments)) return;
+    setVerifyingCard(false);
     const url = new URL(window.location.href);
     url.searchParams.delete("verificacao-cartao");
     window.history.replaceState(null, "", url.toString());
-  }, []);
+  }, [verifyingCard, data]);
   useEffect(() => {
     if (!verifyingCard || !automaticPayment) return;
     void notify3ds({ data: { token, paymentId: automaticPayment.id } }).catch(() => undefined);
   }, [verifyingCard, automaticPayment?.id]);
 
-  if (isLoading) return <Shell><CheckoutSkeleton /></Shell>;
+  if (!hydrated || isLoading) return <Shell><CheckoutSkeleton /></Shell>;
   const appearance = data?.state === "ok" ? data.appearance : DEFAULT_APPEARANCE;
-  if (error || !data) return <Shell><StateView icon={XCircle} tone="danger" title={ui("Não foi possível abrir o link")} text={ui("Tente novamente em alguns minutos.")} /></Shell>;
+  if (!data) return <Shell><StateView icon={XCircle} tone="danger" title={ui("Não foi possível abrir o link")} text={ui("Tente novamente em alguns minutos.")} /></Shell>;
   if (data.state !== "ok") {
     const texts = { invalid: "Este link não existe. Confira o endereço recebido.", revoked: "Este link foi desativado pelo prestador. Peça um novo link." } as const;
     return <Shell><StateView icon={XCircle} tone="muted" title={ui("Link indisponível")} text={ui(texts[data.state])} /></Shell>;
@@ -224,9 +240,9 @@ function Checkout() {
         ) : null}
         {current ? <CheckoutProgress current={checkoutStep} needsCustomerData needsContract={Boolean(data.pendingContract)} /> : null}
           {needsCustomerData ? (
-           <CustomerForm token={token} customer={data.customer} acceptedTerms={acceptedTerms} onAcceptedTerms={setAcceptedTerms} onDone={() => void refetch()} />
+           <CustomerForm key={token} token={token} customer={data.customer} acceptedTerms={acceptedTerms} onAcceptedTerms={setAcceptedTerms} onDone={() => void refetch()} />
         ) : data.pendingContract ? (
-          <CheckoutContractForm onViewed={() => void track({ data: { token, event: "contract_viewed" } }).catch(() => undefined)} token={token} contract={data.pendingContract} customerName={data.customer?.name ?? ""} onSigned={() => void refetch()} />
+          <CheckoutContractForm key={`${token}:${data.pendingContract.version}`} onViewed={() => void track({ data: { token, event: "contract_viewed" } }).catch(() => undefined)} token={token} contract={data.pendingContract} customerName={data.customer?.name ?? ""} onSigned={() => void refetch()} />
         ) : data.coproductionPending && !allPaid ? (
           <StateView icon={CheckCircle2} tone="muted" title={ui("Pagamento disponível em breve")} text={ui("O prestador está finalizando a configuração desta cobrança. Volte a este mesmo link em alguns instantes.")} />
         ) : allPaid || pixPaid ? (
@@ -273,7 +289,7 @@ function Checkout() {
         ) : !current ? (
           <StateView icon={CheckCircle2} tone="muted" title={ui("Nada a pagar agora")} text={ui("Não há pagamentos em aberto neste link.")} />
         ) : verifyingCard ? (
-          <StateView icon={Loader2} spin tone="muted" title={ui("Confirmando a verificação do banco")} text={ui("A verificação do banco foi concluída. Aguarde a confirmação do pagamento nesta página.")} hint={ui("Esta página atualiza sozinha quando o pagamento for confirmado.")}>
+          <StateView icon={Loader2} spin tone="muted" title={ui("Confirmando a verificação do banco")} text={ui("Você voltou da verificação do banco. Estamos aguardando a confirmação oficial do pagamento.")} hint={ui("Esta página atualiza sozinha quando o pagamento for confirmado.")}>
             <Button variant="outline" className="mt-6" onClick={() => setVerifyingCard(false)}>{ui("Voltar ao pagamento")}</Button>
           </StateView>
         ) : resolvedMethod ? (
@@ -307,7 +323,7 @@ function Checkout() {
               <div><h3 className="font-display text-xl font-semibold">{resolvedMethod === "pix" ? ui("Pague com Pix") : resolvedMethod === "boleto" ? ui("Pague com boleto") : ui("Dados do cartão")}</h3><p className="text-sm text-muted-foreground">{resolvedMethod === "credit_card" ? ui("Preencha os dados abaixo para finalizar") : ui("Use os dados abaixo para concluir o pagamento")}</p></div>
             </div>
             {resolvedMethod === "credit_card" ? (
-              <CardPaymentForm token={token} paymentId={current.id} amount={late ? late.total : current.amount} disabled={false} onDone={() => void refetch()} />
+              <CardPaymentForm key={`${token}:${current.id}`} token={token} paymentId={current.id} amount={late ? late.total : current.amount} disabled={false} onDone={() => void refetch()} />
             ) : null}
             {resolvedMethod === "pix" || resolvedMethod === "boleto" ? (
               <div className="space-y-5">
@@ -532,7 +548,7 @@ type CheckoutCustomer = {
 function CustomerForm({ token, customer, acceptedTerms, onAcceptedTerms, onDone }: { token: string; customer: CheckoutCustomer; acceptedTerms: boolean; onAcceptedTerms: (accepted: boolean) => void; onDone: () => void }) {
   const { t: ui } = useTranslation("ui");
   const save = useServerFn(updateCheckoutCustomer);
-  const [f, setF] = useState({
+  const [f, setF, clearDraft] = useCheckoutDraft(token, "customer", CHECKOUT_CUSTOMER_FIELDS, {
     email: customer?.email ?? "",
     phone: customer?.phone ?? "",
     zipCode: customer?.zipCode ?? "",
@@ -554,7 +570,7 @@ function CustomerForm({ token, customer, acceptedTerms, onAcceptedTerms, onDone 
           zipCode: f.zipCode.replace(/\D/g, ""),
         },
       }),
-    onSuccess: onDone,
+    onSuccess: () => { clearDraft(); onDone(); },
     onError: (e: Error) => {
       const message = friendlyCheckoutError(e);
       if (message.toLowerCase().includes("celular") || message.toLowerCase().includes("telefone")) setFieldError(message);
@@ -567,7 +583,7 @@ function CustomerForm({ token, customer, acceptedTerms, onAcceptedTerms, onDone 
     try {
       const r = await fetch(`https://viacep.com.br/ws/${d}/json/`);
       const j = (await r.json()) as { logradouro?: string; bairro?: string; localidade?: string; uf?: string; erro?: boolean };
-      if (!j.erro) setF((v) => ({ ...v, address: j.logradouro || v.address, district: j.bairro || v.district, city: j.localidade || v.city, state: j.uf || v.state }));
+      if (!j.erro) setF((v) => v.zipCode.replace(/\D/g, "") !== d ? v : ({ ...v, address: j.logradouro || v.address, district: j.bairro || v.district, city: j.localidade || v.city, state: j.uf || v.state }));
     } catch {
       /* preenchimento manual */
     }
