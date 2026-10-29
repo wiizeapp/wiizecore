@@ -1438,6 +1438,7 @@ export type Database = {
         Row: {
           attempts: number
           binding_hash: string
+          capability_hash: string | null
           code_hash: string
           consumed_at: string | null
           content_hash: string
@@ -1450,12 +1451,14 @@ export type Database = {
           revoked_at: string | null
           sent_at: string | null
           signer_role: string
+          source: string | null
           tenant_id: string
           version_id: string
         }
         Insert: {
           attempts?: number
           binding_hash: string
+          capability_hash?: string | null
           code_hash: string
           consumed_at?: string | null
           content_hash: string
@@ -1468,12 +1471,14 @@ export type Database = {
           revoked_at?: string | null
           sent_at?: string | null
           signer_role: string
+          source?: string | null
           tenant_id: string
           version_id: string
         }
         Update: {
           attempts?: number
           binding_hash?: string
+          capability_hash?: string | null
           code_hash?: string
           consumed_at?: string | null
           content_hash?: string
@@ -1486,6 +1491,7 @@ export type Database = {
           revoked_at?: string | null
           sent_at?: string | null
           signer_role?: string
+          source?: string | null
           tenant_id?: string
           version_id?: string
         }
