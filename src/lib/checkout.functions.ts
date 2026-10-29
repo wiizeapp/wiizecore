@@ -540,6 +540,15 @@ const cardSchema = z.object({
   expiryYear: z.string().regex(/^\d{4}$/, "Ano inválido."),
   ccv: z.string().regex(/^\d{3,4}$/, "Código de segurança inválido."),
   holderDocument: z.string().transform((v) => v.replace(/\D/g, "")).refine((v) => v === "" || v.length === 11 || v.length === 14, "CPF ou CNPJ do titular inválido."),
+  // Dados do dispositivo exigidos pelo fluxo 3DS oficial (fuso em horas, conforme a documentação).
+  deviceInfo: z.object({
+    colorDepth: z.number().int().min(1).max(48),
+    screenHeight: z.number().int().min(1).max(10000),
+    screenWidth: z.number().int().min(1).max(10000),
+    timezoneHours: z.number().min(-14).max(14),
+    language: z.string().min(2).max(35),
+    userAgent: z.string().min(1).max(500),
+  }).optional(),
 });
 
 /**
@@ -564,7 +573,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
 
     const { data: payment } = await admin
       .from("payments")
-      .select("id, provider_payment_id, status, method")
+      .select("id, provider_payment_id, status, method, installment_count, subscription_id")
       .eq("id", data.paymentId).eq("tenant_id", link.tenant_id).eq("charge_group_id", link.charge_group_id!)
       .maybeSingle();
     if (!payment?.provider_payment_id) throw new Error("Pagamento indisponível.");
@@ -592,26 +601,98 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       if (fresh?.provider_payment_id) payment.provider_payment_id = fresh.provider_payment_id;
     }
 
+    const threeDs = (await import("./threeds.server")).isCheckoutThreeDsEnabled();
+    const body: Record<string, unknown> = {
+      creditCard: { holderName: data.holderName, number: data.number, expiryMonth: data.expiryMonth, expiryYear: data.expiryYear, ccv: data.ccv },
+      creditCardHolderInfo: {
+        name: data.holderName, email: customer.email, cpfCnpj: holderDoc,
+        postalCode: customer.zip_code, addressNumber: customer.address_number, phone: customer.phone,
+      },
+      remoteIp: requestInfo().ip ?? undefined,
+    };
+    if (threeDs) {
+      // URL oficial de retorno do desafio: volta para o próprio link de pagamento.
+      const { getRequestHeader } = await import("@tanstack/react-start/server");
+      const { safeOrigin } = await import("./contract-docs.server");
+      const origin = safeOrigin(getRequestHeader("origin") ?? undefined);
+      body.threeDSecure = { callbackUrl: `${origin}/pagar/${data.token}?verificacao-cartao=retorno` };
+      if (data.deviceInfo) {
+        body.deviceInfo = {
+          colorDepth: data.deviceInfo.colorDepth,
+          screenHeight: data.deviceInfo.screenHeight,
+          screenWidth: data.deviceInfo.screenWidth,
+          timezone: data.deviceInfo.timezoneHours,
+          language: data.deviceInfo.language,
+          userAgent: data.deviceInfo.userAgent,
+          remoteIp: requestInfo().ip ?? undefined,
+        };
+      }
+    }
+
     let status = "PENDING";
+    let challengeUrl: string | null = null;
     try {
-      const res = await (conn.provider as unknown as { payWithCreditCard: (id: string, b: Record<string, unknown>) => Promise<{ status: string }> }).payWithCreditCard(payment.provider_payment_id, {
-        creditCard: { holderName: data.holderName, number: data.number, expiryMonth: data.expiryMonth, expiryYear: data.expiryYear, ccv: data.ccv },
-        creditCardHolderInfo: {
-          name: data.holderName, email: customer.email, cpfCnpj: holderDoc,
-          postalCode: customer.zip_code, addressNumber: customer.address_number, phone: customer.phone,
-        },
-        remoteIp: requestInfo().ip ?? undefined,
-      });
+      const res = await conn.provider.payWithCreditCard(payment.provider_payment_id, body);
       status = res.status ?? status;
+      if (threeDs) {
+        // Resposta oficial: URL do desafio preenchida (banco exige verificação) ou nula (sem desafio).
+        challengeUrl = typeof res.threeDSecureChallengeUrl === "string" && res.threeDSecureChallengeUrl ? res.threeDSecureChallengeUrl : null;
+      }
     } catch (e) {
+      // Resposta inconclusiva (ex.: timeout): consulta o estado real da cobrança antes de
+      // deixar o cliente tentar de novo, para não cobrar duas vezes.
+      let providerStatus: string | null = null;
+      try {
+        const current = await conn.provider.getPayment(payment.provider_payment_id);
+        providerStatus = typeof (current as { status?: string }).status === "string" ? (current as { status?: string }).status! : null;
+      } catch { /* sem consulta, segue com a recusa genérica */ }
       await trackEvent(admin, link, "card_declined");
-      await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_declined", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4) } });
+      await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_declined", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4), providerStatus } });
+      if (providerStatus && !["PENDING", "AWAITING_RISK_ANALYSIS"].includes(providerStatus)) {
+        throw new Error("Não foi possível confirmar a resposta da operadora. Aguarde a atualização desta página antes de tentar novamente.");
+      }
       throw new Error(e instanceof Error ? e.message : "Cartão recusado. Confira os dados ou tente outro cartão.");
     }
-    await trackEvent(admin, link, "payment_submitted", { method: "credit_card" });
-    await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_submitted", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4), providerStatus: status } });
-    // O status da cobrança só muda pela confirmação do processador (webhook).
-    return { status, approved: ["CONFIRMED", "RECEIVED"].includes(status) };
+
+    if (threeDs) {
+      const { data: attempt } = await admin.from("payment_attempts").select("id").eq("tenant_id", link.tenant_id).eq("payment_id", payment.id).eq("status", "active").maybeSingle();
+      const { recordAuthStart, modalityForPayment } = await import("./threeds.server");
+      await recordAuthStart(admin, {
+        tenantId: link.tenant_id,
+        paymentId: payment.id,
+        paymentAttemptId: attempt?.id ?? null,
+        connectionId: conn.connection.id,
+        providerPaymentId: payment.provider_payment_id,
+        modality: modalityForPayment(payment),
+        authResult: challengeUrl ? "issuer_challenge" : "frictionless",
+        correlationId: crypto.randomUUID(),
+      });
+    }
+    await trackEvent(admin, link, "payment_submitted", { method: "credit_card", ...(challengeUrl ? { threeDs: "challenge" } : {}) });
+    await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_submitted", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4), providerStatus: status, threeDs: threeDs ? (challengeUrl ? "challenge" : "frictionless") : "off" } });
+    // O status da cobrança só muda pela confirmação do processador (webhook). Com desafio
+    // 3DS pendente, o pagamento NUNCA é apresentado como aprovado.
+    return { status, approved: !challengeUrl && ["CONFIRMED", "RECEIVED"].includes(status), challengeUrl };
+  });
+
+/** O cliente voltou do desafio 3DS do banco. O retorno não confirma o pagamento; só o webhook confirma. */
+export const notifyCheckout3dsReturn = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => z.object({ token: tokenSchema, paymentId: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
+    const resolved = await resolveLink(admin, data.token);
+    if (resolved.state !== "ok") return { ok: false };
+    const { link } = resolved;
+    const { data: payment } = await admin
+      .from("payments")
+      .select("id")
+      .eq("id", data.paymentId).eq("tenant_id", link.tenant_id).eq("charge_group_id", link.charge_group_id!)
+      .maybeSingle();
+    if (!payment) return { ok: false };
+    const { markAuthReturned } = await import("./threeds.server");
+    await markAuthReturned(admin, { tenantId: link.tenant_id, paymentId: payment.id });
+    await trackEvent(admin, link, "card_3ds_returned");
+    return { ok: true };
   });
 
 /** PDF do contrato vinculado ao link (somente leitura), para o cliente ler antes de assinar. */
