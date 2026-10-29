@@ -1,6 +1,8 @@
 import os,pwd,subprocess,re,json
 from pathlib import Path
-u=pwd.getpwnam('lovable'); root=Path('/dev-server'); base=Path('/tmp/wiize-accounting-xcxn9pce')
+assert os.environ.get('WIIZE_FIXTURE_CONFIRMED') == 'local-only', 'Use run-accounting-fixture.py'
+u=pwd.getpwnam('lovable'); root=Path(__file__).resolve().parents[2]; base=Path(os.environ['WIIZE_FIXTURE_DIR'])
+assert base.parent == Path('/tmp') and base.name.startswith('wiize-accounting-')
 def unprivileged():
  os.setgid(u.pw_gid); os.setuid(u.pw_uid)
 def sql(query):

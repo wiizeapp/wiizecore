@@ -1,6 +1,8 @@
 import os,pwd,subprocess,re
 from pathlib import Path
-u=pwd.getpwnam('lovable');b=Path('/tmp/wiize-accounting-xcxn9pce')
+assert os.environ.get('WIIZE_FIXTURE_CONFIRMED') == 'local-only', 'Use run-accounting-fixture.py'
+u=pwd.getpwnam('lovable');b=Path(os.environ['WIIZE_FIXTURE_DIR'])
+assert b.parent == Path('/tmp') and b.name.startswith('wiize-accounting-')
 def drop_uid():
  os.setgid(u.pw_gid);os.setuid(u.pw_uid)
 env={'PATH':'/bin:/usr/bin','HOME':u.pw_dir}
@@ -10,10 +12,9 @@ def sql(q,ok=True):
  if ok and r.returncode:raise RuntimeError(r.stderr)
  if not ok:assert r.returncode!=0
  return r.stdout.strip()
-r=run(['/bin/pg_ctl','-D',str(b/'cluster'),'-l',str(b/'server.log'),'-o',f'-p 55439 -k {b} -c listen_addresses= -c unix_socket_permissions=0700','-w','start']);assert r.returncode==0,r.stderr
 try:
  sql('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;')
- sql(Path('/dev-server/docs/migrations-pendentes/accounting-release-candidate.sql').read_text())
+ sql((Path(__file__).resolve().parents[2]/'docs/migrations-pendentes/accounting-release-candidate.sql').read_text())
  a='00000000-0000-4000-8000-000000000001';p='00000000-0000-4000-8000-000000000002';s='00000000-0000-4000-8000-000000000003';r='00000000-0000-4000-8000-000000000004'
  sql(f"UPDATE wallets SET pending_balance=260,available_balance=0,total_fees=0; UPDATE payments SET released_at=now(),refund_reserved_pending=0; UPDATE coproduction_splits SET status='received',released_at=NULL;")
  assert sql(f"SELECT release_coproduction_splits('{p}')")=='1'
@@ -41,4 +42,4 @@ try:
  assert sql("SELECT has_function_privilege('anon','public.apply_anticipation_event(uuid,anticipation_status,text,text)','EXECUTE')")=='f'
  print('PASS financial candidate functions not directly executable by ordinary roles')
 finally:
- r=run(['/bin/pg_ctl','-D',str(b/'cluster'),'-m','fast','-w','stop']);print('disposable server stopped:',r.returncode==0)
+ print('candidate checks ended; parent runner shuts down the disposable cluster')
