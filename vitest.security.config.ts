@@ -5,5 +5,5 @@ import { fileURLToPath } from "node:url";
 // rather than TanStack's transformed transport stub. No live clients are loaded.
 export default defineConfig({
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
-  test: { include: ["src/lib/final-security-flows.security-check.ts", "src/lib/contract-signing.security-check.ts"], environment: "node" },
+  test: { include: ["src/lib/final-security-flows.security-check.ts", "src/lib/contract-signing.security-check.ts", "src/lib/password-retest.security-check.ts"], environment: "node" },
 });
