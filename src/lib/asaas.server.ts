@@ -222,6 +222,18 @@ export class AsaasProvider implements PaymentProvider {
   createCustomer(input: Record<string, unknown>) {
     return this.request<{ id: string }>("POST", "/customers", input);
   }
+  listChargebacks(offset = 0) {
+    return this.request<{ hasMore: boolean; data: { id: string; payment?: string; installment?: string; status: string; reason?: string; deadlineToSendDisputeDocuments?: string; disputeStatus?: string }[] }>("GET", `/chargebacks?limit=100&offset=${offset}`);
+  }
+  async submitChargebackDefense(id: string, files: { blob: Blob; name: string }[]) {
+    const form = new FormData();
+    for (const f of files) form.append("files", f.blob, f.name);
+    const response = await fetch(`${ASAAS_BASE_URLS[this.environment]}/chargebacks/${encodeURIComponent(id)}/dispute`, {
+      method: "POST", signal: AbortSignal.timeout(20000), headers: { access_token: this.apiKey, accept: "application/json", "user-agent": "WiizePay" }, body: form,
+    });
+    if (!response.ok) throw new ProviderRequestError("O Asaas não confirmou o envio da defesa.", response.status);
+    return await response.json() as unknown;
+  }
   updateCustomer(id: string, input: Record<string, unknown>) {
     return this.request<{ id: string }>("PUT", `/customers/${encodeURIComponent(id)}`, input);
   }

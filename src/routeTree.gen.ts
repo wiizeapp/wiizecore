@@ -49,6 +49,7 @@ import { Route as AuthenticatedCheckoutPersonalizadoRouteImport } from './routes
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedCobrancasRouteImport } from './routes/_authenticated/cobrancas'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
+import { Route as AuthenticatedContestacoesRouteImport } from './routes/_authenticated/contestacoes'
 import { Route as AuthenticatedContratosRouteImport } from './routes/_authenticated/contratos'
 import { Route as AuthenticatedCoproducoesRouteImport } from './routes/_authenticated/coproducoes'
 import { Route as AuthenticatedCuponsRouteImport } from './routes/_authenticated/cupons'
@@ -314,6 +315,12 @@ const AuthenticatedConfiguracoesRoute =
   AuthenticatedConfiguracoesRouteImport.update({
     id: '/configuracoes',
     path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedContestacoesRoute =
+  AuthenticatedContestacoesRouteImport.update({
+    id: '/contestacoes',
+    path: '/contestacoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedContratosRoute = AuthenticatedContratosRouteImport.update({
@@ -692,6 +699,7 @@ export interface FileRoutesByFullPath {
   '/clientes': typeof AuthenticatedClientesRoute
   '/cobrancas': typeof AuthenticatedCobrancasRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/contestacoes': typeof AuthenticatedContestacoesRoute
   '/contratos': typeof AuthenticatedContratosRoute
   '/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/cupons': typeof AuthenticatedCuponsRoute
@@ -795,6 +803,7 @@ export interface FileRoutesByTo {
   '/clientes': typeof AuthenticatedClientesRoute
   '/cobrancas': typeof AuthenticatedCobrancasRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/contestacoes': typeof AuthenticatedContestacoesRoute
   '/contratos': typeof AuthenticatedContratosRoute
   '/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/cupons': typeof AuthenticatedCuponsRoute
@@ -901,6 +910,7 @@ export interface FileRoutesById {
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/cobrancas': typeof AuthenticatedCobrancasRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/_authenticated/contestacoes': typeof AuthenticatedContestacoesRoute
   '/_authenticated/contratos': typeof AuthenticatedContratosRoute
   '/_authenticated/coproducoes': typeof AuthenticatedCoproducoesRoute
   '/_authenticated/cupons': typeof AuthenticatedCuponsRoute
@@ -1007,6 +1017,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/cobrancas'
     | '/configuracoes'
+    | '/contestacoes'
     | '/contratos'
     | '/coproducoes'
     | '/cupons'
@@ -1110,6 +1121,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/cobrancas'
     | '/configuracoes'
+    | '/contestacoes'
     | '/contratos'
     | '/coproducoes'
     | '/cupons'
@@ -1215,6 +1227,7 @@ export interface FileRouteTypes {
     | '/_authenticated/clientes'
     | '/_authenticated/cobrancas'
     | '/_authenticated/configuracoes'
+    | '/_authenticated/contestacoes'
     | '/_authenticated/contratos'
     | '/_authenticated/coproducoes'
     | '/_authenticated/cupons'
@@ -1629,6 +1642,13 @@ declare module '@tanstack/react-router' {
       path: '/configuracoes'
       fullPath: '/configuracoes'
       preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contestacoes': {
+      id: '/_authenticated/contestacoes'
+      path: '/contestacoes'
+      fullPath: '/contestacoes'
+      preLoaderRoute: typeof AuthenticatedContestacoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/contratos': {
@@ -2082,6 +2102,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedCobrancasRoute: typeof AuthenticatedCobrancasRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
+  AuthenticatedContestacoesRoute: typeof AuthenticatedContestacoesRoute
   AuthenticatedContratosRoute: typeof AuthenticatedContratosRoute
   AuthenticatedCoproducoesRoute: typeof AuthenticatedCoproducoesRoute
   AuthenticatedCuponsRoute: typeof AuthenticatedCuponsRoute
@@ -2117,6 +2138,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedCobrancasRoute: AuthenticatedCobrancasRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
+  AuthenticatedContestacoesRoute: AuthenticatedContestacoesRoute,
   AuthenticatedContratosRoute: AuthenticatedContratosRoute,
   AuthenticatedCoproducoesRoute: AuthenticatedCoproducoesRoute,
   AuthenticatedCuponsRoute: AuthenticatedCuponsRoute,

@@ -77,6 +77,7 @@ export const PAGE_PERMISSION: Record<string, string> = {
   "/servicos": "services.view",
   "/contratos": "contracts.view",
   "/cobrancas": "charges.view",
+  "/contestacoes": "charges.view",
   "/lembrete-de-cobranca": "dunning.view",
   "/cupons": "coupons.view",
   "/documentos": "documents.view",

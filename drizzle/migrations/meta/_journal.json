@@ -323,6 +323,20 @@
       "when": 1793042543444,
       "tag": "0045_activation_gate_storage_and_request_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1793279448266,
+      "tag": "0046_chargebacks_and_payment_authentications",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1793279557887,
+      "tag": "0047_chargeback_defense_guards",
+      "breakpoints": true
     }
   ]
 }

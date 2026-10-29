@@ -47,7 +47,7 @@ import { EnvironmentSwitch } from "@/components/environment-switch";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { useLanguageBootstrap } from "@/components/language-switcher";
 
-type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/integracao-externa" | "/documentos" | "/cupons" | "/coproducoes" | "/ajuda";
+type AppPath = "/painel" | "/clientes" | "/servicos" | "/contratos" | "/cobrancas" | "/contestacoes" | "/lembrete-de-cobranca" | "/notas-fiscais" | "/financas" | "/financeiro" | "/extrato" | "/recebiveis" | "/limites" | "/antecipacao" | "/multas-e-encargos" | "/configuracoes" | "/checkout-personalizado" | "/ativacao" | "/seguranca" | "/equipe" | "/integracoes" | "/integracao-externa" | "/documentos" | "/cupons" | "/coproducoes" | "/ajuda";
 
 const operationItems = [
   { to: "/clientes", label: "Clientes", icon: Users },
@@ -63,6 +63,7 @@ const managementItems = [
 
 const chargesGroup = { id: "cobrancas", label: "Cobranças", icon: Receipt, children: [
   { to: "/cobrancas", label: "Central de Cobranças", icon: Receipt },
+  { to: "/contestacoes", label: "Central de Contestações", icon: ShieldCheck },
   { to: "/lembrete-de-cobranca", label: "Lembrete inteligente", icon: MessagesSquare },
   { to: "/cupons", label: "Cupons & Incentivos", icon: TicketPercent },
   { to: "/coproducoes", label: "Coproduções", icon: Handshake },
@@ -104,7 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const groupScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(() => {
     if (["/financeiro", "/extrato", "/limites", "/antecipacao", "/multas-e-encargos"].some((path) => pathname.startsWith(path))) return ["financeiro"];
-    if (["/cobrancas", "/lembrete-de-cobranca", "/cupons", "/coproducoes"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
+    if (["/cobrancas", "/contestacoes", "/lembrete-de-cobranca", "/cupons", "/coproducoes"].some((path) => pathname.startsWith(path))) return ["cobrancas"];
     if (["/configuracoes", "/checkout-personalizado", "/ativacao", "/seguranca", "/equipe"].some((path) => pathname.startsWith(path))) return ["configuracoes"];
     if (["/integracoes", "/integracao-externa"].some((path) => pathname.startsWith(path))) return ["integracoes"];
     return [];
