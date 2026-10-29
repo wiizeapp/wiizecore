@@ -393,6 +393,13 @@
       "when": 1793316683158,
       "tag": "0055_contract_confirmation_private_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1793316890122,
+      "tag": "0056_contract_signature_rpc_only",
+      "breakpoints": true
     }
   ]
 }
