@@ -774,6 +774,36 @@ export type Database = {
           },
         ]
       }
+      card_risk_signals: {
+        Row: {
+          card_mark: string | null
+          created_at: string
+          id: string
+          ip_mark: string | null
+          link_mark: string
+          outcome: string
+          tenant_id: string
+        }
+        Insert: {
+          card_mark?: string | null
+          created_at?: string
+          id?: string
+          ip_mark?: string | null
+          link_mark: string
+          outcome: string
+          tenant_id: string
+        }
+        Update: {
+          card_mark?: string | null
+          created_at?: string
+          id?: string
+          ip_mark?: string | null
+          link_mark?: string
+          outcome?: string
+          tenant_id?: string
+        }
+        Relationships: []
+      }
       charge_events: {
         Row: {
           actor: string
@@ -8284,6 +8314,22 @@ export type Database = {
       cancel_withdrawal: {
         Args: { _reason: string; _tenant_id: string; _withdrawal_id: string }
         Returns: undefined
+      }
+      card_risk_record: {
+        Args: {
+          _card_mark: string
+          _ip_mark: string
+          _link_mark: string
+          _outcome: string
+          _tenant: string
+        }
+        Returns: {
+          cards_per_ip: number
+          declines_per_card: number
+          declines_per_ip: number
+          ips_per_card: number
+          links_per_ip: number
+        }[]
       }
       charge_invoice_fee: { Args: { _invoice_id: string }; Returns: number }
       claim_chargeback_defense: {
