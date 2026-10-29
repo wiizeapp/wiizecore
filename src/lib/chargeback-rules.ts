@@ -13,5 +13,6 @@ export function defenseEditable(c: { status: string; defense_state: string; disp
 export function disputeConfirmed(body: unknown, id: string): boolean {
   if (!body || typeof body !== "object") return false;
   const r = body as Record<string, unknown>;
-  return r.chargebackId === id && ["REQUESTED", "ACCEPTED", "REJECTED"].includes(String(r.status)) && Array.isArray(r.files) && r.files.length > 0 && r.files.every((f) => typeof f === "string");
+  const files = r["files"];
+  return r["chargebackId"] === id && ["REQUESTED", "ACCEPTED", "REJECTED"].includes(String(r["status"])) && Array.isArray(files) && files.length > 0 && files.every((f) => typeof f === "string");
 }

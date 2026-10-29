@@ -114,7 +114,7 @@ export async function sendDefense(userId: string, id: string) {
   } catch (e) {
     const definitive = !called || (e instanceof ProviderRequestError && [400, 401, 403, 404].includes(e.status));
     await admin.from("chargeback_cases").update({ defense_state: definitive ? "idle" : "uncertain" }).eq("id", id).eq("tenant_id", member.tenantId).eq("defense_claim", claim);
-    await logAudit(admin, { tenantId: member.tenantId, userId, action: "chargeback.defense.failed", resourceId: id, result: "failed", metadata: { claim, uncertain: !definitive } });
+    await logAudit(admin, { tenantId: member.tenantId, userId, action: "chargeback.defense.failed", resourceId: id, result: "failure", metadata: { claim, uncertain: !definitive } });
     throw new Error(definitive ? "O envio não foi concluído. Os documentos foram preservados." : "Não foi possível confirmar o envio. Consulte o Asaas antes de tentar novamente.");
   }
 }
