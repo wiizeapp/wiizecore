@@ -37,6 +37,7 @@
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
 
 - Read subdirectories' scoped `AGENTS.md` before edits.
+- Scripts have scoped rules in `scripts/AGENTS.md`; read before editing. Why: isolate destructive fixture tests from shared data.
 - Checkout payable instructions and provider mutations require `checkout-readiness.server.ts` (charge consent plus current customer contract signature); uncertain charge creation preserves its placeholder and key, and external checkout claims request-bound idempotency before side effects. Why: prevent skipped steps, altered replays and duplicate external charges.
 - All backup-code flows consume through `claimRecoveryCode` before privileged effects; custom-role grants validate tenant and grant subset, and server access ignores foreign roles. Why: enforce single use and tenant-scoped delegation even for legacy records.
 - Administrative data requires `assertAdminPage` after the platform role/MFA checks; only the minimal status and fresh-unlock endpoints are exempt. The page proof is volatile, bound to server-side session/credential state, and never persisted by the browser. Why: closing or reopening the Admin must require both factors again.
