@@ -4,6 +4,7 @@
  */
 export const TURNSTILE_SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 export const TURNSTILE_ACTION_CARD = "checkout_card";
+export const TURNSTILE_ACTION_SIGNUP = "signup";
 export const DEFAULT_TURNSTILE_HOSTNAMES = ["wiizepay.com", "www.wiizepay.com"];
 
 export type TurnstileFailure =

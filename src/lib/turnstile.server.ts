@@ -18,22 +18,27 @@ const MESSAGES: Record<TurnstileFailure, string> = {
  * Token de uso único: além da checagem oficial, o hash do token só é aceito uma vez.
  */
 export async function requireTurnstile(admin: AdminClient, opts: { token: string | undefined; remoteIp: string | null; tenantId: string; paymentId: string }) {
+  return requireTurnstileFor(admin, { ...opts, action: TURNSTILE_ACTION_CARD, auditAction: "checkout.turnstile_rejected", resource: "payments", resourceId: opts.paymentId, messages: MESSAGES });
+}
+
+/** Mesma verificação para outras telas (ex.: cadastro), com ação própria e mensagens próprias. */
+export async function requireTurnstileFor(admin: AdminClient, opts: { token: string | undefined; remoteIp: string | null; action: string; auditAction: string; resource: string; resourceId?: string | null; tenantId?: string | null; messages: Record<TurnstileFailure, string> }) {
   const { logAudit, consumeRateLimit } = await import("./audit.server");
   const result = await verifyTurnstileToken({
     token: opts.token,
     secret: process.env["TURNSTILE_SECRET_KEY"],
     remoteIp: opts.remoteIp,
     hostnames: allowedHostnames(process.env["TURNSTILE_ALLOWED_HOSTNAMES"]),
-    expectedAction: TURNSTILE_ACTION_CARD,
+    expectedAction: opts.action,
   });
   if (!result.ok) {
-    await logAudit(admin, { tenantId: opts.tenantId, action: "checkout.turnstile_rejected", resource: "payments", resourceId: opts.paymentId, metadata: { reason: result.reason } });
-    throw new Error(MESSAGES[result.reason]);
+    await logAudit(admin, { tenantId: opts.tenantId ?? null, action: opts.auditAction, resource: opts.resource, resourceId: opts.resourceId ?? null, metadata: { reason: result.reason } });
+    throw new Error(opts.messages[result.reason]);
   }
   const { tokenFingerprint } = await import("./crypto.server");
   const once = await consumeRateLimit(admin, { scope: "turnstile_token", identifier: tokenFingerprint(opts.token!), maxAttempts: 1, windowSeconds: 600, blockSeconds: 600 });
   if (!once.allowed) {
-    await logAudit(admin, { tenantId: opts.tenantId, action: "checkout.turnstile_rejected", resource: "payments", resourceId: opts.paymentId, metadata: { reason: "expired_or_reused" } });
-    throw new Error(MESSAGES.expired_or_reused);
+    await logAudit(admin, { tenantId: opts.tenantId ?? null, action: opts.auditAction, resource: opts.resource, resourceId: opts.resourceId ?? null, metadata: { reason: "expired_or_reused" } });
+    throw new Error(opts.messages.expired_or_reused);
   }
 }
