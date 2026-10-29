@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Correções completas do reteste F01–F10 — saldo/reservas, assinatura/arquivos/destinatário, senha financeira, contratos/permissões/RLS, webhooks/limites/MFA/logs/dependências; plano e testes por fase antes de migrations no banco compartilhado. Sem promessa de 100%, ajuste artificial de saldo, cobrança real ou publicação automática; configurações externas e homologação completa com bloqueios explícitos.
+
 - [x] Reteste de segurança — matriz dos 15 tópicos e relatório em docs/reteste-seguranca-2026-10-29.md; 479 regressões passaram/22 reais ignorados, 23 checks de serviços simulados, saldo e assinatura SQL isolados reexecutados. 145 tabelas com RLS/20 fechadas sem policies; duas falhas financeiras persistem; erro de consulta de senha e substituição de arquivo parcialmente assinado reproduzidos com mocks. 9 avisos de dependências. Sem alteração no banco compartilhado, negócio, secrets ou produção; aprovação geral recusada.
 - [ ] Reteste integrado A/B, sessões/MFA, quatro assinaturas/PDF/Drive, provedor/CAPTCHA/alertas e recuperação — bloqueado por ausência de ambiente completo isolado com usuários e destinos fictícios e evidência externa de backups. Correções F01–F10 e implantação exigem autorização separada; não aplicar candidato financeiro de docs.
 
