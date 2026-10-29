@@ -28,7 +28,7 @@ export const Route = createFileRoute("/api/public/wiize/webhook")({
         const sig = request.headers.get("x-wiize-signature");
         const db = await s.getAdmin();
         if (!s.validateTimestamp(ts) || !s.validateSignature(cfg.webhookSecret, ts!, body, sig)) {
-          await s.audit(db, { action: "wiize.webhook.bad_signature", outcome: "denied", ip: request.headers.get("cf-connecting-ip") });
+          await s.audit(db, { action: "wiize.webhook.bad_signature", outcome: "denied", ip: (await import("@/lib/audit.server")).clientIpFromRequest(request) });
           return new Response("Invalid signature", { status: 401 });
         }
         let evt: z.infer<typeof eventSchema>;

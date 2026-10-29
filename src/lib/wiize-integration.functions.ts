@@ -67,7 +67,7 @@ export const startWiizeLogin = createServerFn({ method: "POST" }).handler(async 
   const cfg = s.wiizeConfig();
   if (!cfg.configured) throw new Error("O acesso com o Wiize ainda não está disponível.");
   const db = await s.getAdmin();
-  const ip = getRequest().headers.get("cf-connecting-ip") ?? "unknown";
+  const ip = (await import("./audit.server")).clientIpFromRequest(getRequest()) ?? "sem-ip";
   if (!(await s.rateLimit(db, `login:${ip}`, 20, 900))) throw new Error("Muitas tentativas. Tente novamente mais tarde.");
   const state = s.newState();
   const pkce = s.createPkce();

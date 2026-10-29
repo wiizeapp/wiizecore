@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest, getRequestHeader, setResponseHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { trustedClientIp } from "./audit.server";
 
 const keySchema = z.string().uuid();
 const tokenSchema = z.string().regex(/^[a-f0-9]{64}$/);
@@ -15,7 +16,7 @@ async function hashToken(t: string) {
   return createHash("sha256").update(t).digest("hex");
 }
 function clientIp() {
-  return (getRequestHeader("cf-connecting-ip") || getRequestHeader("x-forwarded-for")?.split(",")[0] || "").trim() || null;
+  return trustedClientIp((n) => getRequestHeader(n)).ip;
 }
 
 /** Respostas do portal nunca podem ficar guardadas em cache de navegador ou proxy. */

@@ -149,7 +149,7 @@ export const submitActivation = createServerFn({ method: "POST" })
     // Guarda a prova do aceite (quem, quando, de onde e qual versão dos termos).
     const { getRequestHeader } = await import("@tanstack/react-start/server");
     const acceptedAt = new Date().toISOString();
-    const ip = (getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-forwarded-for")?.split(",")[0] ?? "").trim().slice(0, 64) || null;
+    const ip = (await import("./audit.server")).trustedClientIp((n) => getRequestHeader(n)).ip;
     const proof = { truth: true, terms: true, privacy: true, acceptedAt, acceptedBy: context.userId, ip, userAgent: (getRequestHeader("user-agent") ?? "").slice(0, 300), termsVersion: "2026-10" };
     await admin.from("payment_activations").update({ consents: proof }).eq("tenant_id", m.tenant_id);
     const { error } = await admin.rpc("submit_activation", { _tenant_id: m.tenant_id, _user_id: context.userId });

@@ -1,13 +1,22 @@
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { categoryFor, cleanText, riskFor, safeId, sanitizeMetadata, type AuditCategory, type AuditOrigin, type AuditRisk } from "./audit-policy";
 
+import { parseTrustedHeaders, resolveClientIp, type ClientIpResult } from "./client-ip";
+
+/** IP confiável do cliente (ver client-ip.ts). Ordem de cabeçalhos em TRUSTED_CLIENT_IP_HEADERS. */
+export function trustedClientIp(getHeader: (name: string) => string | null | undefined): ClientIpResult {
+  return resolveClientIp(getHeader, parseTrustedHeaders(process.env["TRUSTED_CLIENT_IP_HEADERS"]));
+}
+export function clientIpFromRequest(request: Request): string | null {
+  return trustedClientIp((n) => request.headers.get(n)).ip;
+}
+
 export type RequestContextInfo = { ip: string | null; userAgent: string | null };
 
 /** Metadados da requisição para auditoria. Nunca guarda segredos. */
 export function requestInfo(): RequestContextInfo {
   try {
-    const forwarded = getRequestHeader("x-forwarded-for");
-    const ip = forwarded ? (forwarded.split(",")[0]?.trim() ?? null) : (getRequestHeader("cf-connecting-ip") ?? null);
+    const ip = trustedClientIp((n) => getRequestHeader(n)).ip;
     return { ip, userAgent: getRequestHeader("user-agent") ?? null };
   } catch {
     return { ip: null, userAgent: null };
