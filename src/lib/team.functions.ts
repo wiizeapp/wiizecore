@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, logSecurityEvent } from "./audit.server";
 import { ALL_PERMISSIONS, effectivePermissions, isCritical, type TeamRole } from "./permissions";
-import { canAssignCustomRole, scopedRolePermissions } from "./team-role-policy";
+import { canAssignCustomRole, canGrantBaseRole, scopedRolePermissions } from "./team-role-policy";
 
 type Ctx = { userId: string; claims: unknown };
 const INVITE_DAYS = 7;
@@ -62,9 +62,10 @@ function sanitizePerms(perms: unknown, role: TeamRole, granter: string[]) {
   );
 }
 
-function assertRoleGrant(granterRole: TeamRole, target: TeamRole) {
+function assertRoleGrant(granterRole: TeamRole, target: TeamRole, permissions: string[]) {
   if (target === "owner") throw new Error("O Proprietário não pode ser atribuído por convite.");
   if (target === "admin" && granterRole !== "owner") throw new Error("Somente o Proprietário pode definir administradores.");
+  if (!canGrantBaseRole(target, permissions)) throw new Error("Cargo personalizado inválido.");
 }
 
 async function assertCustomRoleGrant(db: Awaited<ReturnType<typeof admin>>, access: { tenantId: string; permissions: string[] }, id: string | null) {
@@ -141,7 +142,7 @@ export const createInvite = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const access = await requirePerm(context.userId, "team.manage");
-    assertRoleGrant(access.role, data.role);
+    assertRoleGrant(access.role, data.role, access.permissions);
     const db = await admin();
     const { data: profile } = await db.from("profiles").select("id").eq("email", data.email).maybeSingle();
     if (profile) {
@@ -309,7 +310,7 @@ export const updateMember = createServerFn({ method: "POST" })
     const me = await requirePerm(context.userId, "team.manage");
     const target = await targetMember(me.tenantId, data.memberId);
     assertCanManage(me, target);
-    assertRoleGrant(me.role, data.role);
+    assertRoleGrant(me.role, data.role, me.permissions);
     const db = await admin();
     const permissions = sanitizePerms(data.permissions, data.role, me.permissions);
     await assertCustomRoleGrant(db, me, data.customRoleId);

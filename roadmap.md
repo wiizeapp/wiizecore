@@ -1,6 +1,9 @@
 # Roadmap
 
-- [ ] Auditoria completa de segurança (pedido de 2026-10-29): diagnóstico real de código, permissões e configurações acessíveis; priorização e plano antes das correções; testes não destrutivos, relatório, reversão e resposta a incidentes. Não alterar produção nem dados financeiros para testar; configurações externas e testes isolados dependem de acesso comprovado.
+- [x] Auditoria de segurança — diagnóstico e correções locais: catálogo real 144 tabelas com RLS/5 buckets privados; recuperação, delegação, checkout, reservas, logs, CAPTCHA, exportação e importação protegidos; relatórios e resposta a incidentes em docs/auditoria-seguranca-2026-10-29.md e docs/resposta-incidentes-recuperacao.md. Sem migração, publicação ou movimentação financeira.
+- [ ] Auditoria — corrigir acesso direto no banco: bloqueado por avaliação/reversão e aprovação específica no backend compartilhado; GRANTs de escrita de contratos/finance e MFA/leitura por módulo detalhados no relatório.
+- [ ] Auditoria — homologação integrada A/B, MFA/Admin, Asaas/timeout/parcelas, storage e restauração: depende de ambiente comprovadamente isolado e sessões autorizadas; 22 testes reais ignorados, configurações Vercel/Auth/provedor/backups não verificadas.
+- [ ] Auditoria — Zod principal e XLSX: avisos altos residuais exigem migração de compatibilidade/revisão especializada; importação de logo por URL depende de hosts confiáveis aprovados em CHECKOUT_LOGO_ALLOWED_HOSTS, upload preservado.
 
 - [x] Revisar retorno ao checkout (Pix, recorrência e 3DS): rascunhos permitidos com expiração, limpeza e isolamento; consulta ao voltar e acompanhamento de processamento/análise; 39 testes aprovados e fluxo com respostas locais isoladas conferido sem movimentar dinheiro. Limites em docs/checkout-continuity.md; recebimento real/Pix Automático/desafio 3DS dependem de teste autorizado com Asaas.
 - [x] Ajustar seção 3DS da página de segurança em computador e celular, usando o verde Wiize; globo carregado e sem overflow em 320, 390, 768 e 1163 px; aviso de homologação real pendente mantido.

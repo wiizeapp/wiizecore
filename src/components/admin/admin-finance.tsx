@@ -350,7 +350,8 @@ function Origin({ data, onDrill }: { data: FinanceData; onDrill: (title: string,
 
 export async function exportRows(rows: Record<string, unknown>[], name: string, kind: "csv" | "xlsx") {
   const XLSX = await import("xlsx");
-  const ws = XLSX.utils.json_to_sheet(rows);
+  const { safeSpreadsheetRows } = await import("@/lib/spreadsheet-safety");
+  const ws = XLSX.utils.json_to_sheet(safeSpreadsheetRows(rows));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Dados");
   XLSX.writeFile(wb, `${name}.${kind}`, { bookType: kind });

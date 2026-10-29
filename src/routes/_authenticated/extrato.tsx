@@ -111,7 +111,8 @@ function ExtratoPage() {
       const rows = mergeFeeRows(all).map((t) => ({ Data: new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" }).format(new Date(t.occurred_at)), Tipo: KIND[t.kind] ?? t.kind, "Descrição": t.description ?? "", Valor: Math.round(Number(t.amount) * 100) / 100 }));
       await exportAuth({ data: { kind: "extrato", filters: { from, to, type, q }, rows: rows.length } });
       const XLSX = await import("xlsx");
-      const sheet = XLSX.utils.json_to_sheet(rows.length ? rows : [{ Data: "Sem movimentações no filtro" }]);
+      const { safeSpreadsheetRows } = await import("@/lib/spreadsheet-safety");
+      const sheet = XLSX.utils.json_to_sheet(rows.length ? safeSpreadsheetRows(rows) : [{ Data: "Sem movimentações no filtro" }]);
       if (rows.length) {
         XLSX.utils.sheet_add_json(sheet, [{ Data: "Total", Valor: { f: `SUM(D2:D${rows.length + 1})` } as never }], { skipHeader: true, origin: -1 });
         for (let r = 1; r <= rows.length + 1; r++) { const c = sheet[XLSX.utils.encode_cell({ r, c: 3 })]; if (c) c.z = '"R$" #,##0.00;-"R$" #,##0.00'; }

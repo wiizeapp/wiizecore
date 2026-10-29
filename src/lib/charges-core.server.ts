@@ -1,4 +1,5 @@
 import { logAudit } from "./audit.server";
+import { requireChargeSaved as requireSaved } from "./charge-save.server";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 const FINANCE = ["owner", "admin", "finance"];
@@ -90,13 +91,20 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
     // Idempotência: mesma chave devolve a mesma cobrança.
     const { data: existing } = await admin
       .from("payments")
-      .select("charge_group_id, customer_id, service_id, contract_id, provider_payment_id, status")
+      .select("charge_group_id, customer_id, service_id, contract_id, provider_payment_id, status, installment_count, subscription_id")
       .eq("tenant_id", tenantId)
       .eq("idempotency_key", data.idempotencyKey)
       .maybeSingle();
     if (existing) {
       // Retain uncertain provider work: a missing remote id never permits recreation.
       if (!existing.provider_payment_id || existing.status === "created") throw new Error("Cobrança em conferência. Aguarde a confirmação antes de tentar novamente.");
+      const group = await admin.from("payments").select("id, provider_payment_id, status")
+        .eq("tenant_id", tenantId).eq("charge_group_id", existing.charge_group_id);
+      if (group.error || !group.data?.length || group.data.some((payment) => !payment.provider_payment_id || payment.status === "created") || group.data.length < (existing.installment_count ?? 1)) throw new Error("Cobrança em conferência. Aguarde a confirmação antes de tentar novamente.");
+      if (existing.subscription_id) {
+        const subscription = await admin.from("subscriptions").select("provider_subscription_id").eq("id", existing.subscription_id).eq("tenant_id", tenantId).maybeSingle();
+        if (subscription.error || !subscription.data?.provider_subscription_id) throw new Error("Cobrança em conferência. Aguarde a confirmação antes de tentar novamente.");
+      }
       if (existing.customer_id !== data.customerId || existing.service_id !== data.serviceId || existing.contract_id !== (data.contractId ?? null)) throw new Error("Chave de operação já utilizada com outros dados.");
       const link = await issueLink(admin, { tenantId, chargeGroupId: existing.charge_group_id, customerId: existing.customer_id, serviceId: existing.service_id, contractId: existing.contract_id, userId: userId, days: data.linkDays, minutes: data.linkMinutes, collectCustomerData: data.collectCustomerData });
       return { chargeGroupId: existing.charge_group_id, token: link.token };
@@ -296,10 +304,10 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           split: wiizePaySplit(initialFee.totalFeeCents - coverCents, masterWalletId),
           ...extras,
         });
-        await admin
+        await requireSaved(admin
           .from("payments")
           .update({ provider_payment_id: p.id, status: "awaiting_payment", invoice_url: p.invoiceUrl ?? null, bank_slip_url: p.bankSlipUrl ?? null })
-          .eq("id", placeholder.id);
+          .eq("id", placeholder.id).eq("tenant_id", tenantId).select("id").maybeSingle());
       } else if (service.type === "installment") {
         const count = Number(service.installments ?? 2);
         const first = await conn.provider.createPayment({
@@ -318,14 +326,15 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
         const list = installmentId ? await conn.provider.listInstallmentPayments(installmentId) : [first];
         list.sort((a, b) => (a.installmentNumber ?? 0) - (b.installmentNumber ?? 0));
         const [head, ...rest] = list.length ? list : [first];
-        const headGross = head!.value ?? firstGross;
+        if (!head || list.length !== count) throw new Error("installment_creation_incomplete");
+        const headGross = head.value ?? firstGross;
         const cardTotalFee = method === "credit_card" ? await computePlatformFeeDetails(admin, amount, method, count) : null;
         const headDetails = cardTotalFee ?? await computePlatformFeeDetails(admin, headGross, method, 1);
         const headFee = cardTotalFee ? Math.floor(cardTotalFee.totalFeeCents / count) / 100 : headDetails.totalFee;
-        await admin
+        await requireSaved(admin
           .from("payments")
           .update({
-            provider_payment_id: head!.id,
+            provider_payment_id: head.id,
             provider_installment_id: installmentId,
             status: "awaiting_payment",
             gross_amount: headGross,
@@ -336,12 +345,12 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
              fee_percentage_amount: cardTotalFee ? Math.floor(cardTotalFee.percentageFeeCents / count) / 100 : headDetails.percentageFeeAmount,
              fee_calculated_at: headDetails.calculationTimestamp,
             net_amount: round2(headGross - headFee),
-            due_on: head!.dueDate ?? dueOn,
-            installment_number: head!.installmentNumber ?? 1,
-            invoice_url: head!.invoiceUrl ?? null,
-            bank_slip_url: head!.bankSlipUrl ?? null,
+            due_on: head.dueDate ?? dueOn,
+            installment_number: head.installmentNumber ?? 1,
+            invoice_url: head.invoiceUrl ?? null,
+            bank_slip_url: head.bankSlipUrl ?? null,
           })
-          .eq("id", placeholder.id);
+          .eq("id", placeholder.id).eq("tenant_id", tenantId).select("id").maybeSingle());
         for (const [index, item] of rest.entries()) {
           const gross = item.value ?? firstGross;
           const details = cardTotalFee ?? await computePlatformFeeDetails(admin, gross, method, 1);
@@ -349,7 +358,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           const allocatedBefore = Math.floor(details.totalFeeCents / count) * (count - 1);
           const feeCents = cardTotalFee ? (isLast ? details.totalFeeCents - allocatedBefore : Math.floor(details.totalFeeCents / count)) : details.totalFeeCents;
           const fee = feeCents / 100;
-          await admin.from("payments").insert({
+          await requireSaved(admin.from("payments").insert({
             ...base,
             status: "awaiting_payment",
             gross_amount: gross,
@@ -367,7 +376,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
             provider_installment_id: installmentId,
             invoice_url: item.invoiceUrl ?? null,
             bank_slip_url: item.bankSlipUrl ?? null,
-          });
+          }).select("id").maybeSingle());
         }
       } else {
         const cycle = frequencyToCycle[service.frequency ?? "monthly"] ?? "MONTHLY";
@@ -390,7 +399,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           .single();
         if (subError || !sub) { console.error("subscription insert failed", subError); throw new Error("Não foi possível registrar a recorrência. Confira o valor e o vencimento e tente novamente."); }
         subscriptionRowId = sub.id;
-        await admin.from("payments").update({ subscription_id: sub.id }).eq("id", placeholder.id);
+        await requireSaved(admin.from("payments").update({ subscription_id: sub.id }).eq("id", placeholder.id).eq("tenant_id", tenantId).select("id").maybeSingle());
         const created = await conn.provider.createSubscription({
           customer: providerCustomerId,
           billingType,
@@ -403,11 +412,12 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
           split: wiizePaySplit(initialFee.totalFeeCents, masterWalletId),
           ...extras,
         });
-        await admin.from("subscriptions").update({ provider_subscription_id: created.id }).eq("id", sub.id);
+        await requireSaved(admin.from("subscriptions").update({ provider_subscription_id: created.id }).eq("id", sub.id).eq("tenant_id", tenantId).select("id").maybeSingle());
         const payments = await conn.provider.listSubscriptionPayments(created.id);
         const first = payments.sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""))[0];
+        if (!first) throw new Error("subscription_payment_not_available");
         if (first) {
-          await admin
+          await requireSaved(admin
             .from("payments")
             .update({
               provider_payment_id: first.id,
@@ -417,7 +427,7 @@ export async function createChargeCore(tenantId: string, userId: string, origin:
               invoice_url: first.invoiceUrl ?? null,
               bank_slip_url: first.bankSlipUrl ?? null,
             })
-            .eq("id", placeholder.id);
+            .eq("id", placeholder.id).eq("tenant_id", tenantId).select("id").maybeSingle());
         }
       }
     } catch (error) {
