@@ -156,7 +156,7 @@ export async function processChargebackWebhook(
       body: `A cobrança de ${customerName} no valor de ${brl(amount)} teve uma atualização de contestação: ${EVENT_DESCRIPTIONS[eventType]}${deadline ? ` Prazo para envio de documentos: ${deadline}.` : ""}`,
       link: "/cobrancas",
       dedupeKey: `chargeback:${providerPaymentId}:${eventType}`,
-      email: {},
+      email: { subject: `WiizePay — ${EVENT_TITLES[eventType]}` },
     });
   }
 
