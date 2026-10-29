@@ -3,6 +3,7 @@ import os
 import pwd
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[2]
@@ -37,7 +38,7 @@ CREATE TABLE public.payment_links(tenant_id uuid,contract_id uuid,customer_id uu
 CREATE TABLE public.contract_signature_fields(contract_id uuid,version integer);
 CREATE TABLE public.contract_signatures(id uuid DEFAULT gen_random_uuid(),tenant_id uuid,contract_id uuid,contract_version_id uuid,signer_role text,signer_name text,signer_document text,signer_email text,content_hash text,signature_mode text,signature_image text,initials_image text,ip_address text,user_agent text,signed_at timestamptz DEFAULT now(),UNIQUE(contract_version_id,signer_role));
 """)
-    for file in ("0053_contract_signature_confirmation.sql", "0054_contract_confirmation_scope_guards.sql", "0055_contract_confirmation_private_grants.sql"):
+    for file in ("0053_contract_signature_confirmation.sql", "0054_contract_confirmation_scope_guards.sql", "0055_contract_confirmation_private_grants.sql", "0056_contract_signature_rpc_only.sql"):
         sql((root / "drizzle/migrations" / file).read_text())
     tenant="00000000-0000-0000-0000-000000000001"
     contract="00000000-0000-0000-0000-000000000002"
@@ -51,7 +52,12 @@ CREATE TABLE public.contract_signatures(id uuid DEFAULT gen_random_uuid(),tenant
         return sql(f"SELECT public.contract_signature_finish('{tenant}','{contract}','{version}','customer','hash','{bound}','{challenge}','codehash',{valid},'{payload}');")
     assert '"ok": false' in finish("false")
     assert '"ok": false' in finish("true", "changed-payload")
-    assert '"ok": true' in finish()
+    sql(f"UPDATE contract_signature_challenges SET expires_at=now()-interval '1 second' WHERE id='{challenge}';")
+    assert '"ok": false' in finish()
+    sql(f"UPDATE contract_signature_challenges SET expires_at=now()+interval '10 minutes' WHERE id='{challenge}';")
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        concurrent = list(pool.map(lambda _: finish(), range(2)))
+    assert sum('"ok": true' in value for value in concurrent)==1
     assert '"ok": false' in finish()
     assert sql("SELECT count(*) FROM contract_signatures;").strip()=="1"
     assert sql("SELECT count(*) FROM contract_signature_challenges WHERE consumed_at IS NOT NULL;").strip()=="1"
@@ -61,6 +67,7 @@ CREATE TABLE public.contract_signatures(id uuid DEFAULT gen_random_uuid(),tenant
         raise AssertionError("Immutable signature was changed")
     except subprocess.CalledProcessError:
         pass
-    print("PASS: wrong code, changed payload, positive signing, replay, exactly one signature/consumption, private grants, immutable evidence")
+    assert sql("SELECT has_table_privilege('service_role','contract_signatures','INSERT');").strip()=="f"
+    print("PASS: wrong code, changed payload, expiry, concurrent single completion, replay, exactly one signature/consumption, private grants, RPC-only writes, immutable evidence")
 finally:
     run(["/bin/pg_ctl", "-D", str(base / "cluster"), "-m", "fast", "-w", "stop"])
