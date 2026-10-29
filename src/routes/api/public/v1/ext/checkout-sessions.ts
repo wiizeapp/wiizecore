@@ -83,9 +83,6 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
           };
 
           // Repetição com a mesma chave: devolve a mesma sessão, nunca cria outra cobrança.
-          const { data: prev } = await db.from("ext_checkout_sessions").select("*").eq("integration_id", ctx.integrationId).eq("idempotency_key", idem).maybeSingle();
-          if (prev) return prev.request_hash === requestHash ? respond(prev, 200) : fail("idempotency_key_reused", 409);
-
           if (!conn) return fail("account_not_ready", 409);
           if ((ctx.environment === "live") !== (conn.environment === "production")) return fail("environment_mismatch", 409);
           if (!service) return fail("service_not_found", 404);
@@ -93,6 +90,9 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
 
           const { withIdempotency } = await import("@/lib/ext-idempotency.server");
           return withIdempotency(ctx, request, "checkout_session.create", body, async () => {
+          // Legacy sessions are bound and checked inside the durable request claim.
+          const { data: prev } = await db.from("ext_checkout_sessions").select("*").eq("integration_id", ctx.integrationId).eq("idempotency_key", idem).maybeSingle();
+          if (prev) return prev.request_hash === requestHash ? respond(prev, 200) : fail("idempotency_key_reused", 409);
           // Cliente: vínculo externo → CPF/CNPJ → cria. Sempre dentro da empresa da chave.
           const c = body.customer;
           let customerId: string | null = null;
