@@ -168,6 +168,8 @@ async function resolvePublicLink(token: string): Promise<{ link: PublicLink } | 
   if (!link) return { error: "Link inválido ou já utilizado." };
   if (link.revoked_at) return { error: "Este link foi revogado pelo prestador." };
   if (new Date(link.expires_at) < new Date()) return { error: "Este link expirou. Peça um novo ao prestador." };
+  const { publicContractScopeValid } = await import("./public-contract-scope.server");
+  if (!await publicContractScopeValid(supabaseAdmin, link)) return { error: "Link inválido ou já utilizado." };
   return { link: link as PublicLink };
 }
 
@@ -187,6 +189,7 @@ export const getPublicContract = createServerFn({ method: "GET" })
       .from("contracts")
       .select("id, title, amount, status, current_version, starts_on, ends_on, customers(name, email), tenants(company_name:name)")
       .eq("id", link.contract_id)
+      .eq("tenant_id", link.tenant_id)
       .maybeSingle();
     if (!contract) throw new Error("Contrato não encontrado.");
     if (["cancelled", "expired"].includes(contract.status)) throw new Error("Este contrato não está disponível.");
@@ -195,6 +198,7 @@ export const getPublicContract = createServerFn({ method: "GET" })
       .from("contract_versions")
       .select("body, version")
       .eq("contract_id", contract.id)
+      .eq("tenant_id", link.tenant_id)
       .eq("version", contract.current_version)
       .maybeSingle();
     if (!version) throw new Error("Versão do contrato não encontrada.");
@@ -203,18 +207,20 @@ export const getPublicContract = createServerFn({ method: "GET" })
       .from("contract_signatures")
       .select("signer_role, signer_name, signed_at")
       .eq("contract_id", contract.id)
+      .eq("tenant_id", link.tenant_id)
       .eq("contract_version_id", (
         await supabaseAdmin
           .from("contract_versions")
           .select("id")
           .eq("contract_id", contract.id)
+          .eq("tenant_id", link.tenant_id)
           .eq("version", contract.current_version)
           .maybeSingle()
       ).data?.id ?? "");
 
     const customer = contract.customers as { name?: string; email?: string } | null;
     const tenant = contract.tenants as { company_name?: string } | null;
-    const { data: vrow } = await supabaseAdmin.from("contract_versions").select("id").eq("contract_id", contract.id).eq("version", contract.current_version).maybeSingle();
+    const { data: vrow } = await supabaseAdmin.from("contract_versions").select("id").eq("contract_id", contract.id).eq("tenant_id", link.tenant_id).eq("version", contract.current_version).maybeSingle();
     const { signingProgress } = await import("./contract-docs.server");
     const progress = vrow ? await signingProgress(supabaseAdmin, contract.id, vrow.id) : [];
 
@@ -266,6 +272,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
       .from("contracts")
       .select("id, status, current_version, customer_id, customers(document)")
       .eq("id", link.contract_id)
+      .eq("tenant_id", link.tenant_id)
       .maybeSingle();
     if (!contract) throw new Error("Contrato não encontrado.");
     if (["cancelled", "expired"].includes(contract.status)) throw new Error("Este contrato não está disponível.");
@@ -289,6 +296,7 @@ export const signContractAsCustomer = createServerFn({ method: "POST" })
       .from("contract_versions")
       .select("id, content_hash")
       .eq("contract_id", contract.id)
+      .eq("tenant_id", link.tenant_id)
       .eq("version", contract.current_version)
       .maybeSingle();
     if (!version) throw new Error("Versão do contrato não encontrada.");
