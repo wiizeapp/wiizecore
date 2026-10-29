@@ -5676,7 +5676,6 @@
   "Salvei meu código reserva em local seguro": "Guardé mi código de respaldo en un lugar seguro",
   "Seu código reserva": "Tu código de respaldo",
   "Verificar integridade": "Verificar integridad",
-  "A verificação em duas etapas é obrigatória para usar a WiizePay.": "La verificación en dos pasos es obligatoria para usar WiizePay.",
   "Por que ativar?": "¿Por qué activarla?",
   "Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.": "Aunque alguien descubra tu contraseña, no podrá entrar sin tu celular.",
   "Protege seu saldo, saques e os dados dos seus clientes.": "Protege tu saldo, retiros y los datos de tus clientes.",
@@ -5739,5 +5738,11 @@
   "A conta de produção chega em breve": "La cuenta de producción llega pronto",
   "A WiizePay está na versão beta. Por enquanto, é possível apenas testar e simular pagamentos. Em breve vamos liberar o acesso à conta de produção para você receber de verdade.": "WiizePay está en versión beta. Por ahora solo es posible probar y simular pagos. Pronto liberaremos el acceso a la cuenta de producción para que recibas pagos reales.",
   "Fique tranquilo:": "Tranquilo:",
-  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "en cuanto lo liberemos, recibirás un aviso aquí y en tu correo."
+  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "en cuanto lo liberemos, recibirás un aviso aquí y en tu correo.",
+  "Verificação de segurança do banco": "Verificación de seguridad del banco",
+  "Estamos abrindo a página segura do seu banco para confirmar o pagamento.": "Estamos abriendo la página segura de tu banco para confirmar el pago.",
+  "Continuar para a verificação": "Continuar a la verificación",
+  "Confirmando a verificação do banco": "Confirmando la verificación del banco",
+  "A verificação do banco foi concluída. Aguarde a confirmação do pagamento nesta página.": "La verificación del banco ha finalizado. Espera la confirmación del pago en esta página.",
+  "Voltar ao pagamento": "Volver al pago"
 }
