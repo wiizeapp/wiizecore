@@ -1,5 +1,6 @@
 import { DEPLOY_CONFIG } from "./deploy-config";
 import { AsaasProvider, billingTypeToMethod, eventToStatus, type ProviderPayment } from "./asaas.server";
+import { isChargebackEvent } from "./chargebacks.server";
 import { decryptSecret } from "./crypto.server";
 import { calculatePaymentFee, type FeeMethod } from "./fee-engine.server";
 import { scopedProviderEventId } from "./financial-scope";
