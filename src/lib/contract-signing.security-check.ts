@@ -12,7 +12,7 @@ function query(table: string) {
     if (write) return { data: null, error: null };
     let data: unknown = null;
     if (table === "contract_links") data = { tenant_id: "A", contract_id: "contract", expires_at: "2099-01-01" };
-    if (table === "contracts" && filters.tenant_id === state.tenant) data = { id: "contract", tenant_id: state.tenant, customer_id: "customer", current_version: 1, title: "Fixture", status: "draft" };
+    if (table === "contracts" && filters["tenant_id"] === state.tenant) data = { id: "contract", tenant_id: state.tenant, customer_id: "customer", current_version: 1, title: "Fixture", status: "draft" };
     if (table === "customers") data = { email: state.email, document: "00000000000" };
     if (table === "contract_versions") data = { id: "version", content_hash: "content" };
     if (table === "contract_signature_challenges") data = { id: "fixture-challenge", binding_hash: state.binding, recipient: "fixture@example.invalid", code_hash: "hashed-code" };
@@ -24,7 +24,7 @@ function query(table: string) {
 const admin = { from: query, rpc: async (fn: string, args: Record<string, unknown>) => {
   state.calls.push(args);
   if (fn === "contract_signature_issue") return { data: "fixture-challenge", error: null };
-  const ok = state.rpcOk && args._valid && !state.consumed && !state.expires && state.attempts < 5;
+  const ok = state.rpcOk && args["_valid"] && !state.consumed && !state.expires && state.attempts < 5;
   state.attempts++;
   if (ok) state.consumed = true;
   return { data: { ok, status: "awaiting_provider" }, error: null };
@@ -33,13 +33,13 @@ beforeEach(() => { Object.assign(state, { tenant: "A", email: "fixture@example.i
 describe("real signing service with isolated dependencies", () => {
   it("positive control signs and encrypts birthdate without recording code", async () => {
     await expect(finishPublicSigning(admin as never, input)).resolves.toEqual({ status: "awaiting_provider" });
-    expect(state.calls[0]?._signature).toMatchObject({ identity_enc: "encrypted-private-identity" });
+    expect(state.calls[0]?.["_signature"]).toMatchObject({ identity_enc: "encrypted-private-identity" });
     expect(JSON.stringify(state.calls)).not.toContain("123456");
   });
   it("rejects foreign tenant", async () => { state.tenant = "B"; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); expect(state.calls).toHaveLength(0); });
   it("rejects changed recipient", async () => { state.email = "other@example.invalid"; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); expect(state.calls).toHaveLength(0); });
   it("rejects foreign capability", async () => { state.binding = "other"; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); expect(state.calls).toHaveLength(0); });
-  it("rejects wrong code", async () => { state.valid = false; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); expect(state.calls[0]?._valid).toBe(false); });
+  it("rejects wrong code", async () => { state.valid = false; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); expect(state.calls[0]?.["_valid"]).toBe(false); });
   it("rejects expired code", async () => { state.expires = true; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); });
   it("rejects reused code", async () => { await finishPublicSigning(admin as never, input); await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); });
   it("rejects exhausted attempts", async () => { state.attempts = 5; await expect(finishPublicSigning(admin as never, input)).rejects.toThrow(); });
