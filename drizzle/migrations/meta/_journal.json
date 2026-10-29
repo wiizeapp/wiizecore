@@ -351,6 +351,13 @@
       "when": 1793280470860,
       "tag": "0049_three_ds_control_private_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1793293427286,
+      "tag": "0050_atomic_rate_limit",
+      "breakpoints": true
     }
   ]
 }
