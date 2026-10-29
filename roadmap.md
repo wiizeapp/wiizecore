@@ -181,3 +181,5 @@
   - [x] Fase 4 — implementação: visão Admin protegida com filtros/paginação/histórico e últimas tentativas, controle durável 3DS ausente/desligado por padrão; acesso direto revogado e RLS conferidos. Seção pública de segurança e documentação em docs/3ds-admin-homologacao.md; 51 testes aprovados, compilação OK, página larga/estreita sem overflow. Confirmação financeira não apresentada como prova de autenticação.
   - [ ] Validação final do módulo: bloqueada por ausência de sessão Admin autorizada e conta de produção Asaas habilitada com teste real autorizado; configuração Vercel não verificada/alterada. RLS com duas sessões, concorrência integrada e defesa real permanecem não validados; sandbox não substitui desafio real. Divergência de renderização observada no estado não encontrado do Admin sem sessão, sem dados privados expostos; fluxo Admin autenticado indisponível nesta sessão.
 
+
+- [x] Apresentação profissional da seção 3D Secure: globo do anexo adaptado com destaque no Brasil, hierarquia e benefícios; somente visual. Telas larga/estreita sem overflow, globo visível e em movimento, abertura sem erros; pagamentos e configuração preservados.
