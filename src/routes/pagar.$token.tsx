@@ -61,9 +61,11 @@ function Checkout() {
   const fetchInstructions = useServerFn(getPaymentInstructions);
   const [method, setMethod] = useState<"pix" | "boleto" | "credit_card" | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const loadedInstructions = useRef<string | null>(null);
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["checkout", token],
     queryFn: () => fetchCheckout({ data: { token } }),
     refetchInterval: (q) => {
@@ -145,7 +147,7 @@ function Checkout() {
     void notify3ds({ data: { token, paymentId: automaticPayment.id } }).catch(() => undefined);
   }, [verifyingCard, automaticPayment?.id]);
 
-  if (isLoading) return <Shell><CheckoutSkeleton /></Shell>;
+  if (!hydrated || isLoading) return <Shell><CheckoutSkeleton /></Shell>;
   const appearance = data?.state === "ok" ? data.appearance : DEFAULT_APPEARANCE;
   if (!data) return <Shell><StateView icon={XCircle} tone="danger" title={ui("Não foi possível abrir o link")} text={ui("Tente novamente em alguns minutos.")} /></Shell>;
   if (data.state !== "ok") {
