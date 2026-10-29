@@ -412,7 +412,7 @@ export async function contractPdf(admin: Admin, contractId: string, origin: stri
     if (record.identity_enc) {
       // Private PDF only; never included in public authenticity/progress responses.
       const identity = JSON.parse(decryptSecret(record.identity_enc)) as { birthDate?: string };
-      signer.birthDate = identity.birthDate;
+      signer.birthDate = identity.birthDate ?? null;
     }
   }
 

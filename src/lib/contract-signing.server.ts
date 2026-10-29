@@ -26,7 +26,7 @@ export async function resolveSigning(admin: Admin, input: Request) {
   } else {
     const table = input.source === "checkout" ? "payment_links" : "contract_links";
     const { data: l } = await admin.from(table).select("*").eq("token_hash", tokenHash).maybeSingle();
-    if (!l || l.revoked_at || (l.expires_at && Date.parse(l.expires_at) <= Date.now()) || !l.contract_id) throw new Error("Link inválido ou expirado.");
+    if (!l || l.revoked_at || (input.source !== "checkout" && l.expires_at && Date.parse(l.expires_at) <= Date.now()) || !l.contract_id) throw new Error("Link inválido ou expirado.");
     tenant = l.tenant_id; contractId = l.contract_id;
     if (input.source === "checkout" && "customer_id" in l && "charge_group_id" in l) {
       customerId = l.customer_id;
@@ -57,6 +57,8 @@ export async function issueSigningCode(admin: Admin, input: Request) {
   const code = String(randomInt(0, 1000000)).padStart(6, "0");
   const { data: id, error } = await admin.rpc("contract_signature_issue", { _challenge: { tenant_id: s.tenant, contract_id: s.c.id, version_id: s.v.id, signer_role: s.role, content_hash: s.v.content_hash, binding_hash: s.binding, recipient: tokenFingerprint(s.email), payload_hash: s.payloadHash, code_hash: hashSecretValue(code) } });
   if (error || !id) throw new Error("Não foi possível enviar. Aguarde 60 segundos antes de reenviar.");
+  const { error: bound } = await admin.from("contract_signature_challenges").update({ source: input.source, capability_hash: tokenFingerprint(input.token) }).eq("id", id);
+  if (bound) throw new Error("Não foi possível enviar o código.");
   const sent = await sendEmail(admin, { tenantId: s.tenant, kind: "contract.confirmation", dedupeKey: `contract.confirmation:${id}`, email: { to: s.email, subject: "Confirme sua assinatura — WiizePay", title: "Código para assinar o contrato", intro: "Use este código apenas na tela de assinatura que você abriu.", lines: [{ label: "Contrato", value: s.c.title }, { label: "Código de confirmação", value: code }], footnote: "Válido por dez minutos. Não compartilhe este código." } });
   const delivered = "sent" in sent && sent.sent;
   const { error: marked } = await admin.from("contract_signature_challenges").update(delivered ? { sent_at: new Date().toISOString() } : { revoked_at: new Date().toISOString() }).eq("id", id);

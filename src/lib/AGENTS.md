@@ -1,5 +1,7 @@
 # Library rules
 
+- Contract signatures finalize via service-only atomic confirmation RPC; external signers use payload-bound email challenges and provider signing retains MFA/financial password. Identity evidence is encrypted and signatures immutable. Why: block alternate signing paths and secret disclosure while retaining legacy evidence.
+
 - Public contract capabilities require tenant-consistent resolution and scoped public queries; cash receipts are rejected before financial side effects, including legacy queued reconciliations. Why: block cross-tenant links and credit without provider-held funds.
 - Run final-security-flows.security-check.ts with vitest.security.config.ts so real handler bodies execute with mocked dependencies, not transformed RPC stubs. Why: transport failures must never masquerade as access denials.
 
