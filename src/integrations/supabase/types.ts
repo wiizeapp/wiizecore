@@ -1434,6 +1434,78 @@ export type Database = {
           },
         ]
       }
+      contract_signature_challenges: {
+        Row: {
+          attempts: number
+          binding_hash: string
+          code_hash: string
+          consumed_at: string | null
+          content_hash: string
+          contract_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          payload_hash: string
+          recipient: string
+          revoked_at: string | null
+          sent_at: string | null
+          signer_role: string
+          tenant_id: string
+          version_id: string
+        }
+        Insert: {
+          attempts?: number
+          binding_hash: string
+          code_hash: string
+          consumed_at?: string | null
+          content_hash: string
+          contract_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          payload_hash: string
+          recipient: string
+          revoked_at?: string | null
+          sent_at?: string | null
+          signer_role: string
+          tenant_id: string
+          version_id: string
+        }
+        Update: {
+          attempts?: number
+          binding_hash?: string
+          code_hash?: string
+          consumed_at?: string | null
+          content_hash?: string
+          contract_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          payload_hash?: string
+          recipient?: string
+          revoked_at?: string | null
+          sent_at?: string | null
+          signer_role?: string
+          tenant_id?: string
+          version_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_signature_challenges_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_signature_challenges_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_signature_fields: {
         Row: {
           contract_id: string
@@ -1499,10 +1571,15 @@ export type Database = {
       }
       contract_signatures: {
         Row: {
+          actor_user_id: string | null
+          auth_method: string | null
           content_hash: string
           contract_id: string
           contract_version_id: string
+          evidence_id: string | null
+          evidence_version: number | null
           id: string
+          identity_enc: string | null
           initials_image: string | null
           ip_address: string | null
           signature_image: string | null
@@ -1514,12 +1591,18 @@ export type Database = {
           signer_role: string
           tenant_id: string
           user_agent: string | null
+          verified_at: string | null
         }
         Insert: {
+          actor_user_id?: string | null
+          auth_method?: string | null
           content_hash: string
           contract_id: string
           contract_version_id: string
+          evidence_id?: string | null
+          evidence_version?: number | null
           id?: string
+          identity_enc?: string | null
           initials_image?: string | null
           ip_address?: string | null
           signature_image?: string | null
@@ -1531,12 +1614,18 @@ export type Database = {
           signer_role: string
           tenant_id: string
           user_agent?: string | null
+          verified_at?: string | null
         }
         Update: {
+          actor_user_id?: string | null
+          auth_method?: string | null
           content_hash?: string
           contract_id?: string
           contract_version_id?: string
+          evidence_id?: string | null
+          evidence_version?: number | null
           id?: string
+          identity_enc?: string | null
           initials_image?: string | null
           ip_address?: string | null
           signature_image?: string | null
@@ -1548,6 +1637,7 @@ export type Database = {
           signer_role?: string
           tenant_id?: string
           user_agent?: string | null
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -8464,6 +8554,22 @@ export type Database = {
           retry_after_seconds: number
         }[]
       }
+      contract_signature_finish: {
+        Args: {
+          _challenge: string
+          _code_hash: string
+          _contract: string
+          _hash: string
+          _payload_hash: string
+          _role: string
+          _signature: Json
+          _tenant: string
+          _valid: boolean
+          _version: string
+        }
+        Returns: Json
+      }
+      contract_signature_issue: { Args: { _challenge: Json }; Returns: string }
       document_in_use: {
         Args: { _document: string; _tenant_id: string }
         Returns: boolean

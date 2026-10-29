@@ -372,6 +372,13 @@
       "when": 1793299627775,
       "tag": "0052_card_risk_cases",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1793316241370,
+      "tag": "0053_contract_signature_confirmation",
+      "breakpoints": true
     }
   ]
 }
