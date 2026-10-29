@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/wiize/callback")({
         const code = url.searchParams.get("code");
         const state = url.searchParams.get("state");
         const db = await s.getAdmin();
-        const ip = request.headers.get("cf-connecting-ip");
+        const ip = (await import("@/lib/audit.server")).clientIpFromRequest(request);
         if (!code || !state || code.length > 2048 || state.length > 200) return back(origin, "/configuracoes?wiize=erro");
         if (!(await s.rateLimit(db, `callback:${ip ?? "x"}`, 30, 600))) return back(origin, "/configuracoes?wiize=erro");
 

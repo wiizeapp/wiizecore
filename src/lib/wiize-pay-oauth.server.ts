@@ -1,3 +1,4 @@
+import { clientIpFromRequest } from "./audit.server";
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { DEPLOY_CONFIG } from "./deploy-config";
 import { hashSecretValue, verifySecretValue } from "./crypto.server";
@@ -92,7 +93,7 @@ export const oauthJson = (body: unknown, status = 200, extra: Record<string, str
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store", Pragma: "no-cache", ...extra } });
 
 export function clientIp(request: Request) {
-  return request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+  return clientIpFromRequest(request);
 }
 
 export async function audit(db: Db, e: { tenantId?: string | null; userId?: string | null; action: string; outcome?: string; details?: Record<string, unknown>; ip?: string | null }) {
