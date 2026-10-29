@@ -564,7 +564,19 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     if (await (await import("./coproduction.server")).coproductionBlocksCheckout(admin, resolved.link.charge_group_id!)) throw new Error("Pagamento disponível em breve.");
     const { link } = resolved;
     const { consumeRateLimit, requestInfo, logAudit } = await import("./audit.server");
-    const limit = await consumeRateLimit(admin, { scope: "checkout_card", identifier: data.paymentId, maxAttempts: 5, windowSeconds: 900, blockSeconds: 1800 });
+    // Limites somados: por cobrança, por link e por IP confiável. Criar outra cobrança
+    // não zera o contador do mesmo visitante nem do mesmo link.
+    const { tokenFingerprint: cardFp } = await import("./crypto.server");
+    const cardIp = requestInfo().ip;
+    const cardLimits = await Promise.all([
+      consumeRateLimit(admin, { scope: "checkout_card", identifier: data.paymentId, maxAttempts: 5, windowSeconds: 900, blockSeconds: 1800 }),
+      consumeRateLimit(admin, { scope: "checkout_card_link", identifier: cardFp(data.token), maxAttempts: 8, windowSeconds: 3600, blockSeconds: 3600 }),
+      cardIp
+        ? consumeRateLimit(admin, { scope: "checkout_card_ip", identifier: cardIp, maxAttempts: 10, windowSeconds: 3600, blockSeconds: 3600 })
+        : Promise.resolve({ allowed: true, retryAfterSeconds: 0 }),
+    ]);
+    if (!cardIp) await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_ip_unavailable", resource: "payments", resourceId: data.paymentId, metadata: {} });
+    const limit = { allowed: cardLimits.every((l) => l.allowed) };
     if (!limit.allowed) throw new Error("Muitas tentativas com cartão. Aguarde alguns minutos ou escolha outra forma de pagamento.");
 
     const now = new Date();
