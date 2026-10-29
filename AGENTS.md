@@ -28,7 +28,7 @@
 - Checkout journey steps are logged in `checkout_events` and shown in Cliente 360; data + terms confirmation required once per charge.
 - Customer portal (`/portal/$key`): email + full CPF/CNPJ, rate-limited, 30-min hashed sessions, every fn filtered by session customer; docs in tenant Drive.
 - Coupons belong to one tenant; discount is computed and reserved only in the `reserve_coupon` RPC (service_role) and consumed/released by the payments status trigger.
-- Internal access order: login → mandatory TOTP setup/confirmation (server `requireMfaAuth` + RLS `mfa_satisfied()` require AAL2) → mandatory onboarding completed server-side (no skip) → app. Why: client gates are UX; the server enforces each step.
+- Internal access order: login (email confirmed, rechecked server-side in `requireMfaAuth`) → mandatory TOTP setup/confirmation (server `requireMfaAuth` + RLS `mfa_satisfied()` require AAL2) → mandatory onboarding completed server-side (no skip) → app. Why: client gates are UX; the server enforces each step.
 - `audit_logs` is append-only with a hash chain; write only through `src/lib/audit.server.ts` (sanitized metadata, failures never break operations). Why: tamper evidence without blocking financial flows.
 - Activation handoff uses a short-lived one-time token plus code; IP only audits/limits because mobile IP changes. Prevalidate document quality before private upload.
 - Payout data (`bank_accounts.sensitive_enc`) and KYC form (`payment_activations.form_enc`) are encrypted server-side; plaintext columns hold masks/safe keys only.
