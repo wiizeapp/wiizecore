@@ -9,6 +9,8 @@ import { join } from "node:path";
 const PUBLIC_ALLOWED: Record<string, string[]> = {
   "checkout.functions.ts": ["*"],
   "signup.functions.ts": ["signUpProtected"],
+  // Public contract capability, tenant/version/recipient checks and atomic rate limits precede email delivery.
+  "contract-signing.functions.ts": ["requestContractSigningCode"],
   "fees.functions.ts": ["*"],
   "contract-docs.functions.ts": ["getSignerView", "getSignerPdf", "signAsExtraSigner", "getCustomerPdf", "verifyContract"],
   "contract-links.functions.ts": ["*"],
