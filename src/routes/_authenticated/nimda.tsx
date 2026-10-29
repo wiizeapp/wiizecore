@@ -30,6 +30,7 @@ import { AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-
 import { AdminAuditSecurity } from "@/components/admin/admin-audit-security";
 import { AdminUnlockGate } from "@/components/admin/admin-unlock-gate";
 import { AdminPld } from "@/components/admin/admin-pld";
+import { AdminChargebacks } from "@/components/admin/admin-chargebacks";
 
 export const Route = createFileRoute("/_authenticated/nimda")({
   head: () => ({
@@ -279,7 +280,7 @@ function AdminContent() {
     clientes: empView,
     faturas: soon("Notas fiscais", "As taxas de notas fiscais autorizadas aparecem em Receitas. Nenhuma nota adicional para revisar aqui."),
     saques: saquesView,
-    chargebacks: soon("Nenhum chargeback registrado", "Quando o provedor informar uma contestação de cartão, ela aparecerá aqui."),
+    chargebacks: <AdminChargebacks />,
     estornos: <AdminRefunds f={fin} />,
     empresas: <div className="space-y-6"><div className="surface-panel p-4"><AdminUsers /></div>{empView}</div>,
     publico: <AdminOnboarding />,

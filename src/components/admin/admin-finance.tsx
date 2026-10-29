@@ -299,7 +299,7 @@ function RevenueWaterfall({ c, p, cmp }: { c: FinanceData["current"]; p: Finance
       <div className="flex justify-between"><span className="text-muted-foreground">(−) Custos de antecipação</span><span className="numeric-tabular text-destructive">−{formatBRL(c.anticipationCost)}</span></div>
       <div className="flex justify-between"><span className="text-muted-foreground">(−) Custos de notas fiscais</span><span className="numeric-tabular text-destructive">−{formatBRL(c.invoiceCost)}</span></div>
       <div className="flex items-center justify-between rounded-lg bg-primary/10 px-3 py-2.5"><span className="font-semibold">Receita líquida</span><span className="flex items-center gap-3"><Delta cur={c.netRevenue} prev={p.netRevenue} label={cmp} /><span className="numeric-tabular font-display text-lg font-bold text-primary">{formatBRL(c.netRevenue)}</span></span></div>
-      <p className="pt-1 text-xs text-muted-foreground">Estornos concluídos no período: {formatBRL(c.refunds)} (dinheiro devolvido pelos clientes; a taxa retida de {formatBRL(c.refundsRetained)} já está na receita). Chargebacks: nenhum registrado.</p>
+      <p className="pt-1 text-xs text-muted-foreground">Estornos concluídos no período: {formatBRL(c.refunds)} (dinheiro devolvido pelos clientes; a taxa retida de {formatBRL(c.refundsRetained)} já está na receita).</p>
     </div>
   );
 }
