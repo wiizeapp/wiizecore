@@ -37,6 +37,7 @@ URL de desafio retornada pelo Asaas leva ao banco emissor; retorno ao checkout n
 8. Desativar após teste até aprovação operacional; só declarar concluído quando evidências dos cenários exigidos estiverem documentadas.
 
 ## Verificações desta fase e limitações
+- 51 testes aprovados em nove arquivos e compilação OK. Controle privado confirmado no banco com RLS e sem SELECT para anon/authenticated; ausência de linha mantém 3DS desligado.
 - Testes automatizados cobrem controle combinado, acesso Admin, projeções seguras/filtro de empresa, auditoria sem cartão/CVV/token, eventos repetidos, proteção contra reabertura por eventos atrasados, modalidades e limites de anexos.
 - Página pública conferida em tela larga e estreita, sem rolagem horizontal; informa integração preparada e homologação pendente, sem declarar ativação ou liderança de mercado não comprovadas.
 - Não foi possível exercitar o Admin autenticado: não havia sessão correspondente ao solicitante. Ao abrir sem sessão, a rota Admin ocultou o conteúdo como página não encontrada; foi observada divergência de renderização do estado não encontrado existente. Esse estado não comprova o fluxo Admin autenticado nem exposição de dados.
