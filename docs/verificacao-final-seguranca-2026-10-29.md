@@ -71,7 +71,14 @@ As tabelas de gestão financeira permitem operações diretas a determinados car
 
 ## Fases seguintes — impacto e bloqueios
 
-Tentativa de preparar PostgreSQL local descartável foi recusada pelo mecanismo de execução de usuário (`runuser` abortou antes de inicializar). Nenhum banco novo foi iniciado e nenhuma função de saldo foi testada em PostgreSQL isolado. Há um esquema mínimo de teste identificado, mas ele não substitui uma cópia de autenticação/arquivos com sessões A/B autorizadas. Não apontar testes de escrita para a instância compartilhada como alternativa.
+A primeira tentativa de preparar PostgreSQL descartável foi recusada pelo mecanismo `runuser`. Uma segunda tentativa, com troca explícita para usuário não privilegiado e ambiente limpo, funcionou. Foi iniciado um cluster local independente, com socket privado, TCP desativado e sem herdar configuração/credenciais do banco conectado; recebeu apenas esquema mínimo e dados sintéticos. O cluster foi desligado ao concluir. Ele não substitui uma cópia de autenticação/arquivos com sessões A/B autorizadas.
+
+Reprodução das definições atuais, com restrições de saldo não negativo e recebimentos não relacionados suficientes para demonstrar o problema:
+
+- Coprodução: split original R$ 100,00, estorno R$ 40,00 e pendente total R$ 260,00 (R$ 60,00 do split + R$ 200,00 não relacionados). A função atual liberou R$ 100,00 e deixou R$ 160,00 pendentes; o resultado correto seria R$ 60,00 disponíveis e R$ 200,00 pendentes. A repetição não movimentou novamente.
+- Antecipação: pagamento líquido R$ 100,00, reserva de estorno R$ 40,00, pendente total R$ 260,00 e taxa R$ 5,00. A função atual deixou R$ 160,00 pendentes e R$ 95,00 disponíveis, sem preservar a reserva na liberação. Repetições com o mesmo e outro ID de evento não cobraram novamente a taxa; isso comprova idempotência desse caso, não a correção da liberação.
+- **Esses são testes de reprodução das falhas existentes, não testes de aprovação de uma correção.** Nenhuma função candidata foi implantada/testada e nenhuma concorrência entre duas sessões foi executada. A admissão transacional compartilhada de estorno/antecipação ainda precisa ser projetada com o esquema completo e testada isoladamente.
+- Nenhum dado real, identidade, segredo ou chamada de provedor participou. O banco compartilhado permaneceu inalterado.
 
 Inventário dos escritores legítimos que impede revogação genérica:
 
