@@ -46,7 +46,7 @@ As tabelas de gestão financeira permitem operações diretas a determinados car
 - Seleção de segurança: 44 aprovados e os mesmos 22 ignorados.
 - Todas as variáveis de homologação A/B estão ausentes; os 22 testes reais NÃO foram executados e NÃO contam como aprovação.
 - Nenhum teste de INSERT/UPDATE/DELETE, liberação de saldo, concorrência, assinatura ou provedor foi disparado no banco compartilhado. Se a proteção falhar, um teste negativo de escrita pode alterar dados reais.
-- Verificação automatizada básica executada; análise aprofundada iniciada e resultado ainda pendente na elaboração deste complemento.
+- Verificação automatizada básica executada; análise aprofundada concluída em 29/10/2026 às 23:07 UTC, sem achados retornados. O resultado é marcado como desatualizado e precede estas correções; não invalida os riscos demonstrados por análise manual/catálogo.
 - Linter: 19 tabelas fechadas sem policy, uma função trigger sem search_path, extensão no esquema público e sete funções privilegiadas acessíveis a usuários. São sinais para avaliação, não provas automáticas de exploração.
 - A verificação não prova comportamento de todos os endpoints, acesso a todos os arquivos, isolamento entre sessões reais, configuração Vercel/Asaas nem ausência de outras falhas.
 
@@ -58,3 +58,29 @@ As tabelas de gestão financeira permitem operações diretas a determinados car
 4. Migrar escritores legítimos de gestão antes de revogar permissões diretas; alinhar MFA e permissões por módulo.
 5. Testar leitura/escrita cruzadas, concessão de cargo, AAL1/AAL2, membro desativado, arquivos, saldo próprio, repetição e concorrência; confirmar pelo aplicativo e leitura posterior.
 6. Só depois reavaliar prontidão; pentest independente e recuperação testada continuam necessários para uma exigência equivalente à de instituição financeira.
+
+## Fase 1 aprovada — implementação e validação
+
+- Resolução do link público agora confere a empresa do contrato e falha fechada em erro; leitura e assinatura também filtram contrato, versão e assinaturas pela empresa do link.
+- `RECEIVED_IN_CASH` não é mais normalizado como `PAYMENT_RECEIVED`. O processamento também intercepta eventos em dinheiro e eventos antigos normalizados com esse status antes de criar/alterar pagamentos, creditar saldo, reembolsar taxas ou liberar splits.
+- **Nove testes de funções reais com dependências simuladas aprovados**, incluindo controle positivo de contrato próprio, negativa de leitura/assinatura estrangeiras, falha de consulta, reconciliação em dinheiro sem escrita e evento legado sem RPC financeira.
+- Esses testes usam `vitest.security.config.ts`; o arquivo separado `final-security-flows.security-check.ts` evita que o transporte RPC transformado seja confundido com autorização. A primeira tentativa com o transporte padrão falhou no controle positivo e NÃO foi usada como prova de bloqueio.
+- Regressões usuais reexecutadas: **470 aprovadas, 22 ignoradas**. Total de cenários executados nas duas baterias: **479 aprovados**; não inclui isolamento real.
+- Compilação automática OK após as alterações. Não há comprovação end-to-end publicada nem assinatura real com sessões A/B.
+- Nenhuma migração aplicada: as regras vulneráveis de coprodução/antecipação continuam no banco conectado até a fase de implantação autorizada.
+
+## Fases seguintes — impacto e bloqueios
+
+Tentativa de preparar PostgreSQL local descartável foi recusada pelo mecanismo de execução de usuário (`runuser` abortou antes de inicializar). Nenhum banco novo foi iniciado e nenhuma função de saldo foi testada em PostgreSQL isolado. Há um esquema mínimo de teste identificado, mas ele não substitui uma cópia de autenticação/arquivos com sessões A/B autorizadas. Não apontar testes de escrita para a instância compartilhada como alternativa.
+
+Inventário dos escritores legítimos que impede revogação genérica:
+
+| Recurso | Caminho atual | Avaliação antes de revogar |
+|---|---|---|
+| `contract_links` | emissão/revogação em `contract-links.functions.ts`, cliente privilegiado após autorização | Permissões ordinárias não são necessárias para esses caminhos; falta consistência relacional no banco e homologação |
+| `finance_accounts` | `gestao.functions.ts`, `finance-ops.functions.ts`, cliente do usuário | Migrar operações para caminhos estreitos e autorizados antes de revogar |
+| `finance_categories` | mesmas funções, cliente do usuário | Preservar categorias compartilhadas e edição legítima por empresa |
+| `finance_entries` | mesmas funções e RPCs, cliente do usuário | Validar criação/edição/cancelamento e auditoria por operação |
+| `finance_cards` | `finance-ops.functions.ts`, cliente do usuário | Preservar cadastro/alteração legítimos; privilégio efetivo atual inclui DELETE |
+
+**Bloqueios restantes:** ambiente descartável com autenticação/arquivos e sessões A/B autorizadas; validação concorrente das funções financeiras; avaliação/reversão e autorização específica posterior para implantação no banco compartilhado; homologação externa e testes independentes. Não foram revogadas permissões nem alteradas regras financeiras no banco nesta fase.

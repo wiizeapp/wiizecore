@@ -1,7 +1,7 @@
 # Library rules
 
 - Public contract capabilities require tenant-consistent resolution and scoped public queries; cash receipts are rejected before financial side effects, including legacy queued reconciliations. Why: block cross-tenant links and credit without provider-held funds.
-- Run final-security-flows.test.ts with vitest.security.config.ts so real handler bodies execute with mocked dependencies, not transformed RPC stubs. Why: transport failures must never masquerade as access denials.
+- Run final-security-flows.security-check.ts with vitest.security.config.ts so real handler bodies execute with mocked dependencies, not transformed RPC stubs. Why: transport failures must never masquerade as access denials.
 
 - Export user-authored cells through `safeSpreadsheetRows`; URL logo imports require exact server-approved hosts and bounded streams. Why: prevent formulas in exports and arbitrary outbound fetches without affecting file uploads.
 
