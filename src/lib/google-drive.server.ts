@@ -70,7 +70,7 @@ async function accessToken(admin: Admin, tenantId: string) {
 
 async function gfetch(token: string, url: string, init: RequestInit = {}) {
   const res = await fetch(url, { ...init, headers: { ...(init.headers ?? {}), Authorization: `Bearer ${token}` } });
-  if (!res.ok) { const t = await res.text(); console.error("drive", res.status, t.slice(0, 300)); throw new Error("Não foi possível acessar o Google Drive."); }
+  if (!res.ok) { console.error("drive_request_failed", res.status); throw new Error("Não foi possível acessar o Google Drive."); }
   return res;
 }
 

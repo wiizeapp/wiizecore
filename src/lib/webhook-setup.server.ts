@@ -37,7 +37,7 @@ export async function ensureTenantWebhook(admin: AdminClient, tenantId: string, 
   if (!conn || conn.connection.webhook_id) return;
   try {
     await registerTenantWebhook(admin, tenantId, origin, userId);
-  } catch (error) {
-    console.error("Falha ao registrar webhook automaticamente", error);
+  } catch {
+    console.error("webhook_registration_failed");
   }
 }

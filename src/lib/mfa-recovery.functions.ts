@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { consumeRateLimit, logAudit, logSecurityEvent } from "./audit.server";
 import { assertStrongPassword } from "./password-policy";
+import { claimRecoveryCode } from "./recovery-code.server";
 
 type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -44,7 +45,7 @@ export const recoverWithCode = createServerFn({ method: "POST" })
       await logAudit(supabaseAdmin, { userId: context.userId, action: "mfa.recovery", result: "failure" });
       throw new Error("Código de recuperação inválido.");
     }
-    await supabaseAdmin.from("mfa_recovery_codes").update({ used_at: new Date().toISOString() }).eq("id", match.id);
+    await claimRecoveryCode(supabaseAdmin, match.id, context.userId);
     await removeAllFactors(supabaseAdmin, context.userId);
 
     // Encerra as outras sessões abertas.
@@ -87,15 +88,7 @@ export const resetPasswordWithRecoveryCode = createServerFn({ method: "POST" })
       throw new Error("Código reserva inválido.");
     }
 
-    const consumedAt = new Date().toISOString();
-    const { data: consumed, error: consumeError } = await supabaseAdmin
-      .from("mfa_recovery_codes")
-      .update({ used_at: consumedAt })
-      .eq("id", stored.id)
-      .is("used_at", null)
-      .select("id")
-      .maybeSingle();
-    if (consumeError || !consumed) throw new Error("Este código reserva já foi utilizado.");
+    const consumedAt = await claimRecoveryCode(supabaseAdmin, stored.id, context.userId);
 
     const { error } = await supabaseAdmin.auth.admin.updateUserById(context.userId, { password: data.password });
     if (error) {
@@ -125,9 +118,7 @@ export const disableMfaWithRecoveryCode = createServerFn({ method: "POST" })
       await logSecurityEvent(supabaseAdmin, { userId: context.userId, eventType: "mfa.disable_code_failed", severity: "warning" });
       throw new Error("Código reserva inválido.");
     }
-    const { data: consumed } = await supabaseAdmin.from("mfa_recovery_codes")
-      .update({ used_at: new Date().toISOString() }).eq("id", stored.id).is("used_at", null).select("id").maybeSingle();
-    if (!consumed) throw new Error("Este código reserva já foi utilizado.");
+    await claimRecoveryCode(supabaseAdmin, stored.id, context.userId);
     await removeAllFactors(supabaseAdmin, context.userId);
     await logSecurityEvent(supabaseAdmin, { userId: context.userId, eventType: "mfa.disabled_with_backup_code", severity: "critical" });
     await logAudit(supabaseAdmin, { userId: context.userId, action: "mfa.disabled_with_backup_code" });
