@@ -209,6 +209,17 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
     }
     const status = eventToStatus(event.event_type);
     if (!p?.id || !status) {
+      // Evento sem efeito mapeado: fica registrado para diagnóstico, nunca descartado em silêncio.
+      const { logAudit } = await import("./audit.server");
+      await logAudit(admin, {
+        tenantId: event.tenant_id,
+        action: "webhook.unmapped_event",
+        resource: "webhook_events",
+        resourceId: eventId,
+        result: "success",
+        metadata: { event: event.event_type, hasPayment: Boolean(p?.id) },
+        externalEventId: event.external_event_id,
+      });
       await admin.from("webhook_events").update({ processing_status: "discarded", processed_at: new Date().toISOString() }).eq("id", eventId);
       return;
     }
