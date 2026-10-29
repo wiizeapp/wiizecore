@@ -1,3 +1,5 @@
+import { BirthDateField } from "@/components/contracts/birth-date-field";
+import { EmailSigningConfirmation, type EmailConfirmation } from "@/components/contracts/email-signing-confirmation";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { paymentShareMeta } from "@/lib/payment-share";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -393,8 +395,10 @@ function CheckoutContractForm({ token, contract, customerName, onSigned, onViewe
   });
   const [document, setDocument] = useState("");
   const [signature, setSignature] = useState<SignatureValue | null>(null);
+  const [birthDate, setBirthDate] = useState("");
+  const [proof, setProof] = useState<EmailConfirmation | null>(null);
   const mutation = useMutation({
-    mutationFn: () => sign({ data: { token, signerName: name, signerDocument: document, signature } }),
+    mutationFn: () => sign({ data: { token, signerName: name, signerDocument: document, signature, birthDate, challengeId: proof?.challengeId ?? "", code: proof?.code ?? "" } }),
     onSuccess: () => { toast.success("Contrato assinado. O pagamento foi liberado."); onSigned(); },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -424,7 +428,7 @@ function CheckoutContractForm({ token, contract, customerName, onSigned, onViewe
       </div>
       <SignaturePad name={name} onChange={setSignature} />
       {!opened ? <p className="text-center text-xs text-muted-foreground">Abra e leia o contrato para liberar a assinatura.</p> : null}
-      <Button type="submit" size="lg" className="h-12 w-full" disabled={!signature || !opened || mutation.isPending}>{mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <FileSignature className="size-4" />}{mutation.isPending ? "Registrando assinatura…" : "Assinar e continuar"}</Button>
+      <Button type="submit" size="lg" className="h-12 w-full" disabled={!signature || !opened || !proof || !birthDate || mutation.isPending}>{mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <FileSignature className="size-4" />}{mutation.isPending ? "Registrando assinatura…" : "Assinar e continuar"}</Button>
     </form>
   );
 }

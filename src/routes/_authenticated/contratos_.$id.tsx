@@ -1,3 +1,4 @@
+import { BirthDateField } from "@/components/contracts/birth-date-field";
 import { SignaturePad, type SignatureValue } from "@/components/contracts/signature-pad";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -36,6 +37,10 @@ const TABS = [
 type Tab = (typeof TABS)[number]["id"];
 
 const EVENT_LABELS: Record<string, string> = {
+  confirmation_sent: "Código de assinatura enviado",
+  confirmation_send_failed: "Falha no envio da confirmação",
+  confirmation_rejected: "Confirmação de assinatura recusada",
+  signature_confirmed: "Assinatura confirmada",
   created: "Contrato criado",
   version_created: "Nova versão do documento",
   link_created: "Enviado para assinatura (link gerado)",
@@ -108,6 +113,8 @@ function ContratoDetalhe() {
   const [link, setLink] = useState<string | null>(null);
   const [signOpen, setSignOpen] = useState(false);
   const [pwd, setPwd] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [signerDocument, setSignerDocument] = useState("");
   const [signature, setSignature] = useState<SignatureValue | null>(null);
   const [draft, setDraft] = useState<string | null>(null);
   const [linkTitle, setLinkTitle] = useState("Link de assinatura do cliente");
@@ -208,7 +215,7 @@ function ContratoDetalhe() {
     onError: (e: Error) => toast.error(e.message),
   });
   const signM = useMutation({
-    mutationFn: () => sign({ data: { contractId: id, financialPassword: pwd, signerName: workspace?.fullName ?? workspace?.email ?? "Prestador", signature } }),
+    mutationFn: () => sign({ data: { contractId: id, financialPassword: pwd, birthDate, signerDocument, signerName: workspace?.fullName ?? workspace?.email ?? "Prestador", signature } }),
     onSuccess: () => { toast.success("Assinatura registrada."); setSignOpen(false); setPwd(""); refresh(); },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -482,9 +489,11 @@ function ContratoDetalhe() {
           <DialogHeader><DialogTitle>Assinar como prestador</DialogTitle></DialogHeader>
           <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); signM.mutate(); }}>
             <p className="text-sm text-muted-foreground">Registramos data, versão, código do documento, IP e dispositivo.</p>
+            <div className="space-y-2"><Label htmlFor="provider-document">CPF/CNPJ</Label><Input id="provider-document" required inputMode="numeric" value={signerDocument} onChange={(e) => setSignerDocument(e.target.value)} /></div>
+            <BirthDateField value={birthDate} onChange={setBirthDate} />
             <SignaturePad name={workspace?.fullName ?? ""} onChange={setSignature} />
             <div className="space-y-2"><Label htmlFor="pwd">Senha financeira</Label><Input id="pwd" type="password" required value={pwd} onChange={(e) => setPwd(e.target.value)} /></div>
-            <Button type="submit" className="w-full" disabled={signM.isPending || !signature}>Confirmar assinatura</Button>
+            <Button type="submit" className="w-full" disabled={signM.isPending || !signature || !birthDate || !signerDocument}>Confirmar assinatura</Button>
           </form>
         </DialogContent>
       </Dialog>
