@@ -250,6 +250,21 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       });
     }
 
+    // Autenticação 3DS: os eventos oficiais do cartão concluem o registro da tentativa.
+    // Falha aqui nunca interrompe o processamento do pagamento.
+    {
+      const { authStatusForEvent, syncAuthFromWebhook } = await import("./threeds.server");
+      if (authStatusForEvent(event.event_type)) {
+        await syncAuthFromWebhook(admin, {
+          tenantId: event.tenant_id,
+          connectionId,
+          providerPaymentId: p.id,
+          eventType: event.event_type,
+          externalEventId: event.external_event_id,
+        }).catch((e) => console.error("3ds auth sync", e instanceof Error ? e.message : "falhou"));
+      }
+    }
+
     // Cada parcela e cada ciclo recorrente é uma cobrança individual. A RPC
     // garante que eventos repetidos do mesmo pagamento nunca descontem duas vezes.
     const { data: paymentOwner } = await admin
