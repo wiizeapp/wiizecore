@@ -1015,6 +1015,27 @@ export type Database = {
           },
         ]
       }
+      checkout_3ds_control: {
+        Row: {
+          allowed: boolean
+          id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          allowed?: boolean
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          allowed?: boolean
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       checkout_appearance_versions: {
         Row: {
           created_at: string
