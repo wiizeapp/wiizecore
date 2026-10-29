@@ -615,10 +615,10 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       const { getRequestHeader } = await import("@tanstack/react-start/server");
       const { safeOrigin } = await import("./contract-docs.server");
       const origin = safeOrigin(getRequestHeader("origin") ?? undefined);
-      body.threeDSecure = { callbackUrl: `${origin}/pagar/${data.token}?verificacao-cartao=retorno` };
+      body["threeDSecure"] = { callbackUrl: `${origin}/pagar/${data.token}?verificacao-cartao=retorno` };
       const device = data["deviceInfo"];
       if (device) {
-        body.deviceInfo = {
+        body["deviceInfo"] = {
           colorDepth: device.colorDepth,
           screenHeight: device.screenHeight,
           screenWidth: device.screenWidth,
