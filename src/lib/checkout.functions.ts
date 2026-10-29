@@ -591,6 +591,11 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     if (!limit.allowed) throw new Error("Muitas tentativas com cartão. Aguarde alguns minutos ou escolha outra forma de pagamento.");
     // Verificação anti-robô no servidor (Cloudflare Siteverify), antes de qualquer contato com o processador.
     await (await import("./turnstile.server")).requireTurnstile(admin, { token: data.turnstileToken, remoteIp: cardIp, tenantId: link.tenant_id, paymentId: data.paymentId });
+    // Regras de comportamento suspeito (vários cartões, links, recusas), antes do processador.
+    const { recordCardRisk } = await import("./card-risk.server");
+    const riskBase = { tenantId: link.tenant_id, paymentId: data.paymentId, ip: cardIp, cardMark, linkMark: cardFp(data.token).slice(0, 40) };
+    const risk = await recordCardRisk(admin, { ...riskBase, outcome: "attempt" });
+    if (risk.block) throw new Error("Não foi possível processar o cartão agora. Tente mais tarde ou escolha outra forma de pagamento.");
 
     const now = new Date();
     const exp = new Date(Number(data.expiryYear), Number(data.expiryMonth), 1);
@@ -674,6 +679,7 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
         providerStatus = typeof consultedStatus === "string" ? consultedStatus : null;
       } catch { /* sem consulta, segue com a recusa genérica */ }
       await trackEvent(admin, link, "card_declined");
+      await recordCardRisk(admin, { ...riskBase, outcome: "declined" }).catch(() => undefined);
       await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_declined", resource: "payments", resourceId: payment.id, metadata: { last4: data.number.slice(-4), providerStatus } });
       if (providerStatus && !["PENDING", "AWAITING_RISK_ANALYSIS"].includes(providerStatus)) {
         throw new Error("Não foi possível confirmar a resposta da operadora. Aguarde a atualização desta página antes de tentar novamente.");
