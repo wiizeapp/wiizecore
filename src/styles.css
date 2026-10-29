@@ -2,6 +2,35 @@
 @source "../src";
 @import "tw-animate-css";
 
+.secure-three-ds {
+  --background: oklch(0.19 0.012 180);
+  --foreground: oklch(0.97 0.003 180);
+  --muted-foreground: oklch(0.74 0.015 180);
+  --border: oklch(0.34 0.013 180);
+  --primary: oklch(0.77 0.15 165);
+  --secure-globe-land: oklch(0.7 0.018 180);
+  --secure-globe-marker: oklch(0.8 0.14 165);
+  --secure-globe-glow: oklch(0.25 0.016 180);
+  background: var(--background);
+  color: var(--foreground);
+}
+.secure-globe canvas { opacity: 0; transition: opacity 800ms ease; }
+.secure-globe canvas[data-ready="true"] { opacity: 1; }
+.secure-globe-pulse {
+  position: absolute;
+  position-anchor: --cobe-brazil;
+  bottom: anchor(center);
+  left: anchor(center);
+  translate: -50% 50%;
+  width: 28px; height: 28px;
+  opacity: var(--cobe-visible-brazil, 0);
+  pointer-events: none;
+}
+.secure-globe-pulse span { position: absolute; inset: 0; border: 1px solid var(--primary); border-radius: 50%; animation: secure-pulse 2.5s ease-out infinite; }
+.secure-globe-pulse span + span { animation-delay: 1s; }
+@keyframes secure-pulse { from { transform: scale(0.5); opacity: 0.8; } to { transform: scale(2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .secure-globe-pulse span { animation: none; } .secure-globe canvas { transition: none; } }
+
 @custom-variant dark (&:is(.dark *));
 
 @keyframes onboarding-enter {
