@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { eventToStatus, ASAAS_WEBHOOK_EVENTS } from "./asaas.server";
-import { internalStatusFor, isChargebackEvent } from "./chargebacks.server";
+import { internalStatusFor, isChargebackEvent, ignoresStaleChargeback } from "./chargebacks.server";
 
 describe("eventos oficiais de chargeback do Asaas", () => {
   it("os três eventos de contestação são reconhecidos", () => {
@@ -45,6 +45,12 @@ describe("eventos oficiais do fluxo 3DS e análise de risco", () => {
 });
 
 describe("estado interno da contestação", () => {
+  it("evento atrasado não reabre disputa encerrada", () => {
+    expect(ignoresStaleChargeback("reversed", "awaiting_documents")).toBe(true);
+    expect(ignoresStaleChargeback("lost", "in_review")).toBe(true);
+    expect(ignoresStaleChargeback("in_review", "awaiting_documents")).toBe(true);
+    expect(ignoresStaleChargeback("awaiting_documents", "in_review")).toBe(false);
+  });
   it("contestação recebida aguarda documentos", () => {
     expect(internalStatusFor("PAYMENT_CHARGEBACK_REQUESTED", null)).toBe("awaiting_documents");
     expect(internalStatusFor("PAYMENT_CHARGEBACK_REQUESTED", "REQUESTED")).toBe("awaiting_documents");

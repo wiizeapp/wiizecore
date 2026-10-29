@@ -3,7 +3,7 @@ import { isCheckoutThreeDsEnabled } from "./threeds.server";
 import { threeDsOperationallyEnabled } from "./three-ds-policy";
 import { logAudit } from "./audit.server";
 
-export async function readAdminChargebacks(context: AdminContext, input: { page: number; tenantId?: string; status?: string }) {
+export async function readAdminChargebacks(context: AdminContext, input: { page: number; tenantId?: string | undefined; status?: string | undefined }) {
   const { admin } = await assertAdminPage(context);
   let cases = admin.from("chargeback_cases").select("id, tenant_id, payment_id, amount, reason, status, internal_status, defense_state, dispute_deadline, created_at, synced_at", { count: "exact" });
   let attempts = admin.from("payment_authentications").select("id, tenant_id, payment_id, modality, status, auth_result, capture_status, started_at, completed_at");

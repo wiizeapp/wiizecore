@@ -31,6 +31,11 @@ export function internalStatusFor(eventType: ChargebackEventType, providerStatus
   }
 }
 
+export function ignoresStaleChargeback(current: string, next: string): boolean {
+  if (["reversed", "lost"].includes(current)) return true;
+  return current === "in_review" && next === "awaiting_documents";
+}
+
 const EVENT_DESCRIPTIONS: Record<ChargebackEventType, string> = {
   PAYMENT_CHARGEBACK_REQUESTED: "Contestação recebida do processador.",
   PAYMENT_CHARGEBACK_DISPUTE: "Defesa apresentada; contestação em análise.",
@@ -85,12 +90,14 @@ export async function processChargebackWebhook(
     .select("id, last_event, last_provider_event_id, internal_status")
     .eq("provider_connection_id", connectionId)
     .eq("provider_payment_id", providerPaymentId)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
 
   // Mesmo evento reenviado: nada a fazer (idempotência).
   if (existing?.last_provider_event_id && existing.last_provider_event_id === input.externalEventId) return true;
 
   const internalStatus = internalStatusFor(eventType, providerStatus);
+  if (existing && ignoresStaleChargeback(existing.internal_status, internalStatus)) return true;
   const officialStatus = providerStatus ?? (eventType === "PAYMENT_CHARGEBACK_DISPUTE" ? "IN_DISPUTE" : eventType === "PAYMENT_AWAITING_CHARGEBACK_REVERSAL" ? "REVERSED" : "REQUESTED");
 
   let caseId: string;
@@ -110,7 +117,8 @@ export async function processChargebackWebhook(
         last_provider_event_id: input.externalEventId,
       })
       .eq("id", caseId)
-      .eq("tenant_id", tenantId);
+      .eq("tenant_id", tenantId)
+      .eq("internal_status", existing.internal_status);
   } else {
     const { data: inserted, error } = await db
       .from("chargeback_cases")
