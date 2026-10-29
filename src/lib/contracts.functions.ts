@@ -316,9 +316,10 @@ export const signContractAsProvider = createServerFn({ method: "POST" })
       _payload_hash: "", _challenge: null as unknown as string, _code_hash: "", _valid: true,
       _signature: { signer_name: data.signerName, signer_document: data.signerDocument, ...sigCols, ip_address: ip, user_agent: userAgent, actor_user_id: context.userId, identity_enc: encryptSecret(JSON.stringify({ birthDate: data.birthDate })) },
     });
-    const r = result as { ok?: boolean; status?: string; fullySigned?: boolean } | null;
+    const r = result as { ok?: boolean; status?: string; fullySigned?: boolean; id?: string } | null;
     if (error || !r?.ok || !r.status) throw new Error("Não foi possível registrar a assinatura ou ela já foi registrada.");
-    await (await import("./contract-signing.server")).evidenceEvent(supabaseAdmin, membership.tenant_id, contract.id, "signature_confirmed", { method: "financial_password", birth_date_collected: true, version: contract.current_version });
+    await (await import("./contract-signing.server")).evidenceEvent(supabaseAdmin, membership.tenant_id, contract.id, "signature_confirmed", { evidence_id: r.id ?? null, method: "financial_password", birth_date_collected: true, version: contract.current_version });
+    await (await import("./contract-docs.server")).notifyContractSigned(supabaseAdmin, membership.tenant_id, contract.id, data.signerName, Boolean(r.fullySigned));
     return { status: r.status };
   });
 
