@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Verificação final solicitada — conferir catálogo ativo de RLS/GRANT/RPC/storage, isolamento entre contas e impossibilidade de crédito próprio; executar testes seguros, sem alterar banco ou movimentar dinheiro. Testes de ataque com escrita e sessões A/B exigem homologação isolada e autorização; análise aprofundada iniciada.
+- [x] Verificação final — catálogo ativo: 144 tabelas com RLS, saldo/status/cargos sem escrita ordinária e funções financeiras sem EXECUTE comum; 470 testes aprovados/22 ignorados. Novos riscos: ponte pública de contratos, dinheiro externo tratado como liquidação, coprodução parcialmente estornada e antecipação com reserva de estorno. Evidências e limites em docs/verificacao-final-seguranca-2026-10-29.md; nenhuma alteração de banco ou dinheiro.
+- [ ] Corrigir riscos da verificação final — aguarda aprovação do plano por fases e homologação comprovadamente isolada; análise aprofundada também pendente. Não certificar segurança bancária.
 
 - [x] Auditoria de segurança — diagnóstico e correções locais: catálogo real 144 tabelas com RLS/5 buckets privados; recuperação, delegação, checkout, reservas, logs, CAPTCHA, exportação e importação protegidos; relatórios e resposta a incidentes em docs/auditoria-seguranca-2026-10-29.md e docs/resposta-incidentes-recuperacao.md. Sem migração, publicação ou movimentação financeira.
 - [ ] Auditoria — corrigir acesso direto no banco: bloqueado por avaliação/reversão e aprovação específica no backend compartilhado; GRANTs de escrita de contratos/finance e MFA/leitura por módulo detalhados no relatório.
