@@ -3,6 +3,7 @@ import os
 import pwd
 import subprocess
 import tempfile
+import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[2]
@@ -24,6 +25,6 @@ command(["/bin/pg_ctl", "-D", str(base / "cluster"), "-l", str(base / "server.lo
 try:
     child_env = {**env, "WIIZE_FIXTURE_DIR": str(base), "WIIZE_FIXTURE_CONFIRMED": "local-only"}
     for script in ("accounting-baseline.py", "accounting-candidate.py"):
-        subprocess.run(["/bin/python3", str(root / "scripts/security" / script)], env=child_env, cwd=str(root), check=True)
+        subprocess.run([sys.executable, str(root / "scripts/security" / script)], env=child_env, cwd=str(root), check=True)
 finally:
     command(["/bin/pg_ctl", "-D", str(base / "cluster"), "-m", "fast", "-w", "stop"])
