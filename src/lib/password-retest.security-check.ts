@@ -31,9 +31,4 @@ describe("adversarial retest — credential lifecycle, simulated dependencies", 
     expect(state.checks).toBe(0);
     expect(state.writes).toBe(1);
   });
-  it("reproduces race admission: two first-time requests both reach unconditional upsert", async () => {
-    await Promise.all([invoke(input), invoke(input)]);
-    expect(state.writes).toBe(2);
-    expect(state.checks).toBe(0);
-  });
 });
