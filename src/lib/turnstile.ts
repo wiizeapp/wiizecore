@@ -56,14 +56,14 @@ export async function verifyTurnstileToken(opts: {
   }
 
   const codes = Array.isArray(payload["error-codes"]) ? (payload["error-codes"] as unknown[]).map(String) : [];
-  if (payload.success !== true) {
+  if (payload["success"] !== true) {
     if (codes.includes("timeout-or-duplicate")) return { ok: false, reason: "expired_or_reused", retryable: true };
     if (codes.includes("internal-error")) return { ok: false, reason: "unavailable", retryable: true };
     if (codes.some((c) => c.includes("secret"))) return { ok: false, reason: "not_configured", retryable: false };
     return { ok: false, reason: "invalid_token", retryable: true };
   }
-  const host = typeof payload.hostname === "string" ? payload.hostname.toLowerCase() : "";
+  const host = typeof payload["hostname"] === "string" ? payload["hostname"].toLowerCase() : "";
   if (!host || !opts.hostnames.includes(host)) return { ok: false, reason: "hostname_mismatch", retryable: false };
-  if (opts.expectedAction && payload.action !== opts.expectedAction) return { ok: false, reason: "action_mismatch", retryable: false };
+  if (opts.expectedAction && payload["action"] !== opts.expectedAction) return { ok: false, reason: "action_mismatch", retryable: false };
   return { ok: true };
 }
