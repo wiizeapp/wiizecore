@@ -540,6 +540,8 @@ const cardSchema = z.object({
   expiryYear: z.string().regex(/^\d{4}$/, "Ano inválido."),
   ccv: z.string().regex(/^\d{3,4}$/, "Código de segurança inválido."),
   holderDocument: z.string().transform((v) => v.replace(/\D/g, "")).refine((v) => v === "" || v.length === 11 || v.length === 14, "CPF ou CNPJ do titular inválido."),
+  // Token Turnstile: opcional no formato para devolver mensagem clara; o servidor exige e valida.
+  turnstileToken: z.string().max(2048).optional(),
   // Dados do dispositivo exigidos pelo fluxo 3DS oficial (fuso em horas, conforme a documentação).
   deviceInfo: z.object({
     colorDepth: z.number().int().min(1).max(48),
@@ -555,6 +557,9 @@ const cardSchema = z.object({
  * Pagamento com cartão dentro do checkout da WiizePay.
  * Os dados do cartão são repassados direto ao processador e nunca são gravados nem registrados em log.
  */
+/** Chave pública do widget Turnstile (site key é pública por definição). */
+export const getTurnstileSiteKey = createServerFn({ method: "GET" }).handler(async () => ({ siteKey: process.env["TURNSTILE_SITE_KEY"] ?? null }));
+
 export const payCheckoutWithCard = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => cardSchema.parse(input))
   .handler(async ({ data }) => {
@@ -584,6 +589,8 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
     if (!cardIp) await logAudit(admin, { tenantId: link.tenant_id, action: "checkout.card_ip_unavailable", resource: "payments", resourceId: data.paymentId, metadata: {} });
     const limit = { allowed: cardLimits.every((l) => l.allowed) };
     if (!limit.allowed) throw new Error("Muitas tentativas com cartão. Aguarde alguns minutos ou escolha outra forma de pagamento.");
+    // Verificação anti-robô no servidor (Cloudflare Siteverify), antes de qualquer contato com o processador.
+    await (await import("./turnstile.server")).requireTurnstile(admin, { token: data.turnstileToken, remoteIp: cardIp, tenantId: link.tenant_id, paymentId: data.paymentId });
 
     const now = new Date();
     const exp = new Date(Number(data.expiryYear), Number(data.expiryMonth), 1);
