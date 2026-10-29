@@ -386,6 +386,20 @@
       "when": 1793316546648,
       "tag": "0054_contract_confirmation_scope_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1793316683158,
+      "tag": "0055_contract_confirmation_private_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1793316890122,
+      "tag": "0056_contract_signature_rpc_only",
+      "breakpoints": true
     }
   ]
 }

@@ -450,6 +450,10 @@ export const updateCheckoutCustomer = createServerFn({ method: "POST" })
       data_status: "submitted",
       data_submitted_at: new Date().toISOString(),
     };
+    if (link.contract_id) {
+      const { data: registered } = await admin.from("customers").select("email").eq("id", link.customer_id as string).eq("tenant_id", link.tenant_id).maybeSingle();
+      if (!registered?.email || registered.email.trim().toLowerCase() !== fields.email) throw new Error("Para assinar este contrato, peça à empresa para corrigir seu e-mail cadastrado.");
+    }
     const { data: customer, error } = await admin
       .from("customers")
       .update(fields)
