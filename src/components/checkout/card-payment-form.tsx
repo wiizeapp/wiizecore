@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, CreditCard, Loader2, LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { payCheckoutWithCard } from "@/lib/checkout.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ const fmtExpiry = (v: string) => { const d = v.replace(/\D/g, "").slice(0, 4); r
 
 /** Formulário de cartão: os dados vão direto para o processador e são apagados da tela ao enviar. */
 export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: { token: string; paymentId: string; amount: number; disabled: boolean; onDone: () => void }) {
+  const { t: ui } = useTranslation("ui");
   const pay = useServerFn(payCheckoutWithCard);
   const [holderName, setHolderName] = useState("");
   const [number, setNumber] = useState("");
@@ -23,15 +25,45 @@ export function CardPaymentForm({ token, paymentId, amount, disabled, onDone }: 
   const [sameHolder, setSameHolder] = useState(true);
   const [holderDocument, setHolderDocument] = useState("");
   const [done, setDone] = useState(false);
+  const [challengeUrl, setChallengeUrl] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: () => {
       const [mm, yy] = expiry.split("/");
-      return pay({ data: { token, paymentId, holderName, number, expiryMonth: mm ?? "", expiryYear: yy ? `20${yy}` : "", ccv, holderDocument: sameHolder ? "" : holderDocument } });
+      // Dados do dispositivo exigidos pelo 3DS oficial; o fuso é enviado em horas, como pede a documentação.
+      const deviceInfo = {
+        colorDepth: window.screen.colorDepth || 24,
+        screenHeight: window.screen.height,
+        screenWidth: window.screen.width,
+        timezoneHours: -new Date().getTimezoneOffset() / 60,
+        language: navigator.language || "pt-BR",
+        userAgent: navigator.userAgent,
+      };
+      return pay({ data: { token, paymentId, holderName, number, expiryMonth: mm ?? "", expiryYear: yy ? `20${yy}` : "", ccv, holderDocument: sameHolder ? "" : holderDocument, deviceInfo } });
     },
-    onSuccess: () => { setNumber(""); setCcv(""); setExpiry(""); setDone(true); onDone(); },
+    onSuccess: (r) => {
+      setNumber(""); setCcv(""); setExpiry("");
+      // O banco pediu verificação: o cliente é levado à página segura oficial do desafio.
+      if (r.challengeUrl) { setChallengeUrl(r.challengeUrl); window.location.assign(r.challengeUrl); return; }
+      setDone(true); onDone();
+    },
     onError: (e: Error) => { setCcv(""); toast.error(e.message.startsWith("[") ? "Confira os dados do cartão." : e.message); },
   });
+
+  if (challengeUrl) {
+    return (
+      <div className="space-y-4 rounded-xl border border-primary/30 bg-primary/5 p-5 text-sm" role="status">
+        <div className="flex items-start gap-3">
+          <Loader2 className="mt-0.5 size-5 shrink-0 animate-spin text-primary" />
+          <div>
+            <p className="font-semibold">{ui("Verificação de segurança do banco")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{ui("Estamos abrindo a página segura do seu banco para confirmar o pagamento.")}</p>
+          </div>
+        </div>
+        <Button type="button" variant="outline" className="w-full" onClick={() => window.location.assign(challengeUrl)}>{ui("Continuar para a verificação")}</Button>
+      </div>
+    );
+  }
 
   if (done) {
     return (
