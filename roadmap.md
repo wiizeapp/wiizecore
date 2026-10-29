@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Assinatura de contratos — planejar nascimento obrigatório, senha financeira para signatário autenticado da empresa e código por e-mail para os demais; evidências protegidas nos registros e certificado, cobrindo links e checkout. Implementação aguarda aprovação do plano; alterações no banco compartilhado devem ser explicitadas antes de aplicar.
+
 - [x] Verificação final — catálogo ativo: 144 tabelas com RLS, saldo/status/cargos sem escrita ordinária e funções financeiras sem EXECUTE comum; 470 testes aprovados/22 ignorados. Novos riscos: ponte pública de contratos, dinheiro externo tratado como liquidação, coprodução parcialmente estornada e antecipação com reserva de estorno. Evidências e limites em docs/verificacao-final-seguranca-2026-10-29.md; nenhuma alteração de banco ou dinheiro.
 - [x] Fase 1 da verificação final aprovada — contratos públicos filtrados por empresa e recebimento em dinheiro bloqueado antes de efeitos financeiros, inclusive eventos legados; nove testes de funções reais com dependências simuladas + 470 regressões aprovados/22 reais ignorados. Análise aprofundada concluída sem novos alertas, resultado precede correções; compilação OK. Sem migração/publicação/dinheiro real.
 - [x] Reprodução isolada das falhas de saldo — cluster PostgreSQL local sem TCP/credenciais reais, esquema mínimo e dados sintéticos: coprodução estornada liberou R$ 100 em vez de R$ 60; antecipação ignorou reserva de R$ 40. Repetições não duplicaram movimentos; cluster desligado. Não é homologação da correção nem clone auth/storage.
