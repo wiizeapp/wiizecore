@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArrowDown, ArrowRight, Ban, CalendarDays, CheckCircle2, Clock3, Copy, Loader2, Mail, MapPin, Phone, Undo2, XCircle, CreditCard, FileSignature, FileText, Eye, LockKeyhole, QrCode, UserRound } from "lucide-react";
-import { applyCheckoutCoupon, getCheckout, getCheckoutContractPdf, getCheckoutReceipt, getPaymentInstructions, removeCheckoutCoupon, signCheckoutContract, switchCheckoutMethod, trackCheckoutEvent, updateCheckoutCustomer } from "@/lib/checkout.functions";
+import { applyCheckoutCoupon, getCheckout, getCheckoutContractPdf, getCheckoutReceipt, getPaymentInstructions, notifyCheckout3dsReturn, removeCheckoutCoupon, signCheckoutContract, switchCheckoutMethod, trackCheckoutEvent, updateCheckoutCustomer } from "@/lib/checkout.functions";
 import { TicketPercent, X } from "lucide-react";
 import { DEFAULT_APPEARANCE, type CheckoutAppearance } from "@/lib/checkout-appearance";
 import { Button } from "@/components/ui/button";
@@ -111,6 +111,25 @@ function Checkout() {
       instructions.mutate({ paymentId: automaticPayment.id, kind: chosen });
     }
   }, [automaticPayment?.id, automaticPayment?.method]);
+
+  // Retorno do desafio 3DS do banco: mostra "confirmando" até o webhook oficial atualizar a cobrança.
+  const notify3ds = useServerFn(notifyCheckout3dsReturn);
+  const [verifyingCard, setVerifyingCard] = useState(false);
+  const handled3dsReturn = useRef(false);
+  useEffect(() => {
+    if (handled3dsReturn.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("verificacao-cartao") !== "retorno") return;
+    handled3dsReturn.current = true;
+    setVerifyingCard(true);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("verificacao-cartao");
+    window.history.replaceState(null, "", url.toString());
+  }, []);
+  useEffect(() => {
+    if (!verifyingCard || !automaticPayment) return;
+    void notify3ds({ data: { token, paymentId: automaticPayment.id } }).catch(() => undefined);
+  }, [verifyingCard, automaticPayment?.id]);
 
   if (isLoading) return <Shell><CheckoutSkeleton /></Shell>;
   const appearance = data?.state === "ok" ? data.appearance : DEFAULT_APPEARANCE;
@@ -253,6 +272,10 @@ function Checkout() {
           </StateView>
         ) : !current ? (
           <StateView icon={CheckCircle2} tone="muted" title={ui("Nada a pagar agora")} text={ui("Não há pagamentos em aberto neste link.")} />
+        ) : verifyingCard ? (
+          <StateView icon={Loader2} spin tone="muted" title={ui("Confirmando a verificação do banco")} text={ui("A verificação do banco foi concluída. Aguarde a confirmação do pagamento nesta página.")} hint={ui("Esta página atualiza sozinha quando o pagamento for confirmado.")}>
+            <Button variant="outline" className="mt-6" onClick={() => setVerifyingCard(false)}>{ui("Voltar ao pagamento")}</Button>
+          </StateView>
         ) : resolvedMethod ? (
           <div className="space-y-6">
             <CheckoutStageHeader step="payment" title={ui("Revise e conclua")} description={ui("Confira os detalhes antes de finalizar.")} method={resolvedMethod === "pix" || resolvedMethod === "boleto" ? resolvedMethod : "credit_card"} />

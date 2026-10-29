@@ -5647,7 +5647,6 @@
   "Salvei meu código reserva em local seguro": "I saved my backup code somewhere safe",
   "Seu código reserva": "Your backup code",
   "Verificar integridade": "Check integrity",
-  "A verificação em duas etapas é obrigatória para usar a WiizePay.": "Two-step verification is required to use WiizePay.",
   "Por que ativar?": "Why enable it?",
   "Mesmo que alguém descubra sua senha, não conseguirá entrar sem o seu celular.": "Even if someone discovers your password, they can't sign in without your phone.",
   "Protege seu saldo, saques e os dados dos seus clientes.": "Protects your balance, withdrawals and your customers' data.",
@@ -5710,5 +5709,11 @@
   "A conta de produção chega em breve": "Your production account is coming soon",
   "A WiizePay está na versão beta. Por enquanto, é possível apenas testar e simular pagamentos. Em breve vamos liberar o acesso à conta de produção para você receber de verdade.": "WiizePay is in beta. For now you can only test and simulate payments. Soon we will open access to the production account so you can receive real payments.",
   "Fique tranquilo:": "Don't worry:",
-  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "as soon as we release it, you'll be notified here and by email."
+  "assim que liberarmos, você recebe um aviso aqui e no seu e-mail.": "as soon as we release it, you'll be notified here and by email.",
+  "Verificação de segurança do banco": "Bank security verification",
+  "Estamos abrindo a página segura do seu banco para confirmar o pagamento.": "We are opening your bank's secure page to confirm the payment.",
+  "Continuar para a verificação": "Continue to verification",
+  "Confirmando a verificação do banco": "Confirming the bank verification",
+  "A verificação do banco foi concluída. Aguarde a confirmação do pagamento nesta página.": "The bank verification is complete. Wait for the payment confirmation on this page.",
+  "Voltar ao pagamento": "Back to payment"
 }

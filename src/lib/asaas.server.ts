@@ -275,7 +275,8 @@ export class AsaasProvider implements PaymentProvider {
   }
   /** Paga uma cobrança existente com cartão. Os dados do cartão só trafegam nesta chamada e nunca são guardados. */
   payWithCreditCard(paymentId: string, body: Record<string, unknown>) {
-    return this.request<{ status: string }>("POST", `/payments/${encodeURIComponent(paymentId)}/payWithCreditCard`, body);
+    // Com 3DS, a resposta oficial traz threeDSecureChallengeUrl (desafio do banco) ou null (sem desafio).
+    return this.request<{ status: string; threeDSecureChallengeUrl?: string | null }>("POST", `/payments/${encodeURIComponent(paymentId)}/payWithCreditCard`, body);
   }
   /** Somente sandbox: confirma o pagamento de teste (dispara webhook real). */
   async sandboxConfirmPayment(paymentId: string) {
