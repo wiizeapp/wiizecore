@@ -5822,5 +5822,6 @@
   "Defesa bem acompanhada": "Track your defense",
   "Dados oficiais, prazos e documentos reunidos na Central de Contestações. Enviar uma defesa não garante a reversão da disputa.": "Official data, deadlines and documents in the Dispute Center. Submitting a defense does not guarantee dispute reversal.",
   "Integração preparada. Ativação condicionada.": "Integration prepared. Conditional activation.",
-  "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "No layer eliminates fraud or guarantees zero losses. Payment confirmation is not proof of 3DS authentication; protection depends on the transaction and applicable rules."
+  "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "No layer eliminates fraud or guarantees zero losses. Payment confirmation is not proof of 3DS authentication; protection depends on the transaction and applicable rules.",
+  "Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.": "Could not load the security check. Reload the page and try again."
 }
