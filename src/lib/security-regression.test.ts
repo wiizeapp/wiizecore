@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { claimRecoveryCode } from "./recovery-code.server";
-import { canAssignCustomRole, scopedRolePermissions } from "./team-role-policy";
+import { canAssignCustomRole, canGrantBaseRole, scopedRolePermissions } from "./team-role-policy";
 import { assertCheckoutReady, checkoutReadiness } from "./checkout-readiness.server";
 import { withIdempotency } from "./ext-idempotency.server";
 import type { ExtCtx } from "./ext-api.server";
@@ -44,6 +44,8 @@ describe("código reserva de uso único", () => {
 });
 
 describe("permissões por empresa", () => {
+  it("gerente restrito não concede nível financeiro por convite ou alteração", () => expect(canGrantBaseRole("finance", ["dashboard.view", "team.manage"])).toBe(false));
+  it("gerente restrito pode conceder nível básico já permitido", () => expect(canGrantBaseRole("viewer", ["dashboard.view", "team.manage"])).toBe(true));
   it("A não pode atribuir cargo da empresa B", () => expect(canAssignCustomRole("A", ["charges.create"], { tenant_id: "B", permissions: ["charges.create"] })).toBe(false));
   it("não concede permissão que o concedente não possui", () => expect(canAssignCustomRole("A", ["team.manage"], { tenant_id: "A", permissions: ["charges.create"] })).toBe(false));
   it("aceita cargo local com subconjunto permitido", () => expect(canAssignCustomRole("A", ["team.manage", "charges.create"], { tenant_id: "A", permissions: ["charges.create"] })).toBe(true));
