@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Revisar retorno ao checkout (Pix, recorrência e 3DS): preservar rascunhos não financeiros, consultar situação ao voltar e acompanhar processamento até confirmação oficial; testar sem movimentar dinheiro.
+- [ ] Ajustar seção 3DS da página de segurança em computador e celular, usando o verde Wiize; manter aviso de homologação real pendente.
+
 - [x] Rebranding WiizePay: marca visível, traduções, e-mails novos, imagem ilustrativa, documentação pública e endereços de produção; integrações e histórico preservados, 86 testes aprovados, oito páginas públicas e boas-vindas autenticadas sem nome antigo, navegação de cadastro e celular conferidos. Painel completo aguarda pesquisa do usuário; configurações externas e homologação formal permanecem pendentes; instruções em docs/wiizepay-rebranding.md.
 - [ ] Conectar wiizepay.com e publicar: depende de confirmação dos registros do domínio e publicação pelo usuário.
 
