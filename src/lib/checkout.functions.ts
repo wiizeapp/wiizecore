@@ -479,7 +479,7 @@ export const updateCheckoutCustomer = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
     const resolved = await resolveLink(admin, data.token);
-    if (resolved.state !== "ok" || !resolved.link.customer_id) throw new Error("Link indisponível.");
+    if (resolved.state !== "ok" || !resolved.link.customer_id || !resolved.link.charge_group_id) throw new Error("Link indisponível.");
     const { link } = resolved;
     const fields = {
       email: data.email.toLowerCase(),
@@ -526,7 +526,7 @@ export const updateCheckoutCustomer = createServerFn({ method: "POST" })
     });
     // Consent is an authorization prerequisite, not best-effort analytics.
     const { error: confirmError } = await admin.from("checkout_events").insert({
-      tenant_id: link.tenant_id, customer_id: link.customer_id, charge_group_id: link.charge_group_id,
+      tenant_id: link.tenant_id, customer_id: link.customer_id, charge_group_id: resolved.link.charge_group_id,
       payment_link_id: link.id, event: "data_confirmed", metadata: { termsAccepted: data.termsAccepted },
     });
     if (confirmError) throw new Error("Não foi possível salvar seus dados.");
