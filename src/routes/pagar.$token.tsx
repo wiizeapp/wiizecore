@@ -132,10 +132,14 @@ function Checkout() {
     if (params.get("verificacao-cartao") !== "retorno") return;
     handled3dsReturn.current = true;
     setVerifyingCard(true);
+  }, []);
+  useEffect(() => {
+    if (!verifyingCard || data?.state !== "ok" || checkoutPollInterval(data.payments)) return;
+    setVerifyingCard(false);
     const url = new URL(window.location.href);
     url.searchParams.delete("verificacao-cartao");
     window.history.replaceState(null, "", url.toString());
-  }, []);
+  }, [verifyingCard, data]);
   useEffect(() => {
     if (!verifyingCard || !automaticPayment) return;
     void notify3ds({ data: { token, paymentId: automaticPayment.id } }).catch(() => undefined);
@@ -143,7 +147,7 @@ function Checkout() {
 
   if (isLoading) return <Shell><CheckoutSkeleton /></Shell>;
   const appearance = data?.state === "ok" ? data.appearance : DEFAULT_APPEARANCE;
-  if (error || !data) return <Shell><StateView icon={XCircle} tone="danger" title={ui("Não foi possível abrir o link")} text={ui("Tente novamente em alguns minutos.")} /></Shell>;
+  if (!data) return <Shell><StateView icon={XCircle} tone="danger" title={ui("Não foi possível abrir o link")} text={ui("Tente novamente em alguns minutos.")} /></Shell>;
   if (data.state !== "ok") {
     const texts = { invalid: "Este link não existe. Confira o endereço recebido.", revoked: "Este link foi desativado pelo prestador. Peça um novo link." } as const;
     return <Shell><StateView icon={XCircle} tone="muted" title={ui("Link indisponível")} text={ui(texts[data.state])} /></Shell>;
