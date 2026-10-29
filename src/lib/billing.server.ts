@@ -4,6 +4,7 @@ import { isChargebackEvent } from "./chargebacks.server";
 import { decryptSecret } from "./crypto.server";
 import { calculatePaymentFee, type FeeMethod } from "./fee-engine.server";
 import { scopedProviderEventId } from "./financial-scope";
+import { isExternalCashReceipt, reconciliationEventForStatus } from "./provider-event-policy";
 
 type AdminClient = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -201,6 +202,16 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       return;
     }
     const p = payload.payment;
+    if (isExternalCashReceipt(event.event_type, p?.status)) {
+      // Cash outside the provider is not payable wallet money. Also blocks legacy queued reconciliations.
+      const { logAudit } = await import("./audit.server");
+      await logAudit(admin, { tenantId: event.tenant_id, action: "webhook.external_cash_ignored",
+        resource: "webhook_events", resourceId: eventId, result: "success",
+        metadata: { event: event.event_type }, externalEventId: event.external_event_id });
+      const { error } = await admin.from("webhook_events").update({ processing_status: "discarded", processed_at: new Date().toISOString() }).eq("id", eventId);
+      if (error) throw new Error("event_discard_failed");
+      return;
+    }
     if (p?.id && ["PAYMENT_REFUNDED", "PAYMENT_PARTIALLY_REFUNDED", "PAYMENT_REFUND_IN_PROGRESS", "PAYMENT_REFUND_DENIED"].includes(event.event_type)) {
       const { handleRefundWebhook } = await import("./refunds.server");
       if (await handleRefundWebhook(admin, event.tenant_id, p.id, event.event_type, event.external_event_id, connectionId)) {
@@ -342,7 +353,7 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       await autoIssueOnPayment(admin, paymentId);
     }
     // Fonte de verdade da liquidação: o aviso de dinheiro recebido do provedor libera o saldo real.
-    if (event.event_type === "PAYMENT_RECEIVED" || event.event_type === "PAYMENT_RECEIVED_IN_CASH") {
+    if (event.event_type === "PAYMENT_RECEIVED") {
       const { error: settleError } = await (admin.rpc as any)("settle_payment", { _payment_id: paymentId });
       if (settleError) throw new Error(settleError.message);
       const { error: cpReleaseError } = await (admin.rpc as any)("release_coproduction_splits", { _payment_id: paymentId });
@@ -455,16 +466,6 @@ export function publicBaseUrl(origin: string | null | undefined): string | null 
   return allowed.has(clean) ? clean : stable;
 }
 
-const PROVIDER_STATUS_TO_EVENT: Record<string, string> = {
-  RECEIVED: "PAYMENT_RECEIVED",
-  RECEIVED_IN_CASH: "PAYMENT_RECEIVED",
-  CONFIRMED: "PAYMENT_CONFIRMED",
-  OVERDUE: "PAYMENT_OVERDUE",
-  REFUNDED: "PAYMENT_REFUNDED",
-  DELETED: "PAYMENT_DELETED",
-  AWAITING_RISK_ANALYSIS: "PAYMENT_AWAITING_RISK_ANALYSIS",
-};
-
 /**
  * Reconciliação: consulta o status oficial direto na API do provedor (servidor → provedor,
  * autenticado com a chave da empresa) e aplica pelo mesmo pipeline idempotente do webhook.
@@ -482,10 +483,10 @@ export async function reconcilePaymentFromProvider(admin: AdminClient, tenantId:
     .maybeSingle();
   if (!row?.provider_payment_id) return { status: "unknown" as const };
   const remote = await conn.provider.getPayment(row.provider_payment_id);
-  await checkPaymentDivergence(admin, tenantId, paymentId, remote);
-  const eventType = PROVIDER_STATUS_TO_EVENT[String(remote.status)];
-  if (!eventType) return { status: "unchanged" as const };
   if (remote.id !== row.provider_payment_id) throw new Error("provider_payment_mismatch");
+  await checkPaymentDivergence(admin, tenantId, paymentId, remote);
+  const eventType = reconciliationEventForStatus(remote.status);
+  if (!eventType) return { status: "unchanged" as const };
   const externalId = scopedProviderEventId(conn.connection.id, `reconcile:${row.provider_payment_id}:${remote.status}`);
   const payload = { id: externalId, event: eventType, dateCreated: new Date().toISOString(), payment: remote };
   const { data: inserted, error: insertError } = await admin
