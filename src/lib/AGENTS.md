@@ -1,5 +1,7 @@
 # Library rules
 
+- Public contract capabilities require tenant-consistent resolution and scoped public queries; cash receipts are rejected before financial side effects, including legacy queued reconciliations. Why: block cross-tenant links and credit without provider-held funds.
+
 - Export user-authored cells through `safeSpreadsheetRows`; URL logo imports require exact server-approved hosts and bounded streams. Why: prevent formulas in exports and arbitrary outbound fetches without affecting file uploads.
 
 - Financial records bind to their original provider connection via `financial-origin.server.ts`; authenticated Asaas event IDs are namespaced by connection and all external-ID queries scope tenant and connection. Why: prevent cross-account processing and silent use of a replacement account.
