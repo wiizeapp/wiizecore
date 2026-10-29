@@ -17,6 +17,8 @@ Criados: `src/lib/chargeback-rules.ts`, `src/lib/chargeback-rules.test.ts`, `src
 Editados: `src/lib/asaas.server.ts`, `src/lib/permissions.ts`, `src/components/app-shell.tsx`, traduções EN/ES `ui.json`, `AGENTS.md`, `roadmap.md`. Tipos do banco regenerados automaticamente.
 
 ## Pendências do plano
+- Verificações realizadas: 34 testes aprovados (regras/isolamento/permissões/3DS/eventos); compilação OK; RLS ativo nas quatro tabelas e acesso direto authenticated revogado, confirmado por consulta; visitante sem sessão redirecionado ao login sem dados privados e sem erros de execução.
+- Verificação autenticada indisponível: tentativa de sessão da conta solicitante não encontrou conta correspondente; não escolhida outra conta e nenhuma barreira MFA foi contornada. Visual e fluxo de documentos autenticados ainda não validados.
 - Validar upload, remoção e envio reais com conta autorizada e contestação elegível; não fabricar caso financeiro para validar.
 - Indicadores agregados de todas as contestações, aviso vinculado na cobrança e seção de autenticação; a lista atual mostra dados reais paginados, sem totais financeiros presumidos.
 - Reconciliação periódica e alertas de prazo (cron), integração na Vercel; consulta pontual disponível.
