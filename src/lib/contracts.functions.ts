@@ -1,3 +1,5 @@
+import { signingIdentitySchema } from "./contract-signing-rules";
+import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit } from "./audit.server";
@@ -278,13 +280,7 @@ export const createContractVersion = createServerFn({ method: "POST" })
 /** Assinatura do prestador: exige senha financeira e registra IP e dispositivo. */
 export const signContractAsProvider = createServerFn({ method: "POST" })
   .middleware([requireMfaAuth])
-  .inputValidator((input: { contractId: string; financialPassword: string; signerName: string; signature: unknown }) => {
-    if (!input.contractId) throw new Error("Contrato inválido.");
-    if (!input.financialPassword) throw new Error("Informe a senha financeira.");
-    const signerName = input.signerName?.trim();
-    if (!signerName) throw new Error("Informe o nome de quem assina.");
-    return { contractId: input.contractId, financialPassword: input.financialPassword, signerName, signature: input.signature };
-  })
+  .inputValidator((input: unknown) => signingIdentitySchema.extend({ contractId: z.string().uuid(), financialPassword: z.string().min(1).max(200) }).parse(input))
   .handler(async ({ data, context }) => {
     const membership = await memberTenant(context.supabase, context.userId, ["owner", "admin"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -314,37 +310,16 @@ export const signContractAsProvider = createServerFn({ method: "POST" })
     const { parseSignatureInput, signatureColumns } = await import("./contract-docs.server");
     const sigCols = signatureColumns(parseSignatureInput(data.signature));
     const { ip, userAgent } = requestInfo();
-    const { error } = await supabaseAdmin.from("contract_signatures").upsert(
-      {
-        tenant_id: membership.tenant_id,
-        contract_id: contract.id,
-        contract_version_id: version.id,
-        content_hash: version.content_hash,
-        signer_role: "provider",
-        signer_name: data.signerName,
-        ...sigCols,
-        ip_address: ip,
-        user_agent: userAgent,
-      },
-      { onConflict: "contract_version_id,signer_role" },
-    );
-    if (error) throw new Error("Não foi possível registrar a assinatura.");
-
-    const { recomputeContractStatus } = await import("./contract-docs.server");
-    const { fullySigned, status: newStatus } = await recomputeContractStatus(supabaseAdmin, contract.id, version.id);
-
-    await contractEvent(supabaseAdmin, membership.tenant_id, contract.id, "signed_provider", data.signerName, {}, ip);
-    if (fullySigned) await contractEvent(supabaseAdmin, membership.tenant_id, contract.id, "completed", null);
-    await logAudit(supabaseAdmin, {
-      tenantId: membership.tenant_id,
-      userId: context.userId,
-      action: "contract.signed_by_provider",
-      resource: "contracts",
-      resourceId: contract.id,
-      metadata: { version: contract.current_version, content_hash: version.content_hash },
+    const { encryptSecret } = await import("./crypto.server");
+    const { data: result, error } = await supabaseAdmin.rpc("contract_signature_finish", {
+      _tenant: membership.tenant_id, _contract: contract.id, _version: version.id, _role: "provider", _hash: version.content_hash,
+      _payload_hash: "", _challenge: null as unknown as string, _code_hash: "", _valid: true,
+      _signature: { signer_name: data.signerName, signer_document: data.signerDocument, ...sigCols, ip_address: ip, user_agent: userAgent, actor_user_id: context.userId, identity_enc: encryptSecret(JSON.stringify({ birthDate: data.birthDate })) },
     });
-
-    return { status: newStatus };
+    const r = result as { ok?: boolean; status?: string; fullySigned?: boolean } | null;
+    if (error || !r?.ok || !r.status) throw new Error("Não foi possível registrar a assinatura ou ela já foi registrada.");
+    await (await import("./contract-signing.server")).evidenceEvent(supabaseAdmin, membership.tenant_id, contract.id, "signature_confirmed", { method: "financial_password", birth_date_collected: true, version: contract.current_version });
+    return { status: r.status };
   });
 
 /** Histórico de auditoria da empresa (apenas proprietário e administrador). */

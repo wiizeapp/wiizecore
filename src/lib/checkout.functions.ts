@@ -1,3 +1,4 @@
+import { signingIdentitySchema } from "./contract-signing-rules";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { assertCheckoutReady, checkoutReadiness } from "./checkout-readiness.server";
@@ -366,55 +367,10 @@ const checkoutSignatureSchema = z.object({
 
 /** Assina o contrato vinculado ao link de pagamento, sem liberar acesso a outros contratos. */
 export const signCheckoutContract = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => checkoutSignatureSchema.parse(input))
+  .inputValidator((input: unknown) => signingIdentitySchema.extend({ token: z.string().min(20).max(256), challengeId: z.string().uuid(), code: z.string().regex(/^\d{6}$/),  }).parse(input))
   .handler(async ({ data }) => {
-    const { supabaseAdmin: admin } = await import("@/integrations/supabase/client.server");
-    const resolved = await resolveLink(admin, data.token);
-    if (resolved.state !== "ok" || !resolved.link.contract_id || !resolved.link.customer_id) throw new Error("Contrato indisponível.");
-    const { link } = resolved;
-    const linkedContractId = link.contract_id as string;
-    const linkedCustomerId = link.customer_id as string;
-    await assertCheckoutReady(admin, link, false);
-    const { data: contract } = await admin
-      .from("contracts")
-      .select("id, status, current_version, customer_id, customers(document)")
-      .eq("id", linkedContractId)
-      .eq("tenant_id", link.tenant_id)
-      .eq("customer_id", linkedCustomerId)
-      .maybeSingle();
-    if (!contract || ["cancelled", "expired"].includes(contract.status)) throw new Error("Contrato indisponível.");
-    const registered = ((contract.customers as { document?: string | null } | null)?.document ?? "").replace(/\D/g, "");
-    if (registered && registered !== data.signerDocument) throw new Error("O documento informado não confere com o cadastro deste contrato.");
-    const { data: version } = await admin
-      .from("contract_versions")
-      .select("id, content_hash")
-      .eq("contract_id", contract.id)
-      .eq("version", contract.current_version)
-      .maybeSingle();
-    if (!version) throw new Error("Versão do contrato não encontrada.");
-    const { parseSignatureInput, signatureColumns, recomputeContractStatus } = await import("./contract-docs.server");
-    const { requestInfo, logAudit } = await import("./audit.server");
-    const { contractEvent } = await import("./contracts.functions");
-    const { ip, userAgent } = requestInfo();
-    const { error } = await admin.from("contract_signatures").upsert({
-      tenant_id: link.tenant_id,
-      contract_id: contract.id,
-      contract_version_id: version.id,
-      content_hash: version.content_hash,
-      signer_role: "customer",
-      signer_name: data.signerName,
-      signer_document: data.signerDocument,
-      ...signatureColumns(parseSignatureInput(data.signature)),
-      ip_address: ip,
-      user_agent: userAgent,
-    }, { onConflict: "contract_version_id,signer_role" });
-    if (error) throw new Error("Não foi possível registrar a assinatura.");
-    const { fullySigned, status } = await recomputeContractStatus(admin, contract.id, version.id);
-    await contractEvent(admin, link.tenant_id, contract.id, "signed_customer", data.signerName, { source: "checkout" }, ip);
-    if (fullySigned) await contractEvent(admin, link.tenant_id, contract.id, "completed", null);
-    await logAudit(admin, { tenantId: link.tenant_id, action: "contract.signed_by_customer", resource: "contracts", resourceId: contract.id, metadata: { version: contract.current_version, source: "checkout" } });
-    await trackEvent(admin, link, "contract_signed", { version: contract.current_version });
-    return { status };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    return (await import("./contract-signing.server")).finishPublicSigning(supabaseAdmin, { ...data, source: "checkout" });
   });
 
 export const getPaymentInstructions = createServerFn({ method: "POST" })

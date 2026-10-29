@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { signingIdentitySchema } from "./contract-signing-rules";
 import { createServerFn } from "@tanstack/react-start";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, consumeRateLimit, requestInfo } from "./audit.server";
@@ -210,6 +212,8 @@ async function resolveSignerToken(token: string) {
     .eq("token_hash", tokenFingerprint(token)).maybeSingle();
   if (!s || s.removed_at) throw new Error("Link inválido ou cancelado.");
   if (!s.token_expires_at || new Date(s.token_expires_at) < new Date()) throw new Error("Este link expirou. Peça um novo a quem enviou o contrato.");
+  const { data: scope } = await supabaseAdmin.from("contracts").select("id").eq("id", s.contract_id).eq("tenant_id", s.tenant_id).maybeSingle();
+  if (!scope) throw new Error("Link inválido.");
   return { admin: supabaseAdmin, signer: s };
 }
 
@@ -252,38 +256,10 @@ export const getSignerPdf = createServerFn({ method: "POST" })
   });
 
 export const signAsExtraSigner = createServerFn({ method: "POST" })
-  .inputValidator((input: { token: string; signerName: string; signerDocument: string; accepted: boolean; signature: unknown }) => {
-    if (!input.token || input.token.length < 20) throw new Error("Link inválido.");
-    if (!input.accepted) throw new Error("Confirme que leu e concorda com o documento.");
-    const signerName = input.signerName?.trim();
-    const signerDocument = input.signerDocument?.replace(/\D/g, "");
-    if (!signerName || signerName.length < 3) throw new Error("Informe seu nome completo.");
-    if (!signerDocument || (signerDocument.length !== 11 && signerDocument.length !== 14)) throw new Error("Informe um CPF ou CNPJ válido.");
-    return { token: input.token, signerName, signerDocument, signature: input.signature };
-  })
+  .inputValidator((input: unknown) => signingIdentitySchema.extend({ token: z.string().min(20).max(256), challengeId: z.string().uuid(), code: z.string().regex(/^\d{6}$/), accepted: z.literal(true), }).parse(input))
   .handler(async ({ data }) => {
-    const { admin, signer } = await resolveSignerToken(data.token);
-    const { recomputeContractStatus, parseSignatureInput, signatureColumns } = await import("./contract-docs.server");
-    const sigCols = signatureColumns(parseSignatureInput(data.signature));
-    if (signer.document && signer.document !== data.signerDocument) throw new Error("O documento informado não confere com o cadastrado para você.");
-    const { data: contract } = await admin.from("contracts").select("id, status, current_version").eq("id", signer.contract_id).maybeSingle();
-    if (!contract || ["cancelled", "expired", "signed"].includes(contract.status)) throw new Error("Este contrato não está disponível para assinatura.");
-    const { data: version } = await admin.from("contract_versions").select("id, content_hash").eq("contract_id", contract.id).eq("version", contract.current_version).maybeSingle();
-    if (!version) throw new Error("Versão não encontrada.");
-    const { ip, userAgent } = requestInfo();
-    const { error } = await admin.from("contract_signatures").upsert({
-      tenant_id: signer.tenant_id, contract_id: contract.id, contract_version_id: version.id, content_hash: version.content_hash,
-      signer_role: `signer:${signer.id}`, signer_name: data.signerName, signer_document: data.signerDocument, signer_email: signer.email,
-      ...sigCols,
-      ip_address: ip, user_agent: userAgent,
-    }, { onConflict: "contract_version_id,signer_role" });
-    if (error) throw new Error("Não foi possível registrar a assinatura.");
-    const r = await recomputeContractStatus(admin, contract.id, version.id);
-    await contractEvent(admin, signer.tenant_id, contract.id, "signed_extra", data.signerName, { role: signer.role }, ip);
-    if (r.fullySigned) await contractEvent(admin, signer.tenant_id, contract.id, "completed", null);
-    await (await import("./contract-docs.server")).notifyContractSigned(admin, signer.tenant_id, contract.id, data.signerName, r.fullySigned);
-    await logAudit(admin, { tenantId: signer.tenant_id, action: "contract.signed_by_extra", resource: "contracts", resourceId: contract.id, metadata: { role: signer.role, content_hash: version.content_hash } });
-    return { status: r.status };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    return (await import("./contract-signing.server")).finishPublicSigning(supabaseAdmin, { ...data, source: "extra" });
   });
 
 /** PDF para o contratante pelo link de assinatura dele. */
@@ -298,8 +274,9 @@ export const getCustomerPdf = createServerFn({ method: "POST" })
     const { contractPdf, safeOrigin } = await import("./contract-docs.server");
     const rate = await consumeRateLimit(supabaseAdmin, { scope: "contract_customer_pdf", identifier: requestInfo().ip ?? "unknown", maxAttempts: 60, windowSeconds: 600, blockSeconds: 900 });
     if (!rate.allowed) throw new Error("Muitas tentativas. Tente novamente em alguns minutos.");
-    const { data: link } = await supabaseAdmin.from("contract_links").select("contract_id, expires_at, revoked_at").eq("token_hash", tokenFingerprint(data.token)).maybeSingle();
+    const { data: link } = await supabaseAdmin.from("contract_links").select("tenant_id, contract_id, expires_at, revoked_at").eq("token_hash", tokenFingerprint(data.token)).maybeSingle();
     if (!link || link.revoked_at || new Date(link.expires_at) < new Date()) throw new Error("Link inválido ou expirado.");
+    if (!await (await import("./public-contract-scope.server")).publicContractScopeValid(supabaseAdmin, link)) throw new Error("Link inválido.");
     const pdf = await contractPdf(supabaseAdmin, link.contract_id, safeOrigin(data.origin));
     return { base64: Buffer.from(pdf.bytes).toString("base64"), fileName: pdf.fileName };
   });
