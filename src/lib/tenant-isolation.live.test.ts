@@ -8,28 +8,23 @@
  * Nenhum teste cria movimentação financeira: escritas usam ids da empresa B e devem afetar 0 linhas.
  */
 import { describe, it, expect } from "vitest";
+import { assertIsolationDenied, isolationRows as rows } from "./isolation-response";
 
 const env = process.env;
-const ready = ["ISO_URL", "ISO_ANON_KEY", "ISO_A_TOKEN", "ISO_A_TENANT", "ISO_B_TENANT", "ISO_B_PAYMENT", "ISO_B_CUSTOMER"].every((k) => env[k]);
+const ready = env["ISO_ISOLATED_CONFIRMED"] === "yes" && ["ISO_URL", "ISO_ANON_KEY", "ISO_A_TOKEN", "ISO_A_TENANT", "ISO_B_TENANT", "ISO_B_PAYMENT", "ISO_B_CUSTOMER"].every((k) => env[k]);
 const suite = ready ? describe : describe.skip;
 
 function rest(path: string, init: RequestInit = {}) {
   return fetch(`${env["ISO_URL"]}/rest/v1/${path}`, {
     ...init,
     headers: {
-      apikey: env["ISO_ANON_KEY"]!,
+      apikey: env["ISO_ANON_KEY"] ?? "",
       authorization: `Bearer ${env["ISO_A_TOKEN"]}`,
       "content-type": "application/json",
       prefer: "return=representation",
       ...(init.headers ?? {}),
     },
   });
-}
-
-async function rows(res: Response) {
-  if (!res.ok) return [];
-  const body = await res.json();
-  return Array.isArray(body) ? body : [];
 }
 
 const tables = [
@@ -57,18 +52,18 @@ suite("isolamento entre empresas (A não alcança B)", () => {
 
   it("A não cria cliente dentro da empresa B", async () => {
     const r = await rest("customers", { method: "POST", body: JSON.stringify({ tenant_id: env["ISO_B_TENANT"], name: "teste-isolamento" }) });
-    expect(r.ok).toBe(false);
+    await assertIsolationDenied(r);
   });
 
   it("A não marca avisos da empresa B como lidos", async () => {
-    const r = await rest("rpc/mark_notifications_read", { method: "POST", body: JSON.stringify({ _tenant_id: env["ISO_B_TENANT"] }) });
-    expect(r.ok).toBe(false);
+    const r = await rest("rpc/mark_notifications_read", { method: "POST", body: JSON.stringify({ _tenant_id: env["ISO_B_TENANT"], _ids: [] }) });
+    await assertIsolationDenied(r);
   });
 
   it("A não lê arquivos privados de ativação da empresa B", async () => {
     const r = await fetch(`${env["ISO_URL"]}/storage/v1/object/list/kyc-documents`, {
       method: "POST",
-      headers: { apikey: env["ISO_ANON_KEY"]!, authorization: `Bearer ${env["ISO_A_TOKEN"]}`, "content-type": "application/json" },
+      headers: { apikey: env["ISO_ANON_KEY"] ?? "", authorization: `Bearer ${env["ISO_A_TOKEN"]}`, "content-type": "application/json" },
       body: JSON.stringify({ prefix: `${env["ISO_B_TENANT"]}/` }),
     });
     expect(await rows(r)).toHaveLength(0);
