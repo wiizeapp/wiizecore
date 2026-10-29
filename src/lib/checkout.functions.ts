@@ -616,14 +616,15 @@ export const payCheckoutWithCard = createServerFn({ method: "POST" })
       const { safeOrigin } = await import("./contract-docs.server");
       const origin = safeOrigin(getRequestHeader("origin") ?? undefined);
       body.threeDSecure = { callbackUrl: `${origin}/pagar/${data.token}?verificacao-cartao=retorno` };
-      if (data.deviceInfo) {
+      const device = data["deviceInfo"];
+      if (device) {
         body.deviceInfo = {
-          colorDepth: data.deviceInfo.colorDepth,
-          screenHeight: data.deviceInfo.screenHeight,
-          screenWidth: data.deviceInfo.screenWidth,
-          timezone: data.deviceInfo.timezoneHours,
-          language: data.deviceInfo.language,
-          userAgent: data.deviceInfo.userAgent,
+          colorDepth: device.colorDepth,
+          screenHeight: device.screenHeight,
+          screenWidth: device.screenWidth,
+          timezone: device.timezoneHours,
+          language: device.language,
+          userAgent: device.userAgent,
           remoteIp: requestInfo().ip ?? undefined,
         };
       }

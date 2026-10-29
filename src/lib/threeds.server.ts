@@ -11,7 +11,7 @@ export type ThreeDsModality = "single" | "installment" | "recurring";
  * depois da habilitação e validação da conta de produção no processador.
  */
 export function isCheckoutThreeDsEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.CHECKOUT_3DS_ENABLED === "true";
+  return env["CHECKOUT_3DS_ENABLED"] === "true";
 }
 
 /**
