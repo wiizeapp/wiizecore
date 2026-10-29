@@ -6,7 +6,7 @@ const zero = { cards_per_ip: 1, links_per_ip: 1, declines_per_ip: 0, declines_pe
 
 describe("antifraude comportamental do cartão", () => {
   it("pagador comum não é bloqueado", () => {
-    expect(evaluateCardRisk(zero)).toEqual({ level: "low", reasons: [], block: false });
+    expect(evaluateCardRisk(zero)).toEqual({ level: "low", reasons: [], block: false, findings: [] });
   });
   it("4 cartões diferentes na mesma origem em 1h bloqueia", () => {
     expect(evaluateCardRisk({ ...zero, cards_per_ip: 4 }).block).toBe(true);

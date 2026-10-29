@@ -30,6 +30,7 @@ import { AdminDashboard, AdminRecoveries, AdminUsers } from "@/components/admin-
 import { AdminAuditSecurity } from "@/components/admin/admin-audit-security";
 import { AdminUnlockGate } from "@/components/admin/admin-unlock-gate";
 import { AdminPld } from "@/components/admin/admin-pld";
+import { AdminCardRisk } from "@/components/admin/admin-card-risk";
 import { AdminChargebacks } from "@/components/admin/admin-chargebacks";
 
 export const Route = createFileRoute("/_authenticated/nimda")({
@@ -291,6 +292,7 @@ function AdminContent() {
     suporte: soon("Suporte", "Os atendimentos são feitos pelo canal oficial de contato da WiizePay."),
     auditoria: <AdminAuditSecurity />,
     pld: <AdminPld />,
+    antifraude: <AdminCardRisk />,
     configuracoes: <div className="space-y-6"><AdminWiizeCredentials /><AdminTracking />{taxasView}<AdminLimits /></div>,
     permissoes: soon("Permissões", "Hoje existe um único papel administrativo, com verificação em duas etapas obrigatória. Papéis separados (financeiro, suporte, leitura) virão numa próxima etapa."),
     admins: <div className="surface-panel p-4"><AdminUsers /></div>,

@@ -365,6 +365,13 @@
       "when": 1793298901694,
       "tag": "0051_card_risk_signals",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1793299627775,
+      "tag": "0052_card_risk_cases",
+      "breakpoints": true
     }
   ]
 }

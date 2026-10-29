@@ -774,9 +774,93 @@ export type Database = {
           },
         ]
       }
+      card_risk_cases: {
+        Row: {
+          attempts: number
+          blocked_until: string | null
+          first_seen_at: string
+          id: string
+          last_payment_id: string | null
+          last_seen_at: string
+          level: string
+          reasons: string[]
+          status: string
+          subject_kind: string
+          subject_mark: string
+          tenant_id: string
+          version: number
+        }
+        Insert: {
+          attempts?: number
+          blocked_until?: string | null
+          first_seen_at?: string
+          id?: string
+          last_payment_id?: string | null
+          last_seen_at?: string
+          level: string
+          reasons?: string[]
+          status?: string
+          subject_kind: string
+          subject_mark: string
+          tenant_id: string
+          version?: number
+        }
+        Update: {
+          attempts?: number
+          blocked_until?: string | null
+          first_seen_at?: string
+          id?: string
+          last_payment_id?: string | null
+          last_seen_at?: string
+          level?: string
+          reasons?: string[]
+          status?: string
+          subject_kind?: string
+          subject_mark?: string
+          tenant_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      card_risk_decisions: {
+        Row: {
+          action: string
+          actor_id: string
+          case_id: string
+          created_at: string
+          id: string
+          justification: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          case_id: string
+          created_at?: string
+          id?: string
+          justification: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          case_id?: string
+          created_at?: string
+          id?: string
+          justification?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_risk_decisions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "card_risk_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       card_risk_signals: {
         Row: {
           card_mark: string | null
+          cleared_at: string | null
           created_at: string
           id: string
           ip_mark: string | null
@@ -786,6 +870,7 @@ export type Database = {
         }
         Insert: {
           card_mark?: string | null
+          cleared_at?: string | null
           created_at?: string
           id?: string
           ip_mark?: string | null
@@ -795,6 +880,7 @@ export type Database = {
         }
         Update: {
           card_mark?: string | null
+          cleared_at?: string | null
           created_at?: string
           id?: string
           ip_mark?: string | null
@@ -8314,6 +8400,31 @@ export type Database = {
       cancel_withdrawal: {
         Args: { _reason: string; _tenant_id: string; _withdrawal_id: string }
         Returns: undefined
+      }
+      card_risk_decide: {
+        Args: {
+          _action: string
+          _actor: string
+          _case: string
+          _expected_version: number
+          _justification: string
+        }
+        Returns: {
+          status: string
+          version: number
+        }[]
+      }
+      card_risk_open_case: {
+        Args: {
+          _blocked_until: string
+          _kind: string
+          _level: string
+          _mark: string
+          _payment: string
+          _reasons: string[]
+          _tenant: string
+        }
+        Returns: string
       }
       card_risk_record: {
         Args: {
