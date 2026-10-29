@@ -236,6 +236,19 @@ export async function processWebhookEvent(admin: AdminClient, eventId: string) {
       return;
     }
 
+    // Central de contestações: registra o caso, o histórico e o aviso à empresa.
+    if (isChargebackEvent(event.event_type)) {
+      const { processChargebackWebhook } = await import("./chargebacks.server");
+      await processChargebackWebhook(admin, {
+        tenantId: event.tenant_id,
+        connectionId,
+        providerPaymentId: p.id,
+        eventType: event.event_type,
+        externalEventId: event.external_event_id,
+        paymentPayload: p as Record<string, unknown>,
+      });
+    }
+
     // Cada parcela e cada ciclo recorrente é uma cobrança individual. A RPC
     // garante que eventos repetidos do mesmo pagamento nunca descontem duas vezes.
     const { data: paymentOwner } = await admin
