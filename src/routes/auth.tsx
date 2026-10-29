@@ -20,6 +20,7 @@ import { recordAuthEvent, recordLoginFailure } from "@/lib/auth-events.functions
 import { recoverWithCode } from "@/lib/mfa-recovery.functions";
 import { applyOAuthUiTheme, themeFromOAuthReturnPath } from "@/lib/oauth-ui-theme";
 import { readTheme } from "@/lib/theme";
+import { canResend, confirmationLinkProblem } from "@/lib/mfa-policy";
 
 function GoogleIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" className="size-5"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.6h3.3c1.9-1.8 2.9-4.4 2.9-7.5Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.3l-3.3-2.6c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.7A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.5 14a6 6 0 0 1 0-3.9V7.4H3.1a10 10 0 0 0 0 9.2L6.5 14Z"/><path fill="#EA4335" d="M12 6a5.4 5.4 0 0 1 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 12 2a10 10 0 0 0-8.9 5.4l3.4 2.7A5.9 5.9 0 0 1 12 6Z"/></svg>;
@@ -55,6 +56,26 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [resends, setResends] = useState<number[]>([]);
+  useEffect(() => {
+    const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const query = new URLSearchParams(window.location.search);
+    const problem = confirmationLinkProblem(hash) ?? confirmationLinkProblem(query);
+    if (problem === "expired") toast.error(ui("Este link expirou ou já foi usado. Entre com seu e-mail para receber um novo."));
+    else if (problem === "invalid") toast.error(ui("Este link não é válido. Entre com seu e-mail para receber um novo."));
+  }, [ui]);
+
+  async function handleResend() {
+    const target = (pendingEmail ?? email).trim();
+    if (!target) { toast.error(ui("Informe seu e-mail.")); return; }
+    if (!canResend(resends, Date.now())) { toast.error(ui("Aguarde um minuto antes de pedir outro e-mail.")); return; }
+    setResends((r) => [...r, Date.now()]);
+    await supabase.auth.resend({ type: "signup", email: target, options: { emailRedirectTo: `${window.location.origin}/auth` } }).catch(() => null);
+    // Mesma mensagem sempre: não revela se a conta existe.
+    toast.success(ui("Se houver uma conta aguardando confirmação, enviamos um novo e-mail."));
+  }
 
   const [mfaFactor, setMfaFactor] = useState<string | null>(null);
   const [mfaCode, setMfaCode] = useState("");
@@ -124,6 +145,11 @@ function AuthPage() {
     if (error) {
       setBusyAction(null);
       void loginFailure({ data: { email: email.trim() } }).catch(() => null);
+      if (error.message.toLowerCase().includes("not confirmed")) {
+        setPendingEmail(email.trim());
+        toast.error(ui("Confirme seu e-mail antes de entrar. Você pode pedir um novo link abaixo."));
+        return;
+      }
       toast.error(
         error.message.includes("Invalid login")
           ? ui("E-mail ou senha incorretos.")
@@ -165,6 +191,7 @@ function AuthPage() {
       toast.error(ui("Este e-mail já tem conta. Faça login."));
       return;
     }
+    setPendingEmail(email.trim());
     toast.success(ui("Conta criada! Confirme o e-mail que enviamos para continuar."));
   }
 
@@ -322,6 +349,12 @@ function AuthPage() {
             </TabsContent>
           </Tabs>
 
+          {pendingEmail && (
+            <div className="mt-4 rounded-md border border-border p-3 text-center text-xs text-muted-foreground">
+              <p>{ui("Não recebeu o e-mail de confirmação?")}</p>
+              <Button type="button" variant="link" size="sm" onClick={handleResend}>{ui("Reenviar e-mail de confirmação")}</Button>
+            </div>
+          )}
           <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
              {ui("ou")}

@@ -5852,5 +5852,14 @@
   "Dados oficiais, prazos e documentos reunidos na Central de Contestações. Enviar uma defesa não garante a reversão da disputa.": "Datos oficiales, plazos y documentos en la Central de Disputas. Presentar una defensa no garantiza la reversión.",
   "Integração preparada. Ativação condicionada.": "Integración preparada. Activación condicionada.",
   "Nenhuma camada elimina totalmente a fraude ou garante ausência de prejuízos. A confirmação de pagamento não comprova autenticação 3DS; os efeitos da proteção dependem da transação e das regras aplicáveis.": "Ninguna capa elimina el fraude ni garantiza ausencia de pérdidas. Confirmar el pago no demuestra autenticación 3DS; la protección depende de la transacción y las reglas aplicables.",
-  "Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.": "No fue posible cargar la verificación de seguridad. Recarga la página e inténtalo de nuevo."
+  "Não foi possível carregar a verificação de segurança. Recarregue a página e tente novamente.": "No fue posible cargar la verificación de seguridad. Recarga la página e inténtalo de nuevo.",
+  "Este link expirou ou já foi usado. Entre com seu e-mail para receber um novo.": "Este enlace expiró o ya fue usado. Inicia sesión con tu correo para recibir uno nuevo.",
+  "Este link não é válido. Entre com seu e-mail para receber um novo.": "Este enlace no es válido. Inicia sesión con tu correo para recibir uno nuevo.",
+  "Informe seu e-mail.": "Ingresa tu correo.",
+  "Aguarde um minuto antes de pedir outro e-mail.": "Espera un minuto antes de pedir otro correo.",
+  "Se houver uma conta aguardando confirmação, enviamos um novo e-mail.": "Si hay una cuenta esperando confirmación, enviamos un nuevo correo.",
+  "Confirme seu e-mail antes de entrar. Você pode pedir um novo link abaixo.": "Confirma tu correo antes de entrar. Puedes pedir un nuevo enlace abajo.",
+  "Não recebeu o e-mail de confirmação?": "¿No recibiste el correo de confirmación?",
+  "Reenviar e-mail de confirmação": "Reenviar correo de confirmación",
+  "Confirme seu e-mail para continuar.": "Confirma tu correo para continuar."
 }

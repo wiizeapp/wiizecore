@@ -1,6 +1,6 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { sessionHasMfa } from "./mfa-policy";
+import { emailIsConfirmed, sessionHasMfa } from "./mfa-policy";
 
 /**
  * Controle central: sessão válida + segundo fator confirmado nesta sessão (aal2).
@@ -20,5 +20,19 @@ export const requireMfaAuth = createMiddleware({ type: "function" })
       }
       throw new Error("Confirme a verificação em duas etapas para continuar.");
     }
+    // E-mail confirmado: lido agora da conta no servidor, nunca do navegador. Falha ao ler bloqueia.
+    let confirmed = false;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data, error } = await supabaseAdmin.auth.admin.getUserById(context.userId);
+      confirmed = !error && emailIsConfirmed(data?.user);
+      if (!confirmed) {
+        const { logAudit } = await import("./audit.server");
+        await logAudit(supabaseAdmin, { userId: context.userId, action: "security.email_unconfirmed_blocked", result: "blocked", origin: "backend" }).catch(() => null);
+      }
+    } catch {
+      confirmed = false;
+    }
+    if (!confirmed) throw new Error("Confirme seu e-mail para continuar.");
     return next();
   });
