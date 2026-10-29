@@ -169,25 +169,18 @@ function AuthPage() {
       return;
     }
     setBusyAction("signup");
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth${next ? `?next=${encodeURIComponent(next)}` : ""}`,
-        data: { full_name: fullName.trim() },
-      },
-    });
-    setBusyAction(null);
-    if (error) {
-      toast.error(
-        error.message.includes("already registered")
-          ? ui("Este e-mail já tem conta. Faça login.")
-          : `${ui("Não foi possível criar a conta.")} ${error.message}`,
-      );
+    let result: { duplicate: boolean };
+    try {
+      result = await signUpFn({ data: { fullName: fullName.trim(), email: email.trim(), password, turnstileToken: captchaToken ?? undefined, next } });
+    } catch (e) {
+      setBusyAction(null);
+      setCaptchaReset((n) => n + 1);
+      toast.error(ui(e instanceof Error && e.message ? e.message : "Não foi possível criar a conta."));
       return;
     }
-    // E-mail já cadastrado: o servidor não cria outra conta e devolve um usuário sem identidades.
-    if (signUpData.user && (signUpData.user.identities?.length ?? 0) === 0) {
+    setBusyAction(null);
+    setCaptchaReset((n) => n + 1);
+    if (result.duplicate) {
       toast.error(ui("Este e-mail já tem conta. Faça login."));
       return;
     }
@@ -342,7 +335,8 @@ function AuthPage() {
                   </div>
                   <PasswordChecklist value={password} />
                 </div>
-                <Button type="submit" className="w-full" disabled={busy}>
+                {siteKey ? <TurnstileWidget siteKey={siteKey} action="signup" resetKey={captchaReset} onToken={setCaptchaToken} onError={() => toast.error(ui("Não foi possível carregar a verificação de segurança. Recarregue a página."))} /> : null}
+                <Button type="submit" className="w-full" disabled={busy || !captchaToken}>
                    {busyAction === "signup" ? <><Loader2 className="animate-spin" />{ui("Criando conta...")}</> : ui("Criar conta")}
                 </Button>
               </form>
