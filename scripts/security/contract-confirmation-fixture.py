@@ -44,7 +44,7 @@ CREATE TABLE public.contract_signatures(id uuid DEFAULT gen_random_uuid(),tenant
     version="00000000-0000-0000-0000-000000000003"
     customer="00000000-0000-0000-0000-000000000004"
     sql(f"INSERT INTO contracts VALUES('{contract}','{tenant}','{customer}','draft',1,NULL,NULL); INSERT INTO contract_versions VALUES('{version}','{tenant}','{contract}',1,'hash'); INSERT INTO customers VALUES('{customer}','{tenant}','fixture@example.invalid'); INSERT INTO contract_links VALUES('{tenant}','{contract}','cap',NULL,now()+interval '1 hour');")
-    challenge = sql(f"SELECT public.contract_signature_issue('{{\"tenant_id\":\"{tenant}\",\"contract_id\":\"{contract}\",\"version_id\":\"{version}\",\"signer_role\":\"customer\",\"content_hash\":\"hash\",\"binding_hash\":\"binding\",\"recipient\":\"'||encode(sha256(convert_to('fixture@example.invalid','UTF8')),'hex')||'\",\"payload_hash\":\"payload\",\"code_hash\":\"codehash\"}}')").strip()
+    challenge = sql(f"SELECT public.contract_signature_issue(jsonb_build_object('tenant_id','{tenant}','contract_id','{contract}','version_id','{version}','signer_role','customer','content_hash','hash','binding_hash','binding','recipient',encode(sha256(convert_to('fixture@example.invalid','UTF8')),'hex'),'payload_hash','payload','code_hash','codehash'));").strip()
     sql(f"UPDATE contract_signature_challenges SET sent_at=now(),source='customer',capability_hash='cap' WHERE id='{challenge}';")
     payload='{"signer_name":"Fixture","signer_email":"fixture@example.invalid","identity_enc":"encrypted","signature_mode":"typed"}'
     def finish(valid="true", bound="payload"):
