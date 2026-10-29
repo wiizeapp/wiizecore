@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { logAudit, logSecurityEvent } from "./audit.server";
 import { ALL_PERMISSIONS, effectivePermissions, isCritical, type TeamRole } from "./permissions";
+import { canAssignCustomRole, scopedRolePermissions } from "./team-role-policy";
 
 type Ctx = { userId: string; claims: unknown };
 const INVITE_DAYS = 7;
@@ -26,21 +27,21 @@ export async function loadAccess(userId: string) {
   const db = await admin();
   const { data: m } = await db
     .from("tenant_members")
-    .select("id, tenant_id, role, status, permissions, custom_role_id, tenant_custom_roles(name, permissions)")
+    .select("id, tenant_id, role, status, permissions, custom_role_id, tenant_custom_roles(tenant_id, name, permissions)")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (!m) throw new Error("Você não pertence a nenhuma empresa ativa.");
-  const custom = (m.tenant_custom_roles as { name?: string; permissions?: string[] } | null) ?? null;
+  const custom = (m.tenant_custom_roles as { tenant_id?: string; name?: string; permissions?: string[] } | null) ?? null;
   const role = m.role as TeamRole;
   return {
     memberId: m.id,
     tenantId: m.tenant_id,
     role,
-    customRoleName: custom?.name ?? null,
-    permissions: effectivePermissions(role, m.permissions ?? [], custom?.permissions ?? []),
+    customRoleName: custom?.tenant_id === m.tenant_id ? custom.name ?? null : null,
+    permissions: effectivePermissions(role, m.permissions ?? [], scopedRolePermissions(m.tenant_id, custom)),
   };
 }
 
@@ -64,6 +65,13 @@ function sanitizePerms(perms: unknown, role: TeamRole, granter: string[]) {
 function assertRoleGrant(granterRole: TeamRole, target: TeamRole) {
   if (target === "owner") throw new Error("O Proprietário não pode ser atribuído por convite.");
   if (target === "admin" && granterRole !== "owner") throw new Error("Somente o Proprietário pode definir administradores.");
+}
+
+async function assertCustomRoleGrant(db: Awaited<ReturnType<typeof admin>>, access: { tenantId: string; permissions: string[] }, id: string | null) {
+  if (!id) return;
+  const { data: role, error } = await db.from("tenant_custom_roles").select("tenant_id, permissions")
+    .eq("id", id).eq("tenant_id", access.tenantId).maybeSingle();
+  if (error || !canAssignCustomRole(access.tenantId, access.permissions, role)) throw new Error("Cargo personalizado inválido.");
 }
 
 export const getMyAccess = createServerFn({ method: "GET" })
@@ -145,10 +153,7 @@ export const createInvite = createServerFn({ method: "POST" })
         .maybeSingle();
       if (existing) throw new Error("Essa pessoa já faz parte da equipe.");
     }
-    if (data.customRoleId) {
-      const { data: r } = await db.from("tenant_custom_roles").select("id").eq("id", data.customRoleId).eq("tenant_id", access.tenantId).maybeSingle();
-      if (!r) throw new Error("Cargo personalizado inválido.");
-    }
+    await assertCustomRoleGrant(db, access, data.customRoleId);
     await db
       .from("tenant_invitations")
       .update({ status: "cancelled" })
@@ -307,7 +312,10 @@ export const updateMember = createServerFn({ method: "POST" })
     assertRoleGrant(me.role, data.role);
     const db = await admin();
     const permissions = sanitizePerms(data.permissions, data.role, me.permissions);
-    await db.from("tenant_members").update({ role: data.role, custom_role_id: data.customRoleId, permissions }).eq("id", target.id);
+    await assertCustomRoleGrant(db, me, data.customRoleId);
+    const { data: updated, error } = await db.from("tenant_members").update({ role: data.role, custom_role_id: data.customRoleId, permissions })
+      .eq("id", target.id).eq("tenant_id", me.tenantId).select("id").maybeSingle();
+    if (error || !updated) throw new Error("Não foi possível salvar o cargo.");
     await logAudit(db, {
       tenantId: me.tenantId,
       userId: context.userId,

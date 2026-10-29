@@ -37,6 +37,8 @@
 - External API `/api/public/v1/ext/*`: hashed `sk_` keys in `ext-auth.server.ts`; charges only via `createChargeCore`; webhooks queued via `enqueueWiizeSaleEvent`. Why: one path.
 
 - Read subdirectories' scoped `AGENTS.md` before edits.
+- Checkout payable instructions and provider mutations require `checkout-readiness.server.ts` (charge consent plus current customer contract signature); uncertain charge creation preserves its placeholder and key, and external checkout claims request-bound idempotency before side effects. Why: prevent skipped steps, altered replays and duplicate external charges.
+- All backup-code flows consume through `claimRecoveryCode` before privileged effects; custom-role grants validate tenant and grant subset, and server access ignores foreign roles. Why: enforce single use and tenant-scoped delegation even for legacy records.
 - Administrative data requires `assertAdminPage` after the platform role/MFA checks; only the minimal status and fresh-unlock endpoints are exempt. The page proof is volatile, bound to server-side session/credential state, and never persisted by the browser. Why: closing or reopening the Admin must require both factors again.
 - PLD uses isolated encrypted case/rule modules, append-only case history and Decimal rules; observation never alters financial operations. Why: review indicators must not become payment authorization or accusations.
 - PLD observation reads money as decimal strings through a service-only RPC and runs outside payment handlers; automatic batches require cron authentication and explicitly enabled rule versions. Why: preserve precision and keep review failures separate from money movement.

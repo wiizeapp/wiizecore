@@ -1,4 +1,5 @@
 import { effectivePermissions, type TeamRole } from "./permissions";
+import { scopedRolePermissions } from "./team-role-policy";
 
 /**
  * Membro ATIVO do usuário, com permissões efetivas calculadas no servidor.
@@ -8,20 +9,20 @@ export async function activeMember(userId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: m } = await supabaseAdmin
     .from("tenant_members")
-    .select("id, tenant_id, role, permissions, tenant_custom_roles(permissions)")
+    .select("id, tenant_id, role, permissions, tenant_custom_roles(tenant_id, permissions)")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
   if (!m) return null;
-  const custom = (m.tenant_custom_roles as { permissions?: string[] } | null) ?? null;
+  const custom = (m.tenant_custom_roles as { tenant_id?: string; permissions?: string[] } | null) ?? null;
   const role = m.role as TeamRole;
   return {
     memberId: m.id as string,
     tenantId: m.tenant_id as string,
     role,
-    permissions: effectivePermissions(role, m.permissions ?? [], custom?.permissions ?? []),
+    permissions: effectivePermissions(role, m.permissions ?? [], scopedRolePermissions(m.tenant_id, custom)),
   };
 }
 

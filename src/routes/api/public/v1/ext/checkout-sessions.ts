@@ -61,7 +61,7 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
             }).select("*").single();
             if (error || !row) {
               const { data: again } = await db.from("ext_sandbox_charges").select("*").eq("integration_id", ctx.integrationId).eq("idempotency_key", idem).maybeSingle();
-              return again ? sbxView(again, 200) : fail("internal_error", 500);
+              return again ? (again.request_hash === requestHash ? sbxView(again, 200) : fail("idempotency_key_reused", 409)) : fail("internal_error", 500);
             }
             const sbx = await import("@/lib/ext-sandbox.server");
             await sbx.emitSandbox(db, row, "checkout.session.created");
@@ -91,6 +91,8 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
           if (!service) return fail("service_not_found", 404);
           if (body.payment_method && !service.accepted_methods.includes(body.payment_method)) return fail("payment_method_not_allowed", 422);
 
+          const { withIdempotency } = await import("@/lib/ext-idempotency.server");
+          return withIdempotency(ctx, request, "checkout_session.create", body, async () => {
           // Cliente: vínculo externo → CPF/CNPJ → cria. Sempre dentro da empresa da chave.
           const c = body.customer;
           let customerId: string | null = null;
@@ -112,8 +114,9 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
 
           let charge: { chargeGroupId: string };
           try {
+            if (!ctx.createdBy) return fail("account_not_ready", 409);
             const { createChargeCore } = await import("@/lib/charges-core.server");
-            charge = await createChargeCore(tenantId, ctx.createdBy!, null, {
+            charge = await createChargeCore(tenantId, ctx.createdBy, null, {
               customerId, serviceId: service.id, method: body.payment_method ?? "undefined",
               idempotencyKey: `ext:${ctx.integrationId}:${idem}`, linkDays: 30, collectCustomerData: true, feePassShare: 0,
               installmentCount: body.installments ?? null,
@@ -133,12 +136,13 @@ export const Route = createFileRoute("/api/public/v1/ext/checkout-sessions")({
           }).select("*").single();
           if (sErr || !session) {
             const { data: again } = await db.from("ext_checkout_sessions").select("*").eq("integration_id", ctx.integrationId).eq("idempotency_key", idem).maybeSingle();
-            return again ? respond(again, 200) : fail("internal_error", 500);
+            return again ? (again.request_hash === requestHash ? respond(again, 200) : fail("idempotency_key_reused", 409)) : fail("internal_error", 500);
           }
           { const wh = await import("@/lib/ext-webhooks.server"); await wh.enqueueExtSessionCreated(db, tenantId, charge.chargeGroupId); await wh.enqueueExtChargeEvent(db, tenantId, charge.chargeGroupId, "created"); }
           const { logAudit } = await import("@/lib/audit.server");
           await logAudit(db, { tenantId, userId: ctx.createdBy, action: "ext_api.checkout_session.created", resource: "ext_checkout_sessions", metadata: { integration_id: ctx.integrationId, session_id: session.id, charge_group_id: charge.chargeGroupId } });
           return respond(session, 201);
+          }, { retainOnFailure: true });
         }, 60);
       },
     },

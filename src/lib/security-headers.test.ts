@@ -4,6 +4,14 @@ import { applySecurityHeaders, buildCsp, cacheControlFor } from "./security-head
 const SUPA = "https://abc.supabase.co";
 
 describe("security headers", () => {
+  it("permite Turnstile em produção somente na origem oficial para script, conexão e janela", () => {
+    const csp = buildCsp({ preview: false, dev: false });
+    for (const directive of ["script-src", "connect-src", "frame-src"]) {
+      const values = csp.split(";").find((part) => part.trim().startsWith(`${directive} `));
+      expect(values).toContain("https://challenges.cloudflare.com");
+      expect(values).not.toContain("https://*.cloudflare.com");
+    }
+  });
   it("produção: CSP restrita, sem curingas e sem eval", () => {
     const csp = buildCsp({ supabaseUrl: SUPA, preview: false, dev: false });
     expect(csp).toContain("frame-ancestors 'self'");

@@ -566,6 +566,7 @@ function CustomerForm({ token, customer, acceptedTerms, onAcceptedTerms, onDone 
         data: {
           token,
           ...f,
+          termsAccepted: true,
           phone: f.phone.replace(/\D/g, ""),
           zipCode: f.zipCode.replace(/\D/g, ""),
         },
