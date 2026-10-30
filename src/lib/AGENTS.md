@@ -1,5 +1,7 @@
 # Library rules
 
+- Financial credentials use insert-if-absent or expected-hash conditional updates after shared password validation; public checkouts cannot change a registered email; contract originals use new immutable Drive objects and byte/hash verification. Why: prevent credential races, sibling-link OTP rebinding and signed-document replacement.
+
 - Contract signatures finalize via service-only atomic confirmation RPC; external signers use payload-bound email challenges and provider signing retains MFA/financial password. Identity evidence is encrypted and signatures immutable. Why: block alternate signing paths and secret disclosure while retaining legacy evidence.
 
 - Public contract capabilities require tenant-consistent resolution and scoped public queries; cash receipts are rejected before financial side effects, including legacy queued reconciliations. Why: block cross-tenant links and credit without provider-held funds.
