@@ -58,6 +58,8 @@ export const createExtWebhook = createServerFn({ method: "POST" })
     const a = await manager(context.userId, context.claims);
     await financialPassword(context.userId, data.financialPassword, "ext_webhook.create");
     if (!isSafeWebhookUrl(data.url)) throw new Error("Use um endereço https público (sem IP ou rede interna).");
+    const { approvedWebhookDestination } = await import("./webhook-destination");
+    if (!approvedWebhookDestination(data.url, process.env["EXT_WEBHOOK_ALLOWED_HOSTS"])) throw new Error("Use um endereço https público (sem IP ou rede interna).");
     const events = sanitizeEvents(data.events);
     if (!events.length) throw new Error("Escolha ao menos um evento.");
     const d = await db();

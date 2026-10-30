@@ -259,10 +259,12 @@ export const createContractVersion = createServerFn({ method: "POST" })
     });
     if (error) throw new Error("Não foi possível salvar a nova versão.");
 
-    await supabaseAdmin
+    const { data: activated, error: activateError } = await supabaseAdmin
       .from("contracts")
       .update({ current_version: nextVersion, status: "draft", signed_at: null, updated_at: new Date().toISOString() })
-      .eq("id", contract.id);
+      .eq("id", contract.id).eq("tenant_id", membership.tenant_id)
+      .eq("current_version", contract.current_version).eq("status", contract.status).select("id").single();
+    if (activateError || !activated) throw new Error("Não foi possível salvar a nova versão.");
     await contractEvent(supabaseAdmin, membership.tenant_id, contract.id, "version_created", null, { version: nextVersion });
 
     await logAudit(supabaseAdmin, {

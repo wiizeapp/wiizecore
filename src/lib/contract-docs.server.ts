@@ -369,23 +369,27 @@ export async function contractPdf(admin: Admin, contractId: string, origin: stri
 
   if (contract.status === "signed" && !opts.bare) {
     const { data: stored } = await admin.from("contract_files").select("storage_path, storage_backend, drive_file_id, sha256")
-      .eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "signed").maybeSingle();
+      .eq("tenant_id", contract.tenant_id).eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "signed").maybeSingle();
     if (stored) {
       const bytes = await readContractFile(admin, contract.tenant_id, stored).catch(() => null);
-      if (bytes) return { bytes, fileName, sha256: stored.sha256 as string };
+      if (bytes) {
+        if (sha256(bytes) !== stored.sha256) throw new Error("Não foi possível abrir o arquivo original do contrato.");
+        return { bytes, fileName, sha256: stored.sha256 as string };
+      }
     }
   }
 
   const { data: version } = await admin.from("contract_versions").select("id, body, content_hash, version")
-    .eq("contract_id", contractId).eq("version", contract.current_version).maybeSingle();
+    .eq("tenant_id", contract.tenant_id).eq("contract_id", contractId).eq("version", contract.current_version).maybeSingle();
   if (!version) throw new Error("Versão do contrato não encontrada.");
 
   let originalPdf: Uint8Array | null = null;
-  const { data: original } = await admin.from("contract_files").select("storage_path, storage_backend, drive_file_id, source_format")
-    .eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "original").maybeSingle();
+  const { data: original } = await admin.from("contract_files").select("storage_path, storage_backend, drive_file_id, source_format, sha256")
+    .eq("tenant_id", contract.tenant_id).eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "original").maybeSingle();
   if (original?.source_format === "pdf") {
     originalPdf = await readContractFile(admin, contract.tenant_id, original);
     if (!originalPdf) throw new Error("Não foi possível abrir o arquivo original do contrato.");
+    if (sha256(originalPdf) !== version.content_hash || original.sha256 !== version.content_hash) throw new Error("Não foi possível abrir o arquivo original do contrato.");
   }
 
   const { extra } = await requiredSigners(admin, contractId);
@@ -513,9 +517,12 @@ export async function writeContractFile(admin: Admin, input: {
   const conn = await getConnection(admin, input.tenantId);
   // Arquivos de contrato ficam somente no Google Drive da empresa.
   if (!conn) throw new Error("Conecte o Google Drive da empresa para guardar os arquivos do contrato.");
-  const { data: prev } = await admin.from("contract_files").select("drive_file_id").eq("contract_id", input.contractId).eq("version", input.version).eq("kind", input.kind).maybeSingle();
+  if (input.kind === "original") {
+    const { data: signed, error } = await admin.from("contract_signatures").select("id").eq("tenant_id", input.tenantId).eq("contract_id", input.contractId).limit(1);
+    if (error || signed?.length) throw new Error("Contrato já assinado.");
+  }
   const id = await uploadToDrive(admin, input.tenantId, {
-    folderName: `${input.title} (${input.contractId.slice(0, 8)})`, fileName: input.fileName, mime: input.mime, bytes: input.bytes, replaceId: prev?.drive_file_id ?? null,
+    folderName: `${input.title} (${input.contractId.slice(0, 8)})`, fileName: input.fileName, mime: input.mime, bytes: input.bytes, replaceId: null,
   });
   const row: Record<string, unknown> = { storage_backend: "drive", drive_file_id: id, storage_path: `drive:${id}` };
   const { error } = await admin.from("contract_files").upsert({

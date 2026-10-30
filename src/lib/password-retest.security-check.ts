@@ -9,8 +9,9 @@ vi.mock("@/integrations/supabase/auth-middleware", () => ({ requireSupabaseAuth:
 vi.mock("@/lib/mfa-middleware", () => ({ requireMfaAuth: {} }));
 vi.mock("./crypto.server", () => ({ hashSecretValue: () => "synthetic-hash", verifySecretValue: () => { state.checks++; return state.valid; } }));
 vi.mock("./audit.server", () => ({ consumeRateLimit: async () => ({ allowed: true }), logAudit: vi.fn(), logSecurityEvent: vi.fn(), resetRateLimit: vi.fn() }));
+vi.mock("./finance.server", () => ({ assertFinancialPassword: async (_db: unknown, _user: string, password: string) => { state.checks++; if (!password || !state.valid) throw new Error("invalid"); } }));
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: { from: () => {
-  const chain = { select: () => chain, eq: () => chain, maybeSingle: async () => ({ data: state.existing ? { password_hash: "existing-synthetic-hash" } : null, error: state.lookupError ? { code: "fixture_lookup_failure" } : null }), upsert: async () => { state.writes++; return { error: null }; } };
+  const chain = { select: () => chain, eq: () => chain, maybeSingle: async () => ({ data: state.existing ? { password_hash: "existing-synthetic-hash" } : null, error: state.lookupError ? { code: "fixture_lookup_failure" } : null }), insert: () => { state.writes++; return chain; }, update: () => { state.writes++; return chain; }, single: async () => ({ data: { user_id: "fixture-user" }, error: null }) };
   return chain;
 } } }));
 import { setFinancialPassword } from "./security.functions";
@@ -25,10 +26,14 @@ describe("adversarial retest — credential lifecycle, simulated dependencies", 
     await expect(invoke(input)).rejects.toThrow();
     expect(state.writes).toBe(0);
   });
-  it("reproduces vulnerability: lookup error is treated as absence and reaches credential overwrite", async () => {
+  it("lookup error fails closed without credential overwrite", async () => {
     state.lookupError = true;
-    await expect(invoke(input)).resolves.toEqual({ ok: true });
+    await expect(invoke(input)).rejects.toThrow();
     expect(state.checks).toBe(0);
+    expect(state.writes).toBe(0);
+  });
+  it("positive control: initial credential is inserted without upsert", async () => {
+    await expect(invoke(input)).resolves.toEqual({ ok: true });
     expect(state.writes).toBe(1);
   });
 });

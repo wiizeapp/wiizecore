@@ -1,5 +1,8 @@
 # Library rules
 
+- Financial credentials use insert-if-absent or expected-hash updates after shared password validation; public checkouts cannot change registered email; contract uploads create fresh Drive objects and verify downloaded hashes. Why: prevent stale credential writes and identity rebinding; database-atomic file publication remains a required deployment gate.
+- External webhook destinations require exact server-approved hosts in EXT_WEBHOOK_ALLOWED_HOSTS at creation and every delivery; absent configuration blocks delivery. Hosts must be operator-controlled with verified public DNS/egress protection, never tenant-approved wildcards. Refund/anticipation transport errors retain pending state for official reconciliation. Why: block arbitrary outbound access and premature reservation release.
+
 - Contract signatures finalize via service-only atomic confirmation RPC; external signers use payload-bound email challenges and provider signing retains MFA/financial password. Identity evidence is encrypted and signatures immutable. Why: block alternate signing paths and secret disclosure while retaining legacy evidence.
 
 - Public contract capabilities require tenant-consistent resolution and scoped public queries; cash receipts are rejected before financial side effects, including legacy queued reconciliations. Why: block cross-tenant links and credit without provider-held funds.

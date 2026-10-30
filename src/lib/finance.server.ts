@@ -82,12 +82,6 @@ export function assertTwoFactor(claims: unknown) {
 
 /** 2FA obrigatório para todos: a sessão precisa estar confirmada (aal2). Nome mantido por compatibilidade. */
 export async function assertTwoFactorIfEnrolled(claims: unknown, userId: string) {
-  const aal = (claims as { aal?: string } | null)?.aal;
-  if (aal === "aal2") return;
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin.auth.admin.mfa.listFactors({ userId });
-  if (error) throw new Error("Não foi possível confirmar sua segurança agora. Tente novamente.");
-  if ((data?.factors ?? []).some((f) => f.status === "verified")) {
-    throw new Error("Confirme o código da verificação em duas etapas para continuar.");
-  }
+  void userId;
+  assertTwoFactor(claims);
 }

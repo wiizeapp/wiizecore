@@ -12,7 +12,8 @@ vi.mock("pdf-lib", () => ({ PDFDocument: { load: async () => ({}) } }));
 vi.mock("./contract-docs.server", () => ({ writeContractFile: async () => { state.replaced = true; return { sha256: "replacement-hash" }; } }));
 vi.mock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: { from: (table: string) => {
   let write = false;
-  const chain = { select: () => chain, eq: () => chain, update: () => { write = true; return chain; }, maybeSingle: async () => ({ data: { id: "contract", title: "Synthetic", current_version: 1, status: state.status } }), then: (resolve: (r: unknown) => unknown) => {
+  const chain = { select: () => chain, eq: () => chain, limit: () => chain, update: () => { write = true; return chain; }, maybeSingle: async () => ({ data: { id: "contract", title: "Synthetic", current_version: 1, status: state.status } }), then: (resolve: (r: unknown) => unknown) => {
+    if (table === "contract_signatures") return Promise.resolve({ data: [{ id: "existing-signature" }], error: null }).then(resolve);
     if (table === "contract_versions" && write) state.hashUpdateFailed = true;
     return Promise.resolve({ error: { message: "Signed version is immutable" } }).then(resolve);
   } };
@@ -32,9 +33,9 @@ describe("adversarial retest — original file, mocked storage and authorization
     await expect(invoke(input)).rejects.toThrow();
     expect(state.replaced).toBe(false);
   });
-  it("reproduces vulnerability: partial signature permits replacement and ignores frozen-hash error", async () => {
-    await expect(invoke(input)).resolves.toEqual({ sha256: "replacement-hash" });
-    expect(state.replaced).toBe(true);
-    expect(state.hashUpdateFailed).toBe(true);
+  it("partial signature refuses replacement before storage effects", async () => {
+    await expect(invoke(input)).rejects.toThrow();
+    expect(state.replaced).toBe(false);
+    expect(state.hashUpdateFailed).toBe(false);
   });
 });

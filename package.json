@@ -12,7 +12,9 @@
     "format": "prettier --write ."
   },
   "overrides": {
-    "rolldown": "1.2.1"
+    "rolldown": "1.2.1",
+    "launch-editor": "^2.14.2",
+    "seroval": "^1.6.11"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -78,8 +80,8 @@
     "tw-animate-css": "^1.3.4",
     "vaul": "^1.1.2",
     "vite-tsconfig-paths": "^6.0.2",
-    "xlsx": "0.18.5",
-    "zod": "^3.25.76"
+    "write-excel-file": "^4.1.1",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -103,7 +105,7 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "8.1.5",
+    "vite": "8.3.5",
     "vitest": "^5.0.1"
   }
 }
