@@ -19,7 +19,8 @@ export async function sendRefundToProvider(admin: AdminClient, refundId: string)
     const splitRefunds = await refundSharesFor(admin, r.payment_id, Number(r.refund_amount), remote);
     const res = await conn.provider.refundPayment(p.provider_payment_id, { value: Number(r.refund_amount), description: String(r.reason).slice(0, 200), ...(splitRefunds.length ? { splitRefunds } : {}) });
     const st = String((res as Record<string, unknown>)["status"] ?? "");
-    await (admin.rpc as any)("apply_refund_event", { _refund_id: r.id, _status: "processing", _provider_status: st || "REQUESTED", _event_id: null, _message: null });
+    const { error } = await (admin.rpc as any)("apply_refund_event", { _refund_id: r.id, _status: "processing", _provider_status: st || "REQUESTED", _event_id: null, _message: null });
+    if (error) throw new Error("refund_outcome_requires_reconciliation");
     // Even REFUNDED in a synchronous reply is not the authenticated event path.
     // Only handleRefundWebhook finalizes the refund and its split reconciliation.
   } catch {
