@@ -28,7 +28,7 @@ export async function downloadSpreadsheet(rows: Record<string, unknown>[], fileN
   if (fileName.endsWith(".csv")) blob = new Blob([spreadsheetCsv(rows)], { type: "text/csv;charset=utf-8" });
   else {
     const { default: write } = await import("write-excel-file/universal");
-    blob = await write(spreadsheetData(rows, money), { sheet: sheet.slice(0, 31), stickyRowsCount: 1, columns: Object.keys(rows[0] ?? { "Sem dados": "" }).map((h) => ({ width: Math.max(12, h.length + 4) })) });
+    blob = await write(spreadsheetData(rows, money), { sheet: sheet.slice(0, 31), stickyRowsCount: 1, columns: Object.keys(rows[0] ?? { "Sem dados": "" }).map((h) => ({ width: Math.max(12, h.length + 4) })) }).toBlob();
   }
   const url = URL.createObjectURL(blob); const a = document.createElement("a");
   a.href = url; a.download = fileName; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);

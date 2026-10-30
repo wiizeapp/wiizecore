@@ -57,7 +57,7 @@ const bankSchema = z.object({
   accountType: z.enum(["checking", "savings"]),
   pixKey: z.string().trim().min(3, "Informe a chave Pix. Saques são feitos somente via Pix.").max(140),
   financialPassword: z.string().min(1).max(200),
-  confirmedOwnership: z.literal(true, { errorMap: () => ({ message: "Confirme que conferiu os dados da conta." }) }),
+  confirmedOwnership: z.literal(true, { error: "Confirme que conferiu os dados da conta." }),
 });
 
 export const addBankAccount = createServerFn({ method: "POST" })
