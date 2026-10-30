@@ -103,7 +103,8 @@ export const requestAnticipation = createServerFn({ method: "POST" })
       weighted_average_days: s.anticipationDays, receivable_count: 1, idempotency_key: key,
     }).select("id").single();
     if (error) throw new Error("Já existe uma antecipação em andamento para este recebível.");
-    await admin.from("payments").update({ anticipation_status: "pending" }).eq("id", s.paymentId);
+    const { error: pendingError } = await admin.from("payments").update({ anticipation_status: "pending" }).eq("id", s.paymentId).eq("tenant_id", m.tenant_id);
+    if (pendingError) throw new Error("Pagamento temporariamente indisponível.");
 
     const { getPaymentProvider } = await import("./financial-origin.server");
     const prov = await getPaymentProvider(admin, m.tenant_id, s.paymentId);
@@ -111,11 +112,13 @@ export const requestAnticipation = createServerFn({ method: "POST" })
     try {
       if (!prov || !pay?.provider_payment_id) throw new Error("Pagamento temporariamente indisponível.");
       const ant = await prov.provider.createAnticipation({ payment: pay.provider_payment_id });
-      await admin.from("anticipation_requests").update({
+      const { error: receiptError } = await admin.from("anticipation_requests").update({
         provider_anticipation_id: ant.id, provider_status: ant.status ?? "PENDING", status: "processing", processed_at: new Date().toISOString(),
         ...(typeof ant.fee === "number" ? { provider_fee_amount: ant.fee, wiize_margin_amount: Math.round((s.wiizeFee - ant.fee) * 100) / 100 } : {}),
-      }).eq("id", row.id);
-      await admin.from("payments").update({ anticipation_status: "processing" }).eq("id", s.paymentId);
+      }).eq("id", row.id).eq("tenant_id", m.tenant_id);
+      if (receiptError) throw new Error("anticipation_outcome_requires_reconciliation");
+      const { error: processingError } = await admin.from("payments").update({ anticipation_status: "processing" }).eq("id", s.paymentId).eq("tenant_id", m.tenant_id);
+      if (processingError) throw new Error("anticipation_outcome_requires_reconciliation");
     } catch {
       // Unknown provider outcome keeps the admission active. An exception does
       // not prove refusal and must not admit a conflicting refund or retry.

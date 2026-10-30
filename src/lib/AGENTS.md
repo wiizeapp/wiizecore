@@ -1,5 +1,6 @@
 # Library rules
 
+- Anticipation submission checks each persistence result and scopes payment/request writes by tenant; failed receipt persistence must not report successful submission or release admission. Why: an external acceptance with a lost local receipt requires reconciliation, not retry.
 - Financial credentials use insert-if-absent or expected-hash updates after shared password validation; public checkouts cannot change registered email; contract uploads create fresh Drive objects and verify downloaded hashes. Why: prevent stale credential writes and identity rebinding; database-atomic file publication remains a required deployment gate.
 - External webhook destinations require exact server-approved hosts in EXT_WEBHOOK_ALLOWED_HOSTS at creation and every delivery; absent configuration blocks delivery. Hosts must be operator-controlled with verified public DNS/egress protection, never tenant-approved wildcards. Refund/anticipation transport errors retain pending state for official reconciliation. Why: block arbitrary outbound access and premature reservation release.
 
