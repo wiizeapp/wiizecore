@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { eventForTrigger, MAX_ATTEMPTS, nextBackoffMs, signExtWebhook, type ExtEvent } from "./ext-webhooks";
+import { approvedWebhookDestination } from "./webhook-destination";
 
 type Db = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
@@ -62,6 +63,10 @@ export async function deliverOne(db: Db, d: { id: string; endpoint_id: string; b
   const { data: ep } = await db.from("ext_webhook_endpoints").select("url, secret_enc, status, timeout_ms").eq("id", d.endpoint_id).maybeSingle();
   if (!ep || ep.status !== "active") {
     await db.from("ext_webhook_deliveries").update({ status: "failed", last_error: "endpoint_disabled" }).eq("id", d.id);
+    return { ok: false, status: 0 };
+  }
+  if (!approvedWebhookDestination(ep.url, process.env["EXT_WEBHOOK_ALLOWED_HOSTS"])) {
+    await db.from("ext_webhook_deliveries").update({ status: "failed", last_error: "destination_not_approved" }).eq("id", d.id);
     return { ok: false, status: 0 };
   }
   const { decryptSecret } = await import("./crypto.server");
