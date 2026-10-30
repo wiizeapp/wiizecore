@@ -1,4 +1,7 @@
--- Reviewable phase-one correction. Apply only through the migration tool after isolated tests.
+-- NOT APPROVED FOR DEPLOYMENT. Disposable minimal-schema fixture candidate only.
+-- Requires operation-bound provider outcomes (not arbitrary event IDs), a global
+-- lock-order audit, full-schema lifecycle/concurrency validation and reservation
+-- admission/confirmation RPC integration. Do not apply this candidate as a fix.
 -- No historical balances are changed by this DDL.
 CREATE OR REPLACE FUNCTION public.release_coproduction_splits(_payment_id uuid)
 RETURNS integer LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
