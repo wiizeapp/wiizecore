@@ -61,6 +61,8 @@ export const attachContractFile = createServerFn({ method: "POST" })
       .eq("id", data.contractId).eq("tenant_id", m.tenant_id).maybeSingle();
     if (!contract) throw new Error("Contrato não encontrado.");
     if (contract.status === "signed") throw new Error("Contrato já assinado.");
+    const { data: signatures, error: signaturesError } = await supabaseAdmin.from("contract_signatures").select("id").eq("contract_id", contract.id).eq("tenant_id", m.tenant_id).limit(1);
+    if (signaturesError || signatures?.length) throw new Error("Contrato já assinado.");
 
     let bytes: Uint8Array;
     if (data.base64) bytes = b64ToBytes(data.base64);
@@ -80,8 +82,9 @@ export const attachContractFile = createServerFn({ method: "POST" })
 
     // Para PDF, a impressão digital da versão passa a ser a do próprio arquivo.
     if (data.format === "pdf") {
-      await supabaseAdmin.from("contract_versions").update({ content_hash: hash })
-        .eq("contract_id", contract.id).eq("version", contract.current_version);
+      const { data: updated, error: versionError } = await supabaseAdmin.from("contract_versions").update({ content_hash: hash })
+        .eq("tenant_id", m.tenant_id).eq("contract_id", contract.id).eq("version", contract.current_version).select("id").single();
+      if (versionError || !updated) throw new Error("Não foi possível registrar o arquivo.");
     }
     await contractEvent(supabaseAdmin, m.tenant_id, contract.id, "file_attached", null, { format: data.format, sha256: hash });
     return { sha256: hash };
