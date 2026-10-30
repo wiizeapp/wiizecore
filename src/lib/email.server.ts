@@ -77,14 +77,14 @@ export async function sendEmail(admin: Admin, opts: { tenantId: string | null; k
     });
     const body = await res.text();
     if (!res.ok) {
-      await mark({ status: "failed", error_message: opts.kind === "contract.confirmation" ? `Email delivery failed (${res.status})` : `${res.status}: ${body.slice(0, 300)}` });
+      await mark({ status: "failed", error_message: `Email delivery failed (${res.status})` });
       return { failed: true };
     }
     const providerId = (JSON.parse(body) as { id?: string }).id ?? null;
     await mark({ status: "sent", provider_id: providerId, sent_at: new Date().toISOString() });
     return { sent: true };
-  } catch (e) {
-    await mark({ status: "failed", error_message: opts.kind === "contract.confirmation" ? "Email delivery unavailable" : (e instanceof Error ? e.message : "erro").slice(0, 300) });
+  } catch {
+    await mark({ status: "failed", error_message: "Email delivery unavailable" });
     return { failed: true };
   }
 }

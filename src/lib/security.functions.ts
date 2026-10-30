@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { requireMfaAuth } from "@/lib/mfa-middleware";
 import { assertStrongPassword } from "./password-policy";
-import { consumeRateLimit, logAudit, logSecurityEvent, resetRateLimit } from "./audit.server";
+import { consumeRateLimit, logAudit, logSecurityEvent } from "./audit.server";
 
 function assertStrongFinancialPassword(value: string) {
   assertStrongPassword(value, "A senha financeira");
@@ -42,13 +42,14 @@ export const setFinancialPassword = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { hashSecretValue, verifySecretValue } = await import("./crypto.server");
+    const { hashSecretValue } = await import("./crypto.server");
 
-    const { data: existing } = await supabaseAdmin
+    const { data: existing, error: lookupError } = await supabaseAdmin
       .from("financial_credentials")
       .select("password_hash")
       .eq("user_id", context.userId)
       .maybeSingle();
+    if (lookupError) throw new Error("Não foi possível confirmar sua segurança agora. Tente novamente.");
 
     if (existing) {
       const limit = await consumeRateLimit(supabaseAdmin, {
@@ -66,28 +67,23 @@ export const setFinancialPassword = createServerFn({ method: "POST" })
         });
         throw new Error("Muitas tentativas. Tente novamente em alguns minutos.");
       }
-      if (!data.currentPassword || !verifySecretValue(data.currentPassword, existing.password_hash)) {
-        await logAudit(supabaseAdmin, {
-          userId: context.userId,
-          action: "financial_password.change",
-          result: "failure",
-        });
-        throw new Error("Senha financeira atual incorreta.");
-      }
-      await resetRateLimit(supabaseAdmin, "financial_password_change", context.userId);
+      await (await import("./finance.server")).assertFinancialPassword(supabaseAdmin, context.userId, data.currentPassword ?? "", "financial_password.change");
     }
 
-    const { error } = await supabaseAdmin.from("financial_credentials").upsert(
-      {
+    const replacement = {
         user_id: context.userId,
         password_hash: hashSecretValue(data.newPassword),
         failed_attempts: 0,
         locked_until: null,
         updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id" },
-    );
-    if (error) throw new Error("Não foi possível salvar a senha financeira.");
+      };
+    // Insert cannot overwrite a concurrent first setup. Conditional update cannot
+    // overwrite a credential changed since the current password was validated.
+    const write = existing
+      ? supabaseAdmin.from("financial_credentials").update(replacement).eq("user_id", context.userId).eq("password_hash", existing.password_hash)
+      : supabaseAdmin.from("financial_credentials").insert(replacement);
+    const { data: saved, error } = await write.select("user_id").single();
+    if (error || !saved) throw new Error("Não foi possível salvar a senha financeira.");
 
     await logAudit(supabaseAdmin, {
       userId: context.userId,
