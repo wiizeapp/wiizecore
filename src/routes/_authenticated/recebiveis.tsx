@@ -131,7 +131,7 @@ function Recebiveis() {
     if (!tenantId) return;
     setExporting(true);
     try {
-      const XLSX = await import("xlsx");
+      const { downloadSpreadsheet } = await import("@/lib/spreadsheet-export");
       const brDate = (v: string | null) => (v ? new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(v.length === 10 ? `${v}T12:00:00-03:00` : v)) : "");
       let rows: Record<string, string | number>[] = [];
       let money: string[] = [];
@@ -161,32 +161,7 @@ function Recebiveis() {
         money = ["Valor", "Taxas", "Líquido"];
       }
       await exportAuth({ data: { kind, filters: { view, from, to, customer, method, q }, rows: rows.length } });
-      const { safeSpreadsheetRows } = await import("@/lib/spreadsheet-safety");
-      const ws = XLSX.utils.json_to_sheet(safeSpreadsheetRows(rows));
-      const headers = rows.length ? Object.keys(rows[0]!) : ["Sem dados"];
-      if (rows.length) {
-        const n = rows.length;
-        const totalRow: Record<string, string | { f: string }> = { [headers[0]!]: "Total" };
-        headers.forEach((h, i) => {
-          if (money.includes(h)) {
-            const col = XLSX.utils.encode_col(i);
-            totalRow[h] = { f: `SUM(${col}2:${col}${n + 1})` };
-          }
-        });
-        XLSX.utils.sheet_add_json(ws, [totalRow], { skipHeader: true, origin: -1 });
-        headers.forEach((h, i) => {
-          if (!money.includes(h)) return;
-          for (let r = 1; r <= n + 1; r++) {
-            const cell = ws[XLSX.utils.encode_cell({ r, c: i })];
-            if (cell) cell.z = '"R$" #,##0.00;-"R$" #,##0.00';
-          }
-        });
-      }
-      ws["!cols"] = headers.map((h) => ({ wch: Math.max(12, h.length + 4) }));
-      ws["!freeze"] = { xSplit: 0, ySplit: 1 } as never;
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, kind.slice(0, 30));
-      XLSX.writeFile(wb, `wiizepay-${kind}-${today}.xlsx`);
+      await downloadSpreadsheet(rows, `wiizepay-${kind}-${today}.xlsx`, kind, money);
       toast.success(`Planilha gerada com ${rows.length} linha(s).`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Não foi possível exportar.");

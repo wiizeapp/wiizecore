@@ -349,12 +349,8 @@ function Origin({ data, onDrill }: { data: FinanceData; onDrill: (title: string,
 /* ---------------- Exportação ---------------- */
 
 export async function exportRows(rows: Record<string, unknown>[], name: string, kind: "csv" | "xlsx") {
-  const XLSX = await import("xlsx");
-  const { safeSpreadsheetRows } = await import("@/lib/spreadsheet-safety");
-  const ws = XLSX.utils.json_to_sheet(safeSpreadsheetRows(rows));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Dados");
-  XLSX.writeFile(wb, `${name}.${kind}`, { bookType: kind });
+  const { downloadSpreadsheet } = await import("@/lib/spreadsheet-export");
+  await downloadSpreadsheet(rows, `${name}.${kind}`);
 }
 
 function ExportButtons({ rows, name }: { rows: Record<string, unknown>[]; name: string }) {
