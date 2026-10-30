@@ -20,19 +20,13 @@ export async function sendRefundToProvider(admin: AdminClient, refundId: string)
     const res = await conn.provider.refundPayment(p.provider_payment_id, { value: Number(r.refund_amount), description: String(r.reason).slice(0, 200), ...(splitRefunds.length ? { splitRefunds } : {}) });
     const st = String((res as Record<string, unknown>)["status"] ?? "");
     await (admin.rpc as any)("apply_refund_event", { _refund_id: r.id, _status: "processing", _provider_status: st || "REQUESTED", _event_id: null, _message: null });
-    // Pix/boleto costumam concluir na hora; a confirmação oficial ainda chega por aviso, mas se a resposta já trouxer REFUNDED, concluímos.
-    if (st === "REFUNDED") {
-      await (admin.rpc as any)("apply_refund_event", { _refund_id: r.id, _status: "completed", _provider_status: st, _event_id: `api-${r.id}`, _message: null });
-      const { syncRefundsFromProvider } = await import("./coproduction.server");
-      await syncRefundsFromProvider(admin, r.payment_id, true).catch((e) => console.error("coproduction refund sync", e instanceof Error ? e.message : "x"));
-    }
-  } catch (e) {
-    const raw = e instanceof Error ? e.message : "";
-    const msg = /saldo|balance/i.test(raw)
-      ? "Saldo insuficiente no processador para estornar agora. Tente novamente após novos recebimentos."
-      : "O processador recusou o estorno. Nenhum valor saiu do seu saldo.";
-    await fail(msg);
-    await admin.from("audit_logs").insert({ tenant_id: r.tenant_id, action: "refund.provider", resource: "refund", resource_id: r.id, result: "failure", metadata: { error: raw.slice(0, 300) } as never });
+    // Even REFUNDED in a synchronous reply is not the authenticated event path.
+    // Only handleRefundWebhook finalizes the refund and its split reconciliation.
+  } catch {
+    // A timeout/transport or persistence error is not evidence of rejection.
+    // Keep the current operation/reservation; never issue an automatic retry.
+    const { logAudit } = await import("./audit.server");
+    await logAudit(admin, { tenantId: r.tenant_id, action: "refund.provider", resource: "refund", resourceId: r.id, result: "failure", metadata: { code: "provider_outcome_unknown" } });
   }
 }
 

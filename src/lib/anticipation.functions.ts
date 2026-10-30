@@ -116,11 +116,11 @@ export const requestAnticipation = createServerFn({ method: "POST" })
         ...(typeof ant.fee === "number" ? { provider_fee_amount: ant.fee, wiize_margin_amount: Math.round((s.wiizeFee - ant.fee) * 100) / 100 } : {}),
       }).eq("id", row.id);
       await admin.from("payments").update({ anticipation_status: "processing" }).eq("id", s.paymentId);
-    } catch (e) {
-      await admin.from("anticipation_requests").update({ status: "failed", failure_reason: e instanceof Error ? e.message.slice(0, 300) : "erro" }).eq("id", row.id);
-      await admin.from("payments").update({ anticipation_status: "failed" }).eq("id", s.paymentId);
+    } catch {
+      // Unknown provider outcome keeps the admission active. An exception does
+      // not prove refusal and must not admit a conflicting refund or retry.
       await logAudit(admin, { userId: context.userId, tenantId: m.tenant_id, action: "anticipation.request", resource: "anticipation_requests", resourceId: row.id, result: "failure" } as never);
-      throw new Error(e instanceof Error ? e.message : "O provedor recusou a antecipação.");
+      return { id: row.id, status: "pending" };
     }
     await logAudit(admin, { userId: context.userId, tenantId: m.tenant_id, action: "anticipation.request", resource: "anticipation_requests", resourceId: row.id });
     return { id: row.id, status: "processing" };

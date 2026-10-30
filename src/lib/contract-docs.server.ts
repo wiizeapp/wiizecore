@@ -369,10 +369,13 @@ export async function contractPdf(admin: Admin, contractId: string, origin: stri
 
   if (contract.status === "signed" && !opts.bare) {
     const { data: stored } = await admin.from("contract_files").select("storage_path, storage_backend, drive_file_id, sha256")
-      .eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "signed").maybeSingle();
+      .eq("tenant_id", contract.tenant_id).eq("contract_id", contractId).eq("version", contract.current_version).eq("kind", "signed").maybeSingle();
     if (stored) {
       const bytes = await readContractFile(admin, contract.tenant_id, stored).catch(() => null);
-      if (bytes) return { bytes, fileName, sha256: stored.sha256 as string };
+      if (bytes) {
+        if (sha256(bytes) !== stored.sha256) throw new Error("Não foi possível abrir o arquivo original do contrato.");
+        return { bytes, fileName, sha256: stored.sha256 as string };
+      }
     }
   }
 
