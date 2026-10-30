@@ -19,9 +19,14 @@ export function extJson(requestId: string, body: unknown, status = 200) {
  */
 export async function withExtApi(request: Request, path: string, scopes: ExtScope[], fn: (ctx: ExtCtx) => Promise<Response>, limit = 120): Promise<Response> {
   const started = Date.now();
-  const { randomToken } = await import("./crypto.server");
+  const { randomToken, tokenFingerprint } = await import("./crypto.server");
   const requestId = `req_${randomToken(12)}`;
   const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
+  const { consumeRateLimit, requestInfo } = await import("./audit.server");
+  const preAuth = await consumeRateLimit(db, { scope: "ext_api_pre_auth", identifier: tokenFingerprint(requestInfo().ip ?? "unknown"), maxAttempts: limit, windowSeconds: 60, blockSeconds: 60 });
+  if (!preAuth.allowed) return extError(requestId, "rate_limited", 429);
+  const firstScope = scopes[0];
+  if (!firstScope) return extError(requestId, "insufficient_scope", 403);
   let tenantId: string | null = null;
   let integrationId: string | null = null;
   let environment: string | null = null;
@@ -29,7 +34,7 @@ export async function withExtApi(request: Request, path: string, scopes: ExtScop
   let res: Response;
   try {
     const { authenticateExtRequest } = await import("./ext-auth.server");
-    const auth = await authenticateExtRequest(request, scopes[0]!);
+    const auth = await authenticateExtRequest(request, firstScope);
     if (!auth.ok) {
       authResult = auth.error;
       res = extError(requestId, auth.error, auth.status);
@@ -41,9 +46,9 @@ export async function withExtApi(request: Request, path: string, scopes: ExtScop
         authResult = "insufficient_scope";
         res = extError(requestId, "insufficient_scope", 403);
       } else {
-        const { consumeRateLimit } = await import("./audit.server");
         const rl = await consumeRateLimit(db, { scope: "ext_api", identifier: auth.integrationId, maxAttempts: limit, windowSeconds: 60, blockSeconds: 60 });
-        if (!rl.allowed) { authResult = "rate_limited"; res = extError(requestId, "rate_limited", 429); }
+        const tenantLimit = rl.allowed ? await consumeRateLimit(db, { scope: "ext_api_tenant", identifier: auth.tenantId, maxAttempts: limit, windowSeconds: 60, blockSeconds: 60 }) : { allowed: false };
+        if (!rl.allowed || !tenantLimit.allowed) { authResult = "rate_limited"; res = extError(requestId, "rate_limited", 429); }
         else res = await fn({ db, tenantId: auth.tenantId, integrationId: auth.integrationId, environment: auth.environment, requestId, createdBy: it?.created_by ?? null, scopes: owned });
       }
     }
