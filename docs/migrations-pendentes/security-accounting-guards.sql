@@ -29,7 +29,7 @@ BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'operation_scope_invalid'; END IF;
  IF TG_TABLE_NAME='anticipation_requests' AND NEW.status::text IN ('pending','processing','completed') THEN
   IF coalesce(p.refund_reserved_pending,0)<>0 OR EXISTS(SELECT 1 FROM public.refunds WHERE payment_id=p.id AND status IN ('requested','processing')) THEN RAISE EXCEPTION 'refund_requires_reconciliation'; END IF;
- ELSIF TG_TABLE_NAME='refunds' AND NEW.status IN ('requested','processing') THEN
+ ELSIF TG_TABLE_NAME='refunds' AND NEW.status::text IN ('requested','processing') THEN
   IF EXISTS(SELECT 1 FROM public.anticipation_requests WHERE payment_id=p.id AND status::text IN ('pending','processing','completed')) THEN RAISE EXCEPTION 'anticipated'; END IF;
  END IF;
  RETURN NEW;
